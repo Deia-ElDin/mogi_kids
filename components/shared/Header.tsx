@@ -20,8 +20,8 @@ const Header = () => {
   }, []);
 
   return (
-    <header>
-      <div className="flex justify-between items-center pb-5">
+    <header className="grid grid-cols-4 items-center pb-5">
+      <div className="col-span-1">
         <Image
           src="/assets/images/logo.png"
           alt="Logo"
@@ -29,23 +29,20 @@ const Header = () => {
           height={38}
           className="cursor-pointer"
         />
-        {
-          <div className="flex justify-between gap-2 w-fit">
-            {headerLinks.map((link) => (
-              <Button
-                asChild
-                key={link.label}
-                className={`btn ${pathname === link.route && "active-btn"}`}
-              >
-                <Link href={link.route} className="text-lg font-normal">
-                  {link.label}
-                </Link>
-              </Button>
-            ))}
-          </div>
-        }
       </div>
-      <img src={careImgs[count]} alt="Childcare" />
+      <div className="col-span-3 flex justify-between gap-2">
+        {headerLinks.map((link) => (
+          <Button
+            asChild
+            key={link.label}
+            className={`btn ${pathname === link.route && "active-btn"}`}
+          >
+            <Link href={link.route} className="text-lg font-normal md:text-xl">
+              {link.label}
+            </Link>
+          </Button>
+        ))}
+      </div>
     </header>
   );
 };

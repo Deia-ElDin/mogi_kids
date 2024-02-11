@@ -43,6 +43,7 @@ export const socialMediaSvgs = [
   },
 ];
 
+// w: 1024, h: 768, aspect ratio: 4.3
 export const careImgs = [
   "/assets/images/care1.jpg",
   "/assets/images/care2.jpg",

@@ -34,7 +34,7 @@ const Footer = () => {
       </div>
       <div className="flex justify-center bg-gray-400 w-full">
         <p className="text-white p-2">
-          Copyright @ {`${new Date().getFullYear()} `} Mogi Kids. All Rights
+          Copyright &copy; {`${new Date().getFullYear()} `} Mogi Kids. All Rights
           Reserved
         </p>
       </div>
