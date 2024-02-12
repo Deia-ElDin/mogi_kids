@@ -2,26 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { headerLinks, careImgs } from "@/constants";
+import { headerLinks } from "@/constants";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
 
 const Header = () => {
-  const [count, setCount] = useState(0);
   const pathname = usePathname();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCount((prevCount) => (prevCount + 1) % careImgs.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <header className="grid grid-cols-4 items-center pb-5">
-      <div className="col-span-1">
+    <header className="flex items-center">
+      <div className="w-[25%]">
         <Image
           src="/assets/images/logo.png"
           alt="Logo"
@@ -30,14 +20,14 @@ const Header = () => {
           className="cursor-pointer"
         />
       </div>
-      <div className="col-span-3 flex justify-between gap-2">
+      <div className="w-[75%] flex justify-between gap-2 py-8 pr-8">
         {headerLinks.map((link) => (
           <Button
             asChild
             key={link.label}
             className={`btn ${pathname === link.route && "active-btn"}`}
           >
-            <Link href={link.route} className="text-lg font-normal md:text-xl">
+            <Link href={link.route} className="sm:txt-sm md:txt-md xl:txt-xl">
               {link.label}
             </Link>
           </Button>

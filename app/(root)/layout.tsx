@@ -1,5 +1,5 @@
 import Header from "@/components/shared/Header";
-import ImageGallery from "@/components/shared/ImageGallery";
+import Gallery from "@/components/shared/Gallery";
 import Footer from "@/components/shared/Footer";
 
 export default function RootLayout({
@@ -8,9 +8,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col h-screen p-5">
+    <div className="flex flex-col">
       <Header />
-      <ImageGallery />
+      <Gallery />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
