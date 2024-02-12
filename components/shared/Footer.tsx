@@ -14,7 +14,6 @@ const Footer = () => {
             height={38}
           />
         </Link>
-
         <div className="flex flex-col justify-center items-center gap-2 h-28">
           <p>FOLLOW US:</p>
           <div className="flex items-center gap-6">

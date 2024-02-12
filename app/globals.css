@@ -117,7 +117,7 @@ body {
     @apply text-xl font-semibold;
   }
 
-  .txt-l {
+  .txt-lg {
     @apply text-lg font-medium;
   }
 

@@ -16,7 +16,7 @@ const Header = () => {
           src="/assets/images/logo.png"
           alt="Logo"
           width={128}
-          height={38}
+          height={70}
           className="cursor-pointer"
         />
       </div>
