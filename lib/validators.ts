@@ -35,10 +35,7 @@ export const quoteSchema = z.object({
     }),
   from: z.date(),
   to: z.date(),
-  numberOfHours: z
-    .string()
-    .min(1, { message: "Number of hours must be at least 1 hour." })
-    .max(2, { message: "Number of hours can not exceed 24 hours." }),
+  numberOfHours: z.string(),
   numberOfKids: z.string(),
   ageOfKidsFrom: z.string(),
   ageOfKidsTo: z.string(),
