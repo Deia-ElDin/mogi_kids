@@ -153,3 +153,17 @@ export const records = [
     color: "#c9f9cd",
   },
 ];
+
+export const quoteDefaultValues = {
+  fullName: "",
+  mobile: "",
+  location: "",
+  email: "",
+  from: new Date(),
+  to: new Date(),
+  numberOfHours: "",
+  numberOfKids: "",
+  ageOfKidsFrom: "",
+  ageOfKidsTo: "",
+  extraInfo: "",
+};

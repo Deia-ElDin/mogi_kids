@@ -10,7 +10,7 @@ export const quoteSchema = z.object({
       message: "Full name must not exceed 60 characters.",
     }),
   mobile: z
-    .number()
+    .string()
     .min(9, {
       message: "Mobile / landline number must be at least 9 characters.",
     })
@@ -33,15 +33,15 @@ export const quoteSchema = z.object({
     .max(50, {
       message: "Email address must not exceed 50 characters.",
     }),
-  fromDate: z.date(),
-  toDate: z.date(),
+  from: z.date(),
+  to: z.date(),
   numberOfHours: z
-    .number()
+    .string()
     .min(1, { message: "Number of hours must be at least 1 hour." })
-    .max(24, { message: "Number of hours must not exceed 24 hours." }),
-  numberOfKids: z.number(),
-  ageOfKidsFrom: z.number(),
-  ageOfKidsTO: z.number(),
+    .max(2, { message: "Number of hours can not exceed 24 hours." }),
+  numberOfKids: z.string(),
+  ageOfKidsFrom: z.string(),
+  ageOfKidsTo: z.string(),
   extraInfo: z.string().max(5000, {
     message: "maximum 5000 characters.",
   }),
