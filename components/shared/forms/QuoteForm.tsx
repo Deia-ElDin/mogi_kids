@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { quoteDefaultValues } from "@/constants";
 import DatePicker from "react-datepicker";
-import Image from "next/image";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -36,7 +35,7 @@ const QuoteForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-10 pb-32 relative"
+        className="flex flex-col md:grid md:grid-cols-2 gap-5 pt-10 pb-32 relative"
       >
         <FormField
           control={form.control}

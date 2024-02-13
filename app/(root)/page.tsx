@@ -4,6 +4,7 @@ import Questions from "@/components/shared/Questions";
 import Records from "@/components/shared/Records";
 import Customer from "@/components/shared/Customer";
 import Quote from "@/components/shared/Quote";
+import Contact from "@/components/shared/Contact";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Records />
       <Customer />
       <Quote />
+      <Contact />
     </>
   );
 }
