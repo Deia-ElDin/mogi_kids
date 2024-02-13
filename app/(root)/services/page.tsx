@@ -1,7 +1,5 @@
 "use client";
 
-import Title from "@/components/shared/utils/Title";
-import Body from "@/components/shared/utils/Body";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   EffectCoverflow,
@@ -9,8 +7,11 @@ import {
   Pagination,
   Autoplay,
 } from "swiper/modules";
-import ArrowBtn from "@/components/shared/utils/ArrowBtn";
+import ArrowBtn from "@/components/shared/helpers/ArrowBtn";
 import Image from "next/image";
+import Title from "@/components/shared/helpers/Title";
+import Body from "@/components/shared/helpers/Body";
+import Breaker from "@/components/shared/helpers/Breaker";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
@@ -152,6 +153,7 @@ const Services = () => {
         <ArrowBtn btnClass="swiper-prev-img" img="Left arrow" />
         <ArrowBtn btnClass="swiper-next-img" img="Right arrow" />
       </div>
+      <Breaker />
     </section>
   );
 };

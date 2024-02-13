@@ -132,3 +132,24 @@ export const questionsList = [
       "We value your feedback, because it helps us to improve our services. Please get in touch with us at 02 000 0000 or 050 000 0000 to provide your feedback or email us at info@sitters.ae.",
   },
 ];
+
+export const records = [
+  {
+    icon: "/assets/icons/client.svg",
+    rating: 50,
+    title: "Clients",
+    color: "#ffeae6",
+  },
+  {
+    icon: "/assets/icons/members.svg",
+    rating: 80,
+    title: "Active Members",
+    color: "#fff7db",
+  },
+  {
+    icon: "/assets/icons/rating.svg",
+    rating: 4.8,
+    title: "Google Rating",
+    color: "#c9f9cd",
+  },
+];
