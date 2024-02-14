@@ -137,6 +137,10 @@ body {
     margin: 0 auto;
   }
 
+  .nav-transition {
+    transition: all 1s ease-in-out;
+  }
+
   .section-style {
     @apply flex flex-col w-[65%];
   }
