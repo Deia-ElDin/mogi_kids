@@ -44,7 +44,7 @@ const QuoteForm = () => {
             <FormItem>
               <FormLabel className="label-style">Full name</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style txt-style" />
+                <Input {...field} className="input-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -57,7 +57,7 @@ const QuoteForm = () => {
             <FormItem>
               <FormLabel className="label-style">Mobile number</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style txt-style" />
+                <Input {...field} className="input-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,7 +70,7 @@ const QuoteForm = () => {
             <FormItem>
               <FormLabel className="label-style">Your location</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style txt-style" />
+                <Input {...field} className="input-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -83,7 +83,7 @@ const QuoteForm = () => {
             <FormItem>
               <FormLabel className="label-style">Email address</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style txt-style" />
+                <Input {...field} className="input-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -100,7 +100,7 @@ const QuoteForm = () => {
                   selected={field.value}
                   onChange={(date: Date) => field.onChange(date)}
                   dateFormat="dd-MM-yyyy"
-                  className="input-style txt-style w-full"
+                  className="input-style text-style w-full"
                 />
               </FormControl>
               <FormMessage />
@@ -118,7 +118,7 @@ const QuoteForm = () => {
                   selected={field.value}
                   onChange={(date: Date) => field.onChange(date)}
                   dateFormat="dd-MM-yyyy"
-                  className="input-style txt-style w-full"
+                  className="input-style text-style w-full"
                 />
               </FormControl>
               <FormMessage />
@@ -135,7 +135,7 @@ const QuoteForm = () => {
                 <Input
                   {...field}
                   type="number"
-                  className="input-style txt-style"
+                  className="input-style text-style"
                 />
               </FormControl>
               <FormMessage />
@@ -149,7 +149,7 @@ const QuoteForm = () => {
             <FormItem>
               <FormLabel className="label-style">Number of your kids</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style txt-style" />
+                <Input {...field} className="input-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -167,7 +167,7 @@ const QuoteForm = () => {
                 <Input
                   {...field}
                   type="number"
-                  className="input-style txt-style"
+                  className="input-style text-style"
                 />
               </FormControl>
               <FormMessage />
@@ -181,7 +181,7 @@ const QuoteForm = () => {
             <FormItem>
               <FormLabel className="label-style">Age of your kids to</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style txt-style" />
+                <Input {...field} className="input-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -196,8 +196,7 @@ const QuoteForm = () => {
                 Anything else we should know?
               </FormLabel>
               <FormControl>
-                <Textarea {...field} 
-                className="textarea-style txt-style" />
+                <Textarea {...field} className="textarea-style text-style" />
               </FormControl>
               <FormMessage />
             </FormItem>

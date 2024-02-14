@@ -80,8 +80,6 @@ body {
   font-family: var(--font-poppins);
 }
 
-/* TAILWIND STYLES */
-
 @layer utilities {
   .btn {
     background: transparent;
@@ -91,51 +89,29 @@ body {
     color: #000;
     padding: 10px 20px 10px 20px;
     text-decoration: none;
+    font-family: var(--font-courgette);
+    @apply font-bold emd:text-xl;
   }
 
   .btn:hover {
     color: #fff;
-    background: #3cb0fd;
-    background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-    background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-    background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-    background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-    background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+    background: #f2c59f;
+    background-image: -webkit-linear-gradient(top, #f2c59f, #a84d02);
+    background-image: -moz-linear-gradient(top, #f2c59f, #a84d02);
+    background-image: -ms-linear-gradient(top, #f2c59f, #a84d02);
+    background-image: -o-linear-gradient(top, #f2c59f, #a84d02);
+    background-image: linear-gradient(to bottom, #f2c59f, #a84d02);
+    text-decoration: none;
   }
 
   .active-btn {
     color: #fff;
-    background: #3498db;
-    background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-    background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-    background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-    background-image: -o-linear-gradient(top, #3498db, #2980b9);
-    background-image: linear-gradient(to bottom, #3498db, #2980b9);
-  }
-
-  .form-btn {
-    @apply btn active-btn;
-    padding: 30px;
-  }
-
-  .title-style {
-    @apply font-bold text-[26px] leading-[32px] md:text-[32px] md:leading-[42px] lg:text-[38px] lg:leading-[48px] xl:text-[54px] xl:leading-[74px];
-  }
-
-  .txt-style {
-    @apply font-light text-center text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
-  }
-
-  .label-style {
-    @apply font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
-  }
-
-  .input-style {
-    @apply bg-gray-50 h-[54px] rounded-full px-4 py-3 border-none outline-none;
-  }
-
-  .textarea-style {
-    @apply bg-gray-50 rounded-sm px-4 py-3 border-none outline-none w-full h-[200px] text-left;
+    background: #de9a62;
+    background-image: -webkit-linear-gradient(top, #de9a62, #6b3406);
+    background-image: -moz-linear-gradient(top, #de9a62, #6b3406);
+    background-image: -ms-linear-gradient(top, #de9a62, #6b3406);
+    background-image: -o-linear-gradient(top, #de9a62, #6b3406);
+    background-image: linear-gradient(to bottom, #de9a62, #6b3406);
   }
 
   .hidden-text {
@@ -159,5 +135,43 @@ body {
     background-color: #5ab9f4;
     padding: 20px;
     margin: 0 auto;
+  }
+
+  .section-style {
+    @apply flex flex-col w-[65%];
+  }
+
+  .title-style {
+    @apply font-bold text-center text-[26px] leading-[32px] md:text-[32px] md:leading-[42px] lg:text-[38px] lg:leading-[48px] xl:text-[50px] xl:leading-[68px];
+    font-family: var(--font-courgette);
+  }
+
+  .text-style {
+    @apply font-light text-center text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px];
+  }
+
+  .question-style {
+    @apply text-yellow-800 font-normal text-left text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
+  }
+
+  .answer-style {
+    @apply font-light text-left text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px];
+  }
+
+  .label-style {
+    @apply font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
+  }
+
+  .input-style {
+    @apply bg-gray-50 h-[54px] rounded-full px-4 py-3 border-none outline-none;
+  }
+
+  .textarea-style {
+    @apply bg-gray-50 rounded-sm px-4 py-3 border-none outline-none w-full h-[200px] text-left;
+  }
+
+  .form-btn {
+    @apply btn active-btn;
+    padding: 30px;
   }
 }

@@ -15,11 +15,12 @@ const config = {
       padding: "2rem",
       screens: {
         "2xl": "1400px",
+        "emd": "866px",
       },
     },
     extend: {
       colors: {
-        "custom-blue": "#d8f0ff",
+        "custom-red": "#ffeae6",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

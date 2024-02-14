@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Courgette } from "next/font/google";
 import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-Poppins",
+});
+
+const courgette = Courgette({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-courgette",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.variable}>{children}</body>
+      <body className={`${poppins.variable} ${courgette.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }

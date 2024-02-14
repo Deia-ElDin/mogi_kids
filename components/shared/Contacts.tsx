@@ -3,13 +3,17 @@ import Body from "./helpers/Body";
 import Image from "next/image";
 import { contacts } from "@/constants";
 
-const Contact = () => {
+const Contacts = () => {
   return (
-    <section>
+    <section id="contacts" className="section-style">
       <Title text="Contact Information" />
+      <Body text="Get in touch with Sitters Company to take advantage of our wide range of child care services today!" />
       <div className="flex flex-col items-start gap-5 py-9">
         {contacts.map((contact) => (
-          <div className="flex items-center justify-center gap-5">
+          <div
+            key={contact.title}
+            className="flex items-center justify-center gap-5"
+          >
             <Image
               src={contact.icon}
               alt={contact.title}
@@ -25,4 +29,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default Contacts;

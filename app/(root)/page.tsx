@@ -2,9 +2,9 @@ import Welcome from "@/components/shared/Welcome";
 import Services from "./services/page";
 import Questions from "@/components/shared/Questions";
 import Records from "@/components/shared/Records";
-import Customer from "@/components/shared/Customer";
+import Customers from "@/components/shared/Customers";
 import Quote from "@/components/shared/Quote";
-import Contact from "@/components/shared/Contact";
+import Contacts from "@/components/shared/Contacts";
 
 export default function Home() {
   return (
@@ -13,9 +13,9 @@ export default function Home() {
       <Services />
       <Questions />
       <Records />
-      <Customer />
+      <Customers />
       <Quote />
-      <Contact />
+      <Contacts />
     </>
   );
 }

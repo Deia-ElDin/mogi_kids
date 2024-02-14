@@ -6,7 +6,7 @@ type BodyProps = {
 };
 
 const Body = ({ text, bodyClass }: BodyProps) => {
-  return <p className="txt-style text-center leading-9">{text}</p>;
+  return <p className="text-style text-center leading-9">{text}</p>;
 };
 
 export default Body;

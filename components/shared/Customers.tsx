@@ -4,9 +4,9 @@ import Title from "./helpers/Title";
 import Body from "./helpers/Body";
 import Breaker from "./helpers/Breaker";
 
-const Customer = () => {
+const Customers = () => {
   return (
-    <section>
+    <section id="customers" className="section-style">
       <Title text="OUR CUSTOMERS, BOTH PARENTS AND CHILDREN, ARE OUR PRIORITY" />
       <Body text="We take immense pride in the service we provide to our customers. Our customer reviews reflect the high level of customer satisfaction that we have achieved." />
       <Breaker />
@@ -14,4 +14,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default Customers;

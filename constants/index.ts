@@ -12,10 +12,6 @@ export const headerLinks = [
     route: "/services",
   },
   {
-    label: "Corparate Services",
-    route: "/corparate-services",
-  },
-  {
     label: "Careers",
     route: "/careers",
   },

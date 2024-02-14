@@ -57,39 +57,37 @@ const serviceImgs = [
 
 const Services = () => {
   return (
-    <section className="flex flex-col">
-      <div className="flex flex-col gap-3 text-center pt-3 px-3">
-        <Title text="Our Services" />
-        <Body
-          text="If you are looking for high-quality care for your child in the UAE,
+    <section id="services" className="section-style">
+      <Title text="Our Services" />
+      <Body
+        text="If you are looking for high-quality care for your child in the UAE,
           you need to look no further!"
-        />
-        <Body
-          text="Sitters Company is proud to provide some of the highest quality child
+      />
+      <Body
+        text="Sitters Company is proud to provide some of the highest quality child
           care services available in the UAE. We are also the first company in
           the UAE to offer these services via a mobile application. Our child
           care specialists are all highly qualified, and share a passion for
           providing good quality, personalized care for the children they look
           after."
-        />
-        <Body
-          text="We provide a wide range of child care services for parents, at your
+      />
+      <Body
+        text="We provide a wide range of child care services for parents, at your
           choice of location, and all for a budget-friendly hourly rate—so
           you’re in control. Our services include child care in your home, at
           the mall, and at your hotel. We can also provide regular or one-off
           pick-up and drop-off services for school or nursery. If your plans
           change, and you need child care in a hurry, we offer emergency
           service."
-        />
-        <Body
-          text="Whatever services we are providing, your child’s safety and well-being
+      />
+      <Body
+        text="Whatever services we are providing, your child’s safety and well-being
           is our priority. If we are driving your children, they will always be
           in an approved car seat. You can also use our mobile app to provide
           you with up-to-date information about your child’s location and
           activities, giving you the reassurance you need that your child is in
           specialist hands."
-        />
-      </div>
+      />
       <div className="relative py-10">
         <Swiper
           spaceBetween={100}

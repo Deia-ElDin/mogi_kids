@@ -6,18 +6,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Title from "./helpers/Title";
+import Body from "./helpers/Body";
 import Breaker from "./helpers/Breaker";
 
 const Questions = () => (
-  <section className="flex flex-col">
+  <section id="questions" className="section-style">
     <Title text="Frequently Asked Questions" />
     <Accordion type="single" collapsible className="w-full">
       {questionsList.map((item) => (
         <AccordionItem key={item.question} value={item.question}>
-          <AccordionTrigger className="txt-xl text-left text-yellow-800">
+          <AccordionTrigger className="question-style">
             {item.question}
           </AccordionTrigger>
-          <AccordionContent>{item.answer}</AccordionContent>
+          <AccordionContent className="answer-style">{item.answer}</AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>
