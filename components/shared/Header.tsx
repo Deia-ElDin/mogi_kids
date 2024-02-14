@@ -7,6 +7,9 @@ import { headerLinks } from "@/constants";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
 
+import DesktopNav from "./nav/DesktopNav";
+import MobileNav from "./nav/MobileNav";
+
 const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
@@ -23,17 +26,8 @@ const Header = () => {
           onClick={() => router.push("/")}
         />
       </div>
-      <div className="hidden ml-auto xl:w-[50%] lg:w-[60%] md:w-[75%] md:flex md:justify-between gap-auto ">
-        {headerLinks.map((link) => (
-          <Button
-            asChild
-            key={link.label}
-            className={`btn ${pathname === link.route && "active-btn "}`}
-          >
-            <Link href={link.route}>{link.label}</Link>
-          </Button>
-        ))}
-      </div>
+      <DesktopNav />
+      <MobileNav />
     </header>
   );
 };
