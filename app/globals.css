@@ -90,7 +90,7 @@ body {
     padding: 10px 20px 10px 20px;
     text-decoration: none;
     font-family: var(--font-courgette);
-    @apply font-bold emd:text-xl;
+    @apply font-bold md:text-xl;
   }
 
   .btn:hover {

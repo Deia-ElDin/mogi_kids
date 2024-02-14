@@ -23,7 +23,7 @@ const Header = () => {
           onClick={() => router.push("/")}
         />
       </div>
-      <div className="hidden ml-auto xl:w-[50%] lg:w-[60%] md:w-[70%] md:flex md:justify-between gap-auto ">
+      <div className="hidden ml-auto xl:w-[50%] lg:w-[60%] md:w-[75%] md:flex md:justify-between gap-auto ">
         {headerLinks.map((link) => (
           <Button
             asChild

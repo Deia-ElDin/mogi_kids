@@ -70,7 +70,7 @@ const Gallery = () => {
   }, [count]);
 
   return (
-    <div className="border-red-500 border-y-4">
+    <section className="border-red-500 border-y-4">
       <div style={{ display: "flex", overflow: "hidden" }}>
         {careImgs.map((imgUrl, index) => (
           <img
@@ -90,7 +90,7 @@ const Gallery = () => {
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 };
 
