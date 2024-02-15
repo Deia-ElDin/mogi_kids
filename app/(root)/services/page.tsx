@@ -8,14 +8,14 @@ import {
   Autoplay,
 } from "swiper/modules";
 import ArrowBtn from "@/components/shared/helpers/ArrowBtn";
-import Image from "next/image";
 import Title from "@/components/shared/helpers/Title";
-import Body from "@/components/shared/helpers/Body";
-import Breaker from "@/components/shared/helpers/Breaker";
+import Text from "@/components/shared/helpers/Text";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import ServiceCard from "@/components/shared/Cards/ServiceCard";
+import { Separator } from "@/components/ui/separator";
 
 const serviceImgs = [
   {
@@ -59,11 +59,11 @@ const Services = () => {
   return (
     <section id="services" className="section-style">
       <Title text="Our Services" />
-      <Body
+      <Text
         text="If you are looking for high-quality care for your child in the UAE,
           you need to look no further!"
       />
-      <Body
+      <Text
         text="Sitters Company is proud to provide some of the highest quality child
           care services available in the UAE. We are also the first company in
           the UAE to offer these services via a mobile application. Our child
@@ -71,7 +71,7 @@ const Services = () => {
           providing good quality, personalized care for the children they look
           after."
       />
-      <Body
+      <Text
         text="We provide a wide range of child care services for parents, at your
           choice of location, and all for a budget-friendly hourly rate—so
           you’re in control. Our services include child care in your home, at
@@ -80,7 +80,7 @@ const Services = () => {
           change, and you need child care in a hurry, we offer emergency
           service."
       />
-      <Body
+      <Text
         text="Whatever services we are providing, your child’s safety and well-being
           is our priority. If we are driving your children, they will always be
           in an approved car seat. You can also use our mobile app to provide
@@ -88,7 +88,7 @@ const Services = () => {
           activities, giving you the reassurance you need that your child is in
           specialist hands."
       />
-      <div className="relative py-10">
+      <div className="relative pt-10">
         <Swiper
           spaceBetween={100}
           slidesPerView="auto"
@@ -114,36 +114,9 @@ const Services = () => {
           }}
           modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
         >
-          {serviceImgs.map((image, index) => (
+          {serviceImgs.map((service, index) => (
             <SwiperSlide key={index} className="max-w-[300px]">
-              <div className="flex flex-col justify-center max-w-[300px]">
-                <Image
-                  src={image.url}
-                  alt="Child"
-                  width={300}
-                  height={300}
-                  className="rounded-t-lg"
-                />
-                <p className="flex justify-center items-center text-center w-full  h-[60px] font-bold text-lg bg-white rounded-b-lg max-w-[300px]">
-                  {image.title}
-                </p>
-                <p className="hidden-text max-w-[300px]">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Doloribus explicabo maiores aliquid perferendis sit nam odit
-                  aliquam doloremque impedit aperiam. Totam fugit corrupti nam
-                  est dolore fugiat, commodi nemo porro nostrum facere alias
-                  ipsum dolorem quidem autem explicabo vel dicta sint earum
-                  rerum pariatur reprehenderit soluta. Aliquid illo explicabo
-                  nam officia suscipit amet reiciendis inventore aspernatur
-                  voluptatibus, sint fugit corporis itaque. Maiores, quibusdam
-                  repudiandae suscipit aliquid veniam aliquam, similique
-                  nesciunt laudantium, beatae molestias modi nisi recusandae
-                  voluptates accusantium explicabo! Quisquam autem voluptate
-                  delectus numquam tempore debitis, molestiae quis nemo dolores,
-                  tenetur, sapiente eveniet ipsum? Consequatur, eveniet et.
-                  Iure, alias fugiat?
-                </p>
-              </div>
+              <ServiceCard service={service} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -151,7 +124,7 @@ const Services = () => {
         <ArrowBtn btnClass="swiper-prev-img" img="Left arrow" />
         <ArrowBtn btnClass="swiper-next-img" img="Right arrow" />
       </div>
-      <Breaker />
+      <Separator />
     </section>
   );
 };

@@ -132,19 +132,19 @@ export const questionsList = [
 export const records = [
   {
     icon: "/assets/icons/client.svg",
-    rating: 50,
+    rating: "50",
     title: "Clients",
     color: "#ffeae6",
   },
   {
     icon: "/assets/icons/members.svg",
-    rating: 80,
+    rating: "80",
     title: "Active Members",
     color: "#fff7db",
   },
   {
     icon: "/assets/icons/rating.svg",
-    rating: 4.8,
+    rating: "4.8",
     title: "Google Rating",
     color: "#c9f9cd",
   },
@@ -170,6 +170,66 @@ export const contacts = [
     icon: "/assets/icons/email.svg",
     title: "Email",
     details: "info@mogi-kids.com",
+  },
+];
+
+export const cstOpinion = [
+  {
+    cstName: "Olivia Smith",
+    cstOpinion:
+      "Your dedication to providing exceptional care and attention to every child at Mogi Kids is truly commendable. Your unwavering commitment ensures that each child feels valued and cherished.",
+    cstImg: "/assets/images/cst1.jpeg",
+  },
+  {
+    cstName: "Emma Johnson",
+    cstOpinion:
+      "Thank you for creating a safe and nurturing environment where children can thrive and flourish. Your emphasis on safety and well-being instills confidence in parents, knowing that their little ones are in capable hands.",
+    cstImg: "/assets/images/cst2.jpeg",
+  },
+  {
+    cstName: "Ava Williams",
+    cstOpinion:
+      "Your passion for providing enriching learning experiences shines through in every aspect of Mogi Kids. From educational activities to creative playtime, you inspire children to discover, learn, and grow each day.",
+    cstImg: "/assets/images/cst3.jpeg",
+  },
+  {
+    cstName: "Mia Brown",
+    cstOpinion:
+      "Your team's compassion and dedication are evident in the loving care they provide to every child. Their genuine enthusiasm and warmth create a welcoming atmosphere that feels like a home away from home.",
+    cstImg: "/assets/images/cst4.jpeg",
+  },
+  {
+    cstName: "Isabella Jones",
+    cstOpinion:
+      "Thank you for the positive impact you've had on countless families through your Mogi Kids service. Your support, guidance, and encouragement have made a difference in the lives of both children and parents alike.",
+    cstImg: "/assets/images/cst5.jpeg",
+  },
+  {
+    cstName: "Sophia Davis",
+    cstOpinion:
+      "Your commitment to building a supportive community at Mogi Kids is truly commendable. By fostering connections and friendships among families, you've created a tight-knit community where everyone feels like they belong. Thank you for your outstanding service!",
+    cstImg: "/assets/images/cst6.jpeg",
+  },
+];
+
+export const aboutUsDetails = [
+  {
+    src: "/assets/images/about-us1.png",
+    title: "Our Mission",
+    paragraph:
+      "Mogi Kids Child Care Services aims to become the finest and most reliable child care provider in UAE. We want to help parents with our premium-quality, safe, and highly customizable child care services so that they can enjoy their everyday lives without feeling overburdened by their non-stop parental duties.",
+  },
+  {
+    src: "/assets/images/about-us2.png",
+    title: "Who We Are",
+    paragraph:
+      "Mogi Kids Company is a thriving multi-service placement agency providing personalized, top-notch child care services in UAE. We have a well-knit team of child care experts who have invested years in becoming the best at their jobs. We aim to create a highly professional team of child care experts qualified to provide our unique services to families in UAE.",
+  },
+  {
+    src: "/assets/images/about-us3.png",
+    title: "What We Do",
+    paragraph:
+      "Mogi Kids Company offers on-demand childcare and baby sitting services to parents. All of our staff is well-trained, and every member of our team has CPR training and First Aid Certification to ensure your child’s well-being and safety. We offer in home child care services on an hourly basis. At Mogi Kids Company, we make sure to listen to the expectations of the parents who entrust us with their kids and make sure to provide them with services that fulfill their needs. We have child care specialists and babymogi Kids on our team who are well-versed in the art of creating a personalized environment and approach to caring for your child, based on their temperaments, age, and specific needs.",
   },
 ];
 

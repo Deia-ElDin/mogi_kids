@@ -6,8 +6,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Title from "./helpers/Title";
-import Body from "./helpers/Body";
-import Breaker from "./helpers/Breaker";
+import { Separator } from "../ui/separator";
+
 
 const Questions = () => (
   <section id="questions" className="section-style">
@@ -18,11 +18,13 @@ const Questions = () => (
           <AccordionTrigger className="question-style">
             {item.question}
           </AccordionTrigger>
-          <AccordionContent className="answer-style">{item.answer}</AccordionContent>
+          <AccordionContent className="answer-style">
+            {item.answer}
+          </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>
-    <Breaker />
+    <Separator />
   </section>
 );
 

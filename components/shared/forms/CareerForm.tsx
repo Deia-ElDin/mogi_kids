@@ -19,7 +19,7 @@ import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
-const QuoteForm = () => {
+const CareerForm = () => {
   const form = useForm<z.infer<typeof quoteSchema>>({
     resolver: zodResolver(quoteSchema),
     defaultValues: quoteDefaultValues,
@@ -212,4 +212,4 @@ const QuoteForm = () => {
   );
 };
 
-export default QuoteForm;
+export default CareerForm;

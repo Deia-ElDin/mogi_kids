@@ -1,9 +1,15 @@
-import React from 'react'
+import React from "react";
+import AboutUsCard from "@/components/shared/Cards/AboutUsCard";
+import { aboutUsDetails } from "@/constants";
 
-const AboutUS = () => {
+const AboutUs = () => {
   return (
-    <div>AboutUS</div>
-  )
-}
+    <section className="section-style gap-20">
+      {aboutUsDetails.map((details, index) => (
+        <AboutUsCard key={index} details={details} index={index} />
+      ))}
+    </section>
+  );
+};
 
-export default AboutUS
+export default AboutUs;

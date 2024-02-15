@@ -8,10 +8,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <Header />
       <Gallery />
-      <main className="flex flex-col flex-1 justify-center items-center bg-orange-50">{children}</main>
+      <main className="flex flex-col flex-1 justify-center items-center bg-orange-50">
+        {children}
+      </main>
       <Footer />
     </div>
   );

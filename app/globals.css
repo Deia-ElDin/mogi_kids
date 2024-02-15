@@ -132,26 +132,43 @@ body {
   .hidden-text:hover {
     opacity: 1;
     color: #fff;
-    background-color: #5ab9f4;
+    background-color: #de9a62;
     padding: 20px;
     margin: 0 auto;
   }
 
-  .nav-transition {
-    transition: all 1s ease-in-out;
+  ::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #fff; /* Color of the scrollbar track */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #6b3406; /* Color of the scrollbar thumb */
+    border-radius: 5px; /* Radius of the scrollbar thumb */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #f2c59f; /* Color of the scrollbar thumb on hover */
   }
 
   .section-style {
-    @apply flex flex-col w-[65%];
+    @apply flex flex-col w-[65%] py-4;
   }
 
   .title-style {
-    @apply font-bold text-center text-[26px] leading-[32px] md:text-[32px] md:leading-[42px] lg:text-[38px] lg:leading-[48px] xl:text-[50px] xl:leading-[68px];
+    @apply font-bold text-center text-[26px] leading-[32px] md:text-[32px] md:leading-[42px] lg:text-[38px] lg:leading-[48px] xl:text-[50px] xl:leading-[68px] pb-3;
     font-family: var(--font-courgette);
   }
 
   .text-style {
     @apply font-light text-center text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px];
+  }
+
+  .text2-style {
+    @apply font-light text-left text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px];
   }
 
   .question-style {
@@ -163,11 +180,11 @@ body {
   }
 
   .label-style {
-    @apply font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
+    @apply text-yellow-800 font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
   }
 
   .input-style {
-    @apply bg-gray-50 h-[54px] rounded-full px-4 py-3 border-none outline-none;
+    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white h-[54px] rounded-lg px-4 py-3 focus:outline-4 focus:bg-white;
   }
 
   .textarea-style {
