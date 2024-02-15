@@ -12,7 +12,7 @@ export const connectToDb = async () => {
   cached.promise =
     cached.promise ||
     mongoose.connect(MONGODB_URI, {
-      dbName: "mogi-kids",
+      dbName: "mogi_kids",
       bufferCommands: false,
     });
 
