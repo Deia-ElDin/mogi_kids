@@ -19,7 +19,7 @@ const Customers = () => {
     <section id="customers" className="section-style">
       <Title text="Our Customers, Both Parents and Children, Are Our Priority." />
       <Text text="We take immense pride in the service we provide to our customers. Our customer reviews reflect the high level of customer satisfaction that we have achieved." />
-      <div className="relative py-10">
+      <div className="py-10">
         <Swiper
           spaceBetween={100}
           slidesPerView="auto"
@@ -33,7 +33,7 @@ const Customers = () => {
             depth: 100,
             modifier: 2.5,
           }}
-          pagination={{ el: ".swiper-pagination", clickable: true }}
+          pagination={{ el: ".swiper-pagination1", clickable: true }}
           navigation={{
             nextEl: ".swiper-next-img",
             prevEl: ".swiper-prev-img",
@@ -46,12 +46,12 @@ const Customers = () => {
           modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
         >
           {cstOpinion.map((cst) => (
-            <SwiperSlide key={cst.cstName} className="max-w-[300px]">
+            <SwiperSlide key={cst.cstName} className="max-w-[300px] mb-3">
               <CstCard cst={cst} />
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="swiper-pagination"></div>
+        <div className="swiper-pagination1 text-center"></div>
         <ArrowBtn btnClass="swiper-prev-img" img="Left arrow" />
         <ArrowBtn btnClass="swiper-next-img" img="Right arrow" />
       </div>

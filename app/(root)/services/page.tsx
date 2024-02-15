@@ -78,7 +78,7 @@ const Services = () => {
       {textArr.map((text, index) => (
         <Text key={index} text={text} />
       ))}
-      <div className="relative pt-10">
+      <div className="pt-10">
         <Swiper
           spaceBetween={100}
           slidesPerView="auto"
@@ -105,7 +105,7 @@ const Services = () => {
           modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
         >
           {serviceImgs.map((service, index) => (
-            <SwiperSlide key={index} className="max-w-[300px] mb-9">
+            <SwiperSlide key={index} className="max-w-[300px]">
               <ServiceCard service={service} />
             </SwiperSlide>
           ))}
