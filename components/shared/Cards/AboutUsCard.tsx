@@ -14,12 +14,12 @@ type AboutUsCardParams = {
 const AboutUsCard = ({ details, index }: AboutUsCardParams) => {
   return (
     <Card
-      className={`flex ${
-        index % 2 ? "flex-row" : "flex-row-reverse"
+      className={`flex flex-col ${
+        index % 2 ? "md:flex-row" : "md:flex-row-reverse"
       } justify-between items-center w-full border-none bg-transparent`}
     >
       <CardContent
-        className={`w-[50%] flex ${
+        className={`md:w-[50%] flex ${
           index % 2 ? "justify-start" : "justify-end"
         }`}
       >
@@ -29,7 +29,7 @@ const AboutUsCard = ({ details, index }: AboutUsCardParams) => {
           className="w-[300px] h-[300px]"
         />
       </CardContent>
-      <CardContent className="flex flex-col items-start gap-3 w-[50%]">
+      <CardContent className="flex flex-col items-start gap-3 md:w-[50%]">
         <Title text={details.title} />
         <Text text={details.paragraph} targetClass={2} />
       </CardContent>
