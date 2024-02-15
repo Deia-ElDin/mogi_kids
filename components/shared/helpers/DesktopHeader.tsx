@@ -6,6 +6,7 @@ import { headerLinks } from "@/constants";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const DesktopHeader = () => {
   const pathname = usePathname();
@@ -33,6 +34,16 @@ const DesktopHeader = () => {
             <Link href={link.route}>{link.label}</Link>
           </Button>
         ))}
+        <div className="flex justify-center items-center">
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+          <SignedOut>
+            <Button asChild className="rounded-full btn active-btn" size="lg">
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
+          </SignedOut>
+        </div>
       </nav>
     </header>
   );

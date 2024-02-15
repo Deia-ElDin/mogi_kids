@@ -1,5 +1,6 @@
 "use client";
 
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -36,14 +37,25 @@ const MobileHeader = () => {
           className="cursor-pointer"
           onClick={() => router.push("/")}
         />
-        <Image
-          src={`/assets/icons/${isOpen ? "menu-on" : "menu"}.svg`}
-          alt="Menu"
-          width={30}
-          height={30}
-          className="cursor-pointer"
-          onClick={() => setIsOpen((prev) => !prev)}
-        />
+
+        <div className="flex justify-center gap-3 items-center">
+          <Image
+            src={`/assets/icons/${isOpen ? "menu-on" : "menu"}.svg`}
+            alt="Menu"
+            width={30}
+            height={30}
+            className="cursor-pointer"
+            onClick={() => setIsOpen((prev) => !prev)}
+          />
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+          <SignedOut>
+            <Button asChild className="rounded-full btn active-btn" size="lg">
+              <Link href="/sign-in">Sign In</Link>
+            </Button>
+          </SignedOut>
+        </div>
       </div>
       {isOpen && (
         <nav className="flex flex-col items-center gap-6 transition duration-600 ease-out">

@@ -5,8 +5,11 @@ import Statistics from "@/components/shared/Statistics";
 import Customers from "@/components/shared/Customers";
 import Quote from "@/components/shared/Quote";
 import Contacts from "@/components/shared/Contacts";
+import { connectToDb } from "@/lib/database";
 
-export default function Home() {
+export default async function Home() {
+  await connectToDb();
+
   return (
     <>
       <Welcome />
