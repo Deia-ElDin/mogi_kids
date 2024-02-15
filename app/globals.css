@@ -164,7 +164,7 @@ body {
   }
 
   .text-style {
-    @apply font-light text-center text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px];
+    @apply font-light text-center text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px] mb-4;
   }
 
   .text2-style {

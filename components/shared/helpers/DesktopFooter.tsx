@@ -33,7 +33,7 @@ const DesktopFooter = () => {
       </div>
       <div className="flex justify-center bg-gray-400 w-full">
         <p className="text-white p-2">
-          Copyright &copy; {`${new Date().getFullYear()} `} Mogi Kids. All
+          Copyright &copy; {`${new Date().getFullYear()} `} MOGi KiDS. All
           Rights Reserved
         </p>
       </div>

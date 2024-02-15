@@ -56,10 +56,19 @@ const serviceImgs = [
 ];
 
 const textArr = [
-  "If you are looking for high-quality care for your child in the UAE,you need to look no further!",
-  "Mogi Kids Company is proud to provide some of the highest quality child care services available in the UAE. We are also the first company in the UAE to offer these services via a mobile application. Our child care specialists are all highly qualified, and share a passion for providing good quality, personalized care for the children they look after.",
-  "We provide a wide range of child care services for parents, at your choice of location, and all for a budget-friendly hourly rate—so you’re in control. Our services include child care in your home, at the mall, and at your hotel. We can also provide regular or one-off pick-up and drop-off services for school or nursery. If your plans change, and you need child care in a hurry, we offer emergency service.",
-  "Whatever services we are providing, your child’s safety and well-being is our priority. If we are driving your children, they will always be in an approved car seat. You can also use our mobile app to provide you with up-to-date information about your child’s location and activities, giving you the reassurance you need that your child is in specialist hands.",
+  "• Preschools and Schools:",
+  "• Organizing celebrations for local and international occasions.",
+  "• Arranging events in alignment with school and nursery curricula.",
+  "• Planning external trips and festivals for schools and nurseries.",
+  "• Providing qualified teachers to deliver modern courses for children, such as courses in investment and a comprehensive program accredited by the Ministry of Education. This program enables children to learn about savings and apply their knowledge through practical exercises. Additionally, we offer certified courses in artificial intelligence and more.",
+  "• Organizing modern and distinctive birthday celebrations, either at home or at external venues.",
+  "• Arranging graduation parties for various age groups. Organizing private family gatherings.",
+  "• Catering to children's needs during corporate events and institutional celebrations.",
+  "• Organizing public carnivals.",
+  "• Weekly varied and refreshing activities.",
+  "• Weekly recreational and educational outings.",
+  "• Providing all the stationery needs for schools, nurseries, and institutions through a single application, offering the best prices and daily delivery.",
+  "• Supplying all school and educational supplies for students of various ages, with the option to customize their own designs.",
 ];
 
 const Services = () => {
@@ -96,7 +105,7 @@ const Services = () => {
           modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
         >
           {serviceImgs.map((service, index) => (
-            <SwiperSlide key={index} className="max-w-[300px]">
+            <SwiperSlide key={index} className="max-w-[300px] mb-9">
               <ServiceCard service={service} />
             </SwiperSlide>
           ))}

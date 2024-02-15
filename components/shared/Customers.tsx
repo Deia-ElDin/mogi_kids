@@ -19,7 +19,7 @@ const Customers = () => {
     <section id="customers" className="section-style">
       <Title text="Our Customers, Both Parents and Children, Are Our Priority." />
       <Text text="We take immense pride in the service we provide to our customers. Our customer reviews reflect the high level of customer satisfaction that we have achieved." />
-      <div className="relative pt-10">
+      <div className="relative py-10">
         <Swiper
           spaceBetween={100}
           slidesPerView="auto"

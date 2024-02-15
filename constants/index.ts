@@ -90,26 +90,26 @@ export const serviceImgs = [
 
 export const questionsList = [
   {
-    question: "What is Mogi Kids Child Care Services?",
+    question: "What is MOGi KiDS Child Care Services?",
     answer:
-      "Mogi Kids Child Care Services provides qualified, competitive, dependable and professional care for your child. We are a group of child care professionals located in Abu Dhabi. We are a thriving company which delivers care through our unique Mogi Kids mobile application. Mogi Kids Child Care Services provides instant relief to parents who are facing care difficulties by allowing them to search for and book child care services, including in home child care, hotel child care, event child care, emergency child care, overnight care, travel companions, after-school home child care, nursery and school pick-up and drop-off, holiday child care, event baby sitting, hotel baby sitting, and mall baby sitting.",
+      "MOGi KiDS Child Care Services provides qualified, competitive, dependable and professional care for your child. We are a group of child care professionals located in Abu Dhabi. We are a thriving company which delivers care through our unique MOGi KiDS mobile application. MOGi KiDS Child Care Services provides instant relief to parents who are facing care difficulties by allowing them to search for and book child care services, including in home child care, hotel child care, event child care, emergency child care, overnight care, travel companions, after-school home child care, nursery and school pick-up and drop-off, holiday child care, event baby sitting, hotel baby sitting, and mall baby sitting.",
   },
   {
     question:
-      "How can Mogi Kids Child Care Services Provider guarantee the safety of my child?",
+      "How can MOGi KiDS Child Care Services Provider guarantee the safety of my child?",
     answer:
-      "Your child’s safety is our top priority. We fully understand that it is difficult to choose the right caregiver, who will be fully able to meet the unique needs of your child. Mogi Kids Child Care Services has meticulously screened and carried out background checks on all caregivers to ensure the safety of your child, your family, and the company. We contact all the known placement agencies so that we can provide caregivers who are more than qualified. Our mogi Kids include professional, certified, and licensed caregivers from different professions, including teachers and nurses with vast child caregiving experience. We also encourage our caregivers to take our Caregiving Online Training Program, before they start taking on caregiving work for Mogi Kids Company.",
+      "Your child’s safety is our top priority. We fully understand that it is difficult to choose the right caregiver, who will be fully able to meet the unique needs of your child. MOGi KiDS Child Care Services has meticulously screened and carried out background checks on all caregivers to ensure the safety of your child, your family, and the company. We contact all the known placement agencies so that we can provide caregivers who are more than qualified. Our MOGi KiDS include professional, certified, and licensed caregivers from different professions, including teachers and nurses with vast child caregiving experience. We also encourage our caregivers to take our Caregiving Online Training Program, before they start taking on caregiving work for MOGi KiDS Company.",
   },
   {
     question:
-      "Why should I choose Mogi Kids Child Care Services over other child care providers?",
+      "Why should I choose MOGi KiDS Child Care Services over other child care providers?",
     answer:
       "We are unique in how we deliver your child care and development needs. Using our mobile app, everything is just a click away. You can see what your child is doing with their caregiver through regular updates and photographs, plus GPS tracking when we are out and about with them. This provides you with peace of mind about their whereabouts and activities./n Most importantly, our caregivers have passion, care and love for children. They are all fully qualified to care for your child and they also really enjoy what they do.\n-SAFETY – You are protected by all the mandatory safeguarding requirements\n-IMMEDIATE – You can book an ‘on demand’ service anytime\n-TRACK- You can track your child and see their activities through our mobile app\n-TRUST- You can safely trust us to look after your child and keep them safe\n-ENGAGE- You can engage with us anytime and anywhere to ensure your child care needs are met\n-RESPONSE- You will always get a reply within 12 hours from us\n-SERVICE- We provide a quality service for your child",
   },
   {
     question: "What is the minimum duration, I can hire for a caregiver?",
     answer:
-      "Mogi Kids Child Care Services charges an hourly rate. The minimum time for our caregivers is four (4) hours, and the maximum is 12 hours.",
+      "MOGi KiDS Child Care Services charges an hourly rate. The minimum time for our caregivers is four (4) hours, and the maximum is 12 hours.",
   },
   {
     question: "When and how can I request a caregiver?",
@@ -125,7 +125,7 @@ export const questionsList = [
   {
     question: "How can I lodge a complaint or give feedback?",
     answer:
-      "We value your feedback, because it helps us to improve our services. Please get in touch with us at 02 000 0000 or 050 000 0000 to provide your feedback or email us at info@mogi Kids.ae.",
+      "We value your feedback, because it helps us to improve our services. Please get in touch with us at 02 000 0000 or 050 000 0000 to provide your feedback or email us at info@mogikids.ae.",
   },
 ];
 
@@ -177,7 +177,7 @@ export const cstOpinion = [
   {
     cstName: "Olivia Smith",
     cstOpinion:
-      "Your dedication to providing exceptional care and attention to every child at Mogi Kids is truly commendable. Your unwavering commitment ensures that each child feels valued and cherished.",
+      "Your dedication to providing exceptional care and attention to every child at MOGi KiDS is truly commendable. Your unwavering commitment ensures that each child feels valued and cherished.",
     cstImg: "/assets/images/cst1.jpeg",
   },
   {
@@ -189,7 +189,7 @@ export const cstOpinion = [
   {
     cstName: "Ava Williams",
     cstOpinion:
-      "Your passion for providing enriching learning experiences shines through in every aspect of Mogi Kids. From educational activities to creative playtime, you inspire children to discover, learn, and grow each day.",
+      "Your passion for providing enriching learning experiences shines through in every aspect of MOGi KiDS. From educational activities to creative playtime, you inspire children to discover, learn, and grow each day.",
     cstImg: "/assets/images/cst3.jpeg",
   },
   {
@@ -201,13 +201,13 @@ export const cstOpinion = [
   {
     cstName: "Isabella Jones",
     cstOpinion:
-      "Thank you for the positive impact you've had on countless families through your Mogi Kids service. Your support, guidance, and encouragement have made a difference in the lives of both children and parents alike.",
+      "Thank you for the positive impact you've had on countless families through your MOGi KiDS service. Your support, guidance, and encouragement have made a difference in the lives of both children and parents alike.",
     cstImg: "/assets/images/cst5.jpeg",
   },
   {
     cstName: "Sophia Davis",
     cstOpinion:
-      "Your commitment to building a supportive community at Mogi Kids is truly commendable. By fostering connections and friendships among families, you've created a tight-knit community where everyone feels like they belong. Thank you for your outstanding service!",
+      "Your commitment to building a supportive community at MOGi KiDS is truly commendable. By fostering connections and friendships among families, you've created a tight-knit community where everyone feels like they belong. Thank you for your outstanding service!",
     cstImg: "/assets/images/cst6.jpeg",
   },
 ];
@@ -215,21 +215,27 @@ export const cstOpinion = [
 export const aboutUsDetails = [
   {
     src: "/assets/images/about-us1.png",
-    title: "Our Mission",
+    title: "Our Slogan",
     paragraph:
-      "Mogi Kids Child Care Services aims to become the finest and most reliable child care provider in UAE. We want to help parents with our premium-quality, safe, and highly customizable child care services so that they can enjoy their everyday lives without feeling overburdened by their non-stop parental duties.",
+      "A healthy childhood for a healthy future and a better society. We have always believed that caring for children is one of the most important ways to create a good and healthy society. The majority of normal, moderate individuals often owe their well-being to their proper upbringing and childhood experiences, and vice versa. Some negative traits in a person may usually be rooted in their early experiences, escalating into a psychological problem that imposes itself on society and the individual alike.",
   },
   {
     src: "/assets/images/about-us2.png",
-    title: "Who We Are",
+    title: "Our Goal",
     paragraph:
-      "Mogi Kids Company is a thriving multi-service placement agency providing personalized, top-notch child care services in UAE. We have a well-knit team of child care experts who have invested years in becoming the best at their jobs. We aim to create a highly professional team of child care experts qualified to provide our unique services to families in UAE.",
+      "Our goal: To assist all our children in shaping their unique identities by discovering and nurturing their skills. We aim to ensure that they enjoy these discoveries, enabling them to live a future full of successes, keeping pace with development, with a strong mindset capable of innovation and individuality.",
   },
   {
     src: "/assets/images/about-us3.png",
-    title: "What We Do",
+    title: "Our Mission",
     paragraph:
-      "Mogi Kids Company offers on-demand childcare and baby sitting services to parents. All of our staff is well-trained, and every member of our team has CPR training and First Aid Certification to ensure your child’s well-being and safety. We offer in home child care services on an hourly basis. At Mogi Kids Company, we make sure to listen to the expectations of the parents who entrust us with their kids and make sure to provide them with services that fulfill their needs. We have child care specialists and baby kids on our team who are well-versed in the art of creating a personalized environment and approach to caring for your child, based on their temperaments, age, and specific needs.",
+      "To discover each child individually, providing them with their own space for expression, encouraging them to think, welcoming positive and healthy behaviors, and equipping them with the information and activities they need to build the best possible personality.",
+  },
+  {
+    src: "/assets/images/about-us4.jpeg",
+    title: "Our Vision & Target",
+    paragraph:
+      "We aim to reach all children in the current state and the future Arab Gulf region through schools, nurseries, and both governmental and private institutions. Every place where a child or their guardian is present is a target for us. We strive for the widespread availability of our services, benefiting everyone in need, and highlighting their importance everywhere.",
   },
 ];
 

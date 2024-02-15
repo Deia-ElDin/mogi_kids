@@ -6,9 +6,11 @@ import { Separator } from "../ui/separator";
 const Welcome = () => {
   return (
     <section id="welcome" className="section-style">
-      <Title text="Welcome To Mogi Kids Company – Home To The Finest Child Care Specialists In The UAE!" />
-      <Text text="Mogi Kids Company is proud to be the first company in the UAE to offer professional child care services using a mobile app. We are a thriving team of child care specialists from around the world and we offer a wide range of personalized home-based and other child care services to   parents who want the best for their little ones. All of our services are based on a budget-friendly hourly rate, so that every parent has the opportunity to benefit from specialist child care." />
-      <Separator  />
+      <Title text="Welcome To MOGi KiDS Company – Home To The Finest Child Care Specialists In The UAE!" />
+      <Text text="At MOGi KiDS, we firmly believe that every child is unique and talented, deserving the opportunity to discover their individuality and develop their skills for a successful and joyous future. We are dedicated to paving the way for children through distinctive and innovative entertainment, educational programs, and studies, all delivered in an environment characterized by safety, fun, and stimulation." />
+      <Text text="The concept originated in 2019 and underwent extensive testing with parents to ensure continuous improvement and quality. As of the latest country statistics, there are approximately 1,145 schools, consisting of 838 private and government nurseries. The United Arab Emirates recorded an average of 35,552 nurseries in the year 2014, aligning with our slogan: 'A healthy childhood for a healthy future and a better society.'" />
+      <Text text="We firmly believe that nurturing children is paramount to fostering a good and healthy society. A majority of well-adjusted individuals contribute positively to society due to their proper upbringing and childhood experiences. Conversely, negative traits in a person may often be attributed to their early experiences, potentially escalating into psychological problems that impact both the individual and society. Our mission is to provide a foundation that corrects and mitigates any potential negative impact from these early experiences." />
+      <Separator />
     </section>
   );
 };

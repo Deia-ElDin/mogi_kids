@@ -15,8 +15,8 @@ const courgette = Courgette({
 });
 
 export const metadata: Metadata = {
-  title: "Mogi Kids",
-  description: "Mogi kids is a website for professional child care services",
+  title: "MOGi KiDS",
+  description: "MOGi KiDS is a website for professional child care services",
   icons: { icon: "/assets/images/logo.png" },
 };
 
