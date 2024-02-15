@@ -57,7 +57,7 @@ export const careerSchema = z.object({
     required_error: "Please select education level.",
   }),
   dha: z.string({
-    required_error: "Kindly select one..",
+    required_error: "Kindly select one.",
   }),
   coverLetter: z
     .string()

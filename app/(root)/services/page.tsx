@@ -56,9 +56,9 @@ const serviceImgs = [
 ];
 
 const textArr = [
-  "• Preschools and Schools:",
+  "• Preschools and Schools.",
   "• Organizing celebrations for local and international occasions.",
-  "• Arranging events in alignment with school and nursery curricula.",
+  "• Arranging events in alignment with school and nursery curriculum.",
   "• Planning external trips and festivals for schools and nurseries.",
   "• Providing qualified teachers to deliver modern courses for children, such as courses in investment and a comprehensive program accredited by the Ministry of Education. This program enables children to learn about savings and apply their knowledge through practical exercises. Additionally, we offer certified courses in artificial intelligence and more.",
   "• Organizing modern and distinctive birthday celebrations, either at home or at external venues.",
