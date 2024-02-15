@@ -13,7 +13,7 @@ const Statistics = () => (
         <StatisticCard key={statistic.title} statistic={statistic} />
       ))}
     </div>
-    <Separator  />
+    <Separator />
   </section>
 );
 

@@ -19,7 +19,7 @@ const Customers = () => {
     <section id="customers" className="section-style">
       <Title text="Our Customers, Both Parents and Children, Are Our Priority" />
       <Text text="We take immense pride in the service we provide to our customers. Our customer reviews reflect the high level of customer satisfaction that we have achieved." />
-      <div className="py-10">
+      <div className="py-10 relative">
         <Swiper
           spaceBetween={100}
           slidesPerView="auto"
@@ -35,8 +35,8 @@ const Customers = () => {
           }}
           pagination={{ el: ".swiper-pagination1", clickable: true }}
           navigation={{
-            nextEl: ".swiper-next-img",
-            prevEl: ".swiper-prev-img",
+            nextEl: ".swiper-next-img1",
+            prevEl: ".swiper-prev-img1",
           }}
           autoplay={{
             delay: 2500,
@@ -52,8 +52,8 @@ const Customers = () => {
           ))}
         </Swiper>
         <div className="swiper-pagination1 text-center"></div>
-        <ArrowBtn btnClass="swiper-prev-img" img="Left arrow" />
-        <ArrowBtn btnClass="swiper-next-img" img="Right arrow" />
+        <ArrowBtn btnClass="swiper-prev-img1" img="Left arrow" />
+        <ArrowBtn btnClass="swiper-next-img1" img="Right arrow" />
       </div>
       <Separator />
     </section>

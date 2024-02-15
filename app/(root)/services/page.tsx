@@ -78,7 +78,7 @@ const Services = () => {
       {textArr.map((text, index) => (
         <Text key={index} text={text} />
       ))}
-      <div className="pt-10">
+      <div className="pt-10 relative">
         <Swiper
           spaceBetween={100}
           slidesPerView="auto"
@@ -94,8 +94,8 @@ const Services = () => {
           }}
           pagination={{ el: ".swiper-pagination2", clickable: true }}
           navigation={{
-            nextEl: ".swiper-next-img",
-            prevEl: ".swiper-prev-img",
+            nextEl: ".swiper-next-img2",
+            prevEl: ".swiper-prev-img2",
           }}
           autoplay={{
             delay: 2500,
@@ -111,8 +111,8 @@ const Services = () => {
           ))}
         </Swiper>
         <div className="swiper-pagination2 text-center"></div>
-        <ArrowBtn btnClass="swiper-prev-img" img="Left arrow" />
-        <ArrowBtn btnClass="swiper-next-img" img="Right arrow" />
+        <ArrowBtn btnClass="swiper-prev-img2" img="Left arrow" />
+        <ArrowBtn btnClass="swiper-next-img2" img="Right arrow" />
       </div>
       <Separator />
     </section>

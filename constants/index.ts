@@ -210,6 +210,24 @@ export const cstOpinion = [
       "Your commitment to building a supportive community at MOGi KiDS is truly commendable. By fostering connections and friendships among families, you've created a tight-knit community where everyone feels like they belong. Thank you for your outstanding service!",
     cstImg: "/assets/images/cst6.jpeg",
   },
+  {
+    cstName: "Fatima Ahmed",
+    cstOpinion:
+      "Your dedication to fostering a nurturing environment at MOGi KiDS is truly admirable. With your thoughtful approach to learning and play, children are not just participants but active explorers, eager to uncover the wonders of the world around them.",
+    cstImg: "/assets/images/cst7.jpeg",
+  },
+  {
+    cstName: "Khadija Mohamed",
+    cstOpinion:
+      "The impact of your work at MOGi KiDS is immeasurable. Through your innovative teaching methods and unwavering enthusiasm, you cultivate a space where children feel valued, supported, and excited to engage with the world. Your dedication to nurturing young minds is truly inspiring.",
+    cstImg: "/assets/images/cst8.jpeg",
+  },
+  {
+    cstName: "Alyaa Ibrahim",
+    cstOpinion:
+      "At MOGi KiDS, your commitment to igniting curiosity and fostering a love for learning is evident in every interaction. Your passion for creating meaningful educational experiences resonates deeply, empowering young minds to thrive and embrace the joy of discovery.",
+    cstImg: "/assets/images/cst9.jpeg",
+  },
 ];
 
 export const aboutUsDetails = [
