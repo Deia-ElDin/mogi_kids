@@ -3,43 +3,69 @@ import * as z from "zod";
 export const quoteSchema = z.object({
   fullName: z
     .string()
-    .min(15, {
-      message: "Full name must be at least of 15 characters.",
-    })
-    .max(60, {
-      message: "Full name must not exceed 60 characters.",
-    }),
+    .min(15, "Full name must be at least of 15 characters.")
+    .max(100, "Full name must not exceed 100 characters."),
   mobile: z
     .string()
-    .min(9, {
-      message: "Mobile / landline number must be at least 9 characters.",
-    })
-    .max(25, {
-      message: "Mobile / landline number not exceed 25 characters.",
-    }),
+    .min(9, "Mobile / landline number must be at least 9 characters.")
+    .max(25, "Mobile / landline number not exceed 25 characters."),
   location: z
     .string()
-    .min(3, {
-      message: "Location must be at least 3 characters.",
-    })
-    .max(150, {
-      message: "Location must not exceed 60 characters.",
-    }),
-  email: z
-    .string()
-    .min(13, {
-      message: "Email address must be at least 13 characters.",
-    })
-    .max(50, {
-      message: "Email address must not exceed 50 characters.",
-    }),
+    .min(3, "Location must be at least 3 characters.")
+    .max(150, "Location must not exceed 60 characters."),
+  email: z.string({ required_error: "Please select an email" }).email(),
   from: z.date(),
   to: z.date(),
   numberOfHours: z.string(),
   numberOfKids: z.string(),
   ageOfKidsFrom: z.string(),
   ageOfKidsTo: z.string(),
-  extraInfo: z.string().max(5000, {
-    message: "maximum 5000 characters.",
+  extraInfo: z.string().max(5000, "maximum 5000 characters."),
+});
+
+export const careerSchema = z.object({
+  fullName: z
+    .string()
+    .min(15, "Full name must be at least of 15 characters.")
+    .max(100, "Full name must not exceed 100 characters."),
+  email: z.string({ required_error: "Please select an email" }).email(),
+  mobile: z
+    .string()
+    .min(9, "Mobile / landline number must be at least 9 characters.")
+    .max(25, "Mobile / landline number not exceed 25 characters."),
+  applyingFor: z
+    .string()
+    .min(3, "Career must be at least 3 characters.")
+    .max(150, "Career must not exceed 150 characters."),
+  workingAt: z
+    .string()
+    .min(3, "Current job must be at least 3 characters.")
+    .max(150, "Current job must not exceed 150 characters."),
+  salary: z
+    .string()
+    .min(3, "Salary must be at least 3 characters.")
+    .max(25, "Salary must not exceed 25 characters."),
+  joinDate: z.date(),
+  skills: z
+    .string()
+    .min(3, "Skills must be at least 3 characters.")
+    .max(1000, "Skills must not exceed 1000 characters."),
+  gender: z.string({
+    required_error: "Please select your gender.",
   }),
+  education: z.string({
+    required_error: "Please select education level.",
+  }),
+  dha: z.string({
+    required_error: "Kindly select one..",
+  }),
+  coverLetter: z
+    .string()
+    .min(3, "Skills must be at least 3 characters.")
+    .max(1000, "Skills must not exceed 1000 characters."),
+  // resume: z.object({
+  //   fileName: z.string(),
+  //   fileType: z.string(),
+  //   fileSize: z.number(),
+  // }),
 });

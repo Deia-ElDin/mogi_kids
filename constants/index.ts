@@ -229,7 +229,7 @@ export const aboutUsDetails = [
     src: "/assets/images/about-us3.png",
     title: "What We Do",
     paragraph:
-      "Mogi Kids Company offers on-demand childcare and baby sitting services to parents. All of our staff is well-trained, and every member of our team has CPR training and First Aid Certification to ensure your child’s well-being and safety. We offer in home child care services on an hourly basis. At Mogi Kids Company, we make sure to listen to the expectations of the parents who entrust us with their kids and make sure to provide them with services that fulfill their needs. We have child care specialists and babymogi Kids on our team who are well-versed in the art of creating a personalized environment and approach to caring for your child, based on their temperaments, age, and specific needs.",
+      "Mogi Kids Company offers on-demand childcare and baby sitting services to parents. All of our staff is well-trained, and every member of our team has CPR training and First Aid Certification to ensure your child’s well-being and safety. We offer in home child care services on an hourly basis. At Mogi Kids Company, we make sure to listen to the expectations of the parents who entrust us with their kids and make sure to provide them with services that fulfill their needs. We have child care specialists and baby kids on our team who are well-versed in the art of creating a personalized environment and approach to caring for your child, based on their temperaments, age, and specific needs.",
   },
 ];
 
@@ -245,4 +245,20 @@ export const quoteDefaultValues = {
   ageOfKidsFrom: "",
   ageOfKidsTo: "",
   extraInfo: "",
+};
+
+export const careerDefaultValues = {
+  fullName: "",
+  email: "",
+  mobile: "",
+  applyingFor: "",
+  workingAt: "",
+  salary: "",
+  joinDate: new Date(),
+  skills: "",
+  gender: "",
+  education: "",
+  dha: "",
+  coverLetter: "",
+  // resume: "",
 };
