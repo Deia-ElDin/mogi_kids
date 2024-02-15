@@ -28,15 +28,7 @@ const ServiceCard = ({ service }: ServiceCardParams) => {
         text="Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus
         explicabo maiores aliquid perferendis sit nam odit aliquam doloremque
         impedit aperiam. Totam fugit corrupti nam est dolore fugiat, commodi
-        nemo porro nostrum facere alias ipsum dolorem quidem autem explicabo vel
-        dicta sint earum rerum pariatur reprehenderit soluta. Aliquid illo
-        explicabo nam officia suscipit amet reiciendis inventore aspernatur
-        voluptatibus, sint fugit corporis itaque. Maiores, quibusdam repudiandae
-        suscipit aliquid veniam aliquam, similique nesciunt laudantium, beatae
-        molestias modi nisi recusandae voluptates accusantium explicabo!
-        Quisquam autem voluptate delectus numquam tempore debitis, molestiae
-        quis nemo dolores, tenetur, sapiente eveniet ipsum? Consequatur, eveniet
-        et. Iure, alias fugiat?"
+        nemo porro nostrum facere?"
       />
     </Card>
   );

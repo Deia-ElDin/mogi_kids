@@ -7,15 +7,15 @@ import {
   Pagination,
   Autoplay,
 } from "swiper/modules";
+import { Separator } from "@/components/ui/separator";
 import ArrowBtn from "@/components/shared/helpers/ArrowBtn";
 import Title from "@/components/shared/helpers/Title";
 import Text from "@/components/shared/helpers/Text";
+import ServiceCard from "@/components/shared/Cards/ServiceCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import ServiceCard from "@/components/shared/Cards/ServiceCard";
-import { Separator } from "@/components/ui/separator";
 
 const serviceImgs = [
   {
@@ -55,39 +55,20 @@ const serviceImgs = [
   },
 ];
 
+const textArr = [
+  "If you are looking for high-quality care for your child in the UAE,you need to look no further!",
+  "Mogi Kids Company is proud to provide some of the highest quality child care services available in the UAE. We are also the first company in the UAE to offer these services via a mobile application. Our child care specialists are all highly qualified, and share a passion for providing good quality, personalized care for the children they look after.",
+  "We provide a wide range of child care services for parents, at your choice of location, and all for a budget-friendly hourly rate—so you’re in control. Our services include child care in your home, at the mall, and at your hotel. We can also provide regular or one-off pick-up and drop-off services for school or nursery. If your plans change, and you need child care in a hurry, we offer emergency service.",
+  "Whatever services we are providing, your child’s safety and well-being is our priority. If we are driving your children, they will always be in an approved car seat. You can also use our mobile app to provide you with up-to-date information about your child’s location and activities, giving you the reassurance you need that your child is in specialist hands.",
+];
+
 const Services = () => {
   return (
     <section id="services" className="section-style">
       <Title text="Our Services" />
-      <Text
-        text="If you are looking for high-quality care for your child in the UAE,
-          you need to look no further!"
-      />
-      <Text
-        text="Sitters Company is proud to provide some of the highest quality child
-          care services available in the UAE. We are also the first company in
-          the UAE to offer these services via a mobile application. Our child
-          care specialists are all highly qualified, and share a passion for
-          providing good quality, personalized care for the children they look
-          after."
-      />
-      <Text
-        text="We provide a wide range of child care services for parents, at your
-          choice of location, and all for a budget-friendly hourly rate—so
-          you’re in control. Our services include child care in your home, at
-          the mall, and at your hotel. We can also provide regular or one-off
-          pick-up and drop-off services for school or nursery. If your plans
-          change, and you need child care in a hurry, we offer emergency
-          service."
-      />
-      <Text
-        text="Whatever services we are providing, your child’s safety and well-being
-          is our priority. If we are driving your children, they will always be
-          in an approved car seat. You can also use our mobile app to provide
-          you with up-to-date information about your child’s location and
-          activities, giving you the reassurance you need that your child is in
-          specialist hands."
-      />
+      {textArr.map((text, index) => (
+        <Text key={index} text={text} />
+      ))}
       <div className="relative pt-10">
         <Swiper
           spaceBetween={100}

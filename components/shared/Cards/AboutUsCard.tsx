@@ -18,7 +18,11 @@ const AboutUsCard = ({ details, index }: AboutUsCardParams) => {
         index % 2 ? "flex-row" : "flex-row-reverse"
       } justify-between items-center w-full border-none bg-transparent`}
     >
-      <CardContent className="w-[50%]">
+      <CardContent
+        className={`w-[50%] flex ${
+          index % 2 ? "justify-start" : "justify-end"
+        }`}
+      >
         <img
           src={details.src}
           alt={details.title}
