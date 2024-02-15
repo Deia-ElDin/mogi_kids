@@ -92,7 +92,7 @@ const Services = () => {
             depth: 100,
             modifier: 2.5,
           }}
-          pagination={{ el: ".swiper-pagination", clickable: true }}
+          pagination={{ el: ".swiper-pagination2", clickable: true }}
           navigation={{
             nextEl: ".swiper-next-img",
             prevEl: ".swiper-prev-img",
@@ -110,7 +110,7 @@ const Services = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="swiper-pagination"></div>
+        <div className="swiper-pagination2 text-center"></div>
         <ArrowBtn btnClass="swiper-prev-img" img="Left arrow" />
         <ArrowBtn btnClass="swiper-next-img" img="Right arrow" />
       </div>

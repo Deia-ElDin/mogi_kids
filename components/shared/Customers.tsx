@@ -7,17 +7,17 @@ import {
   Pagination,
   Autoplay,
 } from "swiper/modules";
+import { Separator } from "../ui/separator";
 import { cstOpinion } from "@/constants";
 import Title from "./helpers/Title";
 import Text from "./helpers/Text";
 import CstCard from "./Cards/CstCard";
 import ArrowBtn from "./helpers/ArrowBtn";
-import { Separator } from "../ui/separator";
 
 const Customers = () => {
   return (
     <section id="customers" className="section-style">
-      <Title text="Our Customers, Both Parents and Children, Are Our Priority." />
+      <Title text="Our Customers, Both Parents and Children, Are Our Priority" />
       <Text text="We take immense pride in the service we provide to our customers. Our customer reviews reflect the high level of customer satisfaction that we have achieved." />
       <div className="py-10">
         <Swiper
