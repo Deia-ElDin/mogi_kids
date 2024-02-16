@@ -23,8 +23,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { isValidForm, handleError } from "@/lib/utils";
-import * as z from "zod";
 import EditBtn from "../btns/EditBtn";
+import CloseBtn from "../btns/CloseBtn";
+import * as z from "zod";
 
 type WelcomeFormProps = {
   isAdmin: boolean;
@@ -83,6 +84,7 @@ const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
             onSubmit={form.handleSubmit(onSubmit)}
             className="edit-form-style"
           >
+            <CloseBtn handleClick={() => setDisplayForm(false)} />
             <h1 className="title-style text-white">Welcome Page</h1>
             <FormField
               control={form.control}
