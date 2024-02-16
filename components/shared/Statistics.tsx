@@ -1,7 +1,7 @@
 import Title from "./helpers/Title";
 import Text from "./helpers/Text";
 import { records } from "@/constants";
-import StatisticCard from "./Cards/StatisticCard";
+import StatisticCard from "./cards/StatisticCard";
 import { Separator } from "../ui/separator";
 
 const Statistics = () => (

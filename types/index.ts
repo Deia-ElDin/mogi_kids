@@ -7,3 +7,10 @@ export type CreateUserParams = {
   photo: string;
   role: string;
 };
+
+// WelcomePage Params
+export type CreateWelcomePageParams = {
+  title: string;
+  content: string;
+  path: string;
+};

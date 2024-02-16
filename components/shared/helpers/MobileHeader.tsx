@@ -51,9 +51,15 @@ const MobileHeader = () => {
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
           <SignedOut>
-            <Button asChild className="rounded-full btn active-btn" size="lg">
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
+            <Link href="/sign-in">
+              <Image
+                src="/assets/3d/user.gif"
+                alt="Girl"
+                width={50}
+                height={50}
+                className="cursor-pointer min-h-[50px] min-w-[50px]"
+              />
+            </Link>
           </SignedOut>
         </div>
       </div>

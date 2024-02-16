@@ -24,7 +24,7 @@ const DesktopHeader = () => {
           onClick={() => router.push("/")}
         />
       </div>
-      <nav className="flex justify-between gap-auto ml-auto xl:w-[50%] lg:w-[60%] md:w-[75%]">
+      <nav className="flex justify-between items-center gap-auto ml-auto xl:w-[50%] lg:w-[60%] md:w-[75%]">
         {headerLinks.map((link) => (
           <Button
             asChild
@@ -39,9 +39,15 @@ const DesktopHeader = () => {
             <UserButton afterSignOutUrl="/" />
           </SignedIn>
           <SignedOut>
-            <Button asChild className="rounded-full btn active-btn" size="lg">
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
+            <Link href="/sign-in">
+              <Image
+                src="/assets/3d/user.gif"
+                alt="Girl"
+                width={50}
+                height={50}
+                className="cursor-pointer min-h-[50px] min-w-[50px]"
+              />
+            </Link>
           </SignedOut>
         </div>
       </nav>

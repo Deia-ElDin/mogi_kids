@@ -286,3 +286,8 @@ export const careerDefaultValues = {
   coverLetter: "",
   // resume: "",
 };
+
+export const welcomeDefaultValues = {
+  title: "",
+  content: "",
+};

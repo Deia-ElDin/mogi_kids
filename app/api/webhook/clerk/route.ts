@@ -73,7 +73,11 @@ export async function POST(req: Request) {
       photo: image_url,
       gender: gender,
       phoneNumbers: phone_numbers,
-      role: "user",
+      role:
+        email_addresses[0].email_address === "mohagtareg@gmail.com" ||
+        email_addresses[0].email_address === "deia.tech2021@gmail.com"
+          ? "Admin"
+          : "User",
     };
 
     const newUser = await createUser(user);

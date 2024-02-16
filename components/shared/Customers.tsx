@@ -11,8 +11,8 @@ import { Separator } from "../ui/separator";
 import { cstOpinion } from "@/constants";
 import Title from "./helpers/Title";
 import Text from "./helpers/Text";
-import CstCard from "./Cards/CstCard";
-import ArrowBtn from "./helpers/ArrowBtn";
+import CstCard from "./cards/CstCard";
+import ArrowBtn from "./btns/ArrowBtn";
 
 const Customers = () => {
   return (

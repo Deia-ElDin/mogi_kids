@@ -33,9 +33,7 @@ const CareerForm = () => {
     defaultValues: careerDefaultValues,
   });
 
-  function onSubmit(values: z.infer<typeof careerSchema>) {
-    console.log(values);
-  }
+  function onSubmit(values: z.infer<typeof careerSchema>) {}
 
   return (
     <Form {...form}>
@@ -268,11 +266,3 @@ const CareerForm = () => {
 };
 
 export default CareerForm;
-
-{
-  /* 
-        
-        
-
-       */
-}

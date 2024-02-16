@@ -8,10 +8,10 @@ import {
   Autoplay,
 } from "swiper/modules";
 import { Separator } from "@/components/ui/separator";
-import ArrowBtn from "@/components/shared/helpers/ArrowBtn";
+import ArrowBtn from "@/components/shared/btns/ArrowBtn";
 import Title from "@/components/shared/helpers/Title";
 import Text from "@/components/shared/helpers/Text";
-import ServiceCard from "@/components/shared/Cards/ServiceCard";
+import ServiceCard from "@/components/shared/cards/ServiceCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";

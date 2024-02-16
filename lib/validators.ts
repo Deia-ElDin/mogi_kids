@@ -69,3 +69,10 @@ export const careerSchema = z.object({
   //   fileSize: z.number(),
   // }),
 });
+
+export const homePageSchema = z.object({
+  title: z.string().min(3, "Section title must be at least 3 characters."),
+  content: z
+    .string()
+    .min(3, "Section content must be at least 3 characters."),
+});
