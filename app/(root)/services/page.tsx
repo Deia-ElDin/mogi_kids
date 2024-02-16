@@ -56,7 +56,7 @@ const serviceImgs = [
 ];
 
 const textArr = [
-  "• Preschools and Schools.",
+  "• Preschools and schools.",
   "• Organizing celebrations for local and international occasions.",
   "• Arranging events in alignment with school and nursery curriculum.",
   "• Planning external trips and festivals for schools and nurseries.",

@@ -2,7 +2,6 @@ import { Schema, models, model } from "mongoose";
 
 const UserSchema = new Schema({
   clerkId: { type: "string", required: true, unique: true },
-  username: String,
   firstName: String,
   lastName: String,
   email: String,
