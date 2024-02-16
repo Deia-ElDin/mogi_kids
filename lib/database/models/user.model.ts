@@ -6,6 +6,8 @@ const UserSchema = new Schema({
   lastName: String,
   email: String,
   photo: String,
+  gender: String,
+  phoneNumbers: Array,
   role: { type: "string", default: "user" },
 });
 
