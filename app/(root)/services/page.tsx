@@ -1,7 +1,12 @@
+import { auth } from "@clerk/nextjs";
+import { getUser } from "@/lib/actions/user.actions";
+import { getWelcomePage } from "@/lib/actions/welcome.actions";
 import { Separator } from "@/components/ui/separator";
+import Article from "@/components/shared/Article";
+import ServiceForm from "@/components/shared/forms/ServiceForm";
+import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
 import Title from "@/components/shared/helpers/Title";
 import Text from "@/components/shared/helpers/Text";
-import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
 
 const serviceImgs = [
   {
@@ -57,7 +62,13 @@ const textArr = [
   "• Supplying all school and educational supplies for students of various ages, with the option to customize their own designs.",
 ];
 
-const Services = () => {
+const Services = async () => {
+  const { sessionClaims } = auth();
+  const userId = sessionClaims?.userId as string;
+  const user = await getUser(userId);
+  const isAdmin = user?.role === "Admin";
+  // const servicePage = await getServicePage();
+
   return (
     <section id="services" className="section-style">
       <Title text="Our Services" />
@@ -65,6 +76,7 @@ const Services = () => {
         <Text key={index} text={text} />
       ))}
       <ServicesSwiper serviceImgs={serviceImgs} />
+      <ServiceForm isAdmin={isAdmin} servicePage={null} />
       <Separator />
     </section>
   );

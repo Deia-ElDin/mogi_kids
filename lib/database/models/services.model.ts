@@ -30,3 +30,5 @@ const ServicePage =
   models.ServicePage || model("ServicePage", ServicePageSchema);
 
 export default ServicePage;
+
+// git mv -f OldFileNameCase newfilenamecase

@@ -10,7 +10,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { homePageSchema } from "@/lib/validators";
-import { welcomeDefaultValues } from "@/constants";
+import { serviceDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -23,20 +23,21 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { isValidForm, handleError } from "@/lib/utils";
+import { IServicePage } from "@/lib/database/models/services.model";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import * as z from "zod";
 
-type WelcomeFormProps = {
+type ServiceFormProps = {
   isAdmin: boolean;
-  welcomePage?: IWelcomePage | null;
+  servicePage?: IServicePage | null;
 };
 
-const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
+const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
   const [displayForm, setDisplayForm] = useState(false);
 
   const pathname = usePathname();
-  const initValues = welcomePage ? welcomePage : welcomeDefaultValues;
+  const initValues = servicePage ? servicePage : serviceDefaultValues;
 
   const form = useForm<z.infer<typeof homePageSchema>>({
     resolver: zodResolver(homePageSchema),
@@ -58,13 +59,13 @@ const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
   async function onSubmit(values: z.infer<typeof homePageSchema>) {
     if (!isValidForm(values)) return;
     try {
-      if (welcomePage) {
-        await updateWelcomePage({
-          ...values,
-          _id: welcomePage._id,
-          path: pathname,
-        });
-      } else await createWelcomePage({ ...values, path: pathname });
+      // if (servicePage) {
+      //   await updateServicePage({
+      //     ...values,
+      //     _id: servicePage._id,
+      //     path: pathname,
+      //   });
+      // } else await createServicePage({ ...values, path: pathname });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -85,7 +86,7 @@ const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Welcome Page</h1>
+            <h1 className="title-style text-white">Service Page</h1>
             <FormField
               control={form.control}
               name="title"
@@ -115,10 +116,9 @@ const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
                 </FormItem>
               )}
             />
-            {/* <Error errMsg={invalidForm ? "Invalid Form" : null} /> */}
             <div className="w-full flex justify-center md:col-span-2">
               <Button type="submit" className="form-btn label-style">
-                {welcomePage ? "Update" : "Create"} Welcome Page
+                {servicePage ? "Update" : "Create"} Service Page
               </Button>
             </div>
           </form>
@@ -128,4 +128,4 @@ const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
   );
 };
 
-export default WelcomeForm;
+export default ServiceForm;

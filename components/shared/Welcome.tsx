@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { getUser } from "@/lib/actions/user.actions";
-import { getWelcomePage } from "@/lib/actions/page.actions";
+import { getWelcomePage } from "@/lib/actions/welcome.actions";
 import { Separator } from "../ui/separator";
 import Article from "./Article";
 import WelcomeForm from "./forms/WelcomeForm";
@@ -11,7 +11,6 @@ const Welcome = async () => {
   const user = await getUser(userId);
   const isAdmin = user?.role === "Admin";
   const welcomePage = await getWelcomePage();
-
 
   return (
     <section className="section-style relative">

@@ -71,8 +71,24 @@ export const careerSchema = z.object({
 });
 
 export const homePageSchema = z.object({
-  title: z.string().min(3, "Section title must be at least 3 characters."),
+  title: z
+    .string()
+    .min(3, "Welcome section title must be at least 3 characters."),
   content: z
     .string()
-    .min(3, "Section content must be at least 3 characters."),
+    .min(3, "Welcome section content must be at least 3 characters."),
+});
+
+export const servicePageSchema = z.object({
+  title: z.string().min(3, "Service page title must be at least 3 characters."),
+  content: z
+    .string()
+    .min(3, "Service page content must be at least 3 characters."),
+  services: z.array(
+    z.object({
+      service: z.string().min(3, "Kindly provide us a service name."),
+      imgUrl: z.string().min(3, "Kindly provide us a service image."),
+      content: z.string().min(3, "Kindly provide us a service content."),
+    })
+  ),
 });

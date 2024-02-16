@@ -8,7 +8,7 @@ import {
   Autoplay,
 } from "swiper/modules";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
-import ServiceCard from "@/components/shared/cards/ServiceCard";
+import ServiceCard from "@/components/shared/card/ServiceCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";

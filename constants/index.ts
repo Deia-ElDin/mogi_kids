@@ -291,3 +291,9 @@ export const welcomeDefaultValues = {
   title: "",
   content: "",
 };
+
+export const serviceDefaultValues = {
+  title: "",
+  content: "",
+  services: [],
+};

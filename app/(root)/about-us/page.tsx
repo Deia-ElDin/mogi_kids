@@ -1,5 +1,5 @@
 import React from "react";
-import AboutUsCard from "@/components/shared/cards/AboutUsCard";
+import AboutUsCard from "@/components/shared/card/AboutUsCard";
 import { aboutUsDetails } from "@/constants";
 
 const AboutUs = () => {

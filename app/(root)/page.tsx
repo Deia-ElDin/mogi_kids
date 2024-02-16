@@ -1,5 +1,3 @@
-import { auth } from "@clerk/nextjs";
-import { getUser } from "@/lib/actions/user.actions";
 import Welcome from "@/components/shared/Welcome";
 import Services from "./services/page";
 import Questions from "@/components/shared/Questions";
