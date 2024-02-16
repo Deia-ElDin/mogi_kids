@@ -46,15 +46,25 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
-    return new Response("Error occurred", {
+    return new Response("Error occured", {
       status: 400,
     });
   }
 
+  // Get the ID and type
+  const { id } = evt.data;
   const eventType = evt.type;
 
   if (eventType === "user.created") {
-    const { id, email_addresses, username, first_name, last_name , image_url, gender, phone_numbers} = evt.data;
+    const {
+      id,
+      email_addresses,
+      first_name,
+      last_name,
+      image_url,
+      gender,
+      phone_numbers,
+    } = evt.data;
 
     const user = {
       clerkId: id,
@@ -66,20 +76,42 @@ export async function POST(req: Request) {
       phoneNumbers: phone_numbers,
       role: "user",
     };
-    console.log("eventType", eventType);
 
     const newUser = await createUser(user);
-    console.log("newUser", newUser);
 
     if (newUser) {
-      console.log("isNewUser");
-
       await clerkClient.users.updateUserMetadata(id, {
-        publicMetadata: { userId: newUser._id },
+        publicMetadata: {
+          userId: newUser._id,
+        },
       });
     }
 
     return NextResponse.json({ message: "OK", user: newUser });
   }
+
+  // if (eventType === "user.updated") {
+  //   const { id, image_url, first_name, last_name, username } = evt.data;
+
+  //   const user = {
+  //     firstName: first_name,
+  //     lastName: last_name,
+  //     username: username!,
+  //     photo: image_url,
+  //   };
+
+  //   const updatedUser = await updateUser(id, user);
+
+  //   return NextResponse.json({ message: "OK", user: updatedUser });
+  // }
+
+  // if (eventType === "user.deleted") {
+  //   const { id } = evt.data;
+
+  //   const deletedUser = await deleteUser(id!);
+
+  //   return NextResponse.json({ message: "OK", user: deletedUser });
+  // }
+
   return new Response("", { status: 200 });
 }
