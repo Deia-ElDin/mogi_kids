@@ -65,14 +65,16 @@ export async function POST(req: Request) {
       photo: image_url ?? "",
       role: "user",
     };
+    console.log("eventType", eventType);
 
     const newUser = await createUser(user);
+    console.log("newUser", newUser);
 
     if (newUser) {
+      console.log("isNewUser");
+
       await clerkClient.users.updateUserMetadata(id, {
-        publicMetadata: {
-          userId: newUser._id,
-        },
+        publicMetadata: { userId: newUser._id },
       });
     }
 
