@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDb } from "../database";
 import { handleError } from "../utils";
 import { CreateWelcomePageParams } from "@/types";
-import WelcomePage from "../database/models/welcomePage.model";
+import WelcomePage from "../database/models/welcome.model";
 
 export async function createWelcomePage(props: CreateWelcomePageParams) {
   const { title, content, path } = props;

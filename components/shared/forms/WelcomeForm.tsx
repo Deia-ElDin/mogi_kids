@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { IWelcomePage } from "@/lib/database/models/welcomePage.model";
+import { IWelcomePage } from "@/lib/database/models/welcome.model";
 import {
   createWelcomePage,
   updateWelcomePage,
