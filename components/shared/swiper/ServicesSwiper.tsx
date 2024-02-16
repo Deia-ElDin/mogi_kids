@@ -8,13 +8,13 @@ import {
   Autoplay,
 } from "swiper/modules";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
-import ServiceCard from "@/components/shared/card/ServiceCard";
+import ServiceCard from "@/components/shared/cards/ServiceCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-const ServicesSwiper = ({ serviceImgs }) => {
+const ServicesSwiper = ({ serviceImgs }: any) => {
   return (
     <div className="pt-10 relative">
       <Swiper
@@ -42,7 +42,7 @@ const ServicesSwiper = ({ serviceImgs }) => {
         }}
         modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
       >
-        {serviceImgs.map((service, index) => (
+        {serviceImgs.map((service: any, index: number) => (
           <SwiperSlide key={index} className="max-w-[300px]">
             <ServiceCard service={service} />
           </SwiperSlide>
