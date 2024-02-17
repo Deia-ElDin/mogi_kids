@@ -35,3 +35,11 @@ export type CreateServicePageParams = {
   services: ServiceParams[] | [];
   path: string;
 };
+
+export type UpdateServicePageParams = {
+  _id: string;
+  title: string;
+  content: string;
+  services: ServiceParams[] | [];
+  path: string;
+};

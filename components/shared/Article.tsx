@@ -2,12 +2,13 @@ import Title from "./helpers/Title";
 import Text from "./helpers/Text";
 
 type ArticleProps = {
+  page: any;
   title: string;
   content: string[];
 };
 
-const Article = ({ title, content }: ArticleProps) => {
-  if (!title || !content?.length) return null;
+const Article = ({page, title, content }: ArticleProps) => {
+  if (!page || !title || !content?.length) return null;
 
   return (
     <>

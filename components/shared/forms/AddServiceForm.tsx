@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { IServicesPage } from "@/lib/database/models/services.model";
-import { createServicePage } from "@/lib/actions/service.action";
+import {
+  createServicePage,
+  updateServicePage,
+} from "@/lib/actions/service.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { servicePageSchema } from "@/lib/validators";
@@ -36,7 +39,6 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
   const pathname = usePathname();
   const initValues = servicePage ? servicePage : serviceDefaultValues;
 
-
   const form = useForm<z.infer<typeof servicePageSchema>>({
     resolver: zodResolver(servicePageSchema),
     defaultValues: initValues,
@@ -57,14 +59,13 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
   async function onSubmit(values: z.infer<typeof servicePageSchema>) {
     // if (!isValidForm(values)) return;
     try {
-      // if (servicePage) {
-      //   await updateServicePage({
-      //     ...values,
-      //     _id: servicePage._id,
-      //     path: pathname,
-      //   });
-      // } else await createServicePage({ ...values, path: pathname });
-      console.log("values: ", values);
+      if (servicePage) {
+        await updateServicePage({
+          ...values,
+          _id: servicePage._id,
+          path: pathname,
+        });
+      } else await createServicePage({ ...values, path: pathname });
 
       await createServicePage({ ...values, path: pathname });
       setDisplayForm(false);

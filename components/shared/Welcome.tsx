@@ -14,12 +14,11 @@ const Welcome = async () => {
 
   return (
     <section className="section-style relative">
-      {welcomePage && (
-        <Article
-          title={welcomePage.title}
-          content={welcomePage?.content?.split("\n")}
-        />
-      )}
+      <Article
+        page={welcomePage}
+        title={welcomePage.title}
+        content={welcomePage?.content?.split("\n")}
+      />
       <WelcomeForm isAdmin={isAdmin} welcomePage={welcomePage} />
       <Separator />
     </section>

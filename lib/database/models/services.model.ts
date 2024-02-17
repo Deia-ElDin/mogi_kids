@@ -1,34 +1,22 @@
 import { Document, Schema, model, models } from "mongoose";
+import { IServiceCard } from "./service.model";
 
-export interface IServicePage extends Document {
+export interface IServicesPage extends Document {
   _id: string;
   title: string;
   content: string;
   services: IServiceCard[];
 }
 
-export interface IServiceCard {
-  _id: string;
-  service: string;
-  imgUrl: string;
-  content: string;
-}
-
-const ServicePageSchema = new Schema({
+const ServicesPageSchema = new Schema({
   title: { type: String, trim: true },
   content: { type: String, trim: true },
-  services: [
-    {
-      service: { type: String, trim: true },
-      imgUrl: String,
-      content: { type: String, trim: true },
-    },
-  ],
+  services: [{ type: Schema.Types.ObjectId, ref: "Service" }],
 });
 
-const ServicePage =
-  models.ServicePage || model("ServicePage", ServicePageSchema);
+const ServicesPage =
+  models.ServicesPage || model("ServicesPage", ServicesPageSchema);
 
-export default ServicePage;
+export default ServicesPage;
 
 // git mv -f OldFileNameCase newfilenamecase
