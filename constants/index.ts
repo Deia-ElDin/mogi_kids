@@ -297,3 +297,9 @@ export const serviceDefaultValues = {
   content: "",
   services: [],
 };
+
+export const addServiceDefaultValues = {
+  service: "",
+  imgUrl: "",
+  content: "",
+};

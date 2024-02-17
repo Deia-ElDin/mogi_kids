@@ -3,14 +3,11 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { IServicesPage } from "@/lib/database/models/services.model";
-import {
-  createServicePage,
-  updateServicePage,
-} from "@/lib/actions/service.action";
+import { createService } from "@/lib/actions/service.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { servicePageSchema } from "@/lib/validators";
-import { serviceDefaultValues } from "@/constants";
+import { addServiceSchema } from "@/lib/validators";
+import { addServiceDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -23,24 +20,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { isValidForm, handleError } from "@/lib/utils";
-import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import * as z from "zod";
-import FileUploader from "../helpers/FileUploader";
+import { FileUploader } from "../helpers/FileUploader";
+import AddBtn from "../btns/AddBtn";
 
-type ServiceFormProps = {
+type AddServiceFormProps = {
   isAdmin: boolean;
   servicePage?: IServicesPage | null;
 };
 
-const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
-  const [displayForm, setDisplayForm] = useState(false);
+const AddServiceForm = ({ isAdmin, servicePage }: AddServiceFormProps) => {
+  const [displayForm, setDisplayForm] = useState<boolean>(false);
+  const [files, setFiles] = useState<File[]>([]);
 
   const pathname = usePathname();
-  const initValues = servicePage ? servicePage : serviceDefaultValues;
+  const initValues = servicePage ? servicePage : addServiceDefaultValues;
 
-  const form = useForm<z.infer<typeof servicePageSchema>>({
-    resolver: zodResolver(servicePageSchema),
+  const form = useForm<z.infer<typeof addServiceSchema>>({
+    resolver: zodResolver(addServiceSchema),
     defaultValues: initValues,
   });
 
@@ -56,18 +54,19 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof servicePageSchema>) {
+  async function onSubmit(values: z.infer<typeof addServiceSchema>) {
     // if (!isValidForm(values)) return;
     try {
-      if (servicePage) {
-        await updateServicePage({
-          ...values,
-          _id: servicePage._id,
-          path: pathname,
-        });
-      } else await createServicePage({ ...values, path: pathname });
+      // if (servicePage) {
+      //   await updateServicePage({
+      //     ...values,
+      //     _id: servicePage._id,
+      //     path: pathname,
+      //   });
+      // } else await createServicePage({ ...values, path: pathname });
 
-      await createServicePage({ ...values, path: pathname });
+      // await createServicePage({ ...values, path: pathname });
+      await createService({ ...values, path: pathname });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -77,7 +76,7 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
 
   return (
     <>
-      <EditBtn
+      <AddBtn
         isAdmin={isAdmin}
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
@@ -88,13 +87,31 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Service Page</h1>
+            <h1 className="title-style text-white">Add Service</h1>
             <FormField
               control={form.control}
-              name="title"
+              name="imgUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Title</FormLabel>
+                  <FormLabel className="label-style">Image</FormLabel>
+                  <FormControl>
+                    <FileUploader
+                      imageUrl={field.value}
+                      onFieldChange={field.onChange}
+                      setFiles={setFiles}
+                    />
+                    <Input {...field} className="edit-input-style text-style" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="service"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="label-style">Service Title</FormLabel>
                   <FormControl>
                     <Input {...field} className="edit-input-style text-style" />
                   </FormControl>
@@ -107,7 +124,7 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Content</FormLabel>
+                  <FormLabel className="label-style">Service Content</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -120,7 +137,7 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
             />
             <div className="w-full flex justify-center md:col-span-2">
               <Button type="submit" className="form-btn label-style">
-                {servicePage ? "Update" : "Create"} Service Page
+                {servicePage ? "Update" : "Add"} Service
               </Button>
             </div>
           </form>
@@ -130,4 +147,4 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
   );
 };
 
-export default ServiceForm;
+export default AddServiceForm;

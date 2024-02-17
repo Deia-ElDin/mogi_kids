@@ -3,11 +3,9 @@ import { getUser } from "@/lib/actions/user.actions";
 import { getServicePage } from "@/lib/actions/service.action";
 import { Separator } from "@/components/ui/separator";
 import Article from "@/components/shared/Article";
-import ServiceForm from "@/components/shared/forms/ServiceForm";
 import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
-import Title from "@/components/shared/helpers/Title";
-import Text from "@/components/shared/helpers/Text";
-import AddBtn from "@/components/shared/btns/AddBtn";
+import ServiceForm from "@/components/shared/forms/ServiceForm";
+import AddServiceForm from "@/components/shared/forms/AddServiceForm";
 
 // const serviceImgs = [
 //   {
@@ -79,7 +77,7 @@ const Services = async () => {
       />
       {/* <ServicesSwiper serviceImgs={serviceImgs} /> */}
       <ServiceForm isAdmin={isAdmin} servicePage={null} />
-      <AddBtn />
+      <AddServiceForm isAdmin={isAdmin} servicePage={null} />
       <Separator />
     </section>
   );

@@ -31,7 +31,7 @@ type ServiceFormProps = {
 };
 
 const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
-  const [displayForm, setDisplayForm] = useState(false);
+  const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const pathname = usePathname();
   const initValues = servicePage ? servicePage : serviceDefaultValues;

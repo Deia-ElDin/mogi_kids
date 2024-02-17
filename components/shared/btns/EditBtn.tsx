@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 type EditBtnProps = {
@@ -7,7 +6,6 @@ type EditBtnProps = {
 };
 
 const EditBtn = ({ isAdmin, handleClick }: EditBtnProps) => {
-
   if (!isAdmin) return;
 
   return (

@@ -22,3 +22,5 @@ export const isValidForm = (obj: any) => {
   }
   return true;
 };
+
+export const convertFileToUrl = (file: File) => URL.createObjectURL(file);

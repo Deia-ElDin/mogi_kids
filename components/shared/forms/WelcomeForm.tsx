@@ -33,7 +33,7 @@ type WelcomeFormProps = {
 };
 
 const WelcomeForm = ({ isAdmin, welcomePage }: WelcomeFormProps) => {
-  const [displayForm, setDisplayForm] = useState(false);
+  const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const pathname = usePathname();
   const initValues = welcomePage ? welcomePage : welcomeDefaultValues;

@@ -43,3 +43,11 @@ export type UpdateServicePageParams = {
   services: ServiceParams[] | [];
   path: string;
 };
+
+
+export type CreateServiceParams = {
+  service: string;
+  imgUrl: string;
+  content: string;
+  path: string;
+};

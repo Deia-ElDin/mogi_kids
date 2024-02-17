@@ -1,6 +1,6 @@
 import { Document, Schema, model, models } from "mongoose";
 
-export interface IServiceCard {
+export interface IServiceCard extends Document {
   _id: string;
   service: string;
   imgUrl: string;
@@ -16,5 +16,3 @@ const ServiceSchema = new Schema({
 const Service = models.Service || model("Service", ServiceSchema);
 
 export default Service;
-
-// git mv -f OldFileNameCase newfilenamecase

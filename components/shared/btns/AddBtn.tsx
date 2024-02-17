@@ -1,7 +1,12 @@
-import React from "react";
+type EditBtnProps = {
+  isAdmin: boolean;
+  handleClick: () => void;
+};
 
-const AddBtn = () => {
-  return <div className="add-btn"></div>;
+const AddBtn = ({ isAdmin, handleClick }: EditBtnProps) => {
+  if (!isAdmin) return;
+
+  return <div className="add-btn" onClick={handleClick}></div>;
 };
 
 export default AddBtn;

@@ -33,10 +33,10 @@ const Customers = () => {
             depth: 100,
             modifier: 2.5,
           }}
-          pagination={{ el: ".swiper-pagination1", clickable: true }}
+          pagination={{ el: ".swiper-pagination2", clickable: true }}
           navigation={{
-            nextEl: ".swiper-next-img1",
-            prevEl: ".swiper-prev-img1",
+            nextEl: ".swiper-next-img2",
+            prevEl: ".swiper-prev-img2",
           }}
           autoplay={{
             delay: 2500,
@@ -51,9 +51,9 @@ const Customers = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-        <div className="swiper-pagination1 text-center"></div>
-        <ArrowBtn btnClass="swiper-prev-img1" img="Left arrow" />
-        <ArrowBtn btnClass="swiper-next-img1" img="Right arrow" />
+        <div className="swiper-pagination2 text-center"></div>
+        <ArrowBtn btnClass="swiper-prev-img2" img="Left arrow" />
+        <ArrowBtn btnClass="swiper-next-img2" img="Right arrow" />
       </div>
       <Separator />
     </section>

@@ -94,15 +94,7 @@ export const servicePageSchema = z.object({
 });
 
 export const addServiceSchema = z.object({
-  title: z.string().min(3, "Service page title must be at least 3 characters."),
-  content: z
-    .string()
-    .min(3, "Service page content must be at least 3 characters."),
-  services: z.array(
-    z.object({
-      service: z.string().min(3, "Kindly provide us a service name."),
-      imgUrl: z.string().min(3, "Kindly provide us a service image."),
-      content: z.string().min(3, "Kindly provide us a service content."),
-    })
-  ),
+  service: z.string().min(3, "Kindly provide us a service name."),
+  imgUrl: z.string().min(3, "Kindly provide us a service image."),
+  content: z.string().min(3, "Kindly provide us a service content."),
 });
