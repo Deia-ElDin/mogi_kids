@@ -9,7 +9,7 @@ import {
   CreateServiceParams,
   UpdateServiceParams,
 } from "@/types";
-import { utapi } from "@/app/api/uploadthing/route";
+import { utapi } from "../uploadthing";
 import ServicePageModel from "../database/models/servicesPage.model";
 import ServiceModel from "../database/models/service.model";
 import UsageModel from "../database/models/usage.model";
