@@ -6,7 +6,7 @@ import { IServicesPage } from "@/lib/database/models/servicesPage.model";
 import {
   createServicePage,
   updateServicePage,
-} from "@/lib/actions/service.action";
+} from "@/lib/actions/services.actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { servicePageSchema } from "@/lib/validators";

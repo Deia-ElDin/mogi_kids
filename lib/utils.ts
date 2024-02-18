@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { IService } from "./database/models/service.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,8 +26,10 @@ export const isValidForm = (obj: any) => {
 
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 
-export const getImageSize = (file: File): string => {
-  const fileSize = file.size; // in bytes
-  const sizeInKB = fileSize / 1024;
-  return `${sizeInKB.toFixed(2)} KB`;
+export const getImgSize = (file: File): number => {
+  return file.size / 1024;
+};
+
+export const getImgName = (serviceObj: IService) => {
+  return new URL(serviceObj.imgUrl).pathname.split("/").pop();
 };

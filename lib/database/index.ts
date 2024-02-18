@@ -7,12 +7,12 @@ let cached = (global as any).mongoose || { connection: null, promise: null };
 export const connectToDb = async () => {
   if (cached.connection) return cached.connection;
 
-  if (!MONGODB_URI) throw new Error("Failed to connect to date base");
+  if (!MONGODB_URI) throw new Error("Failed to connect to database");
 
   cached.promise =
     cached.promise ||
     mongoose.connect(MONGODB_URI, {
-      dbName: "mogi_kids",
+      dbName: "database",
       bufferCommands: false,
     });
 

@@ -14,7 +14,8 @@ const ServicesPageSchema = new Schema({
   services: [{ type: Schema.Types.ObjectId, ref: "Service" }],
 });
 
-const ServicesPage =
-  models.ServicesPage || model("ServicesPage", ServicesPageSchema);
+const ServicesPageModel =
+  models.ServicesPage ||
+  model<IServicesPage>("ServicesPage", ServicesPageSchema);
 
-export default ServicesPage;
+export default ServicesPageModel;

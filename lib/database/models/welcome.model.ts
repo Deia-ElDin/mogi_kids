@@ -11,7 +11,7 @@ const WelcomePageSchema = new Schema({
   content: { type: String, trim: true },
 });
 
-const WelcomePage =
-  models.WelcomePage || model("WelcomePage", WelcomePageSchema);
+const WelcomePageModel =
+  models.WelcomePage || model<IWelcomePage>("WelcomePage", WelcomePageSchema);
 
-export default WelcomePage;
+export default WelcomePageModel;

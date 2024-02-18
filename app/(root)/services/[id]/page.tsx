@@ -2,8 +2,9 @@
 
 import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { getUserByClerkId } from "@/lib/actions/user.actions";
-import { getServiceById } from "@/lib/actions/service.action";
+import { getServiceById, deleteService } from "@/lib/actions/services.actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { IService } from "@/lib/database/models/service.model";
 import { handleError } from "@/lib/utils";
@@ -20,6 +21,8 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
   const [service, setService] = useState<IService>();
 
   const { user: clerkUser } = useUser();
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -47,6 +50,15 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
     fetchService();
   }, [clerkUser?.id, id]);
 
+  const handleDeleteService = async () => {
+    try {
+      await deleteService(id);
+      router.back();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   return (
     service && (
       <section className="section-style">
@@ -67,7 +79,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
           <DeleteBtn
             text={true}
             deletionTarget="Service"
-            handleClick={() => console.log("clicked delete")}
+            handleClick={() => handleDeleteService()}
           />
         )}
       </section>

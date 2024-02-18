@@ -54,6 +54,8 @@ export async function POST(req: Request) {
   // Get the ID and type
   const eventType = evt.type;
 
+  console.log("eventType", eventType);
+
   if (eventType === "user.created") {
     const {
       id,
@@ -73,12 +75,9 @@ export async function POST(req: Request) {
       photo: image_url,
       gender: gender,
       phoneNumbers: phone_numbers,
-      role:
-        email_addresses[0].email_address === "mohagtareg@gmail.com" ||
-        email_addresses[0].email_address === "deia.tech2021@gmail.com"
-          ? "Admin"
-          : "User",
+      role: "User",
     };
+    console.log("user", user);
 
     const newUser = await createUser(user);
 

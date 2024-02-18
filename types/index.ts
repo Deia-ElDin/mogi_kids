@@ -43,7 +43,7 @@ export type UpdateServicePageParams = {
 
 export type CreateServiceParams = {
   path: string;
-  servicesPageId: string,
+  imgSize: number;
 } & ServiceParams;
 
 export type UpdateServiceParams = {

@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { getUserByUserId } from "@/lib/actions/user.actions";
-import { getServicePage } from "@/lib/actions/service.action";
+import { getServicePage } from "@/lib/actions/services.actions";
 import { Separator } from "@/components/ui/separator";
 import Article from "@/components/shared/Article";
 import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";

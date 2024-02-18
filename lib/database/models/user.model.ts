@@ -10,7 +10,7 @@ export interface IUser extends Document {
   gender: "Male" | "Female" | "";
   phoneNumbers: string[] | [];
   role: "Admin" | "User";
-} 
+}
 
 const UserSchema = new Schema({
   clerkId: { type: "string", required: true, unique: true },
@@ -20,9 +20,9 @@ const UserSchema = new Schema({
   photo: { type: "string", default: "" },
   gender: { type: "string", default: "" },
   phoneNumbers: Array,
-  role: { type: "string", default: "user" },
+  role: { type: "string", default: "User" },
 });
 
-const User = models.User || model("User", UserSchema);
+const UserModel = models.User || model<IUser>("User", UserSchema);
 
-export default User;
+export default UserModel;

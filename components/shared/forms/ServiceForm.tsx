@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { IServicesPage } from "@/lib/database/models/servicesPage.model";
-import { createService } from "@/lib/actions/service.action";
+import { createService } from "@/lib/actions/services.actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { addServiceSchema } from "@/lib/validators";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { isValidForm, handleError } from "@/lib/utils";
+import { handleError } from "@/lib/utils";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import CloseBtn from "../btns/CloseBtn";
@@ -76,19 +76,16 @@ const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
       // await createServicePage({ ...values, path: pathname });
       let uploadedImgUrl = values.imgUrl;
 
-      if (files.length > 0) {
-        const uploadedImgs = await startUpload(files);
+      if (files.length === 0) return;
+      const uploadedImgs = await startUpload(files);
 
-        if (!uploadedImgs) return;
-
-        uploadedImgUrl = uploadedImgs[0].url;
-        console.log("uploadedImgUrl = ", uploadedImgUrl);
-      }
+      if (!uploadedImgs) return;
+      uploadedImgUrl = uploadedImgs[0].url;
 
       await createService({
         ...values,
         imgUrl: uploadedImgUrl,
-        servicesPageId: servicePage._id,
+        imgSize: uploadedImgs[0].size / 1000,
         path: pathname,
       });
       setDisplayForm(false);
