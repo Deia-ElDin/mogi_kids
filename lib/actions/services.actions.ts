@@ -9,7 +9,7 @@ import {
   CreateServiceParams,
   UpdateServiceParams,
 } from "@/types";
-import { utapi } from "../uploadthing";
+import { UTApi } from "uploadthing/server";
 import ServicePageModel from "../database/models/servicesPage.model";
 import ServiceModel from "../database/models/service.model";
 import UsageModel from "../database/models/usage.model";
@@ -132,6 +132,7 @@ export async function getServiceById(serviceId: string) {
 }
 
 export async function deleteService(serviceId: string) {
+  const utapi = new UTApi();
   try {
     const deletedService = await ServiceModel.findByIdAndDelete(serviceId);
     if (!deletedService)
