@@ -1,12 +1,20 @@
+import Image from "next/image";
+
 type EditBtnProps = {
-  isAdmin: boolean;
   handleClick: () => void;
 };
 
-const AddBtn = ({ isAdmin, handleClick }: EditBtnProps) => {
-  if (!isAdmin) return;
-
-  return <div className="add-btn" onClick={handleClick}></div>;
+const AddBtn = ({ handleClick }: EditBtnProps) => {
+  return (
+    <div className="add-btn flex justify-center" onClick={handleClick}>
+      <Image
+        src="/assets/icons/add.svg"
+        alt="Add button"
+        width={30}
+        height={30}
+      />
+    </div>
+  );
 };
 
 export default AddBtn;

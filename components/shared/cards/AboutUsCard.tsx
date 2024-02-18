@@ -21,7 +21,7 @@ const AboutUsCard = ({ details, index }: AboutUsCardParams) => {
       <CardContent
         className={`md:w-[50%] flex ${
           index % 2 ? "justify-start" : "justify-end"
-        }`}
+        } `}
       >
         <img
           src={details.src}

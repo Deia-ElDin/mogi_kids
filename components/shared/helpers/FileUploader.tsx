@@ -3,8 +3,8 @@
 import { useCallback, Dispatch, SetStateAction } from "react";
 import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
-import { Button } from "@/components/ui/button";
 import { convertFileToUrl } from "@/lib/utils";
+import Image from "next/image";
 
 type FileUploaderProps = {
   imageUrl: string;
@@ -30,33 +30,30 @@ export function FileUploader({
   return (
     <div
       {...getRootProps()}
-      className="flex-center bg-dark-3 flex h-72 cursor-pointer flex-col overflow-hidden rounded-xl bg-grey-50"
+      className="flex flex-col items-center justify-center cursor-pointer"
     >
       <input {...getInputProps()} className="cursor-pointer" />
-
       {imageUrl ? (
-        <div className="flex h-full w-full flex-1 justify-center ">
-          <img
+        <div className="flex h-full w-full flex-1 justify-center border-2 border-white">
+          <Image
             src={imageUrl}
-            alt="image"
-            width={250}
-            height={250}
+            alt="Service image"
+            width={300}
+            height={300}
             className="w-full object-cover object-center"
           />
         </div>
       ) : (
-        <div className="flex-center flex-col py-5 text-grey-500">
-          <img
+        <div className="flex flex-col items-center justify-center">
+          <Image
             src="/assets/icons/upload.svg"
-            width={77}
-            height={77}
-            alt="file upload"
+            alt="Upload button"
+            width={150}
+            height={150}
           />
-          <h3 className="mb-2 mt-2">Drag photo here</h3>
-          <p className="p-medium-12 mb-4">SVG, PNG, JPG</p>
-          <Button type="button" className="rounded-full">
-            Select from computer
-          </Button>
+          <p className="mb-2 mt-2 text-white">
+            Click or drag & drop photo here (SVG, PNG, JPG, JPEG)
+          </p>
         </div>
       )}
     </div>

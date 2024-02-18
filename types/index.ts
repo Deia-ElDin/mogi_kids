@@ -26,7 +26,7 @@ export type UpdateWelcomePageParams = {
 export type ServiceParams = {
   service: string;
   imgUrl: string;
-  content: string;
+  serviceContent: string;
 };
 
 export type CreateServicePageParams = {
@@ -38,16 +38,15 @@ export type CreateServicePageParams = {
 
 export type UpdateServicePageParams = {
   _id: string;
-  title: string;
-  content: string;
-  services: ServiceParams[] | [];
   path: string;
-};
-
+} & CreateServicePageParams;
 
 export type CreateServiceParams = {
-  service: string;
-  imgUrl: string;
-  content: string;
   path: string;
-};
+  servicesPageId: string,
+} & ServiceParams;
+
+export type UpdateServiceParams = {
+  _id: string;
+  path: string;
+} & ServiceParams;

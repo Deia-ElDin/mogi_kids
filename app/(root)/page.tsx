@@ -7,11 +7,6 @@ import Quote from "@/components/shared/Quote";
 import Contacts from "@/components/shared/Contacts";
 
 export default async function Home() {
-  // const { sessionClaims } = auth();
-  // const userId = sessionClaims?.userId as string;
-  // const user = await getUser(userId);
-  // const isAdmin = user?.role === "Admin";
-
   return (
     <>
       <Welcome />

@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { IWelcomePage } from "@/lib/database/models/welcome.model";
+import { IServicesPage } from "@/lib/database/models/servicesPage.model";
 import {
-  createWelcomePage,
-  updateWelcomePage,
-} from "@/lib/actions/welcome.actions";
+  createServicePage,
+  updateServicePage,
+} from "@/lib/actions/service.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { homePageSchema } from "@/lib/validators";
-import { welcomeDefaultValues } from "@/constants";
+import { servicePageSchema } from "@/lib/validators";
+import { serviceDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -25,26 +25,32 @@ import { Button } from "@/components/ui/button";
 import { isValidForm, handleError } from "@/lib/utils";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
+import FormBtn from "../btns/FormBtn";
+import SubmittingBtn from "../btns/SubmittingBtn";
 import * as z from "zod";
+// import FileUploader from "../helpers/FileUploader";
 
-type WelcomeFormProps = {
-  welcomePage: IWelcomePage | null;
+type Props = {
+  isAdmin: boolean;
+  servicePage: IServicesPage | null;
 };
 
-const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
+const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
+  if (!isAdmin) return;
+
   const [displayForm, setDisplayForm] = useState<boolean>(false);
-
   const pathname = usePathname();
-  const initValues = welcomePage ? welcomePage : welcomeDefaultValues;
 
-  const form = useForm<z.infer<typeof homePageSchema>>({
-    resolver: zodResolver(homePageSchema),
+  const initValues = servicePage ? servicePage : serviceDefaultValues;
+
+  const form = useForm<z.infer<typeof servicePageSchema>>({
+    resolver: zodResolver(servicePageSchema),
     defaultValues: initValues,
   });
 
   useEffect(() => {
-    form.reset(welcomePage ? welcomePage : welcomeDefaultValues);
-  }, [welcomePage]);
+    form.reset(servicePage ? servicePage : serviceDefaultValues);
+  }, [servicePage]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -58,16 +64,17 @@ const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof homePageSchema>) {
-    if (!isValidForm(values)) return;
+  async function onSubmit(values: z.infer<typeof servicePageSchema>) {
+    // if (!isValidForm(values)) return;
+
     try {
-      if (welcomePage) {
-        await updateWelcomePage({
+      if (servicePage) {
+        await updateServicePage({
           ...values,
-          _id: welcomePage._id,
+          _id: servicePage._id,
           path: pathname,
         });
-      } else await createWelcomePage({ ...values, path: pathname });
+      } else await createServicePage({ ...values, path: pathname });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -78,7 +85,7 @@ const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
   return (
     <>
       <EditBtn
-        centeredPosition={welcomePage ? false : true}
+        centeredPosition={servicePage ? false : true}
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (
@@ -88,7 +95,7 @@ const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Welcome Page</h1>
+            <h1 className="title-style text-white">Service Page</h1>
             <FormField
               control={form.control}
               name="title"
@@ -118,12 +125,13 @@ const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
                 </FormItem>
               )}
             />
-            {/* <Error errMsg={invalidForm ? "Invalid Form" : null} /> */}
-            <div className="w-full flex justify-center md:col-span-2">
-              <Button type="submit" className="form-btn label-style">
-                {welcomePage ? "Update" : "Create"} Welcome Page
-              </Button>
-            </div>
+            {form.formState.isSubmitting ? (
+              <SubmittingBtn />
+            ) : (
+              <FormBtn
+                text={`${servicePage ? "Update" : "Create"} Service Page`}
+              />
+            )}
           </form>
         </Form>
       )}
@@ -131,4 +139,4 @@ const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
   );
 };
 
-export default WelcomeForm;
+export default ServicesPageForm;

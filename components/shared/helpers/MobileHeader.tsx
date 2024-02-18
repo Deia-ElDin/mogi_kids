@@ -27,7 +27,7 @@ const MobileHeader = () => {
   }, []);
 
   return (
-    <header className="md:hidden flex flex-col py-1 px-8 sticky top-0 bg-white border-b-4 border-red-500 z-20">
+    <header className="md:hidden flex flex-col py-1 px-8 sticky top-0 bg-white border-b-4 border-custom-red z-20">
       <div className="flex justify-between items-center">
         <Image
           src="/assets/images/logo.png"

@@ -24,3 +24,9 @@ export const isValidForm = (obj: any) => {
 };
 
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
+
+export const getImageSize = (file: File): string => {
+  const fileSize = file.size; // in bytes
+  const sizeInKB = fileSize / 1024;
+  return `${sizeInKB.toFixed(2)} KB`;
+};

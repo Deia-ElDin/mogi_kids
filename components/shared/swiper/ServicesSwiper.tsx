@@ -7,14 +7,25 @@ import {
   Pagination,
   Autoplay,
 } from "swiper/modules";
+import { useRouter } from "next/navigation";
+import { IService } from "@/lib/database/models/service.model";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
 import ServiceCard from "@/components/shared/cards/ServiceCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import DeleteBtn from "../btns/DeleteBtn";
 
-const ServicesSwiper = ({ serviceImgs }: any) => {
+type Props = {
+  services: IService[];
+};
+
+const ServicesSwiper: React.FC<Props> = ({ services }) => {
+  if (services.length === 0) return;
+
+  const router = useRouter();
+
   return (
     <div className="pt-10 relative">
       <Swiper
@@ -42,9 +53,13 @@ const ServicesSwiper = ({ serviceImgs }: any) => {
         }}
         modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
       >
-        {serviceImgs.map((service: any, index: number) => (
-          <SwiperSlide key={index} className="max-w-[300px]">
-            <ServiceCard service={service} />
+        {services.map((service, index) => (
+          <SwiperSlide
+            key={index}
+            className="max-w-[300px]"
+            onClick={() => router.push(`/services/${service._id}`)}
+          >
+            <ServiceCard serviceObj={service} />
           </SwiperSlide>
         ))}
       </Swiper>

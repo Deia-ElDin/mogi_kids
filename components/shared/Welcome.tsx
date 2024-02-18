@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs";
-import { getUser } from "@/lib/actions/user.actions";
+import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getWelcomePage } from "@/lib/actions/welcome.actions";
 import { Separator } from "../ui/separator";
 import Article from "./Article";
@@ -8,18 +8,17 @@ import WelcomeForm from "./forms/WelcomeForm";
 const Welcome = async () => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
-  const user = await getUser(userId);
+  const user = await getUserByUserId(userId);
   const isAdmin = user?.role === "Admin";
   const welcomePage = await getWelcomePage();
 
   return (
     <section className="section-style relative">
       <Article
-        page={welcomePage}
-        title={welcomePage.title}
-        content={welcomePage?.content?.split("\n")}
+        title={welcomePage?.title || "Welcome Section Title"}
+        content={welcomePage?.content?.split("\n") || "Welcome Section Content"}
       />
-      <WelcomeForm isAdmin={isAdmin} welcomePage={welcomePage} />
+      {isAdmin && <WelcomeForm welcomePage={welcomePage} />}
       <Separator />
     </section>
   );

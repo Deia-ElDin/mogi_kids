@@ -1,11 +1,11 @@
 import { Document, Schema, model, models } from "mongoose";
-import { IServiceCard } from "./service.model";
+import { IService } from "./service.model";
 
 export interface IServicesPage extends Document {
   _id: string;
   title: string;
   content: string;
-  services: IServiceCard[];
+  services: IService[];
 }
 
 const ServicesPageSchema = new Schema({
@@ -18,5 +18,3 @@ const ServicesPage =
   models.ServicesPage || model("ServicesPage", ServicesPageSchema);
 
 export default ServicesPage;
-
-// git mv -f OldFileNameCase newfilenamecase

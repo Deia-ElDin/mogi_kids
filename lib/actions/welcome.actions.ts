@@ -38,6 +38,7 @@ export async function updateWelcomePage({
       title,
       content,
     });
+
     revalidatePath(path);
     return JSON.parse(JSON.stringify(updatedWelcomePage));
   } catch (error) {

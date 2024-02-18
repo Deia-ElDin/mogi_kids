@@ -1,9 +1,17 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
-const CloseBtn = ({ handleClick }: { handleClick: () => void }) => {
+type Props = {
+  handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+};
+
+const CloseBtn: React.FC<Props> = ({ handleClick }) => {
   return (
-    <Button className="bg-transparent hover:bg-transparent border-none absolute top-[5px] right-[-5px]">
+    <Button
+      className="bg-transparent hover:bg-transparent border-none absolute top-[5px] right-[-5px]"
+      type="button"
+      onClick={handleClick}
+    >
       <Image
         src="/assets/icons/x.svg"
         alt="Close button"

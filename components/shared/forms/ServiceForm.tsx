@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { IServicesPage } from "@/lib/database/models/services.model";
-import { createServicePage } from "@/lib/actions/service.action";
+import { IServicesPage } from "@/lib/database/models/servicesPage.model";
+import { createService } from "@/lib/actions/service.action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { servicePageSchema } from "@/lib/validators";
-import { serviceDefaultValues } from "@/constants";
+import { addServiceSchema } from "@/lib/validators";
+import { addServiceDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -18,33 +18,41 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { isValidForm, handleError } from "@/lib/utils";
-import EditBtn from "../btns/EditBtn";
+import { FileUploader } from "../helpers/FileUploader";
+import { useUploadThing } from "@/lib/uploadthing";
 import CloseBtn from "../btns/CloseBtn";
+import AddBtn from "../btns/AddBtn";
+import SubmittingBtn from "../btns/SubmittingBtn";
+import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
-import FileUploader from "../helpers/FileUploader";
 
-type ServiceFormProps = {
+type Props = {
   isAdmin: boolean;
-  servicePage?: IServicesPage | null;
+  servicePage: IServicesPage;
 };
 
-const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
+const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
+  if (!isAdmin || !servicePage) return null;
+
   const [displayForm, setDisplayForm] = useState<boolean>(false);
-
+  const [files, setFiles] = useState<File[]>([]);
+  const { startUpload } = useUploadThing("imageUploader");
   const pathname = usePathname();
-  const initValues = servicePage ? servicePage : serviceDefaultValues;
 
-
-  const form = useForm<z.infer<typeof servicePageSchema>>({
-    resolver: zodResolver(servicePageSchema),
-    defaultValues: initValues,
+  const form = useForm<z.infer<typeof addServiceSchema>>({
+    resolver: zodResolver(addServiceSchema),
+    defaultValues: addServiceDefaultValues,
   });
+
+  const handleClose = () => {
+    form.reset();
+    setDisplayForm(false);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") setDisplayForm(false);
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -54,7 +62,7 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof servicePageSchema>) {
+  async function onSubmit(values: z.infer<typeof addServiceSchema>) {
     // if (!isValidForm(values)) return;
     try {
       // if (servicePage) {
@@ -64,9 +72,25 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
       //     path: pathname,
       //   });
       // } else await createServicePage({ ...values, path: pathname });
-      console.log("values: ", values);
 
-      await createServicePage({ ...values, path: pathname });
+      // await createServicePage({ ...values, path: pathname });
+      let uploadedImgUrl = values.imgUrl;
+
+      if (files.length > 0) {
+        const uploadedImgs = await startUpload(files);
+
+        if (!uploadedImgs) return;
+
+        uploadedImgUrl = uploadedImgs[0].url;
+        console.log("uploadedImgUrl = ", uploadedImgUrl);
+      }
+
+      await createService({
+        ...values,
+        imgUrl: uploadedImgUrl,
+        servicesPageId: servicePage._id,
+        path: pathname,
+      });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -76,24 +100,38 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
 
   return (
     <>
-      <EditBtn
-        isAdmin={isAdmin}
-        handleClick={() => setDisplayForm((prev) => !prev)}
-      />
+      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
       {displayForm && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="edit-form-style"
           >
-            <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Service Page</h1>
+            <CloseBtn handleClick={handleClose} />
+            <h1 className="title-style text-white">Add Service</h1>
             <FormField
               control={form.control}
-              name="title"
+              name="imgUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Title</FormLabel>
+                  <FormLabel className="label-style">Image</FormLabel>
+                  <FormControl>
+                    <FileUploader
+                      imageUrl={field.value}
+                      onFieldChange={field.onChange}
+                      setFiles={setFiles}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="service"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="label-style">Service Title</FormLabel>
                   <FormControl>
                     <Input {...field} className="edit-input-style text-style" />
                   </FormControl>
@@ -103,10 +141,10 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
             />
             <FormField
               control={form.control}
-              name="content"
+              name="serviceContent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Content</FormLabel>
+                  <FormLabel className="label-style">Service Content</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -117,11 +155,11 @@ const ServiceForm = ({ isAdmin, servicePage }: ServiceFormProps) => {
                 </FormItem>
               )}
             />
-            <div className="w-full flex justify-center md:col-span-2">
-              <Button type="submit" className="form-btn label-style">
-                {servicePage ? "Update" : "Create"} Service Page
-              </Button>
-            </div>
+            {form.formState.isSubmitting ? (
+              <SubmittingBtn />
+            ) : (
+              <FormBtn text={`${servicePage ? "Update" : "Add"} Service`} />
+            )}
           </form>
         </Form>
       )}

@@ -301,5 +301,5 @@ export const serviceDefaultValues = {
 export const addServiceDefaultValues = {
   service: "",
   imgUrl: "",
-  content: "",
+  serviceContent: "",
 };

@@ -8,11 +8,13 @@ export default authMiddleware({
     "/",
     "/about-us",
     "/services",
+    "/services/:id",
     "/careers",
     "/contact-us",
     "/api/webhook/clerk",
+    "/api/uploadthing",
   ],
-  ignoredRoutes: ["/api/webhook/clerk"],
+  ignoredRoutes: ["/api/webhook/clerk", "/api/uploadthing"],
 });
 
 export const config = {

@@ -88,7 +88,7 @@ export const servicePageSchema = z.object({
     z.object({
       service: z.string().min(3, "Kindly provide us a service name."),
       imgUrl: z.string().min(3, "Kindly provide us a service image."),
-      content: z.string().min(3, "Kindly provide us a service content."),
+      serviceContent: z.string().min(3, "Kindly provide us a service content."),
     })
   ),
 });
@@ -96,5 +96,5 @@ export const servicePageSchema = z.object({
 export const addServiceSchema = z.object({
   service: z.string().min(3, "Kindly provide us a service name."),
   imgUrl: z.string().min(3, "Kindly provide us a service image."),
-  content: z.string().min(3, "Kindly provide us a service content."),
+  serviceContent: z.string().min(3, "Kindly provide us a service content."),
 });
