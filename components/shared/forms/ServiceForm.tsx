@@ -105,7 +105,7 @@ const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={handleClose} />
-            <h1 className="title-style text-white">Add Service</h1>
+            <h1 className="title-style text-white">Service Form</h1>
             <FormField
               control={form.control}
               name="imgUrl"

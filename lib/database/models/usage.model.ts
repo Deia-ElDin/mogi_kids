@@ -9,6 +9,6 @@ const UsageSchema = new Schema({
   uploadThingDb: { type: Number, default: 0 },
 });
 
-const UsageModel = models.Usage || model<IUsage>("Usage", UsageSchema);
+const Usage = models.Usage || model<IUsage>("Usage", UsageSchema);
 
-export default UsageModel;
+export default Usage;

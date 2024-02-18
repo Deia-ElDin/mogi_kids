@@ -72,7 +72,7 @@ const Services = async () => {
     <section className="section-style">
       <Article
         title={servicePage?.title || "Services Page Title"}
-        content={servicePage?.content?.split("\n") || "Services Page Content"}
+        content={servicePage?.content?.split("\n") || "Content"}
       />
       <ServicesSwiper services={servicePage?.services || []} />
       <ServicesPageForm isAdmin={isAdmin} servicePage={servicePage} />

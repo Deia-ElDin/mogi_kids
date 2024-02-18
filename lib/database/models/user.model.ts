@@ -23,6 +23,6 @@ const UserSchema = new Schema({
   role: { type: "string", default: "User" },
 });
 
-const UserModel = models.User || model<IUser>("User", UserSchema);
+const User = models.User || model<IUser>("User", UserSchema);
 
-export default UserModel;
+export default User;

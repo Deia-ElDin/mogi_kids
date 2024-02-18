@@ -1,24 +1,28 @@
 import { auth } from "@clerk/nextjs";
 import { getUserByUserId } from "@/lib/actions/user.actions";
-import { getWelcomePage } from "@/lib/actions/welcome.actions";
 import { Separator } from "../ui/separator";
 import Article from "./Article";
-import WelcomeForm from "./forms/WelcomeForm";
+import PageForm from "./forms/PageForm";
+import { getPage } from "@/lib/actions/page.actions";
 
 const Welcome = async () => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const user = await getUserByUserId(userId);
   const isAdmin = user?.role === "Admin";
-  const welcomePage = await getWelcomePage();
+  const welcomePage = await getPage("Welcome Page");
+
+  console.log("welcomePage = ", welcomePage);
+
+  const pageTitle =
+    welcomePage?.pageTitle ?? (isAdmin ? "Welcome Section Title" : null);
+  const pageContent =
+    welcomePage?.pageContent?.split("\n") ?? (isAdmin ? "Content" : null);
 
   return (
     <section className="section-style relative">
-      <Article
-        title={welcomePage?.title || "Welcome Section Title"}
-        content={welcomePage?.content?.split("\n") || "Welcome Section Content"}
-      />
-      {isAdmin && <WelcomeForm welcomePage={welcomePage} />}
+      <Article title={pageTitle} content={pageContent} />
+      {isAdmin && <PageForm page={welcomePage} pageName="Welcome Page" />}
       <Separator />
     </section>
   );

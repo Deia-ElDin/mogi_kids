@@ -70,6 +70,12 @@ export const careerSchema = z.object({
   // }),
 });
 
+export const pageSchema = z.object({
+  pageName: z.string(),
+  pageTitle: z.string().min(3, "Kindly provide us a page title."),
+  pageContent: z.string(),
+});
+
 export const homePageSchema = z.object({
   title: z
     .string()
@@ -97,4 +103,9 @@ export const addServiceSchema = z.object({
   service: z.string().min(3, "Kindly provide us a service name."),
   imgUrl: z.string().min(3, "Kindly provide us a service image."),
   serviceContent: z.string().min(3, "Kindly provide us a service content."),
+});
+
+export const questionSchema = z.object({
+  question: z.string().min(3, "Question must be at least 3 characters."),
+  answer: z.string().min(3, "Answer must be at least 3 characters."),
 });

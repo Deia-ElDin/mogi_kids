@@ -88,7 +88,7 @@ const WelcomeForm = ({ welcomePage }: WelcomeFormProps) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Welcome Page</h1>
+            <h1 className="title-style text-white">Welcome Form</h1>
             <FormField
               control={form.control}
               name="title"

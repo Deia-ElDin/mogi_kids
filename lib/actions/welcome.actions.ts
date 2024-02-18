@@ -4,15 +4,15 @@ import { revalidatePath } from "next/cache";
 import { connectToDb } from "../database";
 import { handleError } from "../utils";
 import { CreateWelcomePageParams } from "@/types";
-import WelcomePageModel from "../database/models/welcome.model";
+import WelcomePage from "../database/models/welcome.model";
 
-export async function createWelcomePage(props: CreateWelcomePageParams) {
-  const { title, content, path } = props;
+export async function createWelcomePage(params: CreateWelcomePageParams) {
+  const { title, content, path } = params;
 
   try {
     await connectToDb();
 
-    const welcomePage = await WelcomePageModel.create({ title, content });
+    const welcomePage = await WelcomePage.create({ title, content });
     revalidatePath(path);
     return JSON.parse(JSON.stringify(welcomePage));
   } catch (error) {
@@ -34,7 +34,7 @@ export async function updateWelcomePage({
   try {
     await connectToDb();
 
-    const updatedWelcomePage = await WelcomePageModel.findByIdAndUpdate(_id, {
+    const updatedWelcomePage = await WelcomePage.findByIdAndUpdate(_id, {
       title,
       content,
     });
@@ -50,7 +50,7 @@ export async function getWelcomePage() {
   try {
     await connectToDb();
 
-    const welcomePage = await WelcomePageModel.find();
+    const welcomePage = await WelcomePage.find();
     if (!welcomePage?.length) return null;
     return JSON.parse(JSON.stringify(welcomePage[0]));
   } catch (error) {

@@ -1,14 +1,13 @@
 import Title from "./helpers/Title";
 import Text from "./helpers/Text";
-import { IWelcomePage } from "@/lib/database/models/welcome.model";
 
 type ArticleProps = {
-  title: string;
-  content: string[];
+  title: string | null;
+  content: string[] | string | null;
 };
 
 const Article = ({ title, content }: ArticleProps) => {
-  // if (!page || !title || !content?.length) return null;
+  if (!title) return null;
 
   return (
     <>
@@ -16,7 +15,7 @@ const Article = ({ title, content }: ArticleProps) => {
       {Array.isArray(content) ? (
         content.map((text) => <Text key={text} text={text} />)
       ) : (
-        <Text text={content} />
+        <Text text={content ?? ""} />
       )}
     </>
   );

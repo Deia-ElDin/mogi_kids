@@ -1,4 +1,4 @@
-import { Document, Schema, model, models } from "mongoose";
+import { Document, Schema, models, model } from "mongoose";
 
 export interface IWelcomePage extends Document {
   _id: string;
@@ -7,11 +7,11 @@ export interface IWelcomePage extends Document {
 }
 
 const WelcomePageSchema = new Schema({
-  title: { type: String, trim: true },
+  title: { type: String, trim: true, required: true },
   content: { type: String, trim: true },
 });
 
-const WelcomePageModel =
+const WelcomePage =
   models.WelcomePage || model<IWelcomePage>("WelcomePage", WelcomePageSchema);
 
-export default WelcomePageModel;
+export default WelcomePage;

@@ -1,10 +1,10 @@
 import Image from "next/image";
 
-type EditBtnProps = {
+type Props = {
   handleClick: () => void;
 };
 
-const AddBtn = ({ handleClick }: EditBtnProps) => {
+const AddBtn = ({ handleClick }: Props) => {
   return (
     <div className="add-btn flex justify-center" onClick={handleClick}>
       <Image

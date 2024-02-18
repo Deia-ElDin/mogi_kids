@@ -1,16 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { IServicesPage } from "@/lib/database/models/servicesPage.model";
-import {
-  createServicePage,
-  updateServicePage,
-} from "@/lib/actions/services.actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { servicePageSchema } from "@/lib/validators";
-import { serviceDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -21,36 +14,37 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { isValidForm, handleError } from "@/lib/utils";
+import { pageSchema } from "@/lib/validators";
+import { pageDefaultValues } from "@/constants";
+import { createPage, updatePage } from "@/lib/actions/page.actions";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
-import SubmittingBtn from "../btns/SubmittingBtn";
 import * as z from "zod";
-// import FileUploader from "../helpers/FileUploader";
+import { Button } from "@/components/ui/button";
 
 type Props = {
-  isAdmin: boolean;
-  servicePage: IServicesPage | null;
+  page: {
+    _id: string;
+    pageTitle: string;
+    pageContent: string | undefined;
+  };
+  pageName: "Welcome Page" | "Services Page" | "Questions Page";
 };
 
-const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
-  if (!isAdmin) return;
-
+const PageForm = ({ page, pageName }: Props) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const pathname = usePathname();
 
-  const initValues = servicePage ? servicePage : serviceDefaultValues;
-
-  const form = useForm<z.infer<typeof servicePageSchema>>({
-    resolver: zodResolver(servicePageSchema),
-    defaultValues: initValues,
+  const form = useForm<z.infer<typeof pageSchema>>({
+    resolver: zodResolver(pageSchema),
+    defaultValues: page ? page : pageDefaultValues,
   });
 
   useEffect(() => {
-    form.reset(servicePage ? servicePage : serviceDefaultValues);
-  }, [servicePage]);
+    form.reset(page ? page : pageDefaultValues);
+  }, [page]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -64,17 +58,18 @@ const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof servicePageSchema>) {
-    // if (!isValidForm(values)) return;
+  async function onSubmit(values: z.infer<typeof pageSchema>) {
+    values.pageName = pageName;
+    if (!isValidForm(values)) return;
 
     try {
-      if (servicePage) {
-        await updateServicePage({
+      if (page) {
+        await updatePage({
           ...values,
-          _id: servicePage._id,
+          _id: page._id,
           path: pathname,
         });
-      } else await createServicePage({ ...values, path: pathname });
+      } else await createPage({ ...values, path: pathname });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -85,7 +80,7 @@ const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
   return (
     <>
       <EditBtn
-        centeredPosition={servicePage ? false : true}
+        centeredPosition={page?.pageTitle ? false : true}
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (
@@ -95,10 +90,12 @@ const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Services Form</h1>
+            <h1 className="title-style text-white">
+              {pageName.split(" ")[0]} Form
+            </h1>
             <FormField
               control={form.control}
-              name="title"
+              name="pageTitle"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="label-style">Title</FormLabel>
@@ -111,7 +108,7 @@ const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
             />
             <FormField
               control={form.control}
-              name="content"
+              name="pageContent"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="label-style">Content</FormLabel>
@@ -125,13 +122,11 @@ const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
                 </FormItem>
               )}
             />
-            {form.formState.isSubmitting ? (
-              <SubmittingBtn />
-            ) : (
-              <FormBtn
-                text={`${servicePage ? "Update" : "Create"} Service Page`}
-              />
-            )}
+            <div className="w-full flex justify-center md:col-span-2">
+              <Button type="submit" className="form-btn label-style">
+                Welcome Page
+              </Button>
+            </div>
           </form>
         </Form>
       )}
@@ -139,4 +134,4 @@ const ServicesPageForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
   );
 };
 
-export default ServicesPageForm;
+export default PageForm;

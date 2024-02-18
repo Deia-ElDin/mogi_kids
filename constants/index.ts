@@ -287,6 +287,12 @@ export const careerDefaultValues = {
   // resume: "",
 };
 
+export const pageDefaultValues = {
+  pageName: "",
+  pageTitle: "",
+  pageContent: "",
+};
+
 export const welcomeDefaultValues = {
   title: "",
   content: "",
@@ -302,4 +308,9 @@ export const addServiceDefaultValues = {
   service: "",
   imgUrl: "",
   serviceContent: "",
+};
+
+export const questionDefaultValues = {
+  question: "",
+  answer: "",
 };

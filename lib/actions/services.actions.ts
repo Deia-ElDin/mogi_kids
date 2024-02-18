@@ -10,19 +10,19 @@ import {
   UpdateServiceParams,
 } from "@/types";
 import { UTApi } from "uploadthing/server";
-import ServicePageModel from "../database/models/servicesPage.model";
-import ServiceModel from "../database/models/service.model";
-import UsageModel from "../database/models/usage.model";
+import ServicePage from "../database/models/servicesPage.model";
+import Service from "../database/models/service.model";
+import Usage from "../database/models/usage.model";
 
 const utapi = new UTApi();
 
-export async function createServicePage(props: CreateServicePageParams) {
-  const { title, content, path } = props;
+export async function createServicePage(params: CreateServicePageParams) {
+  const { title, content, path } = params;
 
   try {
     await connectToDb();
 
-    const servicePage = await ServicePageModel.create({ title, content });
+    const servicePage = await ServicePage.create({ title, content });
 
     revalidatePath(path);
     return JSON.parse(JSON.stringify(servicePage));
@@ -31,13 +31,13 @@ export async function createServicePage(props: CreateServicePageParams) {
   }
 }
 
-export async function updateServicePage(props: UpdateServicePageParams) {
-  const { _id, title, content, path } = props;
+export async function updateServicePage(params: UpdateServicePageParams) {
+  const { _id, title, content, path } = params;
 
   try {
     await connectToDb();
 
-    const updatedServicePage = await ServicePageModel.findByIdAndUpdate(_id, {
+    const updatedServicePage = await ServicePage.findByIdAndUpdate(_id, {
       title,
       content,
     });
@@ -53,7 +53,7 @@ export async function getServicePage() {
   try {
     await connectToDb();
 
-    const servicesPage = await ServicePageModel.findOne().populate({
+    const servicesPage = await ServicePage.findOne().populate({
       path: "services",
     });
     if (!servicesPage) return null;
@@ -64,13 +64,13 @@ export async function getServicePage() {
   }
 }
 
-export async function createService(props: CreateServiceParams) {
-  const { service, imgUrl, imgSize, serviceContent, path } = props;
+export async function createService(params: CreateServiceParams) {
+  const { service, imgUrl, imgSize, serviceContent, path } = params;
 
   try {
     await connectToDb();
 
-    const newService = await ServiceModel.create({
+    const newService = await Service.create({
       service,
       imgUrl,
       imgSize,
@@ -78,14 +78,14 @@ export async function createService(props: CreateServiceParams) {
     });
     if (!service) throw new Error("Couldn't create a service");
 
-    const updatedServicesPage = await ServicePageModel.updateOne(
+    const updatedServicesPage = await ServicePage.updateOne(
       {},
       { $addToSet: { services: newService._id } },
       { new: true }
     );
     if (!updatedServicesPage) throw new Error("Couldn't find the service page");
 
-    const usage = await UsageModel.updateOne(
+    const usage = await Usage.updateOne(
       {},
       {
         $inc: { uploadThingDb: imgSize },
@@ -101,13 +101,13 @@ export async function createService(props: CreateServiceParams) {
   }
 }
 
-export async function updateService(props: UpdateServiceParams) {
-  const { _id, service, imgUrl, serviceContent, path } = props;
+export async function updateService(params: UpdateServiceParams) {
+  const { _id, service, imgUrl, serviceContent, path } = params;
 
   try {
     await connectToDb();
 
-    const servicePage = await ServiceModel.create({
+    const servicePage = await Service.create({
       service,
       imgUrl,
       serviceContent,
@@ -124,7 +124,7 @@ export async function getServiceById(serviceId: string) {
   try {
     connectToDb();
 
-    const service = await ServiceModel.findById(serviceId);
+    const service = await Service.findById(serviceId);
     if (!service) throw new Error("Service not found");
 
     return JSON.parse(JSON.stringify(service));
@@ -135,11 +135,11 @@ export async function getServiceById(serviceId: string) {
 
 export async function deleteService(serviceId: string) {
   try {
-    const deletedService = await ServiceModel.findByIdAndDelete(serviceId);
+    const deletedService = await Service.findByIdAndDelete(serviceId);
     if (!deletedService)
       throw new Error("Service not found or already deleted.");
 
-    const updatedServicesPage = await ServicePageModel.updateOne(
+    const updatedServicesPage = await ServicePage.updateOne(
       {},
       { $pull: { services: deletedService._id } }
     );
@@ -149,7 +149,7 @@ export async function deleteService(serviceId: string) {
     if (!imgName) throw new Error("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
-    const usage = await UsageModel.updateOne(
+    const usage = await Usage.updateOne(
       {},
       {
         $inc: { uploadThingDb: -deletedService.imgSize },

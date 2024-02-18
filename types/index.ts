@@ -8,6 +8,18 @@ export type CreateUserParams = {
   role: string;
 };
 
+// Page Params
+export type CreatePageParams = {
+  pageName: string;
+  pageTitle: string;
+  pageContent: string;
+  path: string;
+};
+
+export type UpdatePageParams = {
+  _id: string;
+} & CreatePageParams;
+
 // WelcomePage Params
 export type CreateWelcomePageParams = {
   title: string;
@@ -50,3 +62,12 @@ export type UpdateServiceParams = {
   _id: string;
   path: string;
 } & ServiceParams;
+
+export type CreateQuestionParams = {
+  question: string;
+  answer: string;
+};
+
+export type UpdateQuestionParams = {
+  _id: string;
+} & CreateQuestionParams;

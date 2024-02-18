@@ -1,4 +1,4 @@
-import { Document, Schema, model, models } from "mongoose";
+import { Document, Schema, models, model } from "mongoose";
 
 export interface IService extends Document {
   _id: string;
@@ -15,7 +15,6 @@ const ServiceSchema = new Schema({
   serviceContent: { type: String, trim: true },
 });
 
-const ServiceModel =
-  models.Service || model<IService>("Service", ServiceSchema);
+const Service = models.Service || model<IService>("Service", ServiceSchema);
 
-export default ServiceModel;
+export default Service;
