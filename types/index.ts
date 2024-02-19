@@ -49,11 +49,11 @@ export type UpdateServiceParams = {
 
 // // ServicePage Params
 
-// export type CreateQuestionParams = {
-//   question: string;
-//   answer: string;
-// };
+export type CreateQuestionParams = {
+  question: string;
+  answer: string;
+};
 
-// export type UpdateQuestionParams = {
-//   _id: string;
-// } & CreateQuestionParams;
+export type UpdateQuestionParams = {
+  _id: string;
+} & CreateQuestionParams;
