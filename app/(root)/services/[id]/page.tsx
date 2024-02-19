@@ -64,13 +64,13 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
       <section className="section-style">
         <Card className="flex flex-col md:flex-row justify-between items-center w-full border-none bg-transparent">
           <CardContent className="flex flex-col gap-3 md:w-[50%]">
-            <Title text={service.service} />
+            <Title text={service.serviceName} />
             <Text text={service.serviceContent} targetClass={2} />
           </CardContent>
           <CardContent className="md:w-[50%] h-full flex items-center justify-end">
             <img
               src={service.imgUrl}
-              alt={service.service}
+              alt={service.serviceName}
               className="w-[300px] h-[300px] mt-[30px]"
             />
           </CardContent>

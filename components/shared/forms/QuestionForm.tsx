@@ -118,11 +118,11 @@ const QuestionForm: React.FC<Props> = () => {
                 </FormItem>
               )}
             />
-            {form.formState.isSubmitting ? (
-              <SubmittingBtn />
-            ) : (
-              <FormBtn text="Create Question" />
-            )}
+
+            <FormBtn
+              text="Create Question"
+              isSubmitting={form.formState.isSubmitting}
+            />
           </form>
         </Form>
       )}

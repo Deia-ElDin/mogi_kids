@@ -14,13 +14,13 @@ const ServiceCard: React.FC<Props> = (props) => {
     <Card className="flex flex-col justify-center w-full cursor-pointer">
       <Image
         src={serviceObj.imgUrl}
-        alt={serviceObj.service}
+        alt={serviceObj.serviceName}
         width={300}
         height={300}
         className="rounded-t-lg w-full"
       />
       <p className="flex justify-center items-center text-center w-full h-[60px] font-bold text-lg bg-white rounded-b-lg">
-        {serviceObj.service}
+        {serviceObj.serviceName}
       </p>
       <Text
         textClass="hidden-text w-full overflow-auto"
