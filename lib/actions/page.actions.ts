@@ -1,15 +1,16 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import {
+  CreatePageParams,
+  UpdatePageParams,
+} from "@/types";
 import { connectToDb } from "../database";
 import { handleError } from "../utils";
-import { CreatePageParams, UpdatePageParams } from "@/types";
+import { revalidatePath } from "next/cache";
 import Page from "../database/models/page.model";
 
 export async function createPage(params: CreatePageParams) {
   const { pageName, pageTitle, pageContent, path } = params;
-
-  console.log("params = ", params);
 
   try {
     await connectToDb();
@@ -44,7 +45,8 @@ export async function updatePage(params: UpdatePageParams) {
   }
 }
 
-export async function getPage(pageName: string) {
+export async function getPageByPageName(pageName: string) {
+
   try {
     await connectToDb();
 

@@ -2,7 +2,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDb } from "../database";
 import { handleError } from "../utils";
 import { CreateQuestionParams, UpdateQuestionParams } from "@/types";
-import Question from "../database/models/question.model";
+// import Question from "../database/models/question.model";
 
 export async function getAllQuestions() {
   try {

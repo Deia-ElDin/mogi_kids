@@ -1,11 +1,12 @@
 import { auth } from "@clerk/nextjs";
 import { getUserByUserId } from "@/lib/actions/user.actions";
-import { getServicePage } from "@/lib/actions/services.actions";
+import { getPageByPageName } from "@/lib/actions/page.actions";
 import { Separator } from "@/components/ui/separator";
-import Article from "@/components/shared/Article";
+import Article from "@/components/shared/helpers/Article";
 import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
 import ServicesPageForm from "@/components/shared/forms/ServicesPageForm";
 import ServiceForm from "@/components/shared/forms/ServiceForm";
+import PageForm from "@/components/shared/forms/PageForm";
 
 // const serviceImgs = [
 //   {
@@ -65,19 +66,21 @@ const Services = async () => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const user = await getUserByUserId(userId);
+  const servicePage = await getPageByPageName("Services Page");
   const isAdmin = user?.role === "Admin";
-  const servicePage = await getServicePage();
+
+  const pageTitle =
+    servicePage?.pageTitle ?? (isAdmin ? "Services Page Title" : null);
+  const pageContent =
+    servicePage?.pageContent?.split("\n") ?? (isAdmin ? "Content" : null);
 
   return (
     <section className="section-style">
-      <Article
-        title={servicePage?.title || "Services Page Title"}
-        content={servicePage?.content?.split("\n") || "Content"}
-      />
+      <Article title={pageTitle} content={pageContent} />
       <ServicesSwiper services={servicePage?.services || []} />
-      <ServicesPageForm isAdmin={isAdmin} servicePage={servicePage} />
-      <ServiceForm isAdmin={isAdmin} servicePage={servicePage} />
-      <Separator />
+      {isAdmin && <PageForm page={servicePage} pageName="Services Page" />}
+      {isAdmin && servicePage && <ServiceForm service={null} />}
+      {(servicePage || isAdmin) && <Separator />}
     </section>
   );
 };

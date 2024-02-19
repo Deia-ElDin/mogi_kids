@@ -293,19 +293,8 @@ export const pageDefaultValues = {
   pageContent: "",
 };
 
-export const welcomeDefaultValues = {
-  title: "",
-  content: "",
-};
-
 export const serviceDefaultValues = {
-  title: "",
-  content: "",
-  services: [],
-};
-
-export const addServiceDefaultValues = {
-  service: "",
+  serviceName: "",
   imgUrl: "",
   serviceContent: "",
 };

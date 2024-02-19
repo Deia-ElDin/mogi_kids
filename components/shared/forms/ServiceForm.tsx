@@ -1,13 +1,11 @@
 "use client";
 
+"use client";
+
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { IServicesPage } from "@/lib/database/models/servicesPage.model";
-import { createService } from "@/lib/actions/services.actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { addServiceSchema } from "@/lib/validators";
-import { addServiceDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -18,31 +16,31 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { handleError } from "@/lib/utils";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
-import CloseBtn from "../btns/CloseBtn";
+import { isValidForm, handleError } from "@/lib/utils";
+import { serviceSchema } from "@/lib/validators";
+import { serviceDefaultValues } from "@/constants";
+import { IService } from "@/lib/database/models/service.model";
+import { createService, updateService } from "@/lib/actions/service.actions";
 import AddBtn from "../btns/AddBtn";
-import SubmittingBtn from "../btns/SubmittingBtn";
+import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type Props = {
-  isAdmin: boolean;
-  servicePage: IServicesPage;
+  service: IService | null;
 };
 
-const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
-  if (!isAdmin || !servicePage) return null;
-
+const ServiceForm: React.FC<Props> = ({ service }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
   const pathname = usePathname();
 
-  const form = useForm<z.infer<typeof addServiceSchema>>({
-    resolver: zodResolver(addServiceSchema),
-    defaultValues: addServiceDefaultValues,
+  const form = useForm<z.infer<typeof serviceSchema>>({
+    resolver: zodResolver(serviceSchema),
+    defaultValues: serviceDefaultValues,
   });
 
   const handleClose = () => {
@@ -62,7 +60,7 @@ const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof addServiceSchema>) {
+  async function onSubmit(values: z.infer<typeof serviceSchema>) {
     // if (!isValidForm(values)) return;
     try {
       // if (servicePage) {
@@ -125,7 +123,7 @@ const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
             />
             <FormField
               control={form.control}
-              name="service"
+              name="serviceName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="label-style">Service Title</FormLabel>
@@ -152,11 +150,10 @@ const ServiceForm: React.FC<Props> = ({ isAdmin, servicePage }) => {
                 </FormItem>
               )}
             />
-            {form.formState.isSubmitting ? (
-              <SubmittingBtn />
-            ) : (
-              <FormBtn text={`${servicePage ? "Update" : "Add"} Service`} />
-            )}
+            <FormBtn
+              text={`${service ? "Update" : "Create"} Service`}
+              isSubmitting={form.formState.isSubmitting}
+            />
           </form>
         </Form>
       )}

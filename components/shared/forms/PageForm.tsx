@@ -22,7 +22,6 @@ import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
 
 type Props = {
   page: {
@@ -122,11 +121,10 @@ const PageForm = ({ page, pageName }: Props) => {
                 </FormItem>
               )}
             />
-            <div className="w-full flex justify-center md:col-span-2">
-              <Button type="submit" className="form-btn label-style">
-                Welcome Page
-              </Button>
-            </div>
+            <FormBtn
+              text={`${page ? "Update" : "Create"} ${pageName}`}
+              isSubmitting={form.formState.isSubmitting}
+            />
           </form>
         </Form>
       )}

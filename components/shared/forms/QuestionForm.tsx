@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { IQuestion } from "@/lib/database/models/question.model";
+// import { IQuestion } from "@/lib/database/models/question.model";
 // import // createQuestion,
 // // updateQuestion,
 // // deleteQuestion,
@@ -29,7 +29,8 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type Props = {
-  question: IQuestion | null;
+  // question: IQuestion | null;
+  question: {} | null;
 };
 
 const QuestionForm: React.FC<Props> = () => {

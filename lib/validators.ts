@@ -72,38 +72,38 @@ export const careerSchema = z.object({
 
 export const pageSchema = z.object({
   pageName: z.string(),
-  pageTitle: z.string().min(3, "Kindly provide us a page title."),
+  pageTitle: z.string().min(1, "Kindly provide us a page title."),
   pageContent: z.string(),
 });
 
-export const homePageSchema = z.object({
-  title: z
-    .string()
-    .min(3, "Welcome section title must be at least 3 characters."),
-  content: z
-    .string()
-    .min(3, "Welcome section content must be at least 3 characters."),
+export const serviceSchema = z.object({
+  serviceName: z.string().min(1, "Kindly provide us a service name."),
+  imgUrl: z.string().min(1, "Kindly provide us a service image."),
+  serviceContent: z.string().min(1, "Kindly provide us a service content."),
 });
 
-export const servicePageSchema = z.object({
-  title: z.string().min(3, "Service page title must be at least 3 characters."),
-  content: z
-    .string()
-    .min(3, "Service page content must be at least 3 characters."),
-  services: z.array(
-    z.object({
-      service: z.string().min(3, "Kindly provide us a service name."),
-      imgUrl: z.string().min(3, "Kindly provide us a service image."),
-      serviceContent: z.string().min(3, "Kindly provide us a service content."),
-    })
-  ),
-});
+// export const homePageSchema = z.object({
+//   title: z
+//     .string()
+//     .min(3, "Welcome section title must be at least 3 characters."),
+//   content: z
+//     .string()
+//     .min(3, "Welcome section content must be at least 3 characters."),
+// });
 
-export const addServiceSchema = z.object({
-  service: z.string().min(3, "Kindly provide us a service name."),
-  imgUrl: z.string().min(3, "Kindly provide us a service image."),
-  serviceContent: z.string().min(3, "Kindly provide us a service content."),
-});
+// export const servicePageSchema = z.object({
+//   title: z.string().min(3, "Service page title must be at least 3 characters."),
+//   content: z
+//     .string()
+//     .min(3, "Service page content must be at least 3 characters."),
+//   services: z.array(
+//     z.object({
+//       service: z.string().min(3, "Kindly provide us a service name."),
+//       imgUrl: z.string().min(3, "Kindly provide us a service image."),
+//       serviceContent: z.string().min(3, "Kindly provide us a service content."),
+//     })
+//   ),
+// });
 
 export const questionSchema = z.object({
   question: z.string().min(3, "Question must be at least 3 characters."),

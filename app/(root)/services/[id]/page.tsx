@@ -4,7 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getUserByClerkId } from "@/lib/actions/user.actions";
-import { getServiceById, deleteService } from "@/lib/actions/services.actions";
+import { getServiceById, deleteService } from "@/lib/actions/service.actions";
 import { Card, CardContent } from "@/components/ui/card";
 import { IService } from "@/lib/database/models/service.model";
 import { handleError } from "@/lib/utils";

@@ -8,9 +8,18 @@ export interface IPage extends Document {
 }
 
 const PageSchema = new Schema({
-  pageName: { type: String, trim: true, required: true },
+  pageName: { type: String, trim: true, required: true, immutable: true },
   pageTitle: { type: String, trim: true, required: true },
   pageContent: { type: String, trim: true },
+});
+
+PageSchema.pre("save", function (next) {
+  if (this.isModified("pageName")) {
+    const err = new Error("Cannot modify page name field");
+    next(err);
+  } else {
+    next();
+  }
 });
 
 const Page = models.Page || model<IPage>("Page", PageSchema);

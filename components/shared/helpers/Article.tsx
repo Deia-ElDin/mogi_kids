@@ -1,5 +1,5 @@
-import Title from "./helpers/Title";
-import Text from "./helpers/Text";
+import Title from "./Title";
+import Text from "./Text";
 
 type ArticleProps = {
   title: string | null;

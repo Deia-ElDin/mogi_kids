@@ -1,7 +1,7 @@
 import AdminPanel from "@/components/shared/AdminPanel";
 import Welcome from "@/components/shared/Welcome";
 import Services from "./services/page";
-import Questions from "@/components/shared/Questions";
+// import Questions from "@/components/shared/Questions";
 import Statistics from "@/components/shared/Statistics";
 import Customers from "@/components/shared/Customers";
 import Quote from "@/components/shared/Quote";
@@ -13,7 +13,7 @@ export default async function Home() {
       <AdminPanel />
       <Welcome />
       <Services />
-      <Questions />
+      {/* <Questions /> */}
       <Statistics />
       <Customers />
       <Quote />
