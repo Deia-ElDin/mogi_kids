@@ -15,24 +15,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidForm, handleError } from "@/lib/utils";
+import { IPage } from "@/lib/database/models/page.model";
 import { pageSchema } from "@/lib/validators";
 import { pageDefaultValues } from "@/constants";
 import { createPage, updatePage } from "@/lib/actions/page.actions";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
+import DeleteBtn from "../btns/DeleteBtn";
 import * as z from "zod";
 
 type Props = {
-  page: {
-    _id: string;
-    pageTitle: string;
-    pageContent: string | undefined;
-  };
+  isAdmin: boolean;
+  page: IPage | Partial<IPage>;
   pageName: "Welcome Page" | "Services Page" | "Questions Page";
 };
 
-const PageForm = ({ page, pageName }: Props) => {
+const PageForm = ({ isAdmin, page, pageName }: Props) => {
+  if (!isAdmin) return;
+
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const pathname = usePathname();
 
@@ -62,10 +63,10 @@ const PageForm = ({ page, pageName }: Props) => {
     if (!isValidForm(values)) return;
 
     try {
-      if (page) {
+      if (page._id) {
         await updatePage({
           ...values,
-          _id: page._id,
+          _id: page._id!,
           path: pathname,
         });
       } else await createPage({ ...values, path: pathname });
@@ -122,7 +123,7 @@ const PageForm = ({ page, pageName }: Props) => {
               )}
             />
             <FormBtn
-              text={`${page ? "Update" : "Create"} ${pageName}`}
+              text={`${page._id ? "Update" : "Create"} ${pageName}`}
               isSubmitting={form.formState.isSubmitting}
             />
           </form>

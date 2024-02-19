@@ -1,27 +1,42 @@
-import { auth } from "@clerk/nextjs";
-import { getUserByUserId } from "@/lib/actions/user.actions";
-import { getPageByPageName } from "@/lib/actions/page.actions";
+"use client";
+
+import { IPage } from "@/lib/database/models/page.model";
+import { getPageTitle, getPageContent } from "@/lib/utils";
 import { Separator } from "../ui/separator";
+import { deletePage } from "@/lib/actions/page.actions";
+import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
 import PageForm from "./forms/PageForm";
+import DeleteBtn from "./btns/DeleteBtn";
 
-const Welcome = async () => {
-  const { sessionClaims } = auth();
-  const userId = sessionClaims?.userId as string;
-  const user = await getUserByUserId(userId);
-  const welcomePage = await getPageByPageName("Welcome Page");
-  const isAdmin = user?.role === "Admin";
+type WelcomeProps = {
+  isAdmin: boolean;
+  welcomePage: IPage | Partial<IPage>;
+};
 
-  const pageTitle =
-    welcomePage?.pageTitle ?? (isAdmin ? "Welcome Section Title" : null);
-  const pageContent =
-    welcomePage?.pageContent?.split("\n") ?? (isAdmin ? "Content" : null);
+const Welcome = ({ isAdmin, welcomePage }: WelcomeProps) => {
+  const pageTitle = getPageTitle(welcomePage, isAdmin, "Welcome Section Title");
+  const pageContent = getPageContent(welcomePage, isAdmin);
+
+  const handleDelete = async () => {
+    try {
+      if (welcomePage?._id) await deletePage(welcomePage._id);
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   return (
     <section className="section-style relative">
       <Article title={pageTitle} content={pageContent} />
-      {isAdmin && <PageForm page={welcomePage} pageName="Welcome Page" />}
-      {(welcomePage || isAdmin) && <Separator />}
+      <PageForm isAdmin={isAdmin} page={welcomePage} pageName="Welcome Page" />
+      <DeleteBtn
+        pageId={welcomePage._id}
+        isAdmin={isAdmin}
+        deletionTarget="Welcome Section"
+        handleClick={handleDelete}
+      />
+      <Separator pageId={welcomePage._id} isAdmin={isAdmin} />
     </section>
   );
 };

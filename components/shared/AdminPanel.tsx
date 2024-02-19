@@ -1,8 +1,5 @@
-import { getUsage } from "@/lib/actions/usage.actions";
 
-const AdminPanel = async () => {
-  const usage = await getUsage();
-
+const AdminPanel = async ({ usage }: any) => {
   return <section className="w-full"></section>;
 };
 

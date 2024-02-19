@@ -86,6 +86,7 @@ const Services = async () => {
 
 export default Services;
 
+// Our Services
 // • Preschools and schools.
 // • Organizing celebrations for local and international occasions.
 // • Arranging events in alignment with school and nursery curriculum.

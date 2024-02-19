@@ -12,21 +12,24 @@ import {
 import Image from "next/image";
 
 type Props = {
-  text?: boolean;
-  icon?: boolean;
+  pageId: string | undefined;
+  isAdmin: boolean;
   deletionTarget: string;
   handleClick: () => void;
 };
 
 const DeleteBtn: React.FC<Props> = (props) => {
-  const { text = false, icon = false, deletionTarget, handleClick } = props;
+  const { pageId, isAdmin, deletionTarget, handleClick } = props;
+
+  if (!pageId || !isAdmin) return null;
 
   return (
     <div className="w-full">
       <AlertDialog>
         <AlertDialogTrigger className="delete-btn w-full">
-          {text && <p>Delete {deletionTarget}</p>}
-          {icon && (
+          {deletionTarget ? (
+            <p>Delete {deletionTarget}</p>
+          ) : (
             <Image
               src="/assets/icons/x.svg"
               alt="Delete button"

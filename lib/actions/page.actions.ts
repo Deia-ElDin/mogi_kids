@@ -1,13 +1,33 @@
 "use server";
 
-import {
-  CreatePageParams,
-  UpdatePageParams,
-} from "@/types";
+import { CreatePageParams, UpdatePageParams } from "@/types";
 import { connectToDb } from "../database";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import Page from "../database/models/page.model";
+
+export async function getAllPages() {
+  try {
+    await connectToDb();
+
+    const pages = await Page.find();
+    return JSON.parse(JSON.stringify(pages));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function getPageByPageName(pageName: string) {
+  try {
+    await connectToDb();
+
+    const page = await Page.findOne({ pageName });
+
+    return JSON.parse(JSON.stringify(page));
+  } catch (error) {
+    handleError(error);
+  }
+}
 
 export async function createPage(params: CreatePageParams) {
   const { pageName, pageTitle, pageContent, path } = params;
@@ -21,6 +41,7 @@ export async function createPage(params: CreatePageParams) {
 
     return JSON.parse(JSON.stringify(newPage));
   } catch (error) {
+    console.log(error);
     handleError(error);
   }
 }
@@ -45,14 +66,16 @@ export async function updatePage(params: UpdatePageParams) {
   }
 }
 
-export async function getPageByPageName(pageName: string) {
-
+export async function deletePage(pageId: string) {
   try {
     await connectToDb();
 
-    const page = await Page.findOne({ pageName });
+    const deletedPage = await Page.findByIdAndDelete(pageId);
 
-    return JSON.parse(JSON.stringify(page));
+    if (!deletedPage) throw new Error("Could not find the page.");
+
+    revalidatePath("/");
+    return null;
   } catch (error) {
     handleError(error);
   }

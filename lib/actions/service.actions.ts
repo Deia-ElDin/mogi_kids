@@ -10,6 +10,31 @@ import Usage from "../database/models/usage.model";
 
 const utapi = new UTApi();
 
+export async function getAllServices() {
+  try {
+    await connectToDb();
+
+    const services = await Service.find();
+
+    return JSON.parse(JSON.stringify(services));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function getServiceById(serviceId: string) {
+  try {
+    connectToDb();
+
+    const service = await Service.findById(serviceId);
+    if (!service) throw new Error("Service not found");
+
+    return JSON.parse(JSON.stringify(service));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 export async function createService(params: CreateServiceParams) {
   const { serviceName, imgUrl, imgSize, serviceContent, path } = params;
 
@@ -82,19 +107,6 @@ export async function deleteService(serviceId: string) {
     revalidatePath("/");
 
     return null;
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-export async function getServiceById(serviceId: string) {
-  try {
-    connectToDb();
-
-    const service = await Service.findById(serviceId);
-    if (!service) throw new Error("Service not found");
-
-    return JSON.parse(JSON.stringify(service));
   } catch (error) {
     handleError(error);
   }

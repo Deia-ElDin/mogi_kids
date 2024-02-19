@@ -77,7 +77,6 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
         </Card>
         {isAdmin && (
           <DeleteBtn
-            text={true}
             deletionTarget="Service"
             handleClick={() => handleDeleteService()}
           />

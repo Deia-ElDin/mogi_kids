@@ -1,3 +1,5 @@
+import { IPage } from "@/lib/database/models/page.model";
+
 export const headerLinks = [
   {
     label: "Home",
@@ -287,10 +289,10 @@ export const careerDefaultValues = {
   // resume: "",
 };
 
-export const pageDefaultValues = {
+export const pageDefaultValues: Partial<IPage> = {
   pageName: "",
   pageTitle: "",
-  pageContent: "",
+  pageContent: undefined,
 };
 
 export const serviceDefaultValues = {
