@@ -10,12 +10,14 @@ type FileUploaderProps = {
   imageUrl: string;
   onFieldChange: (value: string) => void;
   setFiles: Dispatch<SetStateAction<File[]>>;
+  imgClass?: string;
 };
 
 export function FileUploader({
   imageUrl,
   onFieldChange,
   setFiles,
+  imgClass,
 }: FileUploaderProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
@@ -40,7 +42,7 @@ export function FileUploader({
             alt="Service image"
             width={300}
             height={300}
-            className="w-full object-cover object-center"
+            className={imgClass}
           />
         </div>
       ) : (

@@ -31,7 +31,13 @@ export type CreateServiceParams = {
 
 export type UpdateServiceParams = {
   _id: string;
-} & CreateServiceParams;
+  serviceName?: string;
+  imgUrl?: string;
+  imgSize?: number;
+  serviceContent: string;
+  newImg: boolean;
+  path: string;
+};
 
 // // WelcomePage Params
 // export type CreateWelcomePageParams = {

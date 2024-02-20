@@ -11,6 +11,8 @@ import { handleError } from "@/lib/utils";
 import Title from "@/components/shared/helpers/Title";
 import Text from "@/components/shared/helpers/Text";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
+import Loading from "@/components/shared/helpers/Loading";
+import MobileServiceForm from "@/components/shared/forms/MobileServiceForm";
 
 type ServicePageProps = {
   params: { id: string };
@@ -19,6 +21,7 @@ type ServicePageProps = {
 const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [service, setService] = useState<IService>();
+  const [loading, setLoading] = useState(true);
 
   const { user: clerkUser } = useUser();
 
@@ -48,16 +51,19 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
 
     if (clerkUser) fetchUser();
     fetchService();
-  }, [clerkUser?.id, id]);
+    setLoading(false);
+  }, [clerkUser?.id, service]);
 
   const handleDeleteService = async () => {
     try {
       await deleteService(id);
-      router.back();
+      router.push("/services");
     } catch (error) {
       handleError(error);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     service && (
@@ -75,12 +81,17 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
             />
           </CardContent>
         </Card>
-        {isAdmin && (
-          <DeleteBtn
-            deletionTarget="Service"
-            handleClick={() => handleDeleteService()}
-          />
-        )}
+        <DeleteBtn
+          pageId={id}
+          isAdmin={isAdmin}
+          deletionTarget="Service"
+          handleClick={() => handleDeleteService()}
+        />
+        <MobileServiceForm
+          isAdmin={isAdmin}
+          servicesPageId={"true"}
+          service={service}
+        />
       </section>
     )
   );

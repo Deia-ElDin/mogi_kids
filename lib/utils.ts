@@ -21,8 +21,8 @@ export const findPage = (
 };
 
 export const getPageTitle = (
-  page: IPage | Partial<IPage>,
-  isAdmin: boolean,
+  page: IPage | Partial<IPage> | undefined,
+  isAdmin: boolean | undefined,
   text: string
 ) => {
   if (page?.pageTitle) return page.pageTitle;
@@ -31,8 +31,8 @@ export const getPageTitle = (
 };
 
 export const getPageContent = (
-  page: IPage | Partial<IPage>,
-  isAdmin: boolean
+  page: IPage | Partial<IPage> | undefined,
+  isAdmin: boolean | undefined
 ) => {
   if (page?.pageContent) return page.pageContent;
   else if (isAdmin) return "Content";

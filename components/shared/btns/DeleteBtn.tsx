@@ -13,7 +13,7 @@ import Image from "next/image";
 
 type Props = {
   pageId: string | undefined;
-  isAdmin: boolean;
+  isAdmin: boolean | undefined;
   deletionTarget: string;
   handleClick: () => void;
 };

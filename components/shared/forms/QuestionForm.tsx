@@ -1,15 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-// import { IQuestion } from "@/lib/database/models/question.model";
-// import // createQuestion,
-// // updateQuestion,
-// // deleteQuestion,
-// "@/lib/actions/question.actions";
-import { questionSchema } from "@/lib/validators";
-import { questionDefaultValues } from "@/constants";
 import {
   Form,
   FormControl,
@@ -21,38 +15,39 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidForm, handleError } from "@/lib/utils";
+import { IPage } from "@/lib/database/models/page.model";
+import { pageSchema } from "@/lib/validators";
+import { pageDefaultValues } from "@/constants";
+import { createPage, updatePage } from "@/lib/actions/page.actions";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
-import AddBtn from "../btns/AddBtn";
-import SubmittingBtn from "../btns/SubmittingBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type Props = {
-  // question: IQuestion | null;
-  question: {} | null;
+  isAdmin: boolean | undefined;
+  page: IPage | Partial<IPage> | undefined;
+  pageName: "Welcome Page" | "Services Page" | "Questions Page";
 };
 
-const QuestionForm: React.FC<Props> = () => {
-  const [displayForm, setDisplayForm] = useState<boolean>(false);
+const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
+  if (!isAdmin) return;
 
-  const form = useForm<z.infer<typeof questionSchema>>({
-    resolver: zodResolver(questionSchema),
-    defaultValues: questionDefaultValues,
+  const [displayForm, setDisplayForm] = useState<boolean>(false);
+  const pathname = usePathname();
+
+  const form = useForm<z.infer<typeof pageSchema>>({
+    resolver: zodResolver(pageSchema),
+    defaultValues: page ? page : pageDefaultValues,
   });
 
-  const handleClose = () => {
-    form.reset();
-    setDisplayForm(false);
-  };
-
-  // useEffect(() => {
-  //   form.reset(question ? question : questionDefaultValues);
-  // }, [question]);
+  useEffect(() => {
+    form.reset(page ? page : pageDefaultValues);
+  }, [page]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") handleClose();
+      if (event.key === "Escape") setDisplayForm(false);
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -62,39 +57,47 @@ const QuestionForm: React.FC<Props> = () => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof questionSchema>) {
+  async function onSubmit(values: z.infer<typeof pageSchema>) {
+    values.pageName = pageName;
     if (!isValidForm(values)) return;
-    // try {
-    //   if (question) {
-    //     await updateQuestion({
-    //       ...values,
-    //       _id: question._id,
-    //     });
-    //   } else await createQuestion({ ...values });
-    //   setDisplayForm(false);
-    //   form.reset();
-    // } catch (error) {
-    //   handleError(error);
-    // }
+
+    try {
+      if (page?._id) {
+        await updatePage({
+          ...values,
+          _id: page._id!,
+          path: pathname,
+        });
+      } else await createPage({ ...values, path: pathname });
+      setDisplayForm(false);
+      form.reset();
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   return (
     <>
-      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
+      <EditBtn
+        centeredPosition={page?.pageTitle ? false : true}
+        handleClick={() => setDisplayForm((prev) => !prev)}
+      />
       {displayForm && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="edit-form-style"
           >
-            <CloseBtn handleClick={handleClose} />
-            <h1 className="title-style text-white">Question Form</h1>
+            <CloseBtn handleClick={() => setDisplayForm(false)} />
+            <h1 className="title-style text-white">
+              {pageName.split(" ")[0]} Form
+            </h1>
             <FormField
               control={form.control}
-              name="question"
+              name="pageTitle"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Question</FormLabel>
+                  <FormLabel className="label-style">Title</FormLabel>
                   <FormControl>
                     <Input {...field} className="edit-input-style text-style" />
                   </FormControl>
@@ -104,10 +107,10 @@ const QuestionForm: React.FC<Props> = () => {
             />
             <FormField
               control={form.control}
-              name="answer"
+              name="pageContent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Answer</FormLabel>
+                  <FormLabel className="label-style">Content</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -118,9 +121,8 @@ const QuestionForm: React.FC<Props> = () => {
                 </FormItem>
               )}
             />
-
             <FormBtn
-              text="Create Question"
+              text={`${page?._id ? "Update" : "Create"} ${pageName}`}
               isSubmitting={form.formState.isSubmitting}
             />
           </form>

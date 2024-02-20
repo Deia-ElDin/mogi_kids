@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,25 +20,29 @@ import { isValidForm, handleError } from "@/lib/utils";
 import { serviceSchema } from "@/lib/validators";
 import { serviceDefaultValues } from "@/constants";
 import { IService } from "@/lib/database/models/service.model";
-import { createService, updateService } from "@/lib/actions/service.actions";
+import { createService } from "@/lib/actions/service.actions";
 import AddBtn from "../btns/AddBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type Props = {
+  isAdmin: boolean | undefined;
+  servicesPageId: string | undefined;
   service: IService | null;
 };
 
-const ServiceForm: React.FC<Props> = ({ service }) => {
+const ServiceForm: React.FC<Props> = ({ isAdmin, servicesPageId, service }) => {
+  if (!isAdmin || !servicesPageId) return null;
+
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-  const { startUpload } = useUploadThing("imageUploader");
   const pathname = usePathname();
+  const { startUpload } = useUploadThing("imageUploader");
 
   const form = useForm<z.infer<typeof serviceSchema>>({
     resolver: zodResolver(serviceSchema),
-    defaultValues: serviceDefaultValues,
+    defaultValues: service ? service : serviceDefaultValues,
   });
 
   const handleClose = () => {
@@ -61,17 +63,8 @@ const ServiceForm: React.FC<Props> = ({ service }) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof serviceSchema>) {
-    // if (!isValidForm(values)) return;
+    if (!isValidForm(values)) return;
     try {
-      // if (servicePage) {
-      //   await updateServicePage({
-      //     ...values,
-      //     _id: servicePage._id,
-      //     path: pathname,
-      //   });
-      // } else await createServicePage({ ...values, path: pathname });
-
-      // await createServicePage({ ...values, path: pathname });
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length === 0) return;
@@ -83,7 +76,7 @@ const ServiceForm: React.FC<Props> = ({ service }) => {
       await createService({
         ...values,
         imgUrl: uploadedImgUrl,
-        imgSize: uploadedImgs[0].size / 1000,
+        imgSize: uploadedImgs[0].size,
         path: pathname,
       });
       setDisplayForm(false);
@@ -115,6 +108,7 @@ const ServiceForm: React.FC<Props> = ({ service }) => {
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}
+                      imgClass="w-full object-cover object-center"
                     />
                   </FormControl>
                   <FormMessage />

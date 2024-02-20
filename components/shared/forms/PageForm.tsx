@@ -22,12 +22,11 @@ import { createPage, updatePage } from "@/lib/actions/page.actions";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
-import DeleteBtn from "../btns/DeleteBtn";
 import * as z from "zod";
 
 type Props = {
-  isAdmin: boolean;
-  page: IPage | Partial<IPage>;
+  isAdmin: boolean | undefined;
+  page: IPage | Partial<IPage> | undefined;
   pageName: "Welcome Page" | "Services Page" | "Questions Page";
 };
 
@@ -63,7 +62,7 @@ const PageForm = ({ isAdmin, page, pageName }: Props) => {
     if (!isValidForm(values)) return;
 
     try {
-      if (page._id) {
+      if (page?._id) {
         await updatePage({
           ...values,
           _id: page._id!,
@@ -123,7 +122,7 @@ const PageForm = ({ isAdmin, page, pageName }: Props) => {
               )}
             />
             <FormBtn
-              text={`${page._id ? "Update" : "Create"} ${pageName}`}
+              text={`${page?._id ? "Update" : "Create"} ${pageName}`}
               isSubmitting={form.formState.isSubmitting}
             />
           </form>

@@ -66,7 +66,7 @@ export async function updatePage(params: UpdatePageParams) {
   }
 }
 
-export async function deletePage(pageId: string) {
+export async function deletePage(pageId: string, path: string) {
   try {
     await connectToDb();
 
@@ -74,7 +74,7 @@ export async function deletePage(pageId: string) {
 
     if (!deletedPage) throw new Error("Could not find the page.");
 
-    revalidatePath("/");
+    revalidatePath(path);
     return null;
   } catch (error) {
     handleError(error);
