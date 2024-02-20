@@ -82,6 +82,11 @@ export const serviceSchema = z.object({
   serviceContent: z.string().min(1, "Kindly provide us a service content."),
 });
 
+export const questionSchema = z.object({
+  question: z.string().min(1, "Kindly provide us a question."),
+  answer: z.string().min(1, "Kindly provide us an answer."),
+});
+
 // export const homePageSchema = z.object({
 //   title: z
 //     .string()
@@ -104,8 +109,3 @@ export const serviceSchema = z.object({
 //     })
 //   ),
 // });
-
-export const questionSchema = z.object({
-  question: z.string().min(3, "Question must be at least 3 characters."),
-  answer: z.string().min(3, "Answer must be at least 3 characters."),
-});

@@ -15,35 +15,35 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidForm, handleError } from "@/lib/utils";
+import { IQuestion } from "@/lib/database/models/question.model";
 import { IPage } from "@/lib/database/models/page.model";
-import { pageSchema } from "@/lib/validators";
-import { pageDefaultValues } from "@/constants";
+import { questionSchema } from "@/lib/validators";
+import { questionDefaultValues } from "@/constants";
 import { createPage, updatePage } from "@/lib/actions/page.actions";
 import EditBtn from "../btns/EditBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type Props = {
+type QuestionFormProps = {
   isAdmin: boolean | undefined;
-  page: IPage | Partial<IPage> | undefined;
-  pageName: "Welcome Page" | "Services Page" | "Questions Page";
+  question: IQuestion | Partial<IQuestion> | undefined | null;
 };
 
-const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
+const QuestionForm = ({ isAdmin, question }: QuestionFormProps) => {
   if (!isAdmin) return;
 
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const pathname = usePathname();
 
-  const form = useForm<z.infer<typeof pageSchema>>({
-    resolver: zodResolver(pageSchema),
-    defaultValues: page ? page : pageDefaultValues,
+  const form = useForm<z.infer<typeof questionSchema>>({
+    resolver: zodResolver(questionSchema),
+    defaultValues: question ? question : questionDefaultValues,
   });
 
   useEffect(() => {
-    form.reset(page ? page : pageDefaultValues);
-  }, [page]);
+    form.reset(question ? question : questionDefaultValues);
+  }, [question]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -57,18 +57,17 @@ const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof pageSchema>) {
-    values.pageName = pageName;
+  async function onSubmit(values: z.infer<typeof questionSchema>) {
     if (!isValidForm(values)) return;
 
     try {
-      if (page?._id) {
-        await updatePage({
-          ...values,
-          _id: page._id!,
-          path: pathname,
-        });
-      } else await createPage({ ...values, path: pathname });
+      // if (question?._id) {
+      //   await updatePage({
+      //     ...values,
+      //     _id: page._id!,
+      //     path: pathname,
+      //   });
+      // } else await createPage({ ...values, path: pathname });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -79,7 +78,7 @@ const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
   return (
     <>
       <EditBtn
-        centeredPosition={page?.pageTitle ? false : true}
+        centeredPosition={question?._id ? false : true}
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (
@@ -89,15 +88,13 @@ const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
             className="edit-form-style"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">
-              {pageName.split(" ")[0]} Form
-            </h1>
+            <h1 className="title-style text-white">Question Form</h1>
             <FormField
               control={form.control}
-              name="pageTitle"
+              name="question"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Title</FormLabel>
+                  <FormLabel className="label-style">Question</FormLabel>
                   <FormControl>
                     <Input {...field} className="edit-input-style text-style" />
                   </FormControl>
@@ -107,10 +104,10 @@ const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
             />
             <FormField
               control={form.control}
-              name="pageContent"
+              name="answer"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Content</FormLabel>
+                  <FormLabel className="label-style">Answer</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
@@ -122,7 +119,7 @@ const QuestionForm = ({ isAdmin, page, pageName }: Props) => {
               )}
             />
             <FormBtn
-              text={`${page?._id ? "Update" : "Create"} ${pageName}`}
+              text={`${question?._id ? "Edit" : "Create"} Question`}
               isSubmitting={form.formState.isSubmitting}
             />
           </form>

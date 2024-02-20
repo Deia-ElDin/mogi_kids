@@ -9,9 +9,18 @@ export async function createUser(user: CreateUserParams) {
   try {
     await connectToDb();
 
-    console.log("we should be here");
+    const isUserExists = await User.findOne({ email: user.email });
+    if (isUserExists) return null;
 
-    const newUser = await User.create(user);
+    const adminMails = ["deia.tech2021@gmail.com", "mohagtareg@gmail.com"];
+    const role = adminMails.includes(user.email) ? "Admin" : "User";
+    console.log("role", role);
+
+    if (adminMails.includes(user.email)) console.log("true include");
+    else console.log("false not include");
+
+    const newUser = await User.create({ ...user, role });
+
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
     handleError(error);

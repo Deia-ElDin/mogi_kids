@@ -1,34 +1,54 @@
-import { auth } from "@clerk/nextjs";
-import { getUserByUserId } from "@/lib/actions/user.actions";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getAllQuestions } from "@/lib/actions/question.actions";
-// import { IQuestion } from "@/lib/database/models/question.model";
+import { IQuestion } from "@/lib/database/models/question.model";
+import { IPage } from "@/lib/database/models/page.model";
+import { getPageContent, getPageTitle } from "@/lib/utils";
+import { deletePage } from "@/lib/actions/page.actions";
+import { handleError } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import Article from "./helpers/Article";
-import Title from "./helpers/Title";
+import PageForm from "./forms/PageForm";
+import QuestionForm from "./forms/QuestionForm";
+import DeleteBtn from "./btns/DeleteBtn";
 
-const Questions = async () => {
-  const { sessionClaims } = auth();
-  const userId = sessionClaims?.userId as string;
-  const user = await getUserByUserId(userId);
-  const isAdmin = user?.role === "Admin";
-  // const questionsList: IQuestion[] = await getAllQuestions();
-  const questionsList = await getAllQuestions();
+type QuestionsProps = {
+  isAdmin: boolean | undefined;
+  questionsPage: IPage | Partial<IPage> | undefined;
+  questions: IQuestion[] | [];
+};
+
+const Questions = async ({
+  isAdmin,
+  questionsPage,
+  questions,
+}: QuestionsProps) => {
+  const pageTitle = getPageTitle(
+    questionsPage,
+    isAdmin,
+    "Questions Page Title"
+  );
+  const pageContent = getPageContent(questionsPage, isAdmin);
+
+  const handleDelete = async () => {
+    try {
+      if (questionsPage?._id) await deletePage(questionsPage._id, "/");
+      // if (questions.length > 0) await deleteAllServices();
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   return (
     <section className="section-style">
-      {questionsList.length === 0 ? (
-        <Article title="Questions Section Title" content="Content" />
-      ) : (
+      <Article title={pageTitle} content={pageContent} />
+      {questions.length > 0 && (
         <>
-          <Title text="Frequently Asked Questions" />
           <Accordion type="single" collapsible className="w-full">
-            {questionsList.map((questionObj: any) => (
+            {questions.map((questionObj: any) => (
               <AccordionItem
                 key={questionObj.question}
                 value={questionObj.question}
@@ -44,10 +64,25 @@ const Questions = async () => {
           </Accordion>
         </>
       )}
-      {/* {isAdmin && <QuestionForm />} */}
-      <Separator />
+      <PageForm
+        isAdmin={isAdmin}
+        page={questionsPage}
+        pageName="Questions Page"
+      />
+      <QuestionForm isAdmin={isAdmin} question={null} />
+      <DeleteBtn
+        pageId={questionsPage?._id}
+        isAdmin={isAdmin}
+        deletionTarget="Services Section"
+        handleClick={handleDelete}
+      />
+      <Separator pageId={questionsPage?._id} isAdmin={isAdmin} />
     </section>
   );
 };
 
 export default Questions;
+
+{
+  /* <Title text="Frequently Asked Questions" /> */
+}

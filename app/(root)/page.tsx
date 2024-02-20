@@ -7,6 +7,7 @@ import { IService } from "@/lib/database/models/service.model";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getAllPages } from "@/lib/actions/page.actions";
 import { getAllServices } from "@/lib/actions/service.actions";
+import { getAllQuestions } from "@/lib/actions/question.actions";
 
 import { findPage } from "@/lib/utils";
 
@@ -25,6 +26,8 @@ export default async function Home() {
   const user: IUser = await getUserByUserId(userId);
   const pages: IPage[] = await getAllPages();
   const services: IService[] = await getAllServices();
+  const questions = await getAllQuestions();
+
   const isAdmin = user?.role === "Admin";
 
   return (
@@ -39,7 +42,11 @@ export default async function Home() {
         servicesPage={findPage(pages, "Services Page")}
         services={services}
       />
-      <Questions />
+      <Questions
+        isAdmin={isAdmin}
+        questionsPage={findPage(pages, "Questions Page")}
+        questions={questions}
+      />
       <Statistics />
       <Customers />
       <Quote />
