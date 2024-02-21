@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -16,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidForm, handleError } from "@/lib/utils";
 import { IQuestion } from "@/lib/database/models/question.model";
-import { IPage } from "@/lib/database/models/page.model";
+import { createQuestion, updateQuestion } from "@/lib/actions/question.actions";
 import { questionSchema } from "@/lib/validators";
 import { questionDefaultValues } from "@/constants";
 import AddBtn from "../btns/AddBtn";
@@ -33,7 +32,6 @@ const QuestionForm = ({ isAdmin, question }: QuestionFormProps) => {
   if (!isAdmin) return;
 
   const [displayForm, setDisplayForm] = useState<boolean>(false);
-  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -60,13 +58,12 @@ const QuestionForm = ({ isAdmin, question }: QuestionFormProps) => {
     if (!isValidForm(values)) return;
 
     try {
-      // if (question?._id) {
-      //   await updatePage({
-      //     ...values,
-      //     _id: page._id!,
-      //     path: pathname,
-      //   });
-      // } else await createPage({ ...values, path: pathname });
+      if (question?._id) {
+        await updateQuestion({
+          ...values,
+          _id: question._id!,
+        });
+      } else await createQuestion({ ...values });
       setDisplayForm(false);
       form.reset();
     } catch (error) {

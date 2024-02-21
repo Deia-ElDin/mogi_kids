@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { IPage } from "@/lib/database/models/page.model";
 import { IService } from "@/lib/database/models/service.model";
 import { deletePage } from "@/lib/actions/page.actions";
@@ -13,7 +12,6 @@ import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
 import ServiceForm from "@/components/shared/forms/ServiceForm";
 import PageForm from "@/components/shared/forms/PageForm";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
-import AddBtn from "./btns/AddBtn";
 
 type ServicesProps = {
   isAdmin: boolean | undefined;
@@ -26,13 +24,12 @@ const Services: React.FC<ServicesProps> = ({
   servicesPage,
   services,
 }) => {
-  const pathName = usePathname();
   const pageTitle = getPageTitle(servicesPage, isAdmin, "Services Page Title");
   const pageContent = getPageContent(servicesPage, isAdmin);
 
   const handleDelete = async () => {
     try {
-      if (servicesPage?._id) await deletePage(servicesPage._id, pathName);
+      if (servicesPage?._id) await deletePage(servicesPage._id, "/");
       if (services.length > 0) await deleteAllServices();
     } catch (error) {
       handleError(error);

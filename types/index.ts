@@ -39,6 +39,16 @@ export type UpdateServiceParams = {
   path: string;
 };
 
+// Questions
+export type CreateQuestionParams = {
+  question: string;
+  answer: string;
+};
+
+export type UpdateQuestionParams = {
+  _id: string;
+} & CreateQuestionParams;
+
 // // WelcomePage Params
 // export type CreateWelcomePageParams = {
 //   title: string;
@@ -54,12 +64,3 @@ export type UpdateServiceParams = {
 // };
 
 // // ServicePage Params
-
-export type CreateQuestionParams = {
-  question: string;
-  answer: string;
-};
-
-export type UpdateQuestionParams = {
-  _id: string;
-} & CreateQuestionParams;

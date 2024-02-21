@@ -44,7 +44,7 @@ export default async function Home() {
       <Questions
         isAdmin={isAdmin}
         questionsPage={findPage(pages, "Questions Page")}
-        questions={questions}
+        questions={[]}
       />
       <Statistics />
       <Customers />

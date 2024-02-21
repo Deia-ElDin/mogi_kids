@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -8,6 +10,7 @@ import { IQuestion } from "@/lib/database/models/question.model";
 import { IPage } from "@/lib/database/models/page.model";
 import { getPageContent, getPageTitle } from "@/lib/utils";
 import { deletePage } from "@/lib/actions/page.actions";
+import { deleteAllQuestions } from "@/lib/actions/question.actions";
 import { handleError } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import Article from "./helpers/Article";
@@ -21,22 +24,16 @@ type QuestionsProps = {
   questions: IQuestion[] | [];
 };
 
-const Questions = async ({
-  isAdmin,
-  questionsPage,
-  questions,
-}: QuestionsProps) => {
-  const pageTitle = getPageTitle(
-    questionsPage,
-    isAdmin,
-    "Questions Page Title"
-  );
+const Questions = (props: QuestionsProps) => {
+  const { isAdmin, questionsPage, questions } = props;
+
+  const pageTitle = getPageTitle(questionsPage, isAdmin, "Questions Page");
   const pageContent = getPageContent(questionsPage, isAdmin);
 
   const handleDelete = async () => {
     try {
       if (questionsPage?._id) await deletePage(questionsPage._id, "/");
-      // if (questions.length > 0) await deleteAllServices();
+      if (questions.length > 0) await deleteAllQuestions();
     } catch (error) {
       handleError(error);
     }
@@ -45,10 +42,10 @@ const Questions = async ({
   return (
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
-      {questions.length > 0 && (
+      {questions?.length > 0 && (
         <>
           <Accordion type="single" collapsible className="w-full">
-            {questions.map((questionObj: any) => (
+            {questions.map((questionObj) => (
               <AccordionItem
                 key={questionObj.question}
                 value={questionObj.question}

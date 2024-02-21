@@ -103,6 +103,8 @@ export async function deleteService(serviceId: string) {
   if (!serviceId) return null;
 
   try {
+    await connectToDb();
+
     const deletedService = await Service.findByIdAndDelete(serviceId);
     if (!deletedService)
       throw new Error("Service not found or already deleted.");
@@ -120,6 +122,8 @@ export async function deleteService(serviceId: string) {
 
 export async function deleteAllServices() {
   try {
+    await connectToDb();
+
     const allServices = await Service.find();
 
     allServices.map(async (service) => await deleteService(service._id));
