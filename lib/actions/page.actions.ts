@@ -75,7 +75,8 @@ export async function deletePage(pageId: string, path: string) {
     if (!deletedPage) throw new Error("Could not find the page.");
 
     revalidatePath(path);
-    return null;
+
+    return "Page deleted successfully";
   } catch (error) {
     handleError(error);
   }

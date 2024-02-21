@@ -88,7 +88,7 @@ export async function deleteRecord(recordId: string) {
 
     revalidatePath("/");
 
-    return null;
+    return "Record deleted successfully";
   } catch (error) {
     handleError(error);
   }
@@ -103,7 +103,8 @@ export async function deleteAllRecords() {
     allRecords.map(async (record) => await deleteRecord(record._id));
 
     revalidatePath("/");
-    return null;
+
+    return "All records deleted successfully";
   } catch (error) {
     handleError(error);
   }

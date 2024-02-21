@@ -5,12 +5,14 @@ import { IPage } from "@/lib/database/models/page.model";
 import { IService } from "@/lib/database/models/service.model";
 import { IQuestion } from "@/lib/database/models/question.model";
 import { IRecord } from "@/lib/database/models/record.model";
+import { IReview } from "@/lib/database/models/review.model";
 
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getAllPages } from "@/lib/actions/page.actions";
 import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
+import { getAllReviews } from "@/lib/actions/review.actions";
 
 import { findPage, formatBytes } from "@/lib/utils";
 
@@ -31,6 +33,7 @@ export default async function Home() {
   const services: IService[] = await getAllServices();
   const questions: IQuestion[] = await getAllQuestions();
   const records: IRecord[] = await getAllRecords();
+  const reviews: IReview[] = await getAllReviews();
   const isAdmin = user?.role === "Admin";
 
   console.log("size = ", formatBytes(services, records));
@@ -57,7 +60,12 @@ export default async function Home() {
         recordsPage={findPage(pages, "Records Page")}
         records={records}
       />
-      <Customers />
+      <Customers
+        isAdmin={isAdmin}
+        customersPage={findPage(pages, "Customers Page")}
+        customersWelcomingPage={findPage(pages, "Customers Welcoming Page")}
+        reviews={reviews}
+      />
       <Quote />
       <Contacts />
     </>

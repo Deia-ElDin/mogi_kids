@@ -72,4 +72,9 @@ export type UpdateRecordParams = {
 export type CreateReviewParams = {
   review?: string;
   rating?: string;
+  user: { _id: string; firstName: string; lastName?: string; photo?: string };
 };
+
+export type UpdateReviewParams = {
+  _id: string;
+} & CreateReviewParams;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -12,7 +12,6 @@ import { IPage } from "@/lib/database/models/page.model";
 import { getPageContent, getPageTitle } from "@/lib/utils";
 import { deletePage } from "@/lib/actions/page.actions";
 import {
-  updateQuestion,
   deleteQuestion,
   deleteAllQuestions,
 } from "@/lib/actions/question.actions";
@@ -22,8 +21,6 @@ import Article from "./helpers/Article";
 import PageForm from "./forms/PageForm";
 import QuestionForm from "./forms/QuestionForm";
 import MiniQuestionForm from "./forms/MiniQuestionForm";
-import Image from "next/image";
-import UpdateBtn from "./btns/UpdateBtn";
 import DeleteBtn from "./btns/DeleteBtn";
 
 type QuestionsProps = {
@@ -34,9 +31,6 @@ type QuestionsProps = {
 
 const Questions = (props: QuestionsProps) => {
   const { isAdmin, questionsPage, questions } = props;
-
-  const [question, setQuestion] = useState<IQuestion | null>(null);
-  const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const pageTitle = getPageTitle(
     questionsPage,

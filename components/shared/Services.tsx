@@ -9,8 +9,8 @@ import { handleError } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 import Article from "@/components/shared/helpers/Article";
 import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
-import ServiceForm from "@/components/shared/forms/ServiceForm";
 import PageForm from "@/components/shared/forms/PageForm";
+import ServiceForm from "@/components/shared/forms/ServiceForm";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 
 type ServicesProps = {
@@ -24,7 +24,11 @@ const Services: React.FC<ServicesProps> = ({
   servicesPage,
   services,
 }) => {
-  const pageTitle = getPageTitle(servicesPage, isAdmin, "Services Section Title");
+  const pageTitle = getPageTitle(
+    servicesPage,
+    isAdmin,
+    "Services Section Title"
+  );
   const pageContent = getPageContent(servicesPage, isAdmin);
 
   const handleDelete = async () => {

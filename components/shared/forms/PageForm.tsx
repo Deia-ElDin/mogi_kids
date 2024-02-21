@@ -30,7 +30,9 @@ type Props = {
     | "Welcome Page"
     | "Services Page"
     | "Questions Page"
-    | "Records Page";
+    | "Records Page"
+    | "Customers Page"
+    | "Customers Welcoming Page";
 };
 
 const PageForm = ({ page, pageName }: Props) => {
@@ -89,7 +91,7 @@ const PageForm = ({ page, pageName }: Props) => {
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
             <h1 className="title-style text-white">
-              {pageName.split(" ")[0]} Form
+              {pageName.split(" ").slice(0, -1).join(" ")} Form
             </h1>
             <FormField
               control={form.control}

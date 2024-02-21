@@ -68,7 +68,7 @@ export async function deleteQuestion(questionId: string) {
 
     revalidatePath("/");
 
-    return null;
+    return "Question deleted successfully";
   } catch (error) {
     handleError(error);
   }
@@ -84,7 +84,8 @@ export async function deleteAllQuestions() {
       throw new Error("Questions not found or already deleted.");
 
     revalidatePath("/");
-    return null;
+
+    return "All questions deleted successfully";
   } catch (error) {
     handleError(error);
   }

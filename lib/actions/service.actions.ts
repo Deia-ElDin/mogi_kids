@@ -114,7 +114,8 @@ export async function deleteService(serviceId: string) {
     await utapi.deleteFiles(imgName);
 
     revalidatePath("/");
-    return null;
+
+    return "Service deleted successfully";
   } catch (error) {
     handleError(error);
   }
@@ -129,7 +130,8 @@ export async function deleteAllServices() {
     allServices.map(async (service) => await deleteService(service._id));
 
     revalidatePath("/");
-    return null;
+
+    return "All services deleted successfully";
   } catch (error) {
     handleError(error);
   }

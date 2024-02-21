@@ -8,25 +8,25 @@ import {
   Autoplay,
 } from "swiper/modules";
 import { useRouter } from "next/navigation";
-import { IService } from "@/lib/database/models/service.model";
+import { IReview } from "@/lib/database/models/review.model";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
-import ServiceCard from "@/components/shared/cards/ServiceCard";
+import CstReviewCard from "../cards/CstCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
-type ServicesSwiperProps = {
-  services: IService[];
+type ReviewsSwiperProps = {
+  reviews: IReview[];
 };
 
-const ServicesSwiper: React.FC<ServicesSwiperProps> = ({ services }) => {
-  if (services.length === 0) return;
+const ReviewsSwiper = ({ reviews }: ReviewsSwiperProps) => {
+  if (reviews.length === 0) return;
 
   const router = useRouter();
 
   return (
-    <div className="pt-10 relative">
+    <div className="py-10 relative">
       <Swiper
         spaceBetween={100}
         slidesPerView="auto"
@@ -40,10 +40,10 @@ const ServicesSwiper: React.FC<ServicesSwiperProps> = ({ services }) => {
           depth: 100,
           modifier: 2.5,
         }}
-        pagination={{ el: ".swiper-pagination1", clickable: true }}
+        pagination={{ el: ".swiper-pagination2", clickable: true }}
         navigation={{
-          nextEl: ".swiper-next-img1",
-          prevEl: ".swiper-prev-img1",
+          nextEl: ".swiper-next-img2",
+          prevEl: ".swiper-prev-img2",
         }}
         autoplay={{
           delay: 2500,
@@ -52,20 +52,23 @@ const ServicesSwiper: React.FC<ServicesSwiperProps> = ({ services }) => {
         }}
         modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
       >
-        {services.map((service, index) => (
-          <SwiperSlide key={index} className="max-w-[300px]">
-            <ServiceCard
-              serviceObj={service}
-              handleNavigate={() => router.push(`/services/${service._id}`)}
+        {reviews.map((reviewObj, index) => (
+          <SwiperSlide
+            key={`${reviewObj.user._id}-${index}`}
+            className="max-w-[300px] mb-3"
+          >
+            <CstReviewCard
+              reviewObj={reviewObj}
+              handleNavigate={() => router.push(`/users/${reviewObj.user._id}`)}
             />
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="swiper-pagination1 text-center"></div>
-      <ArrowBtn btnClass="swiper-prev-img1" img="Left arrow" />
-      <ArrowBtn btnClass="swiper-next-img1" img="Right arrow" />
+      <div className="swiper-pagination2 text-center"></div>
+      <ArrowBtn btnClass="swiper-prev-img2" img="Left arrow" />
+      <ArrowBtn btnClass="swiper-next-img2" img="Right arrow" />
     </div>
   );
 };
 
-export default ServicesSwiper;
+export default ReviewsSwiper;
