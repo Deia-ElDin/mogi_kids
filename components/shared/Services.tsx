@@ -45,7 +45,7 @@ const Services: React.FC<ServicesProps> = ({
       <DeleteBtn
         pageId={servicesPage?._id}
         isAdmin={isAdmin}
-        deletionTarget="Services Section"
+        deletionTarget="Delete Services Section"
         handleClick={handleDelete}
       />
       <Separator pageId={servicesPage?._id} isAdmin={isAdmin} />

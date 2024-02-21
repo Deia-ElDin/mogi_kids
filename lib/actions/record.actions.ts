@@ -2,9 +2,12 @@
 
 import { connectToDb } from "../database";
 import { CreateRecordParams, UpdateRecordParams } from "@/types";
-import { handleError } from "../utils";
+import { handleError, getImgName } from "../utils";
 import { revalidatePath } from "next/cache";
+import { UTApi } from "uploadthing/server";
 import Record from "../database/models/record.model";
+
+const utapi = new UTApi();
 
 export async function getAllRecords() {
   try {
@@ -35,22 +38,40 @@ export async function createRecord(params: CreateRecordParams) {
 }
 
 export async function updateRecord(params: UpdateRecordParams) {
-  let { _id, svgUrl, number, label, backgroundColor } = params;
+  const { _id, svgUrl, imgSize, value, label, backgroundColor, newImg } =
+    params;
 
+  if (!_id || !svgUrl || !label) return;
+
+  let updatedRecord;
   try {
     await connectToDb();
 
-    const updatedRecord = await Record.findByIdAndUpdate(_id, {
-      svgUrl,
-      number,
-      label,
-      backgroundColor,
-    });
+    const originalRecord = await Record.findById(_id);
 
-    if (!updatedRecord) throw new Error("Failed to update the record.");
+    if (!originalRecord) throw new Error("Could not find the original record.");
+
+    if (newImg) {
+      const imgName = getImgName(originalRecord);
+      if (!imgName) throw new Error("Failed to read the image name.");
+      await utapi.deleteFiles(imgName);
+
+      updatedRecord = await Record.findByIdAndUpdate(_id, {
+        svgUrl,
+        imgSize,
+        value,
+        label,
+        backgroundColor,
+      });
+    } else {
+      updatedRecord = await Record.findByIdAndUpdate(_id, {
+        value,
+        label,
+        backgroundColor,
+      });
+    }
 
     revalidatePath("/");
-
     return JSON.parse(JSON.stringify(updatedRecord));
   } catch (error) {
     handleError(error);
@@ -67,6 +88,21 @@ export async function deleteRecord(recordId: string) {
 
     revalidatePath("/");
 
+    return null;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function deleteAllRecords() {
+  try {
+    await connectToDb();
+
+    const allRecords = await Record.find();
+
+    allRecords.map(async (record) => await deleteRecord(record._id));
+
+    revalidatePath("/");
     return null;
   } catch (error) {
     handleError(error);

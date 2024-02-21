@@ -87,25 +87,20 @@ export const questionSchema = z.object({
   answer: z.string().min(1, "Kindly provide us an answer."),
 });
 
-// export const homePageSchema = z.object({
-//   title: z
-//     .string()
-//     .min(3, "Welcome section title must be at least 3 characters."),
-//   content: z
-//     .string()
-//     .min(3, "Welcome section content must be at least 3 characters."),
-// });
-
-// export const servicePageSchema = z.object({
-//   title: z.string().min(3, "Service page title must be at least 3 characters."),
-//   content: z
-//     .string()
-//     .min(3, "Service page content must be at least 3 characters."),
-//   services: z.array(
-//     z.object({
-//       service: z.string().min(3, "Kindly provide us a service name."),
-//       imgUrl: z.string().min(3, "Kindly provide us a service image."),
-//       serviceContent: z.string().min(3, "Kindly provide us a service content."),
-//     })
-//   ),
-// });
+export const recordSchema = z.object({
+  svgUrl: z.string().min(1, "Kindly provide us the record svg url."),
+  value: z.string().min(1, "Kindly provide us a record number."),
+  label: z.string().min(1, "Kindly provide us the record label."),
+  backgroundColor: z
+    .string()
+    .min(1)
+    .refine(
+      (value) => {
+        return value === undefined || /^#[0-9A-Fa-f]{6}$/.test(value);
+      },
+      {
+        message:
+          "Background color must start with '#' & (0 - 9, a - f, A - F), i.e. #ffeae6",
+      }
+    ),
+});

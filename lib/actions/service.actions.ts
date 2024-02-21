@@ -13,7 +13,7 @@ export async function getAllServices() {
   try {
     await connectToDb();
 
-    const services = await Service.find();
+    const services = await Service.find().sort({ createdAt: -1 });
 
     return JSON.parse(JSON.stringify(services));
   } catch (error) {
@@ -128,6 +128,7 @@ export async function deleteAllServices() {
 
     allServices.map(async (service) => await deleteService(service._id));
 
+    revalidatePath("/");
     return null;
   } catch (error) {
     handleError(error);

@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { IPage } from "./database/models/page.model";
 import { IService } from "./database/models/service.model";
+import { IRecord } from "./database/models/record.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -111,4 +112,23 @@ export const generateBackgroundColor = (): string => {
     .padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 
   return hexColor;
+};
+
+export const formatBytes = (
+  services: IService[],
+  records: IRecord[]
+): string => {
+  const units = ["B", "KB", "MB", "GB"];
+  let size = 0;
+
+  services.forEach((service) => (size += service.imgSize));
+  records.forEach((record) => (size += record.imgSize));
+
+  let i = 0;
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024;
+    i++;
+  }
+
+  return `${size.toFixed(2)} ${units[i]}`;
 };

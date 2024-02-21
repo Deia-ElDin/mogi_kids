@@ -45,10 +45,6 @@ const Questions = (props: QuestionsProps) => {
   );
   const pageContent = getPageContent(questionsPage, isAdmin);
 
-  // useEffect(() => {
-  //   if (isAdmin && questionsPage) setDisplayForm(true);
-  //   else if
-  // }, [isAdmin, questionsPage, question]);
   const handleDelete = async () => {
     try {
       if (questionsPage?._id) await deletePage(questionsPage._id, "/");
@@ -57,8 +53,6 @@ const Questions = (props: QuestionsProps) => {
       handleError(error);
     }
   };
-
-  console.log("question", question);
 
   return (
     <section className="section-style">
@@ -82,7 +76,7 @@ const Questions = (props: QuestionsProps) => {
                       <DeleteBtn
                         pageId={questionsPage?._id}
                         isAdmin={isAdmin}
-                        deletionTarget="Question"
+                        deletionTarget="Delete Question"
                         handleClick={async () => {
                           await deleteQuestion(questionObj._id);
                         }}
@@ -96,9 +90,7 @@ const Questions = (props: QuestionsProps) => {
         </>
       )}
       {isAdmin && <PageForm page={questionsPage} pageName="Questions Page" />}
-      {((isAdmin && questionsPage?._id) || question) && (
-        <QuestionForm question={question} />
-      )}
+      {isAdmin && questionsPage?._id && <QuestionForm question={null} />}
       <DeleteBtn
         pageId={questionsPage?._id}
         isAdmin={isAdmin}

@@ -3,6 +3,7 @@
 import { connectToDb } from "../database";
 import { CreateUserParams } from "@/types";
 import { handleError } from "../utils";
+import { revalidatePath } from "next/cache";
 import User from "../database/models/user.model";
 
 export async function createUser(user: CreateUserParams) {
@@ -17,6 +18,7 @@ export async function createUser(user: CreateUserParams) {
 
     const newUser = await User.create({ ...user, role });
 
+    revalidatePath("/");
     return JSON.parse(JSON.stringify(newUser));
   } catch (error) {
     handleError(error);

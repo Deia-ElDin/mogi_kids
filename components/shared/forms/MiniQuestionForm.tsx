@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidForm, handleError } from "@/lib/utils";
 import { IQuestion } from "@/lib/database/models/question.model";
-import { createQuestion, updateQuestion } from "@/lib/actions/question.actions";
+import { updateQuestion } from "@/lib/actions/question.actions";
 import { questionSchema } from "@/lib/validators";
 import { questionDefaultValues } from "@/constants";
 import UpdateBtn from "../btns/UpdateBtn";
@@ -24,7 +24,7 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type MiniQuestionFormProps = {
-  question: IQuestion | Partial<IQuestion> | undefined | null;
+  question: IQuestion | Partial<IQuestion>;
 };
 
 const MiniQuestionForm = ({ question }: MiniQuestionFormProps) => {
@@ -55,12 +55,7 @@ const MiniQuestionForm = ({ question }: MiniQuestionFormProps) => {
     if (!isValidForm(values)) return;
 
     try {
-      if (question?._id) {
-        await updateQuestion({
-          ...values,
-          _id: question._id!,
-        });
-      } else await createQuestion({ ...values });
+      await updateQuestion({ ...values, _id: question._id! });
       setDisplayForm(false);
       form.reset();
     } catch (error) {

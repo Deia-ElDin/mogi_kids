@@ -84,7 +84,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
         <DeleteBtn
           pageId={id}
           isAdmin={isAdmin}
-          deletionTarget="Service"
+          deletionTarget="Delete Service"
           handleClick={handleDeleteService}
         />
         <MobileServiceForm

@@ -12,7 +12,7 @@ import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 
-import { findPage } from "@/lib/utils";
+import { findPage, formatBytes } from "@/lib/utils";
 
 import AdminPanel from "@/components/shared/AdminPanel";
 import Welcome from "@/components/shared/Welcome";
@@ -33,6 +33,8 @@ export default async function Home() {
   const records: IRecord[] = await getAllRecords();
   const isAdmin = user?.role === "Admin";
 
+  console.log("size = ", formatBytes(services, records));
+
   return (
     <>
       <AdminPanel />
@@ -50,7 +52,11 @@ export default async function Home() {
         questionsPage={findPage(pages, "Questions Page")}
         questions={questions}
       />
-      <Records />
+      <Records
+        isAdmin={isAdmin}
+        recordsPage={findPage(pages, "Records Page")}
+        records={records}
+      />
       <Customers />
       <Quote />
       <Contacts />

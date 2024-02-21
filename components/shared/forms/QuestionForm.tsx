@@ -55,12 +55,7 @@ const QuestionForm = ({ question }: QuestionFormProps) => {
     if (!isValidForm(values)) return;
 
     try {
-      if (question?._id) {
-        await updateQuestion({
-          ...values,
-          _id: question._id!,
-        });
-      } else await createQuestion({ ...values });
+      await createQuestion({ ...values });
       setDisplayForm(false);
       form.reset();
     } catch (error) {

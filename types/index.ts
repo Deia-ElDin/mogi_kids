@@ -31,7 +31,7 @@ export type CreateServiceParams = {
 
 export type UpdateServiceParams = {
   _id: string;
-  serviceName?: string;
+  serviceName: string;
   imgUrl?: string;
   imgSize?: number;
   serviceContent: string;
@@ -52,27 +52,18 @@ export type UpdateQuestionParams = {
 // Records Params
 export type CreateRecordParams = {
   svgUrl: string;
-  number: number;
+  imgSize: number;
+  value: string;
   label: string;
-  backgroundColor: string;
+  backgroundColor?: string;
 };
 
 export type UpdateRecordParams = {
   _id: string;
-} & CreateRecordParams;
-
-// // WelcomePage Params
-// export type CreateWelcomePageParams = {
-//   title: string;
-//   content: string;
-//   path: string;
-// };
-
-// export type UpdateWelcomePageParams = {
-//   _id: string;
-//   title: string;
-//   content: string;
-//   path: string;
-// };
-
-// // ServicePage Params
+  svgUrl?: string;
+  imgSize?: number;
+  value: string;
+  label: string;
+  backgroundColor?: string;
+  newImg: boolean;
+};

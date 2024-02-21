@@ -305,3 +305,10 @@ export const questionDefaultValues = {
   question: "",
   answer: "",
 };
+
+export const recordDefaultValues = {
+  svgUrl: "",
+  value: "",
+  label: "",
+  backgroundColor: "",
+};

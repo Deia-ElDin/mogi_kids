@@ -26,7 +26,11 @@ import * as z from "zod";
 
 type Props = {
   page: IPage | Partial<IPage> | undefined;
-  pageName: "Welcome Page" | "Services Page" | "Questions Page";
+  pageName:
+    | "Welcome Page"
+    | "Services Page"
+    | "Questions Page"
+    | "Records Page";
 };
 
 const PageForm = ({ page, pageName }: Props) => {

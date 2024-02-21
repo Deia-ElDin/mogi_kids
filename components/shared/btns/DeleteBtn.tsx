@@ -28,7 +28,7 @@ const DeleteBtn: React.FC<Props> = (props) => {
       <AlertDialog>
         <AlertDialogTrigger className="delete-btn w-full">
           {deletionTarget ? (
-            <p>Delete {deletionTarget != "none" && deletionTarget}</p>
+            <p>{deletionTarget}</p>
           ) : (
             <Image
               src="/assets/icons/x.svg"
