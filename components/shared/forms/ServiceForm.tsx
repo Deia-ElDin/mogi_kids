@@ -27,14 +27,10 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type Props = {
-  isAdmin: boolean | undefined;
-  servicesPageId: string | undefined;
   service: IService | null;
 };
 
-const ServiceForm: React.FC<Props> = ({ isAdmin, servicesPageId, service }) => {
-  if (!isAdmin || !servicesPageId) return null;
-
+const ServiceForm: React.FC<Props> = ({ service }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const pathname = usePathname();
@@ -88,7 +84,9 @@ const ServiceForm: React.FC<Props> = ({ isAdmin, servicesPageId, service }) => {
 
   return (
     <>
-      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
+      {!service && (
+        <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
+      )}
       {displayForm && (
         <Form {...form}>
           <form

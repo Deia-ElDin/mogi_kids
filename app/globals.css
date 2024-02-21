@@ -140,11 +140,68 @@ body {
     @apply bg-transparent hover:bg-transparent font-bold;
   }
 
-  .hidden-text {
+  .update-btn {
+    color: #fff;
+    background: #4caf50;
+    -webkit-border-radius: 28;
+    -moz-border-radius: 28;
+    border-radius: 28px;
+    font-family: Arial;
+    font-size: 20px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    width: 100%;
+    @apply text-custom-green bg-transparent hover:bg-transparent font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
+  }
+
+  .update-btn:hover {
+    color: #fff;
+    background: #4caf50;
+    background-image: -webkit-linear-gradient(top, #4caf50, #388e3c);
+    background-image: -moz-linear-gradient(top, #4caf50, #388e3c);
+    background-image: -ms-linear-gradient(top, #4caf50, #388e3c);
+    background-image: -o-linear-gradient(top, #4caf50, #388e3c);
+    background-image: linear-gradient(to bottom, #4caf50, #388e3c);
+    text-decoration: none;
+    @apply bg-transparent hover:bg-transparent font-bold;
+  }
+
+  .service-card-body {
+    width: 100%;
+    height: 350px;
+    top: 0;
+    left: 0;
+    position: absolute;
+    border-radius: 8px;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  .service-card-content {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: -100%;
+    position: absolute;
+    background-color: #1f3d4738;
+    backdrop-filter: blur(10px);
+    transition: 1s;
+    z-index: 5;
+    padding: 5px;
+    overflow-wrap: anywhere;
+  }
+
+  .service-card:hover .service-card-content {
+    left: 0;
+    backdrop-filter: blur(10px);
+    overflow-y: scroll;
+  }
+
+  /* .hidden-text {
     opacity: 0;
     height: 100%;
     width: 100%;
-    max-width: 400px;
+    max-width: 300px;
     position: absolute;
     top: 0;
     left: 0;
@@ -154,15 +211,17 @@ body {
     transition: opacity 1s ease-in-out;
     margin: 0 auto;
     overflow-wrap: anywhere;
-  }
+    z-index: 1;
+  } */
 
-  .hidden-text:hover {
+  /* .hidden-text:hover {
     opacity: 1;
     color: #fff;
     background-color: #d2a989;
     padding: 20px;
     margin: 0 auto;
-  }
+    z-index: 1;
+  } */
 
   .section-style {
     @apply flex flex-col w-[65%] py-4 relative;
@@ -230,7 +289,7 @@ body {
   }
 
   .tab-content {
-    @apply max-h-[300px];
+    @apply max-h-[350px];
   }
 
   .form-btn {

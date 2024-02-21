@@ -2,41 +2,36 @@ import { IService } from "@/lib/database/models/service.model";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Text from "../helpers/Text";
-import DeleteBtn from "../btns/DeleteBtn";
-import { deleteService } from "@/lib/actions/service.actions";
-import { handleError } from "@/lib/utils";
 
 type Props = {
   serviceObj: IService;
+  handleNavigate: () => void;
 };
 
 const ServiceCard: React.FC<Props> = (props) => {
-  const { serviceObj } = props;
-
-  const handleDeleteService = async () => {
-    try {
-      await deleteService(serviceObj.id);
-    } catch (error) {
-      handleError(error);
-    }
-  };
+  const { serviceObj, handleNavigate } = props;
 
   return (
-    <Card className="flex flex-col justify-center w-full cursor-pointer">
+    <Card
+      className="service-card flex flex-col justify-center w-full cursor-pointer h-[350px]"
+      onClick={handleNavigate}
+    >
       <Image
         src={serviceObj.imgUrl}
         alt={serviceObj.serviceName}
         width={300}
         height={300}
-        className="rounded-t-lg w-full"
+        className="rounded-t-lg w-full max-w-[300px] max-h-[300px] object-cover"
       />
       <p className="flex justify-center items-center text-center w-full h-[60px] font-bold text-lg bg-white rounded-b-lg">
         {serviceObj.serviceName}
       </p>
-      <Text
-        textClass="hidden-text w-full overflow-auto"
-        text={serviceObj.serviceContent}
-      />
+      <div className="service-card-body">
+        <Text
+          textClass="service-card-content w-full overflow-auto"
+          text={serviceObj.serviceContent}
+        />
+      </div>
     </Card>
   );
 };

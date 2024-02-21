@@ -53,12 +53,11 @@ const ServicesSwiper: React.FC<Props> = ({ services }) => {
         modules={[EffectCoverflow, Navigation, Pagination, Autoplay]}
       >
         {services.map((service, index) => (
-          <SwiperSlide
-            key={index}
-            className="max-w-[300px]"
-            onClick={() => router.push(`/services/${service._id}`)}
-          >
-            <ServiceCard serviceObj={service} />
+          <SwiperSlide key={index} className="max-w-[300px]">
+            <ServiceCard
+              serviceObj={service}
+              handleNavigate={() => router.push(`/services/${service._id}`)}
+            />
           </SwiperSlide>
         ))}
       </Swiper>

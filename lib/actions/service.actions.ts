@@ -23,7 +23,7 @@ export async function getAllServices() {
 
 export async function getServiceById(serviceId: string) {
   try {
-    connectToDb();
+    await connectToDb();
 
     const service = await Service.findById(serviceId);
     if (!service) throw new Error("Service not found");
@@ -63,8 +63,6 @@ export async function updateService(params: UpdateServiceParams) {
   const { _id, serviceName, imgUrl, imgSize, newImg, serviceContent, path } =
     params;
 
-  console.log("params", params);
-
   if (!_id || !serviceName || !imgUrl || !serviceContent || !path) return;
 
   let updatedService;
@@ -102,6 +100,8 @@ export async function updateService(params: UpdateServiceParams) {
 }
 
 export async function deleteService(serviceId: string) {
+  if (!serviceId) return null;
+
   try {
     const deletedService = await Service.findByIdAndDelete(serviceId);
     if (!deletedService)
@@ -112,7 +112,6 @@ export async function deleteService(serviceId: string) {
     await utapi.deleteFiles(imgName);
 
     revalidatePath("/");
-
     return null;
   } catch (error) {
     handleError(error);

@@ -64,11 +64,7 @@ const Questions = async ({
           </Accordion>
         </>
       )}
-      <PageForm
-        isAdmin={isAdmin}
-        page={questionsPage}
-        pageName="Questions Page"
-      />
+      {isAdmin && <PageForm page={questionsPage} pageName="Questions Page" />}
       <QuestionForm isAdmin={isAdmin} question={null} />
       <DeleteBtn
         pageId={questionsPage?._id}

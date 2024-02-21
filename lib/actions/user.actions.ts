@@ -14,10 +14,6 @@ export async function createUser(user: CreateUserParams) {
 
     const adminMails = ["deia.tech2021@gmail.com", "mohagtareg@gmail.com"];
     const role = adminMails.includes(user.email) ? "Admin" : "User";
-    console.log("role", role);
-
-    if (adminMails.includes(user.email)) console.log("true include");
-    else console.log("false not include");
 
     const newUser = await User.create({ ...user, role });
 

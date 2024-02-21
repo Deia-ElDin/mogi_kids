@@ -31,7 +31,7 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
   return (
     <section className="section-style relative">
       <Article title={pageTitle} content={pageContent} />
-      <PageForm isAdmin={isAdmin} page={welcomePage} pageName="Welcome Page" />
+      {isAdmin && <PageForm page={welcomePage} pageName="Welcome Page" />}
       <DeleteBtn
         pageId={welcomePage._id}
         isAdmin={isAdmin}

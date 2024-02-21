@@ -19,8 +19,7 @@ import { IQuestion } from "@/lib/database/models/question.model";
 import { IPage } from "@/lib/database/models/page.model";
 import { questionSchema } from "@/lib/validators";
 import { questionDefaultValues } from "@/constants";
-import { createPage, updatePage } from "@/lib/actions/page.actions";
-import EditBtn from "../btns/EditBtn";
+import AddBtn from "../btns/AddBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
@@ -77,10 +76,7 @@ const QuestionForm = ({ isAdmin, question }: QuestionFormProps) => {
 
   return (
     <>
-      <EditBtn
-        centeredPosition={question?._id ? false : true}
-        handleClick={() => setDisplayForm((prev) => !prev)}
-      />
+      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
       {displayForm && (
         <Form {...form}>
           <form

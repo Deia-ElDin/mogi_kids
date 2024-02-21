@@ -28,7 +28,7 @@ const DeleteBtn: React.FC<Props> = (props) => {
       <AlertDialog>
         <AlertDialogTrigger className="delete-btn w-full">
           {deletionTarget ? (
-            <p>Delete {deletionTarget}</p>
+            <p>Delete {deletionTarget != "none" && deletionTarget}</p>
           ) : (
             <Image
               src="/assets/icons/x.svg"
@@ -43,7 +43,8 @@ const DeleteBtn: React.FC<Props> = (props) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your{" "}
-              {deletionTarget} and remove it from your database.
+              {deletionTarget == "none" && "service"} and remove it from your
+              database.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

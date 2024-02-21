@@ -25,14 +25,11 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type Props = {
-  isAdmin: boolean | undefined;
   page: IPage | Partial<IPage> | undefined;
   pageName: "Welcome Page" | "Services Page" | "Questions Page";
 };
 
-const PageForm = ({ isAdmin, page, pageName }: Props) => {
-  if (!isAdmin) return;
-
+const PageForm = ({ page, pageName }: Props) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const pathname = usePathname();
 
@@ -59,8 +56,6 @@ const PageForm = ({ isAdmin, page, pageName }: Props) => {
 
   async function onSubmit(values: z.infer<typeof pageSchema>) {
     values.pageName = pageName;
-    if (!isValidForm(values)) return;
-
     try {
       if (page?._id) {
         await updatePage({

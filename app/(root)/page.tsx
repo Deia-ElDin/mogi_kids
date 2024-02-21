@@ -27,7 +27,6 @@ export default async function Home() {
   const pages: IPage[] = await getAllPages();
   const services: IService[] = await getAllServices();
   const questions = await getAllQuestions();
-
   const isAdmin = user?.role === "Admin";
 
   return (

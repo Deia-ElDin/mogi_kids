@@ -13,6 +13,7 @@ import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
 import ServiceForm from "@/components/shared/forms/ServiceForm";
 import PageForm from "@/components/shared/forms/PageForm";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
+import AddBtn from "./btns/AddBtn";
 
 type ServicesProps = {
   isAdmin: boolean | undefined;
@@ -42,16 +43,8 @@ const Services: React.FC<ServicesProps> = ({
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       <ServicesSwiper services={services || []} />
-      <PageForm
-        isAdmin={isAdmin}
-        page={servicesPage}
-        pageName="Services Page"
-      />
-      <ServiceForm
-        isAdmin={isAdmin}
-        servicesPageId={servicesPage?._id}
-        service={null}
-      />
+      {isAdmin && <PageForm page={servicesPage} pageName="Services Page" />}
+      {isAdmin && servicesPage?._id && <ServiceForm service={null} />}
       <DeleteBtn
         pageId={servicesPage?._id}
         isAdmin={isAdmin}

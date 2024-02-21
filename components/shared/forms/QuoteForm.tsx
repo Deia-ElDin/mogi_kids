@@ -1,158 +1,216 @@
-// "use client";
+"use client";
 
-// import { useState, useEffect } from "react";
-// import { usePathname } from "next/navigation";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { useForm } from "react-hook-form";
-// import {
-//   Form,
-//   FormControl,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/components/ui/form";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
-// import { FileUploader } from "../helpers/FileUploader";
-// import { useUploadThing } from "@/lib/uploadthing";
-// import { isValidForm, handleError } from "@/lib/utils";
-// import { serviceSchema } from "@/lib/validators";
-// import { serviceDefaultValues } from "@/constants";
-// import { IService } from "@/lib/database/models/service.model";
-// import { createService } from "@/lib/actions/service.actions";
-// import AddBtn from "../btns/AddBtn";
-// import CloseBtn from "../btns/CloseBtn";
-// import FormBtn from "../btns/FormBtn";
-// import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { quoteSchema } from "@/lib/validators";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { quoteDefaultValues } from "@/constants";
+import DatePicker from "react-datepicker";
+import * as z from "zod";
+import "react-datepicker/dist/react-datepicker.css";
 
-// type Props = {
-//   isAdmin: boolean | undefined;
-//   servicesPageId: string | undefined;
-//   service: IService | null;
-// };
+const QuoteForm = () => {
+  const form = useForm<z.infer<typeof quoteSchema>>({
+    resolver: zodResolver(quoteSchema),
+    defaultValues: quoteDefaultValues,
+  });
 
-// const ServiceForm: React.FC<Props> = ({ isAdmin, servicesPageId, service }) => {
-//   if (!isAdmin || !servicesPageId) return;
+  function onSubmit(values: z.infer<typeof quoteSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
 
-//   const [displayForm, setDisplayForm] = useState<boolean>(false);
-//   const [files, setFiles] = useState<File[]>([]);
-//   const pathname = usePathname();
-//   const { startUpload } = useUploadThing("imageUploader");
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col md:grid md:grid-cols-2 gap-5 pt-10 pb-32 relative"
+      >
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Full name</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="mobile"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Mobile number</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Your location</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Email address</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="from"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="label-style">From date</FormLabel>
+              <FormControl>
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date: Date) => field.onChange(date)}
+                  dateFormat="dd-MM-yyyy"
+                  className="input-style text-style w-full"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="to"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="label-style">To date</FormLabel>
+              <FormControl>
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date: Date) => field.onChange(date)}
+                  dateFormat="dd-MM-yyyy"
+                  className="input-style text-style w-full"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="numberOfHours"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Number of Hours</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="number"
+                  className="input-style text-style"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="numberOfKids"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Number of your kids</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="ageOfKidsFrom"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                Age of your kids from
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="number"
+                  className="input-style text-style"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="ageOfKidsTo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Age of your kids to</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="extraInfo"
+          render={({ field }) => (
+            <FormItem className="col-span-2">
+              <FormLabel className="label-style">
+                Anything else we should know?
+              </FormLabel>
+              <FormControl>
+                <Textarea {...field} className="textarea-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button
+          type="submit"
+          className="form-btn label-style absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        >
+          REQUEST QUOTE
+        </Button>
+      </form>
+    </Form>
+  );
+};
 
-//   const form = useForm<z.infer<typeof serviceSchema>>({
-//     resolver: zodResolver(serviceSchema),
-//     defaultValues: service ? service : serviceDefaultValues,
-//   });
-
-//   const handleClose = () => {
-//     form.reset();
-//     setDisplayForm(false);
-//   };
-
-//   useEffect(() => {
-//     const handleKeyDown = (event: any) => {
-//       if (event.key === "Escape") handleClose();
-//     };
-
-//     document.addEventListener("keydown", handleKeyDown);
-
-//     return () => {
-//       document.removeEventListener("keydown", handleKeyDown);
-//     };
-//   }, []);
-
-//   async function onSubmit(values: z.infer<typeof serviceSchema>) {
-//     if (!isValidForm(values)) return;
-//     try {
-//       let uploadedImgUrl = values.imgUrl;
-
-//       if (files.length === 0) return;
-//       const uploadedImgs = await startUpload(files);
-
-//       if (!uploadedImgs) return;
-//       uploadedImgUrl = uploadedImgs[0].url;
-
-//       await createService({
-//         ...values,
-//         imgUrl: uploadedImgUrl,
-//         imgSize: uploadedImgs[0].size,
-//         path: pathname,
-//       });
-//       setDisplayForm(false);
-//       form.reset();
-//     } catch (error) {
-//       handleError(error);
-//     }
-//   }
-
-//   return (
-//     <>
-//       <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
-//       {displayForm && (
-//         <Form {...form}>
-//           <form
-//             onSubmit={form.handleSubmit(onSubmit)}
-//             className="edit-form-style"
-//           >
-//             <CloseBtn handleClick={handleClose} />
-//             <h1 className="title-style text-white">Service Form</h1>
-//             <FormField
-//               control={form.control}
-//               name="imgUrl"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel className="label-style">Image</FormLabel>
-//                   <FormControl>
-//                     <FileUploader
-//                       imageUrl={field.value}
-//                       onFieldChange={field.onChange}
-//                       setFiles={setFiles}
-//                       imgClass="w-full object-cover object-center"
-//                     />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="serviceName"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel className="label-style">Service Title</FormLabel>
-//                   <FormControl>
-//                     <Input {...field} className="edit-input-style text-style" />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="serviceContent"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel className="label-style">Service Content</FormLabel>
-//                   <FormControl>
-//                     <Textarea
-//                       {...field}
-//                       className="edit-textarea-style text-style"
-//                     />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormBtn
-//               text={`${service ? "Update" : "Create"} Service`}
-//               isSubmitting={form.formState.isSubmitting}
-//             />
-//           </form>
-//         </Form>
-//       )}
-//     </>
-//   );
-// };
-
-// export default ServiceForm;
+export default QuoteForm;
