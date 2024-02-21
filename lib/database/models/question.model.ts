@@ -6,7 +6,7 @@ export interface IQuestion extends Document {
   answer: string;
 }
 
-const QuestionSchema = new Schema({
+const QuestionSchema = new Schema<IQuestion>({
   question: { type: String, trim: true, required: true },
   answer: { type: String, trim: true, required: true },
 });

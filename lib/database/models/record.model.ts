@@ -16,7 +16,7 @@ export interface IRecord extends Document {
   backgroundColor?: string;
 }
 
-const RecordSchema = new Schema({
+const RecordSchema = new Schema<IRecord>({
   svgUrl: { type: String, required: true, trim: true },
   imgSize: { type: Number, required: true },
   value: { type: String, required: true },

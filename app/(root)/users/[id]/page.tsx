@@ -1,7 +1,11 @@
 import React from "react";
 
-const UserPage = () => {
-  return <div>UserPage</div>;
+type ServicePageProps = {
+  params: { id: string };
+};
+
+const UserPage = ({ params: { id } }) => {
+  return <section className="section-style"></section>;
 };
 
 export default UserPage;

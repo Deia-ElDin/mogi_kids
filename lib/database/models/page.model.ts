@@ -7,7 +7,7 @@ export interface IPage extends Document {
   pageContent?: string;
 }
 
-const PageSchema = new Schema({
+const PageSchema = new Schema<IPage>({
   pageName: { type: String, trim: true, required: true },
   pageTitle: { type: String, trim: true, required: true },
   pageContent: { type: String, trim: true },

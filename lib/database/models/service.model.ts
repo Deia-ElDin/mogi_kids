@@ -6,9 +6,10 @@ export interface IService extends Document {
   imgUrl: string;
   imgSize: number;
   serviceContent: string;
+  createdAt?: string;
 }
 
-const ServiceSchema = new Schema({
+const ServiceSchema = new Schema<IService>({
   serviceName: { type: String, trim: true, required: true },
   imgUrl: { type: String, trim: true, required: true },
   imgSize: { type: Number, required: true },

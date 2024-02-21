@@ -67,3 +67,9 @@ export type UpdateRecordParams = {
   backgroundColor?: string;
   newImg: boolean;
 };
+
+// Review Params
+export type CreateReviewParams = {
+  review?: string;
+  rating?: string;
+};

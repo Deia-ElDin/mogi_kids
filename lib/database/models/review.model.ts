@@ -5,3 +5,12 @@ export interface IReview extends Document {
   review: string;
   rating: string;
 }
+
+const ReviewSchema = new Schema<IReview>({
+  review: { type: String, trim: true },
+  rating: { type: String, trim: true },
+});
+
+const Review = models.Review || model<IReview>("Review", ReviewSchema);
+
+export default Review;
