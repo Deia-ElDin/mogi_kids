@@ -1,11 +1,12 @@
 "use client";
 
-import { Separator } from "../ui/separator";
 import { IPage } from "@/lib/database/models/page.model";
 import { IReview } from "@/lib/database/models/review.model";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { deletePage } from "@/lib/actions/page.actions";
+import { deleteAllReviews } from "@/lib/actions/review.actions";
 import { handleError } from "@/lib/utils";
+import { Separator } from "../ui/separator";
 import Article from "@/components/shared/helpers/Article";
 import ReviewsSwiper from "./swiper/reviewsSwiper";
 import PageForm from "@/components/shared/forms/PageForm";
@@ -34,7 +35,9 @@ const Customers = ({
   const handleDelete = async () => {
     try {
       if (customersPage?._id) await deletePage(customersPage._id, "/");
-      // if (services.length > 0) await deleteAllServices();
+      if (customersWelcomingPage?._id)
+        await deletePage(customersWelcomingPage._id, "/");
+      if (reviews.length > 0) await deleteAllReviews();
     } catch (error) {
       handleError(error);
     }
@@ -54,7 +57,7 @@ const Customers = ({
       <DeleteBtn
         pageId={customersPage?._id}
         isAdmin={isAdmin}
-        deletionTarget="Delete Services Section"
+        deletionTarget="Delete Customer Sections (both)"
         handleClick={handleDelete}
       />
       <Separator pageId={customersPage?._id} isAdmin={isAdmin} />

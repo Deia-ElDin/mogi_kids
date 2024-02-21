@@ -1,4 +1,5 @@
 import { Document, Schema, models, model } from "mongoose";
+import { IReview } from "./review.model";
 
 export interface IUser extends Document {
   _id: string;
@@ -9,6 +10,7 @@ export interface IUser extends Document {
   photo: string;
   gender: "Male" | "Female" | "";
   phoneNumbers: string[] | [];
+  reviews: IReview[] | [];
   role: "Admin" | "User";
 }
 

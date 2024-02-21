@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { IUser } from "@/lib/database/models/user.model";
 import { IPage } from "@/lib/database/models/page.model";
-import { IService } from "@/lib/database/models/service.model";
 import { getUserByClerkId } from "@/lib/actions/user.actions";
 import { getPageByPageName } from "@/lib/actions/page.actions";
-import { getAllServices } from "@/lib/actions/service.actions";
 import { getPageTitle, getPageContent } from "@/lib/utils";
+import { handleError } from "@/lib/utils";
 import Article from "@/components/shared/helpers/Article";
-import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
+import ReviewsSwiper from "@/components/shared/swiper/reviewsSwiper";
 import Loading from "@/components/shared/helpers/Loading";
 
 type ServicePageProps = {
@@ -17,12 +18,58 @@ type ServicePageProps = {
 };
 
 const UserPage = ({ params: { id } }: ServicePageProps) => {
-  const [isAdmin, setIsAdmin] = useState<boolean | undefined>();
-  const [servicesPage, setServicesPage] = useState<IPage | undefined>();
-  const [services, setServices] = useState<IService[] | []>();
+  const [user, setUser] = useState<IUser | null>(null);
+  const [cstWelcomingPage, setCstWelcomingPage] = useState<
+    IPage | Partial<IPage> | undefined
+  >();
   const [loading, setLoading] = useState<boolean>(true);
-  
-  return <section className="section-style"></section>;
+
+  const { user: clerkUser } = useUser();
+
+  const router = useRouter();
+
+  const pageTitle = getPageTitle(
+    cstWelcomingPage,
+    false,
+    `Welcome ${user?.firstName} ${user?.lastName}`
+  );
+  const pageContent = getPageContent(cstWelcomingPage, false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (clerkUser) {
+          const dbUser = await getUserByClerkId(clerkUser.id);
+          setUser(dbUser);
+        }
+      } catch (error) {
+        handleError(error);
+      }
+    };
+
+    const fetchCstWelcomingPage = async () => {
+      try {
+        const page = await getPageByPageName(id);
+
+        setCstWelcomingPage(page as IPage);
+      } catch (error) {
+        handleError(error);
+      }
+    };
+
+    if (clerkUser) fetchUser();
+    fetchCstWelcomingPage();
+    setLoading(false);
+  }, [clerkUser?.id]);
+
+  if (loading) return <Loading />;
+
+  return (
+    <section className="section-style">
+      <Article title={pageTitle} content={pageContent} />
+      <ReviewsSwiper reviews={user?.reviews || []} />
+    </section>
+  );
 };
 
 export default UserPage;
