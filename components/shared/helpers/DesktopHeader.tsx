@@ -1,20 +1,37 @@
 "use client";
 
+import { useUser } from "@clerk/clerk-react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { headerLinks } from "@/constants";
+import { IUser } from "@/lib/database/models/user.model";
+import { getUserByClerkId } from "@/lib/actions/user.actions";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const DesktopHeader = () => {
+  const { user: clerkUser } = useUser();
+  const [user, setUser] = useState<IUser | null>(null);
   const pathname = usePathname();
   const router = useRouter();
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (clerkUser) {
+        const user = await getUserByClerkId(clerkUser.id);
+        setUser(user);
+      }
+    };
+
+    fetchUser();
+  }, [clerkUser]);
+
   return (
-    <header className="hidden md:flex md:justify-between md:items-center py-1 px-8 sticky top-0 bg-white border-b-4 border-red-500 z-20">
-      <div className="w-[30%]">
+    <header className="hidden lg:flex lg:justify-between lg:items-center py-1 px-8 sticky top-0 bg-white border-b-4 border-red-500 z-20">
+      <div className="w-fit">
         <Image
           src="/assets/images/logo.png"
           alt="Logo"
@@ -24,7 +41,7 @@ const DesktopHeader = () => {
           onClick={() => router.push("/")}
         />
       </div>
-      <nav className="flex justify-between items-center gap-auto ml-auto xl:w-[50%] lg:w-[60%] md:w-[75%]">
+      <nav className="flex justify-between items-center gap-auto ml-auto xl:w-[60%] lg:w-[75%]">
         {headerLinks.map((link) => (
           <Button
             asChild
@@ -34,6 +51,13 @@ const DesktopHeader = () => {
             <Link href={link.route}>{link.label}</Link>
           </Button>
         ))}
+        {user && (
+          <Button asChild className="btn active-btn">
+            <Link href={`/users/${user._id}`}>
+              {user.firstName.length < 15 ? user.firstName : "Hi"}
+            </Link>
+          </Button>
+        )}
         <div className="flex justify-center items-center">
           <SignedIn>
             <UserButton afterSignOutUrl="/" />

@@ -20,6 +20,7 @@ const UserSchema = new Schema({
   photo: { type: "string", default: "" },
   gender: { type: "string", default: "" },
   phoneNumbers: Array,
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   role: { type: "string", default: "User" },
 });
 

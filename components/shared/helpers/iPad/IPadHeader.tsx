@@ -1,26 +1,23 @@
 "use client";
 
-import { useUser } from "@clerk/clerk-react";
-import { useState, useEffect } from "react";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { headerLinks } from "@/constants";
-import { IUser } from "@/lib/database/models/user.model";
-import { getUserByClerkId } from "@/lib/actions/user.actions";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 
-const MobileHeader = () => {
-  const { user: clerkUser } = useUser();
-  const [user, setUser] = useState<IUser | null>(null);
+const IPadHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    const handleResize = () => setIsOpen(false);
+    const handleResize = () => {
+      setIsOpen(false);
+    };
 
     window.addEventListener("resize", handleResize);
 
@@ -29,19 +26,8 @@ const MobileHeader = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (clerkUser) {
-        const user = await getUserByClerkId(clerkUser.id);
-        setUser(user);
-      }
-    };
-
-    fetchUser();
-  }, [clerkUser]);
-
   return (
-    <header className="lg:hidden flex flex-col py-1 px-8 sticky top-0 bg-white border-b-4 border-custom-red z-20">
+    <header className="md:hidden flex flex-col py-1 px-8 sticky top-0 bg-white border-b-4 border-custom-red z-20">
       <div className="flex justify-between items-center">
         <Image
           src="/assets/images/logo.png"
@@ -52,7 +38,7 @@ const MobileHeader = () => {
           onClick={() => router.push("/")}
         />
 
-        <div className="flex justify-center gap-3 items-center">
+        <div className="flex flex-col justify-center gap-3 items-center">
           <Image
             src={`/assets/icons/${isOpen ? "menu-on" : "menu"}.svg`}
             alt="Menu"
@@ -78,7 +64,7 @@ const MobileHeader = () => {
         </div>
       </div>
       {isOpen && (
-        <nav className="flex flex-col md:flex-row md:justify-center md:my-5 items-center gap-6 transition duration-600 ease-out">
+        <nav className="flex flex-col items-center gap-6 transition duration-600 ease-out">
           {headerLinks.map((link) => (
             <Button
               asChild
@@ -89,17 +75,10 @@ const MobileHeader = () => {
               <Link href={link.route}>{link.label}</Link>
             </Button>
           ))}
-          {user && (
-            <Button asChild className="btn active-btn">
-              <Link href={`/users/${user._id}`}>
-                {user.firstName.length < 15 ? user.firstName : "Hi"}
-              </Link>
-            </Button>
-          )}
         </nav>
       )}
     </header>
   );
 };
 
-export default MobileHeader;
+export default IPadHeader;
