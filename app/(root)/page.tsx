@@ -3,11 +3,14 @@ import { auth } from "@clerk/nextjs";
 import { IUser } from "@/lib/database/models/user.model";
 import { IPage } from "@/lib/database/models/page.model";
 import { IService } from "@/lib/database/models/service.model";
+import { IQuestion } from "@/lib/database/models/question.model";
+import { IRecord } from "@/lib/database/models/record.model";
 
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getAllPages } from "@/lib/actions/page.actions";
 import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
+import { getAllRecords } from "@/lib/actions/record.actions";
 
 import { findPage } from "@/lib/utils";
 
@@ -15,7 +18,7 @@ import AdminPanel from "@/components/shared/AdminPanel";
 import Welcome from "@/components/shared/Welcome";
 import Services from "@/components/shared/Services";
 import Questions from "@/components/shared/Questions";
-import Statistics from "@/components/shared/Statistics";
+import Records from "@/components/shared/Records";
 import Customers from "@/components/shared/Customers";
 import Quote from "@/components/shared/Quote";
 import Contacts from "@/components/shared/Contacts";
@@ -26,7 +29,8 @@ export default async function Home() {
   const user: IUser = await getUserByUserId(userId);
   const pages: IPage[] = await getAllPages();
   const services: IService[] = await getAllServices();
-  const questions = await getAllQuestions();
+  const questions: IQuestion[] = await getAllQuestions();
+  const records: IRecord[] = await getAllRecords();
   const isAdmin = user?.role === "Admin";
 
   return (
@@ -44,9 +48,9 @@ export default async function Home() {
       <Questions
         isAdmin={isAdmin}
         questionsPage={findPage(pages, "Questions Page")}
-        questions={[]}
+        questions={questions}
       />
-      <Statistics />
+      <Records />
       <Customers />
       <Quote />
       <Contacts />

@@ -24,7 +24,7 @@ const Services: React.FC<ServicesProps> = ({
   servicesPage,
   services,
 }) => {
-  const pageTitle = getPageTitle(servicesPage, isAdmin, "Services Page Title");
+  const pageTitle = getPageTitle(servicesPage, isAdmin, "Services Section Title");
   const pageContent = getPageContent(servicesPage, isAdmin);
 
   const handleDelete = async () => {

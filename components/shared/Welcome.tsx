@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { IPage } from "@/lib/database/models/page.model";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { Separator } from "../ui/separator";
@@ -16,13 +15,12 @@ type WelcomeProps = {
 };
 
 const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
-  const pathName = usePathname();
   const pageTitle = getPageTitle(welcomePage, isAdmin, "Welcome Section Title");
   const pageContent = getPageContent(welcomePage, isAdmin);
 
   const handleDelete = async () => {
     try {
-      if (welcomePage?._id) await deletePage(welcomePage._id, pathName);
+      if (welcomePage?._id) await deletePage(welcomePage._id, "/");
     } catch (error) {
       handleError(error);
     }

@@ -39,7 +39,7 @@ export type UpdateServiceParams = {
   path: string;
 };
 
-// Questions
+// Questions Params
 export type CreateQuestionParams = {
   question: string;
   answer: string;
@@ -48,6 +48,18 @@ export type CreateQuestionParams = {
 export type UpdateQuestionParams = {
   _id: string;
 } & CreateQuestionParams;
+
+// Records Params
+export type CreateRecordParams = {
+  svgUrl: string;
+  number: number;
+  label: string;
+  backgroundColor: string;
+};
+
+export type UpdateRecordParams = {
+  _id: string;
+} & CreateRecordParams;
 
 // // WelcomePage Params
 // export type CreateWelcomePageParams = {

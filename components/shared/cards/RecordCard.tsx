@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 
-type StatisticCardParams = {
+type RecordCardParams = {
   statistic: {
     icon: string;
     title: string;
@@ -10,7 +10,7 @@ type StatisticCardParams = {
   };
 };
 
-const StatisticCard = ({ statistic }: StatisticCardParams) => {
+const RecordCard = ({ statistic }: RecordCardParams) => {
   return (
     <Card
       className="flex flex-col min-w-[200px] h-[200px] justify-around items-center border rounded-lg p-3"
@@ -32,4 +32,4 @@ const StatisticCard = ({ statistic }: StatisticCardParams) => {
   );
 };
 
-export default StatisticCard;
+export default RecordCard;

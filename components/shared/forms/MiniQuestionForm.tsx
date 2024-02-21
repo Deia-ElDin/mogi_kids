@@ -18,16 +18,16 @@ import { IQuestion } from "@/lib/database/models/question.model";
 import { createQuestion, updateQuestion } from "@/lib/actions/question.actions";
 import { questionSchema } from "@/lib/validators";
 import { questionDefaultValues } from "@/constants";
-import AddBtn from "../btns/AddBtn";
+import UpdateBtn from "../btns/UpdateBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type QuestionFormProps = {
+type MiniQuestionFormProps = {
   question: IQuestion | Partial<IQuestion> | undefined | null;
 };
 
-const QuestionForm = ({ question }: QuestionFormProps) => {
+const MiniQuestionForm = ({ question }: MiniQuestionFormProps) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof questionSchema>>({
@@ -70,7 +70,10 @@ const QuestionForm = ({ question }: QuestionFormProps) => {
 
   return (
     <>
-      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
+      <UpdateBtn
+        updateTarget="Edit Question"
+        handleClick={() => setDisplayForm((prev) => !prev)}
+      />
       {displayForm && (
         <Form {...form}>
           <form
@@ -119,4 +122,4 @@ const QuestionForm = ({ question }: QuestionFormProps) => {
   );
 };
 
-export default QuestionForm;
+export default MiniQuestionForm;

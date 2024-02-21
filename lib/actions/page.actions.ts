@@ -1,7 +1,7 @@
 "use server";
 
-import { CreatePageParams, UpdatePageParams } from "@/types";
 import { connectToDb } from "../database";
+import { CreatePageParams, UpdatePageParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import Page from "../database/models/page.model";

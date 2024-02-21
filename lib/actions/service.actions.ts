@@ -1,7 +1,7 @@
 "use server";
 
-import { CreateServiceParams, UpdateServiceParams } from "@/types";
 import { connectToDb } from "../database";
+import { CreateServiceParams, UpdateServiceParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";

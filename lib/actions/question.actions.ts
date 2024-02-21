@@ -1,15 +1,17 @@
-import { revalidatePath } from "next/cache";
+"use server";
+
 import { connectToDb } from "../database";
-import { handleError } from "../utils";
 import { CreateQuestionParams, UpdateQuestionParams } from "@/types";
+import { handleError } from "../utils";
+import { revalidatePath } from "next/cache";
 import Question from "../database/models/question.model";
 
 export async function getAllQuestions() {
   try {
-    console.log("here 00");
     await connectToDb();
-    console.log("here 11");
+
     const questions = await Question.find();
+
     return JSON.parse(JSON.stringify(questions));
   } catch (error) {
     handleError(error);
@@ -18,22 +20,16 @@ export async function getAllQuestions() {
 }
 
 export async function createQuestion(params: CreateQuestionParams) {
-  const { question, answer } = params;
-  console.log("params", params);
-
   try {
-    console.log("here 0");
     await connectToDb();
 
-    console.log("here 1");
-
-    const newQuestion = await Question.create({ question, answer });
-    console.log("here 2");
+    const newQuestion = await Question.create(params);
 
     if (!newQuestion)
       throw new Error(
         "Couldn't create a service & kindly check the uploadthing database"
       );
+
     revalidatePath("/");
 
     return JSON.parse(JSON.stringify(newQuestion));
