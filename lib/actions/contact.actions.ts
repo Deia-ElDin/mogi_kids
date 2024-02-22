@@ -25,6 +25,8 @@ export async function createContact(params: CreateContactsParams) {
   try {
     await connectToDb();
 
+    console.log("params = ", params);
+
     const newContact = await Contact.create(params);
 
     if (!newContact) throw new Error("Failed to create the contact.");

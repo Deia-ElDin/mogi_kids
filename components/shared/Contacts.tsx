@@ -45,14 +45,13 @@ const Contacts = ({ isAdmin, contactsPage, contacts }: ContactsProps) => {
         ))}
       </div>
       {isAdmin && <PageForm page={contactsPage} pageName="Contacts Page" />}
-      {isAdmin && <ContactForm contact={null} />}
+      {isAdmin && contactsPage?._id && <ContactForm contact={null} />}
       <DeleteBtn
         pageId={contactsPage?._id}
         isAdmin={isAdmin}
         deletionTarget="Delete Contacts Section"
         handleClick={() => handleDelete()}
       />
-      <Separator pageId={contactsPage?._id} isAdmin={isAdmin} />
     </section>
   );
 };
