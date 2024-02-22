@@ -33,7 +33,7 @@ type Props = {
   service: IService;
 };
 
-const MobileServiceForm: React.FC<Props> = ({
+const MiniServiceForm: React.FC<Props> = ({
   isAdmin,
   servicesPageId,
   service,
@@ -72,6 +72,7 @@ const MobileServiceForm: React.FC<Props> = ({
       let uploadedImgUrl = values.imgUrl;
       if (files.length > 0) {
         const uploadedImgs = await startUpload(files);
+
         if (!uploadedImgs) return;
         uploadedImgUrl = uploadedImgs[0].url;
         await updateService({
@@ -90,6 +91,7 @@ const MobileServiceForm: React.FC<Props> = ({
           path: pathname,
         });
       }
+
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -131,6 +133,7 @@ const MobileServiceForm: React.FC<Props> = ({
                           imageUrl={field.value}
                           onFieldChange={field.onChange}
                           setFiles={setFiles}
+                          imgClass="max-w-[300px] max-h-[300px]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -188,4 +191,4 @@ const MobileServiceForm: React.FC<Props> = ({
   );
 };
 
-export default MobileServiceForm;
+export default MiniServiceForm;

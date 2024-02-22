@@ -4,15 +4,10 @@ import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 import { IUser } from "@/lib/database/models/user.model";
 import { IPage } from "@/lib/database/models/page.model";
-import { getUserByClerkId } from "@/lib/actions/user.actions";
-import { getPageByPageName } from "@/lib/actions/page.actions";
-import { getPageTitle, getPageContent } from "@/lib/utils";
+import { getUserByUserId } from "@/lib/actions/user.actions";
 import { handleError } from "@/lib/utils";
-import Article from "@/components/shared/helpers/Article";
 import ReviewsSwiper from "@/components/shared/swiper/ReviewsSwiper";
-import PageForm from "@/components/shared/forms/PageForm";
 import Loading from "@/components/shared/helpers/Loading";
-import Title from "@/components/shared/helpers/Title";
 
 type ServicePageProps = {
   params: { id: string };
@@ -20,63 +15,34 @@ type ServicePageProps = {
 
 const UserPage = ({ params: { id } }: ServicePageProps) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const [cstWelcomingPage, setCstWelcomingPage] = useState<
-    IPage | Partial<IPage> | undefined
-  >();
   const [loading, setLoading] = useState<boolean>(true);
-
-  const { user: clerkUser } = useUser();
-
-  const isAdmin = user?.role === "Admin";
-
-  const pageTitle = `Hi ${user?.firstName ?? " "}, Welcome To MogiKids`;
-  const pageContent = getPageContent(cstWelcomingPage, isAdmin);
-
-  console.log("cstWelcomingPage = ", cstWelcomingPage);
-  console.log("pageTitle = ", pageTitle);
-  console.log("pageContent = ", pageContent);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        if (clerkUser) {
-          const dbUser = await getUserByClerkId(clerkUser.id);
-          setUser(dbUser as IUser);
-        }
+        const dbUser = await await getUserByUserId(id);
+        setUser(dbUser as IUser);
+        setLoading(false);
       } catch (error) {
         handleError(error);
       }
     };
 
-    const fetchCstWelcomingPage = async () => {
-      try {
-        const page = await getPageByPageName("Customers Welcoming Page");
-
-        setCstWelcomingPage(page as IPage);
-      } catch (error) {
-        handleError(error);
-      }
-    };
-
-    if (clerkUser) fetchUser();
-    fetchCstWelcomingPage();
-    setLoading(false);
-  }, [clerkUser?.id, cstWelcomingPage]);
+    fetchUser();
+  }, []);
 
   if (loading) return <Loading />;
 
   return (
     user && (
       <section className="section-style">
-        {/* <Article title={pageTitle} content={pageContent} /> */}
         <h1 className="title-style">
           Hi,
           {user?.firstName && (
-            <span className="text-orange-500"> {user?.firstName}</span>
-          )}{" "}
-          Welcome to MogiKids
+            <span className="text-orange-500"> {user?.firstName} </span>
+          )}
+          Welcome to MOGiKiDS
         </h1>
-
         <ReviewsSwiper reviews={user?.reviews || []} />
       </section>
     )

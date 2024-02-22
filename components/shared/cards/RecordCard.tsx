@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IRecord } from "@/lib/database/models/record.model";
 import { deleteRecord } from "@/lib/actions/record.actions";
 import { handleError } from "@/lib/utils";
-import UpdateBtn from "../btns/UpdateBtn";
+import MiniRecordForm from "../forms/MiniRecordForm";
 import DeleteBtn from "../btns/DeleteBtn";
 import Image from "next/image";
 
@@ -22,28 +22,23 @@ const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
 
   return (
     <div className="flex flex-col">
-      <Card
-        className="flex flex-col min-w-[200px] h-[200px] justify-around items-center border-none bg-orange-50 rounded-lg p-3 overflow-hidden"
-        style={{ backgroundColor: record?.backgroundColor }}
-      >
-        <CardContent>
+      <Card className="record-card flex flex-col gap-5 min-w-[200px] h-fit justify-around items-center border-none bg-orange-50 rounded-lg p-3 overflow-hidden">
+        <CardContent className="flex justify-center p-0">
           <Image
             src={record?.imgUrl}
             alt={record?.label}
-            height={50}
+            height={70}
             width={70}
           />
         </CardContent>
-        <CardFooter className="flex flex-col items-center gap-3 w-full">
+        <CardFooter className="flex flex-col justify-center items-center gap-3 w-full h-fit p-3">
           <p className="text-yellow-800 text-2xl font-bold">{record?.value}</p>
           <p className="txt-lg font-bold">{record?.label}</p>
         </CardFooter>
       </Card>
 
-      <div className="bg-orange-50 flex flex-col gap-2 border-none mt-3">
-        {isAdmin && record._id && (
-          <UpdateBtn updateTarget="Update Record" handleClick={() => {}} />
-        )}
+      <div className="bg-orange-50 flex flex-col gap-2 border-none mt-5">
+        {isAdmin && record._id && <MiniRecordForm record={record} />}
         <DeleteBtn
           pageId={record._id}
           isAdmin={isAdmin}

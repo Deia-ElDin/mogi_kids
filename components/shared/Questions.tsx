@@ -66,7 +66,9 @@ const Questions = (props: QuestionsProps) => {
                   <AccordionContent className="answer-style">
                     {questionObj.answer}
                     <div className="flex">
-                      <MiniQuestionForm question={questionObj} />
+                      {isAdmin && questionObj._id && (
+                        <MiniQuestionForm question={questionObj} />
+                      )}
                       <DeleteBtn
                         pageId={questionsPage?._id}
                         isAdmin={isAdmin}

@@ -103,7 +103,7 @@ const ServiceForm: React.FC<Props> = ({ service }) => {
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}
-                      imgClass="w-full object-cover object-center"
+                      imgClass="max-w-[300px] max-h-[300px]"
                     />
                   </FormControl>
                   <FormMessage />

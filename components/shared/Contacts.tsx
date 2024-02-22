@@ -5,7 +5,6 @@ import { IContact } from "@/lib/database/models/contact.model";
 import { deletePage } from "@/lib/actions/page.actions";
 import { deleteAllContacts } from "@/lib/actions/contact.actions";
 import { getPageTitle, getPageContent } from "@/lib/utils";
-import { Separator } from "../ui/separator";
 import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
 import ContactCard from "./cards/ContactCard";
@@ -37,7 +36,7 @@ const Contacts = ({ isAdmin, contactsPage, contacts }: ContactsProps) => {
   };
 
   return (
-    <section id="contacts" className="section-style">
+    <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       <div className="flex flex-col items-start gap-5">
         {contacts.map((contact) => (
@@ -50,7 +49,7 @@ const Contacts = ({ isAdmin, contactsPage, contacts }: ContactsProps) => {
         pageId={contactsPage?._id}
         isAdmin={isAdmin}
         deletionTarget="Delete Contacts Section"
-        handleClick={() => handleDelete()}
+        handleClick={handleDelete}
       />
     </section>
   );

@@ -55,7 +55,6 @@ export type CreateRecordParams = {
   imgSize: number;
   value: string;
   label: string;
-  backgroundColor?: string;
 };
 
 export type UpdateRecordParams = {
@@ -64,8 +63,7 @@ export type UpdateRecordParams = {
   imgSize?: number;
   value: string;
   label: string;
-  backgroundColor?: string;
-  newImg: boolean;
+  newImg?: boolean;
 };
 
 // Review Params

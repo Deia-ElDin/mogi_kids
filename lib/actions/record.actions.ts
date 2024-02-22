@@ -38,8 +38,7 @@ export async function createRecord(params: CreateRecordParams) {
 }
 
 export async function updateRecord(params: UpdateRecordParams) {
-  const { _id, imgUrl, imgSize, value, label, backgroundColor, newImg } =
-    params;
+  const { _id, imgUrl, imgSize, value, label, newImg } = params;
 
   if (!_id || !imgUrl || !label) return;
 
@@ -61,13 +60,11 @@ export async function updateRecord(params: UpdateRecordParams) {
         imgSize,
         value,
         label,
-        backgroundColor,
       });
     } else {
       updatedRecord = await Record.findByIdAndUpdate(_id, {
         value,
         label,
-        backgroundColor,
       });
     }
 

@@ -85,49 +85,58 @@ const PageForm = ({ page, pageName }: PageProps) => {
         centeredPosition={page?.pageTitle ? false : true}
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
-      {displayForm && (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
-            <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">
-              {pageName.split(" ").slice(0, -1).join(" ")} Form
-            </h1>
-            <FormField
-              control={form.control}
-              name="pageTitle"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="label-style">Title</FormLabel>
-                  <FormControl>
-                    <Input {...field} className="edit-input-style text-style" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pageContent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="label-style">Content</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      className="edit-textarea-style text-style"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormBtn
-              text={`${page?._id ? "Update" : "Create"} ${pageName}`}
-              isSubmitting={form.formState.isSubmitting}
-            />
-          </form>
-        </Form>
-      )}
+      <div
+        className={`${
+          pageName === "Contacts Page" && "w-full absolute bottom-[500px]"
+        }`}
+      >
+        {displayForm && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+              <CloseBtn handleClick={() => setDisplayForm(false)} />
+              <h1 className="title-style text-white">
+                {pageName.split(" ").slice(0, -1).join(" ")} Form
+              </h1>
+              <FormField
+                control={form.control}
+                name="pageTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="label-style">Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="edit-input-style text-style"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pageContent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="label-style">Content</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className="edit-textarea-style text-style"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormBtn
+                text={`${page?._id ? "Update" : "Create"} ${pageName}`}
+                isSubmitting={form.formState.isSubmitting}
+              />
+            </form>
+          </Form>
+        )}
+      </div>
     </>
   );
 };

@@ -91,18 +91,16 @@ export const recordSchema = z.object({
   imgUrl: z.string().min(1, "Kindly provide us the record svg icon."),
   value: z.string().min(1, "Kindly provide us the record number."),
   label: z.string().min(1, "Kindly provide us the record label."),
-  backgroundColor: z
-    .string()
-    .min(1)
-    .refine(
-      (value) => {
-        return value === undefined || /^#[0-9A-Fa-f]{3}$/.test(value);
-      },
-      {
-        message:
-          "Background color must start with '#' & (0 - 9, a - f, A - F), i.e. #ffeae6",
-      }
-    ),
+  // .min(1)
+  // .refine(
+  //   (value) => {
+  //     return value === undefined || /^#[0-9A-Fa-f]{3}$/.test(value);
+  //   },
+  //   {
+  //     message:
+  //       "Background color must start with '#' & (0 - 9, a - f, A - F), i.e. #ffeae6",
+  //   }
+  // ),
 });
 
 export const contactSchema = z.object({

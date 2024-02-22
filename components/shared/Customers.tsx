@@ -44,7 +44,7 @@ const Customers = ({
   };
 
   return (
-    <section id="customers" className="section-style">
+    <section  className="section-style">
       <Article title={pageTitle} content={pageContent} />
       <ReviewsSwiper reviews={reviews || []} />
       {isAdmin && <PageForm page={customersPage} pageName="Customers Page" />}

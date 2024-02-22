@@ -37,7 +37,7 @@ const Records = ({ isAdmin, recordsPage, records }: RecordsProps) => {
       <Article title={pageTitle} content={pageContent} />
       {isAdmin && <PageForm page={recordsPage} pageName="Records Page" />}
       {records.length > 0 && (
-        <div className="flex flex-col md:flex-row w-full justify-center gap-7 mt-10">
+        <div className="flex flex-col lg:flex-row w-full justify-center gap-7 mt-10">
           {records.map((record) => (
             <RecordCard key={record.label} isAdmin={isAdmin} record={record} />
           ))}

@@ -5,7 +5,7 @@ import { contacts } from "@/constants";
 
 const Contacts = () => {
   return (
-    <section id="contacts" className="section-style">
+    <section  className="section-style">
       <Title text="Contact Information" />
       <Text text="Get in touch with Sitters Company to take advantage of our wide range of child care services today!" />
       <div className="flex flex-col items-start gap-5 pt-9">

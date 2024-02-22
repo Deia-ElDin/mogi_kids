@@ -310,7 +310,6 @@ export const recordDefaultValues = {
   imgUrl: "",
   value: "",
   label: "",
-  backgroundColor: "",
 };
 
 export const reviewDefaultValues = {};

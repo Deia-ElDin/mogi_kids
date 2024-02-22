@@ -81,59 +81,6 @@ body {
 }
 
 @layer utilities {
-  /* .neon-btn {
-    background-color: transparent;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 5%;
-    color: #a84d02;
-    cursor: pointer;
-    text-decoration: none;
-    border: 4px solid #a84d02;
-    padding: 0.25em 1em;
-    text-shadow: 0 0 0.125em currentColor;
-    box-shadow: inset 0 0 0.5em 0 currentColor, 0 0 0.5em 0 currentColor;
-    position: relative;
-  }
-
-  .neon-btn::before {
-    pointer-events: none;
-    content: "";
-    position: absolute;
-    background-color: #a84d02;
-    top: 120%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: perspective(1em) rotateX(40deg) scale(1, 0.15);
-    filter: blur(1.5em);
-    opacity: 0.7;
-  }
-
-  .neon-btn::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    box-shadow: 0 0 1em 0.3em #a84d02;
-    opacity: 0;
-    background-color: #a84d02;
-    z-index: -1;
-    transition: opacity 100ms linear;
-  }
-
-  .neon-btn:hover,
-  .neon-btn:focus {
-    color: white;
-    text-shadow: none;
-  }
-
-  .neon-btn:hover::after {
-    opacity: 1;
-  } */
-
   .btn {
     background: transparent;
     -webkit-border-radius: 28;
@@ -302,13 +249,13 @@ body {
   }
 
   .form-style {
-    @apply flex flex-col gap-5 absolute h-fit w-full bg-black p-10 rounded-lg z-10 border-yellow-500 border-4;
+    @apply flex flex-col gap-5 absolute h-fit w-full bg-black p-10 rounded-lg z-10 border-white border-4;
   }
 
   form h1 {
     border-top: 1px solid #ffffff;
     border-radius: 10px;
-    box-shadow: 5px 10px 15px #888888;
+    box-shadow: 5px 7px 20px #888888;
     padding: 5px 0;
     margin-bottom: 50px;
   }
@@ -352,6 +299,12 @@ body {
   .form-btn {
     @apply btn active-btn;
     padding: 30px;
+  }
+
+  .record-card {
+    border: 2px solid #fff;
+    box-shadow: 5px 10px 15px #888888;
+    z-index: 2;
   }
 
   ::-webkit-scrollbar {

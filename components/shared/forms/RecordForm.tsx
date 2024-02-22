@@ -55,8 +55,6 @@ const RecordForm = ({ record }: RecordFormProps) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof recordSchema>) {
-    console.log("values = ", values);
-
     try {
       let uploadedImgUrl = values.imgUrl;
 
@@ -97,7 +95,8 @@ const RecordForm = ({ record }: RecordFormProps) => {
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}
-                      imgClass="w-full object-cover object-center"
+                      // imgClass="w-full object-cover object-center"
+                      imgClass="max-w-[100px] max-h-[100px]"
                     />
                   </FormControl>
                   <FormMessage />
@@ -138,25 +137,7 @@ const RecordForm = ({ record }: RecordFormProps) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="backgroundColor"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="label-style">
-                    Background Color
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className="edit-input-style text-style"
-                      placeholder="A Hex value i.e. (#fff)."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <FormBtn
               text={`${record?._id ? "Edit" : "Create"} Record`}
               isSubmitting={form.formState.isSubmitting}

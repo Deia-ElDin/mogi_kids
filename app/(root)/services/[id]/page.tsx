@@ -12,7 +12,7 @@ import Title from "@/components/shared/helpers/Title";
 import Text from "@/components/shared/helpers/Text";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 import Loading from "@/components/shared/helpers/Loading";
-import MobileServiceForm from "@/components/shared/forms/MobileServiceForm";
+import MiniServiceForm from "@/components/shared/forms/MiniServiceForm";
 
 type ServicePageProps = {
   params: { id: string };
@@ -87,7 +87,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
           deletionTarget="Delete Service"
           handleClick={handleDeleteService}
         />
-        <MobileServiceForm
+        <MiniServiceForm
           isAdmin={isAdmin}
           servicesPageId={"true"}
           service={service}

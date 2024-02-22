@@ -37,13 +37,14 @@ export function FileUploader({
       <input {...getInputProps()} className="cursor-pointer" />
       {imageUrl ? (
         <div className="flex h-full w-full flex-1 justify-center border-2 border-white">
-          <Image
+          {/* <Image
             src={imageUrl}
             alt="Service image"
             width={300}
             height={300}
             className={imgClass}
-          />
+          /> */}
+          <img src={imageUrl} alt="Service image"  className={imgClass} />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center">

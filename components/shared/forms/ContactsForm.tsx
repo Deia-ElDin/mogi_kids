@@ -85,49 +85,56 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
       {!contact && (
         <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
       )}
-      {displayForm && (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
-            <CloseBtn handleClick={handleClose} />
-            <h1 className="title-style text-white">Contact Form</h1>
-            <FormField
-              control={form.control}
-              name="imgUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="label-style">Contact Icon</FormLabel>
-                  <FormControl>
-                    <FileUploader
-                      imageUrl={field.value}
-                      onFieldChange={field.onChange}
-                      setFiles={setFiles}
-                      imgClass="w-full object-cover object-center"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="label-style">Contact Content</FormLabel>
-                  <FormControl>
-                    <Input {...field} className="edit-input-style text-style" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormBtn
-              text={`${contact ? "Update" : "Create"} Contact`}
-              isSubmitting={form.formState.isSubmitting}
-            />
-          </form>
-        </Form>
-      )}
+      <div className="absolute bottom-[700px] w-full">
+        {displayForm && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+              <CloseBtn handleClick={handleClose} />
+              <h1 className="title-style text-white">Contact Form</h1>
+              <FormField
+                control={form.control}
+                name="imgUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="label-style">Contact Icon</FormLabel>
+                    <FormControl>
+                      <FileUploader
+                        imageUrl={field.value}
+                        onFieldChange={field.onChange}
+                        setFiles={setFiles}
+                        imgClass="max-w-[100px] max-h-[100px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="label-style">
+                      Contact Content
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="edit-input-style text-style"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormBtn
+                text={`${contact ? "Update" : "Create"} Contact`}
+                isSubmitting={form.formState.isSubmitting}
+              />
+            </form>
+          </Form>
+        )}
+      </div>
     </>
   );
 };
