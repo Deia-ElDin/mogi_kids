@@ -88,7 +88,7 @@ export const questionSchema = z.object({
 });
 
 export const recordSchema = z.object({
-  svgUrl: z.string().min(1, "Kindly provide us the record svg icon."),
+  imgUrl: z.string().min(1, "Kindly provide us the record svg icon."),
   value: z.string().min(1, "Kindly provide us the record number."),
   label: z.string().min(1, "Kindly provide us the record label."),
   backgroundColor: z
@@ -106,6 +106,6 @@ export const recordSchema = z.object({
 });
 
 export const contactSchema = z.object({
-  svgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
+  imgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
   content: z.string().min(1, "Kindly provide us the contact content."),
 });

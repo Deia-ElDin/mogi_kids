@@ -18,7 +18,7 @@ const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
       >
         <CardContent>
           <Image
-            src={record?.svgUrl}
+            src={record?.imgUrl}
             alt={record?.label}
             height={50}
             width={70}

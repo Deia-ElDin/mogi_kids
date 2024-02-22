@@ -2,7 +2,7 @@
 
 import { connectToDb } from "../database";
 import { CreateContactsParams, UpdateContactsParams } from "@/types";
-import { handleError } from "../utils";
+import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
 import Contact from "../database/models/contact.model";
@@ -38,14 +38,14 @@ export async function createContact(params: CreateContactsParams) {
 }
 
 export async function updateContact(params: UpdateContactsParams) {
-  const { _id, svgUrl, content } = params;
+  const { _id, imgUrl, content } = params;
 
   try {
     await connectToDb();
 
     const updatedContact = await Contact.findByIdAndUpdate(
       _id,
-      { svgUrl, content },
+      { imgUrl, content },
       { new: true }
     );
 
@@ -67,6 +67,10 @@ export async function deleteContact(contactId: string) {
 
     if (!deletedContact) throw new Error("Failed to delete the contacts.");
 
+    const imgName = getImgName(deletedContact);
+    if (!imgName) throw new Error("Failed to read the image name.");
+    await utapi.deleteFiles(imgName);
+
     revalidatePath("/");
 
     return "Contact deleted successfully";
@@ -77,10 +81,9 @@ export async function deleteContact(contactId: string) {
 
 export async function deleteAllContacts() {
   try {
-    const deletedContacts = await Contact.deleteMany();
+    const contacts = await Contact.find();
 
-    if (!deletedContacts)
-      throw new Error("Contacts not found or already deleted.");
+    contacts.map(async (contact) => await deleteContact(contact._id));
 
     revalidatePath("/");
 

@@ -14,7 +14,7 @@ const ContactCard = ({ isAdmin, contact }: ContactCardParams) => {
     <Card className="flex flex-col bg-transparent border-none shadow-none w-full">
       <CardContent className="flex gap-5 items-center ">
         <Image
-          src={contact.svgUrl}
+          src={contact.imgUrl}
           alt="Contact image"
           height={40}
           width={40}

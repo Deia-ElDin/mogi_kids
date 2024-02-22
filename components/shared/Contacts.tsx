@@ -2,19 +2,16 @@
 
 import { IPage } from "@/lib/database/models/page.model";
 import { IContact } from "@/lib/database/models/contact.model";
-import { createContact, updateContact } from "@/lib/actions/contact.actions";
+import { deletePage } from "@/lib/actions/page.actions";
+import { deleteAllContacts } from "@/lib/actions/contact.actions";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { Separator } from "../ui/separator";
-import { deletePage } from "@/lib/actions/page.actions";
 import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
-import PageForm from "./forms/PageForm";
-import QuoteForm from "./forms/QuoteForm";
-import DeleteBtn from "./btns/DeleteBtn";
-import Image from "next/image";
-import { contacts } from "@/constants";
 import ContactCard from "./cards/ContactCard";
 import ContactForm from "./forms/ContactsForm";
+import PageForm from "./forms/PageForm";
+import DeleteBtn from "./btns/DeleteBtn";
 
 type ContactsProps = {
   isAdmin: boolean | undefined;
@@ -30,6 +27,15 @@ const Contacts = ({ isAdmin, contactsPage, contacts }: ContactsProps) => {
   );
   const pageContent = getPageContent(contactsPage, isAdmin);
 
+  const handleDelete = async () => {
+    try {
+      if (contactsPage?._id) await deletePage(contactsPage._id, "/");
+      if (contacts.length > 0) await deleteAllContacts();
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   return (
     <section id="contacts" className="section-style">
       <Article title={pageTitle} content={pageContent} />
@@ -43,8 +49,8 @@ const Contacts = ({ isAdmin, contactsPage, contacts }: ContactsProps) => {
       <DeleteBtn
         pageId={contactsPage?._id}
         isAdmin={isAdmin}
-        deletionTarget="Contacts Section"
-        handleClick={() => {}}
+        deletionTarget="Delete Contacts Section"
+        handleClick={() => handleDelete()}
       />
       <Separator pageId={contactsPage?._id} isAdmin={isAdmin} />
     </section>

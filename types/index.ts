@@ -51,7 +51,7 @@ export type UpdateQuestionParams = {
 
 // Records Params
 export type CreateRecordParams = {
-  svgUrl: string;
+  imgUrl: string;
   imgSize: number;
   value: string;
   label: string;
@@ -60,7 +60,7 @@ export type CreateRecordParams = {
 
 export type UpdateRecordParams = {
   _id: string;
-  svgUrl?: string;
+  imgUrl?: string;
   imgSize?: number;
   value: string;
   label: string;
@@ -81,7 +81,7 @@ export type UpdateReviewParams = {
 
 // Contacts Params
 export type CreateContactsParams = {
-  svgUrl: string;
+  imgUrl: string;
   imgSize: number;
   content: string;
 };

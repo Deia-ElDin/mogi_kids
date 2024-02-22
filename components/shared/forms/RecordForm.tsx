@@ -58,7 +58,7 @@ const RecordForm = ({ record }: RecordFormProps) => {
     console.log("values = ", values);
 
     try {
-      let uploadedImgUrl = values.svgUrl;
+      let uploadedImgUrl = values.imgUrl;
 
       if (files.length === 0) return;
       const uploadedImgs = await startUpload(files);
@@ -68,7 +68,7 @@ const RecordForm = ({ record }: RecordFormProps) => {
 
       await createRecord({
         ...values,
-        svgUrl: uploadedImgUrl,
+        imgUrl: uploadedImgUrl,
         imgSize: uploadedImgs[0].size,
       });
       setDisplayForm(false);
@@ -91,7 +91,7 @@ const RecordForm = ({ record }: RecordFormProps) => {
             <h1 className="title-style text-white">Record Form</h1>
             <FormField
               control={form.control}
-              name="svgUrl"
+              name="imgUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="label-style">SVG</FormLabel>

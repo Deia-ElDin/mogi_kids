@@ -60,7 +60,7 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
   async function onSubmit(values: z.infer<typeof contactSchema>) {
     if (!isValidForm(values)) return;
     try {
-      let uploadedImgUrl = values.svgUrl;
+      let uploadedImgUrl = values.imgUrl;
 
       if (files.length === 0) return;
       const uploadedImgs = await startUpload(files);
@@ -70,7 +70,7 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
 
       await createContact({
         ...values,
-        svgUrl: uploadedImgUrl,
+        imgUrl: uploadedImgUrl,
         imgSize: uploadedImgs[0].size,
       });
       setDisplayForm(false);
@@ -95,7 +95,7 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
             <h1 className="title-style text-white">Contact Form</h1>
             <FormField
               control={form.control}
-              name="svgUrl"
+              name="imgUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="label-style">Contact Icon</FormLabel>

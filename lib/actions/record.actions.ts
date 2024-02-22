@@ -38,10 +38,10 @@ export async function createRecord(params: CreateRecordParams) {
 }
 
 export async function updateRecord(params: UpdateRecordParams) {
-  const { _id, svgUrl, imgSize, value, label, backgroundColor, newImg } =
+  const { _id, imgUrl, imgSize, value, label, backgroundColor, newImg } =
     params;
 
-  if (!_id || !svgUrl || !label) return;
+  if (!_id || !imgUrl || !label) return;
 
   let updatedRecord;
   try {
@@ -57,7 +57,7 @@ export async function updateRecord(params: UpdateRecordParams) {
       await utapi.deleteFiles(imgName);
 
       updatedRecord = await Record.findByIdAndUpdate(_id, {
-        svgUrl,
+        imgUrl,
         imgSize,
         value,
         label,
@@ -85,6 +85,10 @@ export async function deleteRecord(recordId: string) {
     const deletedRecord = await Record.findByIdAndDelete(recordId);
 
     if (!deletedRecord) throw new Error("Record not found or already deleted.");
+
+    const imgName = getImgName(deletedRecord);
+    if (!imgName) throw new Error("Failed to read the image name.");
+    await utapi.deleteFiles(imgName);
 
     revalidatePath("/");
 

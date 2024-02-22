@@ -307,7 +307,7 @@ export const questionDefaultValues = {
 };
 
 export const recordDefaultValues = {
-  svgUrl: "",
+  imgUrl: "",
   value: "",
   label: "",
   backgroundColor: "",
@@ -316,6 +316,6 @@ export const recordDefaultValues = {
 export const reviewDefaultValues = {};
 
 export const contactDefaultValues = {
-  svgUrl: "",
+  imgUrl: "",
   content: "",
 };

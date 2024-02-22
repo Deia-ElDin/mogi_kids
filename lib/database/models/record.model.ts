@@ -9,7 +9,7 @@ import { generateBackgroundColor } from "@/lib/utils";
 
 export interface IRecord extends Document {
   _id: string;
-  svgUrl: string;
+  imgUrl: string;
   imgSize: number;
   value: string;
   label: string;
@@ -17,10 +17,10 @@ export interface IRecord extends Document {
 }
 
 const RecordSchema = new Schema<IRecord>({
-  svgUrl: { type: String, required: true, trim: true },
+  imgUrl: { type: String, trim: true, required: true },
   imgSize: { type: Number, required: true },
-  value: { type: String, required: true },
-  label: { type: String, required: true, trim: true },
+  value: { type: String, trim: true, required: true },
+  label: { type: String, trim: true, required: true },
   backgroundColor: { type: String, trim: true },
 });
 
