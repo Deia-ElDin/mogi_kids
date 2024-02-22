@@ -88,8 +88,8 @@ export const questionSchema = z.object({
 });
 
 export const recordSchema = z.object({
-  svgUrl: z.string().min(1, "Kindly provide us the record svg url."),
-  value: z.string().min(1, "Kindly provide us a record number."),
+  svgUrl: z.string().min(1, "Kindly provide us the record svg icon."),
+  value: z.string().min(1, "Kindly provide us the record number."),
   label: z.string().min(1, "Kindly provide us the record label."),
   backgroundColor: z
     .string()
@@ -103,4 +103,9 @@ export const recordSchema = z.object({
           "Background color must start with '#' & (0 - 9, a - f, A - F), i.e. #ffeae6",
       }
     ),
+});
+
+export const contactSchema = z.object({
+  svgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
+  content: z.string().min(1, "Kindly provide us the contact content."),
 });

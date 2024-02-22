@@ -78,3 +78,14 @@ export type CreateReviewParams = {
 export type UpdateReviewParams = {
   _id: string;
 } & CreateReviewParams;
+
+// Contacts Params
+export type CreateContactsParams = {
+  svgUrl: string;
+  imgSize: number;
+  content: string;
+};
+
+export type UpdateContactsParams = {
+  _id: string;
+} & CreateContactsParams;

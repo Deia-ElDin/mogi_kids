@@ -50,3 +50,6 @@ export default Quote;
 <Text text="Are you ready to put your child in the care of one of our professional child care provider, and take advantage of convenient and customizable child care services?" />
 <Text text="Get in touch with us now" /> */
 }
+
+
+//

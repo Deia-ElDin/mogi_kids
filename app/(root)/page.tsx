@@ -6,6 +6,7 @@ import { IService } from "@/lib/database/models/service.model";
 import { IQuestion } from "@/lib/database/models/question.model";
 import { IRecord } from "@/lib/database/models/record.model";
 import { IReview } from "@/lib/database/models/review.model";
+import { IContact } from "@/lib/database/models/contact.model";
 
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getAllPages } from "@/lib/actions/page.actions";
@@ -13,6 +14,7 @@ import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
+import { getAllContacts } from "@/lib/actions/contact.actions";
 
 import { findPage, formatBytes } from "@/lib/utils";
 
@@ -34,6 +36,7 @@ export default async function Home() {
   const questions: IQuestion[] = await getAllQuestions();
   const records: IRecord[] = await getAllRecords();
   const reviews: IReview[] = await getAllReviews();
+  const contacts: IContact[] = await getAllContacts();
   const isAdmin = user?.role === "Admin";
 
   console.log("size = ", formatBytes(services, records));
@@ -67,7 +70,11 @@ export default async function Home() {
         reviews={reviews}
       />
       <Quote isAdmin={isAdmin} quotePage={findPage(pages, "Quote Page")} />
-      <Contacts />
+      <Contacts
+        isAdmin={isAdmin}
+        contactsPage={findPage(pages, "Contacts Page")}
+        contacts={contacts}
+      />
     </>
   );
 }

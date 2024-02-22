@@ -33,7 +33,8 @@ type PageProps = {
     | "Records Page"
     | "Customers Page"
     | "Customers Welcoming Page"
-    | "Quote Page";
+    | "Quote Page"
+    | "Contacts Page";
 };
 
 const PageForm = ({ page, pageName }: PageProps) => {

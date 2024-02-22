@@ -11,6 +11,7 @@ export async function getAllPages() {
     await connectToDb();
 
     const pages = await Page.find();
+    
     return JSON.parse(JSON.stringify(pages));
   } catch (error) {
     handleError(error);

@@ -314,3 +314,8 @@ export const recordDefaultValues = {
 };
 
 export const reviewDefaultValues = {};
+
+export const contactDefaultValues = {
+  svgUrl: "",
+  content: "",
+};
