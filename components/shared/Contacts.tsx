@@ -18,12 +18,15 @@ type ContactsProps = {
   contacts: IContact[] | [];
 };
 
-const Contacts = ({ isAdmin, contactsPage, contacts }: ContactsProps) => {
+const Contacts: React.FC<ContactsProps> = (props) => {
+  const { isAdmin, contactsPage, contacts } = props;
+
   const pageTitle = getPageTitle(
     contactsPage,
     isAdmin,
     "Contacts Section Title"
   );
+
   const pageContent = getPageContent(contactsPage, isAdmin);
 
   const handleDelete = async () => {

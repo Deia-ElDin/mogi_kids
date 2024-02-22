@@ -28,7 +28,7 @@ type RecordFormProps = {
   record: IRecord | Partial<IRecord> | undefined | null;
 };
 
-const RecordForm = ({ record }: RecordFormProps) => {
+const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");

@@ -11,7 +11,7 @@ type AboutUsCardParams = {
   index: number;
 };
 
-const AboutUsCard = ({ details, index }: AboutUsCardParams) => {
+const AboutUsCard: React.FC<AboutUsCardParams> = ({ details, index }) => {
   return (
     <Card
       className={`flex flex-col ${

@@ -54,7 +54,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
     setLoading(false);
   }, [clerkUser?.id, service]);
 
-  const handleDeleteService = async () => {
+  const handleDelete = async () => {
     try {
       await deleteService(id);
       router.push("/services");
@@ -85,7 +85,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
           pageId={id}
           isAdmin={isAdmin}
           deletionTarget="Delete Service"
-          handleClick={handleDeleteService}
+          handleClick={handleDelete}
         />
         <MiniServiceForm
           isAdmin={isAdmin}

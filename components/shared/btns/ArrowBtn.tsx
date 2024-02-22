@@ -6,7 +6,7 @@ type ArrowBtnProps = {
   img: string;
 };
 
-const ArrowBtn = ({ btnClass, img }: ArrowBtnProps) => {
+const ArrowBtn: React.FC<ArrowBtnProps> = ({ btnClass, img }) => {
   const imgSrc =
     img === "Left arrow"
       ? "/assets/icons/left-arrow.svg"

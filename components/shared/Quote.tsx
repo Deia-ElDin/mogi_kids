@@ -15,8 +15,9 @@ type QuoteProps = {
   quotePage: IPage | Partial<IPage> | undefined;
 };
 
-const Quote = ({ isAdmin, quotePage }: QuoteProps) => {
+const Quote: React.FC<QuoteProps> = ({ isAdmin, quotePage }) => {
   const pageTitle = getPageTitle(quotePage, isAdmin, "Quote Section Title");
+
   const pageContent = getPageContent(quotePage, isAdmin);
 
   const handleDelete = async () => {

@@ -27,7 +27,7 @@ type MiniQuestionFormProps = {
   question: IQuestion | Partial<IQuestion>;
 };
 
-const MiniQuestionForm = ({ question }: MiniQuestionFormProps) => {
+const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof questionSchema>>({

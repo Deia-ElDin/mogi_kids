@@ -29,6 +29,8 @@ const DesktopHeader = () => {
     fetchUser();
   }, [clerkUser]);
 
+  console.log("user", user);
+
   return (
     <header className="hidden lg:flex lg:justify-between lg:items-center py-1 px-8 sticky top-0 bg-white border-b-4 border-red-500 z-20">
       <div className="w-fit">

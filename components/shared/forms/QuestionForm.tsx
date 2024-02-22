@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { isValidForm, handleError } from "@/lib/utils";
 import { IQuestion } from "@/lib/database/models/question.model";
-import { createQuestion, updateQuestion } from "@/lib/actions/question.actions";
+import { createQuestion } from "@/lib/actions/question.actions";
 import { questionSchema } from "@/lib/validators";
 import { questionDefaultValues } from "@/constants";
 import AddBtn from "../btns/AddBtn";
@@ -27,7 +27,7 @@ type QuestionFormProps = {
   question: IQuestion | Partial<IQuestion> | undefined | null;
 };
 
-const QuestionForm = ({ question }: QuestionFormProps) => {
+const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof questionSchema>>({

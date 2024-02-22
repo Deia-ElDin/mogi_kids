@@ -19,8 +19,9 @@ type RecordsProps = {
   records: IRecord[] | [];
 };
 
-const Records = ({ isAdmin, recordsPage, records }: RecordsProps) => {
+const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
   const pageTitle = getPageTitle(recordsPage, isAdmin, "Records Section Title");
+
   const pageContent = getPageContent(recordsPage, isAdmin);
 
   const handleDelete = async () => {
@@ -37,9 +38,13 @@ const Records = ({ isAdmin, recordsPage, records }: RecordsProps) => {
       <Article title={pageTitle} content={pageContent} />
       {isAdmin && <PageForm page={recordsPage} pageName="Records Page" />}
       {records.length > 0 && (
-        <div className="flex flex-col lg:flex-row w-full justify-center gap-7 mt-10">
-          {records.map((record) => (
-            <RecordCard key={record.label} isAdmin={isAdmin} record={record} />
+        <div className="flex flex-wrap justify-center gap-7 mt-10">
+          {records.map((record, index) => (
+            <RecordCard
+              key={`${record.label}-${index}`}
+              isAdmin={isAdmin}
+              record={record}
+            />
           ))}
         </div>
       )}

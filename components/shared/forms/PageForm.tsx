@@ -37,7 +37,7 @@ type PageProps = {
     | "Contacts Page";
 };
 
-const PageForm = ({ page, pageName }: PageProps) => {
+const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const pathname = usePathname();
 

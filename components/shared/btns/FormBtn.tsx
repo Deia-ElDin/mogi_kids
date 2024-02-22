@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-type Props = {
+type SubmitBtnProps = {
   text: string;
   isSubmitting: boolean;
 };
@@ -32,7 +32,7 @@ const TextBtn = ({ text }: { text: string }) => (
   </Button>
 );
 
-const FormBtn: React.FC<Props> = ({ text, isSubmitting }) => {
+const FormBtn: React.FC<SubmitBtnProps> = ({ text, isSubmitting }) => {
   return isSubmitting ? <SubmitBtn /> : <TextBtn text={text} />;
 };
 

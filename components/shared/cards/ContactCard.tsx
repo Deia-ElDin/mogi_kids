@@ -11,8 +11,8 @@ type ContactCardParams = {
   contact: IContact;
 };
 
-const ContactCard = ({ isAdmin, contact }: ContactCardParams) => {
-  const handleDeleteContact = async () => {
+const ContactCard: React.FC<ContactCardParams> = ({ isAdmin, contact }) => {
+  const handleDelete = async () => {
     try {
       await deleteContact(contact._id);
     } catch (error) {
@@ -38,7 +38,7 @@ const ContactCard = ({ isAdmin, contact }: ContactCardParams) => {
             pageId={contact._id}
             isAdmin={isAdmin}
             deletionTarget="Delete Contact"
-            handleClick={handleDeleteContact}
+            handleClick={handleDelete}
           />
         </CardFooter>
       )}

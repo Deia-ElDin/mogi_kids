@@ -28,7 +28,7 @@ type MiniRecordFormProps = {
   record: IRecord;
 };
 
-const MiniRecordForm = ({ record }: MiniRecordFormProps) => {
+const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");

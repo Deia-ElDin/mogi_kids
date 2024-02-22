@@ -2,13 +2,16 @@ import { Button } from "@/components/ui/button";
 
 type EditBtnProps = {
   centeredPosition: boolean;
-  handleClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleClick: () => void;
 };
 
-const EditBtn = ({ centeredPosition, handleClick }: EditBtnProps) => {
+const EditBtn: React.FC<EditBtnProps> = ({ centeredPosition, handleClick }) => {
   return (
     <div
-      className={`${!centeredPosition && "absolute right-[-100px] top-[20px]"}`}
+      className={`${
+        !centeredPosition &&
+        "absolute right-[-50px] sm:right-[-70px] top-[20px]"
+      }`}
     >
       <Button
         className="edit-btn-style bg-transparent hover:bg-transparent p-0"

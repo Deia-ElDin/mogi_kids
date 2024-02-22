@@ -19,12 +19,9 @@ type CustomersProps = {
   reviews: IReview[] | [];
 };
 
-const Customers = ({
-  isAdmin,
-  customersPage,
-  reviews,
-  customersWelcomingPage,
-}: CustomersProps) => {
+const Customers: React.FC<CustomersProps> = (props) => {
+  const { isAdmin, customersPage, reviews, customersWelcomingPage } = props;
+
   const pageTitle = getPageTitle(
     customersPage,
     isAdmin,
@@ -44,7 +41,7 @@ const Customers = ({
   };
 
   return (
-    <section  className="section-style">
+    <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       <ReviewsSwiper reviews={reviews || []} />
       {isAdmin && <PageForm page={customersPage} pageName="Customers Page" />}

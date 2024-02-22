@@ -1,10 +1,10 @@
 import Image from "next/image";
 
-type Props = {
+type AddBtnProps = {
   handleClick: () => void;
 };
 
-const AddBtn = ({ handleClick }: Props) => {
+const AddBtn: React.FC<AddBtnProps> = ({ handleClick }) => {
   return (
     <div className="add-btn flex justify-center" onClick={handleClick}>
       <Image

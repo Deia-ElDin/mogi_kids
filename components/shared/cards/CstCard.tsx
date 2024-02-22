@@ -8,7 +8,10 @@ type CstReviewCardParams = {
   handleNavigate: () => void;
 };
 
-const CstReviewCard = ({ reviewObj, handleNavigate }: CstReviewCardParams) => {
+const CstReviewCard: React.FC<CstReviewCardParams> = ({
+  reviewObj,
+  handleNavigate,
+}) => {
   const { user, review, rating } = reviewObj;
   const { firstName, lastName, photo } = user;
 

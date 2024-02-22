@@ -11,14 +11,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import Image from "next/image";
 
-type Props = {
+type DeleteBtnProps = {
   pageId: string | undefined;
   isAdmin: boolean | undefined;
   deletionTarget: string;
   handleClick: () => void;
 };
 
-const DeleteBtn: React.FC<Props> = (props) => {
+const DeleteBtn: React.FC<DeleteBtnProps> = (props) => {
   const { pageId, isAdmin, deletionTarget, handleClick } = props;
 
   if (!pageId || !isAdmin) return null;
@@ -42,9 +42,8 @@ const DeleteBtn: React.FC<Props> = (props) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your{" "}
-              {deletionTarget == "none" && "service"} and remove it from your
-              database.
+              This action cannot be undone. This will permanently delete this{" "}
+              {deletionTarget.split(" ")[1]} and remove it from your database.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

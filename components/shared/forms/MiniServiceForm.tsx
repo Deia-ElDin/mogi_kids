@@ -27,17 +27,15 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type Props = {
+type MiniServiceForm = {
   isAdmin: boolean | undefined;
   servicesPageId: string | undefined;
   service: IService;
 };
 
-const MiniServiceForm: React.FC<Props> = ({
-  isAdmin,
-  servicesPageId,
-  service,
-}) => {
+const MiniServiceForm: React.FC<MiniServiceForm> = (props) => {
+  const { isAdmin, servicesPageId, service } = props;
+
   if (!isAdmin || !servicesPageId) return null;
 
   const [displayForm, setDisplayForm] = useState<boolean>(false);

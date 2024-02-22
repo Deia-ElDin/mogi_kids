@@ -26,11 +26,11 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type Props = {
+type ServiceFormProps = {
   service: IService | null;
 };
 
-const ServiceForm: React.FC<Props> = ({ service }) => {
+const ServiceForm: React.FC<ServiceFormProps> = ({ service }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const pathname = usePathname();

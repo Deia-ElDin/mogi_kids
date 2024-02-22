@@ -11,8 +11,8 @@ type RecordCardParams = {
   record: IRecord;
 };
 
-const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
-  const handleDeleteContact = async () => {
+const RecordCard: React.FC<RecordCardParams> = ({ isAdmin, record }) => {
+  const handleDelete = async () => {
     try {
       await deleteRecord(record._id);
     } catch (error) {
@@ -21,7 +21,7 @@ const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full sm:w-auto">
       <Card className="record-card flex flex-col gap-5 min-w-[200px] h-fit justify-around items-center border-none bg-orange-50 rounded-lg p-3 overflow-hidden">
         <CardContent className="flex justify-center p-0">
           <Image
@@ -43,7 +43,7 @@ const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
           pageId={record._id}
           isAdmin={isAdmin}
           deletionTarget="Delete Record"
-          handleClick={handleDeleteContact}
+          handleClick={handleDelete}
         />
       </div>
     </div>

@@ -4,7 +4,7 @@ type TitleProps = {
   text: string;
 };
 
-const Title = ({ text }: TitleProps) => {
+const Title: React.FC<TitleProps> = ({ text }) => {
   return <h1 className="title-style">{text}</h1>;
 };
 

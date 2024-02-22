@@ -3,12 +3,12 @@ import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Text from "../helpers/Text";
 
-type Props = {
+type ServiceCardProps = {
   serviceObj: IService;
   handleNavigate: () => void;
 };
 
-const ServiceCard: React.FC<Props> = (props) => {
+const ServiceCard: React.FC<ServiceCardProps> = (props) => {
   const { serviceObj, handleNavigate } = props;
 
   return (

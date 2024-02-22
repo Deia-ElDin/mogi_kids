@@ -6,7 +6,7 @@ type ArticleProps = {
   content: string[] | string | null;
 };
 
-const Article = ({ title, content }: ArticleProps) => {
+const Article: React.FC<ArticleProps> = ({ title, content }) => {
   if (!title) return null;
 
   return (

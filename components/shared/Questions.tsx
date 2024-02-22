@@ -29,7 +29,7 @@ type QuestionsProps = {
   questions: IQuestion[] | [];
 };
 
-const Questions = (props: QuestionsProps) => {
+const Questions: React.FC<QuestionsProps> = (props) => {
   const { isAdmin, questionsPage, questions } = props;
 
   const pageTitle = getPageTitle(
@@ -73,9 +73,9 @@ const Questions = (props: QuestionsProps) => {
                         pageId={questionsPage?._id}
                         isAdmin={isAdmin}
                         deletionTarget="Delete Question"
-                        handleClick={async () => {
-                          await deleteQuestion(questionObj._id);
-                        }}
+                        handleClick={async () =>
+                          await deleteQuestion(questionObj._id)
+                        }
                       />
                     </div>
                   </AccordionContent>

@@ -19,11 +19,9 @@ type ServicesProps = {
   services: IService[] | [];
 };
 
-const Services: React.FC<ServicesProps> = ({
-  isAdmin,
-  servicesPage,
-  services,
-}) => {
+const Services: React.FC<ServicesProps> = (props) => {
+  const { isAdmin, servicesPage, services } = props;
+
   const pageTitle = getPageTitle(
     servicesPage,
     isAdmin,

@@ -4,7 +4,7 @@ type TextProps = {
   targetClass?: number;
 };
 
-const Text = ({ text, textClass, targetClass }: TextProps) => {
+const Text: React.FC<TextProps> = ({ text, textClass, targetClass }) => {
   const cssClass =
     !targetClass || targetClass === 1 ? "text-style" : "text2-style";
 
