@@ -96,7 +96,7 @@ export const recordSchema = z.object({
     .min(1)
     .refine(
       (value) => {
-        return value === undefined || /^#[0-9A-Fa-f]{6}$/.test(value);
+        return value === undefined || /^#[0-9A-Fa-f]{3}$/.test(value);
       },
       {
         message:

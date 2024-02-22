@@ -1,5 +1,7 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IRecord } from "@/lib/database/models/record.model";
+import { deleteRecord } from "@/lib/actions/record.actions";
+import { handleError } from "@/lib/utils";
 import UpdateBtn from "../btns/UpdateBtn";
 import DeleteBtn from "../btns/DeleteBtn";
 import Image from "next/image";
@@ -10,6 +12,14 @@ type RecordCardParams = {
 };
 
 const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
+  const handleDeleteContact = async () => {
+    try {
+      await deleteRecord(record._id);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <Card
@@ -38,7 +48,7 @@ const RecordCard = ({ isAdmin, record }: RecordCardParams) => {
           pageId={record._id}
           isAdmin={isAdmin}
           deletionTarget="Delete Record"
-          handleClick={() => {}}
+          handleClick={handleDeleteContact}
         />
       </div>
     </div>

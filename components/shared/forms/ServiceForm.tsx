@@ -89,10 +89,7 @@ const ServiceForm: React.FC<Props> = ({ service }) => {
       )}
       {displayForm && (
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="edit-form-style"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
             <CloseBtn handleClick={handleClose} />
             <h1 className="title-style text-white">Service Form</h1>
             <FormField

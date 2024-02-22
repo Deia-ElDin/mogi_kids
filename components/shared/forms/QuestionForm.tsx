@@ -68,10 +68,7 @@ const QuestionForm = ({ question }: QuestionFormProps) => {
       <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
       {displayForm && (
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="edit-form-style"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
             <CloseBtn handleClick={() => setDisplayForm(false)} />
             <h1 className="title-style text-white">Question Form</h1>
             <FormField

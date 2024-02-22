@@ -87,10 +87,7 @@ const PageForm = ({ page, pageName }: PageProps) => {
       />
       {displayForm && (
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="edit-form-style"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
             <CloseBtn handleClick={() => setDisplayForm(false)} />
             <h1 className="title-style text-white">
               {pageName.split(" ").slice(0, -1).join(" ")} Form

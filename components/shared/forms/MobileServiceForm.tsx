@@ -107,7 +107,7 @@ const MobileServiceForm: React.FC<Props> = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="edit-form-style flex flex-col"
+            className="form-style flex flex-col"
           >
             <CloseBtn handleClick={handleClose} />
             <Tabs defaultValue="image">

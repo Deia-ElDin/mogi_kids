@@ -1,10 +1,4 @@
-import React from "react";
-
-type LoadingProps = {
-  loadingClass?: string;
-};
-
-const Loading = ({ loadingClass }: LoadingProps) => {
+const Loading = () => {
   return (
     <div className="h-[100px] w-full flex justify-center items-center p-5">
       <div id="circularG">

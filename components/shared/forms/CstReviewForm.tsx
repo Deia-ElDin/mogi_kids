@@ -79,7 +79,7 @@
 //         <Form {...form}>
 //           <form
 //             onSubmit={form.handleSubmit(onSubmit)}
-//             className="edit-form-style"
+//             className="form-style"
 //           >
 //             <CloseBtn handleClick={() => setDisplayForm(false)} />
 //             <h1 className="title-style text-white">

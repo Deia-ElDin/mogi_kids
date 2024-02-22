@@ -87,10 +87,7 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
       )}
       {displayForm && (
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="edit-form-style"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
             <CloseBtn handleClick={handleClose} />
             <h1 className="title-style text-white">Contact Form</h1>
             <FormField

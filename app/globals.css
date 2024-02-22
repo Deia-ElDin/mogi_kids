@@ -81,6 +81,59 @@ body {
 }
 
 @layer utilities {
+  /* .neon-btn {
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5%;
+    color: #a84d02;
+    cursor: pointer;
+    text-decoration: none;
+    border: 4px solid #a84d02;
+    padding: 0.25em 1em;
+    text-shadow: 0 0 0.125em currentColor;
+    box-shadow: inset 0 0 0.5em 0 currentColor, 0 0 0.5em 0 currentColor;
+    position: relative;
+  }
+
+  .neon-btn::before {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    background-color: #a84d02;
+    top: 120%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: perspective(1em) rotateX(40deg) scale(1, 0.15);
+    filter: blur(1.5em);
+    opacity: 0.7;
+  }
+
+  .neon-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 1em 0.3em #a84d02;
+    opacity: 0;
+    background-color: #a84d02;
+    z-index: -1;
+    transition: opacity 100ms linear;
+  }
+
+  .neon-btn:hover,
+  .neon-btn:focus {
+    color: white;
+    text-shadow: none;
+  }
+
+  .neon-btn:hover::after {
+    opacity: 1;
+  } */
+
   .btn {
     background: transparent;
     -webkit-border-radius: 28;
@@ -248,36 +301,40 @@ body {
     @apply font-light text-left text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px];
   }
 
+  .form-style {
+    @apply flex flex-col gap-5 absolute h-fit w-full bg-black p-10 rounded-lg z-10 border-yellow-500 border-4;
+  }
+
+  form h1 {
+    border-top: 1px solid #ffffff;
+    border-radius: 10px;
+    box-shadow: 5px 10px 15px #888888;
+    padding: 5px 0;
+    margin-bottom: 50px;
+  }
+
   .label-style {
-    @apply text-yellow-800 font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
+    @apply text-yellow-600 font-bold cursor-pointer text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px];
   }
 
   .input-style {
-    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white h-[54px] rounded-lg px-4 py-3 focus:outline-4 focus:bg-white;
+    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white h-0 rounded-lg px-4 py-3 focus:bg-white focus:h-[50px] transition-all duration-300;
   }
 
   .edit-input-style {
-    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white h-[54px] rounded-lg px-4 py-3 focus:outline-4 text-white focus:bg-white focus:text-black;
+    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white h-0 rounded-lg px-4 py-3 focus:outline-4 text-white focus:bg-white focus:text-black focus:h-[50px] transition-all duration-500;
   }
 
   .textarea-style {
-    @apply bg-gray-50 rounded-sm px-4 py-3 border-none outline-none w-full h-[200px] text-left;
+    @apply bg-gray-50 rounded-sm px-4 py-3 border-none outline-none w-full h-0 text-left focus:h-[200px] transition-all duration-500;
   }
 
   .edit-textarea-style {
-    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white rounded-sm px-4 py-3  w-full h-[200px] text-left text-white focus:bg-white focus:text-black;
+    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white rounded-sm px-4 py-3  w-full h-0 text-left text-white focus:bg-white focus:text-black focus:h-[200px] transition-all duration-500;
   }
 
   .mobile-edit-textarea-style {
     @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white rounded-sm px-4 py-3  w-full h-[130px] text-left text-white focus:bg-white focus:text-black;
-  }
-
-  .form-style {
-    @apply flex flex-col md:grid md:grid-cols-2 gap-5 pt-10 relative;
-  }
-
-  .edit-form-style {
-    @apply flex flex-col gap-5 absolute h-fit w-full bg-black p-10 rounded-lg z-10 border-yellow-800 border-4;
   }
 
   .mobile-edit-tab {
