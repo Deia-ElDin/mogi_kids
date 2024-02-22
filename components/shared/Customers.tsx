@@ -8,7 +8,7 @@ import { deleteAllReviews } from "@/lib/actions/review.actions";
 import { handleError } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import Article from "@/components/shared/helpers/Article";
-import ReviewsSwiper from "./swiper/reviewsSwiper";
+import ReviewsSwiper from "./swiper/ReviewsSwiper";
 import PageForm from "@/components/shared/forms/PageForm";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 
@@ -48,12 +48,6 @@ const Customers = ({
       <Article title={pageTitle} content={pageContent} />
       <ReviewsSwiper reviews={reviews || []} />
       {isAdmin && <PageForm page={customersPage} pageName="Customers Page" />}
-      {isAdmin && (
-        <PageForm
-          page={customersWelcomingPage}
-          pageName="Customers Welcoming Page"
-        />
-      )}
       <DeleteBtn
         pageId={customersPage?._id}
         isAdmin={isAdmin}

@@ -312,3 +312,5 @@ export const recordDefaultValues = {
   label: "",
   backgroundColor: "",
 };
+
+export const reviewDefaultValues = {};

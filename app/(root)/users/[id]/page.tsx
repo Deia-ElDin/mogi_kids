@@ -2,7 +2,6 @@
 
 import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { IUser } from "@/lib/database/models/user.model";
 import { IPage } from "@/lib/database/models/page.model";
 import { getUserByClerkId } from "@/lib/actions/user.actions";
@@ -10,8 +9,10 @@ import { getPageByPageName } from "@/lib/actions/page.actions";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { handleError } from "@/lib/utils";
 import Article from "@/components/shared/helpers/Article";
-import ReviewsSwiper from "@/components/shared/swiper/reviewsSwiper";
+import ReviewsSwiper from "@/components/shared/swiper/ReviewsSwiper";
+import PageForm from "@/components/shared/forms/PageForm";
 import Loading from "@/components/shared/helpers/Loading";
+import Title from "@/components/shared/helpers/Title";
 
 type ServicePageProps = {
   params: { id: string };
@@ -26,21 +27,21 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
 
   const { user: clerkUser } = useUser();
 
-  const router = useRouter();
+  const isAdmin = user?.role === "Admin";
 
-  const pageTitle = getPageTitle(
-    cstWelcomingPage,
-    false,
-    `Welcome ${user?.firstName} ${user?.lastName}`
-  );
-  const pageContent = getPageContent(cstWelcomingPage, false);
+  const pageTitle = `Hi ${user?.firstName ?? " "}, Welcome To MogiKids`;
+  const pageContent = getPageContent(cstWelcomingPage, isAdmin);
+
+  console.log("cstWelcomingPage = ", cstWelcomingPage);
+  console.log("pageTitle = ", pageTitle);
+  console.log("pageContent = ", pageContent);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (clerkUser) {
           const dbUser = await getUserByClerkId(clerkUser.id);
-          setUser(dbUser);
+          setUser(dbUser as IUser);
         }
       } catch (error) {
         handleError(error);
@@ -49,7 +50,7 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
 
     const fetchCstWelcomingPage = async () => {
       try {
-        const page = await getPageByPageName(id);
+        const page = await getPageByPageName("Customers Welcoming Page");
 
         setCstWelcomingPage(page as IPage);
       } catch (error) {
@@ -60,15 +61,25 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
     if (clerkUser) fetchUser();
     fetchCstWelcomingPage();
     setLoading(false);
-  }, [clerkUser?.id]);
+  }, [clerkUser?.id, cstWelcomingPage]);
 
   if (loading) return <Loading />;
 
   return (
-    <section className="section-style">
-      <Article title={pageTitle} content={pageContent} />
-      <ReviewsSwiper reviews={user?.reviews || []} />
-    </section>
+    user && (
+      <section className="section-style">
+        {/* <Article title={pageTitle} content={pageContent} /> */}
+        <h1 className="title-style">
+          Hi,
+          {user?.firstName && (
+            <span className="text-orange-500"> {user?.firstName}</span>
+          )}{" "}
+          Welcome to MogiKids
+        </h1>
+
+        <ReviewsSwiper reviews={user?.reviews || []} />
+      </section>
+    )
   );
 };
 

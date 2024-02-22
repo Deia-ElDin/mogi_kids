@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { isValidForm, handleError } from "@/lib/utils";
+import { handleError } from "@/lib/utils";
 import { IPage } from "@/lib/database/models/page.model";
 import { pageSchema } from "@/lib/validators";
 import { pageDefaultValues } from "@/constants";
@@ -24,7 +24,7 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type Props = {
+type PageProps = {
   page: IPage | Partial<IPage> | undefined;
   pageName:
     | "Welcome Page"
@@ -32,10 +32,11 @@ type Props = {
     | "Questions Page"
     | "Records Page"
     | "Customers Page"
-    | "Customers Welcoming Page";
+    | "Customers Welcoming Page"
+    | "Quote Page";
 };
 
-const PageForm = ({ page, pageName }: Props) => {
+const PageForm = ({ page, pageName }: PageProps) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const pathname = usePathname();
 

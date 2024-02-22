@@ -49,6 +49,8 @@ export async function createPage(params: CreatePageParams) {
 export async function updatePage(params: UpdatePageParams) {
   const { _id, pageName, pageTitle, pageContent, path } = params;
 
+  console.log("params = ", params);
+
   try {
     await connectToDb();
 

@@ -21,8 +21,8 @@ const DesktopHeader = () => {
   useEffect(() => {
     const fetchUser = async () => {
       if (clerkUser) {
-        const user = await getUserByClerkId(clerkUser.id);
-        setUser(user);
+        const dbUser = await getUserByClerkId(clerkUser.id);
+        setUser(dbUser);
       }
     };
 

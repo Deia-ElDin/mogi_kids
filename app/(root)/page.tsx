@@ -66,7 +66,7 @@ export default async function Home() {
         customersWelcomingPage={findPage(pages, "Customers Welcoming Page")}
         reviews={reviews}
       />
-      <Quote />
+      <Quote isAdmin={isAdmin} quotePage={findPage(pages, "Quote Page")} />
       <Contacts />
     </>
   );
