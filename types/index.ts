@@ -87,3 +87,18 @@ export type CreateContactsParams = {
 export type UpdateContactsParams = {
   _id: string;
 } & CreateContactsParams;
+
+// Quote Params
+export type CreateQuoteParams = {
+  fullName?: string;
+  mobile?: string;
+  location?: string;
+  email?: string;
+  from?: Date;
+  to?: Date;
+  numberOfHours?: string;
+  numberOfKids?: string;
+  ageOfKidsFrom?: string;
+  ageOfKidsTo?: string;
+  extraInfo?: string;
+};

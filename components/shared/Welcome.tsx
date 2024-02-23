@@ -16,6 +16,7 @@ type WelcomeProps = {
 
 const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
   const pageTitle = getPageTitle(welcomePage, isAdmin, "Welcome Section Title");
+
   const pageContent = getPageContent(welcomePage, isAdmin);
 
   const handleDelete = async () => {

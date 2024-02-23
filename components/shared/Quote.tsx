@@ -32,13 +32,13 @@ const Quote: React.FC<QuoteProps> = ({ isAdmin, quotePage }) => {
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       {isAdmin && <PageForm page={quotePage} pageName="Quote Page" />}
+      {quotePage?._id && <QuoteForm />}
       <DeleteBtn
         pageId={quotePage?._id}
         isAdmin={isAdmin}
         deletionTarget="Delete Quote Section"
         handleClick={handleDelete}
       />
-      {quotePage?._id && <QuoteForm />}
       <Separator pageId={quotePage?._id} isAdmin={isAdmin} />
     </section>
   );
@@ -51,5 +51,3 @@ export default Quote;
 <Text text="Are you ready to put your child in the care of one of our professional child care provider, and take advantage of convenient and customizable child care services?" />
 <Text text="Get in touch with us now" /> */
 }
-
-//

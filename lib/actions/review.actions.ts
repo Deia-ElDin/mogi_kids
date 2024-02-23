@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import User from "../database/models/user.model";
 import Review from "../database/models/review.model";
 
+
 export async function getAllReviews() {
   try {
     await connectToDb();

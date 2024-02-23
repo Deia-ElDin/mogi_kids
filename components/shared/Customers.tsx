@@ -48,7 +48,7 @@ const Customers: React.FC<CustomersProps> = (props) => {
       <DeleteBtn
         pageId={customersPage?._id}
         isAdmin={isAdmin}
-        deletionTarget="Delete Customer Sections (both)"
+        deletionTarget="Delete Customer Section"
         handleClick={handleDelete}
       />
       <Separator pageId={customersPage?._id} isAdmin={isAdmin} />

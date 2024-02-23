@@ -1,26 +1,65 @@
 import * as z from "zod";
 
+// const [formErrors, setFormErrors] = useState({});
+
+// const handleSubmit = (event) => {
+//   event.preventDefault();
+//   const validationResult = quoteSchema.safeParse(formData);
+//   if (validationResult.success) {
+//     // Form data is valid, you can proceed with submission
+//     console.log("Form data is valid:", formData);
+//   } else {
+//     // Form data is invalid, update the errors state
+//     setFormErrors(validationResult.error.flatten().fieldErrors);
+//   }
+// };
+
 export const quoteSchema = z.object({
   fullName: z
     .string()
-    .min(15, "Full name must be at least of 15 characters.")
-    .max(100, "Full name must not exceed 100 characters."),
+    // .min(15, "Full name must be at least of 15 characters.")
+    .max(100, "Full name must not exceed 100 characters.")
+    .refine(
+      (value) => !/\d/.test(value),
+      "Full name must not contain any numbers"
+    ),
   mobile: z
     .string()
-    .min(9, "Mobile / landline number must be at least 9 characters.")
-    .max(25, "Mobile / landline number not exceed 25 characters."),
+    // .min(9, "Mobile / landline number must be at least 9 characters.")
+    .max(25, "Mobile / landline number not exceed 25 characters.")
+    .refine(
+      (value) =>
+        /^(?:\+971|00971|0)(?:2|3|4|6|7|9|50|51|52|55|56)[0-9]{7}$/.test(value),
+      "Invalid mobile number format"
+    ),
   location: z
     .string()
-    .min(3, "Location must be at least 3 characters.")
-    .max(150, "Location must not exceed 60 characters."),
-  email: z.string({ required_error: "Please select an email" }).email(),
-  from: z.date(),
-  to: z.date(),
-  numberOfHours: z.string(),
-  numberOfKids: z.string(),
-  ageOfKidsFrom: z.string(),
-  ageOfKidsTo: z.string(),
-  extraInfo: z.string().max(5000, "maximum 5000 characters."),
+    // .min(3, "Location must be at least 3 characters.")
+    .max(150, "Location must not exceed 60 characters.")
+    .nullable(),
+  email: z
+    .string()
+    .email()
+    .refine(
+      (value) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value),
+      "Invalid email address format"
+    ),
+  from: z
+    .date()
+    .nullable()
+    .refine((value) => {
+      // Check if the "from" date is not before today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to midnight
+      if (value !== null && value !== undefined) return value >= today;
+      return true;
+    }, "From date must be today or later"),
+  to: z.date().nullable(),
+  numberOfHours: z.string().nullable(),
+  numberOfKids: z.string().nullable(),
+  ageOfKidsFrom: z.string().nullable(),
+  ageOfKidsTo: z.string().nullable(),
+  extraInfo: z.string().max(5000, "maximum 5000 characters.").nullable(),
 });
 
 export const careerSchema = z.object({
