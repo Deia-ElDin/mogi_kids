@@ -11,6 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,14 +39,11 @@ const QuoteForm = () => {
     console.log(values);
     try {
       const response = sendEmail({ ...values });
-
-      console.log("response", response);
-    } catch (error) {
-      console.log("Error sending quote", error);
-    }
-    try {
-      await createQuote({ ...values });
-      form.reset();
+      console.log("done");
+      console.log("response ", response);
+      // "Failed to send email"
+      // await createQuote({ ...values, emailSent: data ? true : false });
+      // form.reset();
     } catch (error) {
       handleError(error);
     }
@@ -70,9 +74,22 @@ const QuoteForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="label-style">Your Location</FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger className="input-style text-style text-center">
+                    <SelectValue placeholder="Kindly select your location" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Abu Dhabi">Abu Dhabi</SelectItem>
+                  <SelectItem value="Dubai">Dubai</SelectItem>
+                  <SelectItem value="Sharjah">Sharjah</SelectItem>
+                  <SelectItem value="Ajman">Ajman</SelectItem>
+                  <SelectItem value="Umm Al Quwain">Umm Al Quwain</SelectItem>
+                  <SelectItem value="Ras Al Khaimah">Ras Al Khaimah</SelectItem>
+                  <SelectItem value="Fujairah">Fujairah</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

@@ -18,9 +18,9 @@ export async function sendEmail(props: EmailTemplateProps) {
       react: EmailTemplate({ ...props }) as React.ReactElement,
     });
 
-    if (error) return "Failed to send email";
-    return "Email send";
+    if (data) return { msg: "success" };
+    return { msg: "fail" };
   } catch (error) {
-    return "Failed to send email";
+    return { msg: "fail", error };
   }
 }

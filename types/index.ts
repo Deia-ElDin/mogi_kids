@@ -101,4 +101,5 @@ export type CreateQuoteParams = {
   ageOfKidsFrom: string;
   ageOfKidsTo: string;
   extraInfo?: string;
+  emailSent: boolean;
 };

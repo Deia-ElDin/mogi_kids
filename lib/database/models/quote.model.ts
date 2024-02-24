@@ -14,6 +14,7 @@ export interface IQuote extends Document {
   ageOfKidsTo?: string;
   extraInfo?: string;
   createdAt?: Date;
+  emailSent: boolean;
 }
 
 const QuoteSchema = new Schema({
@@ -29,6 +30,7 @@ const QuoteSchema = new Schema({
   ageOfKidsTo: { type: String, trim: true },
   extraInfo: { type: String, trim: true },
   createdAt: { type: Date, default: Date.now() },
+  emailSent: { type: Boolean, default: false },
 });
 
 const Quote = models.Quote || model<IQuote>("Quote", QuoteSchema);
