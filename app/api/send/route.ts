@@ -5,7 +5,7 @@ import {
   EmailTemplateProps,
 } from "../../../components/email-template";
 import { Resend } from "resend";
-import * as React from "react";
+import { createQuote } from "@/lib/actions/quote.actions";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -14,12 +14,17 @@ export async function sendEmail(props: EmailTemplateProps) {
     const { data, error } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
       to: ["it.alqabda@gmail.com"],
-      subject: `Quotation - ${props.cstName ?? "Unknown"}`,
+      subject: `Quotation new - ${props.cstName ?? "Unknown"}`,
       react: EmailTemplate({ ...props }) as React.ReactElement,
     });
 
-    if (data) return { msg: "success" };
-    return { msg: "fail" };
+    await createQuote({
+      ...props,
+      emailService: { id: data?.id ?? null, error: error?.message ?? null },
+    });
+
+    if (data) return { data, success: true };
+    return { data: null, success: false };
   } catch (error) {
     return { msg: "fail", error };
   }

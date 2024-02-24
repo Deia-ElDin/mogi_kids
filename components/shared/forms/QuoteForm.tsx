@@ -1,5 +1,6 @@
 "use client";
 
+import { IUser } from "@/lib/database/models/user.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { quoteSchema } from "@/lib/validators";
@@ -29,7 +30,7 @@ import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
-const QuoteForm = () => {
+const QuoteForm = ({ user }: { user: IUser | undefined }) => {
   const form = useForm<z.infer<typeof quoteSchema>>({
     resolver: zodResolver(quoteSchema),
     defaultValues: quoteDefaultValues,
@@ -38,12 +39,8 @@ const QuoteForm = () => {
   async function onSubmit(values: z.infer<typeof quoteSchema>) {
     console.log(values);
     try {
-      const response = sendEmail({ ...values });
-      console.log("done");
-      console.log("response ", response);
-      // "Failed to send email"
-      // await createQuote({ ...values, emailSent: data ? true : false });
-      // form.reset();
+      sendEmail({ ...values, user });
+      form.reset();
     } catch (error) {
       handleError(error);
     }

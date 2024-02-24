@@ -78,13 +78,17 @@ export const quoteSchema = z.object({
       const ageFrom = parseInt(value);
       fromAge = ageFrom;
       return ageFrom <= 17;
-    }, "Kids ages must be less than 18."),
+    }, "Kids age must be less than 18."),
   ageOfKidsTo: z
     .string()
     .min(1, "Kindly let us know the age of your oldest kid.")
     .refine((value) => {
       const ageTo = parseInt(value);
-      return ageTo <= 17 && ageTo >= fromAge;
+      return ageTo <= 17;
+    }, "Kids age must be less than 18.")
+    .refine((value) => {
+      const ageTo = parseInt(value);
+      return ageTo >= fromAge;
     }, "Please ensure the age range begins with the youngest child or remains equal."),
   extraInfo: z.string().max(5000, "maximum 5000 characters."),
 });

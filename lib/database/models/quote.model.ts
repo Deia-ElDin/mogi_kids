@@ -2,19 +2,22 @@ import { Document, Schema, models, model } from "mongoose";
 
 export interface IQuote extends Document {
   _id: string;
-  cstName?: string;
-  mobile?: string;
+  cstName: string;
+  mobile: string;
   location?: string;
-  email?: string;
-  from?: Date;
-  to?: Date;
-  numberOfHours?: string;
-  numberOfKids?: string;
-  ageOfKidsFrom?: string;
-  ageOfKidsTo?: string;
+  email: string;
+  from: Date;
+  to: Date;
+  numberOfHours: string;
+  numberOfKids: string;
+  ageOfKidsFrom: string;
+  ageOfKidsTo: string;
   extraInfo?: string;
-  createdAt?: Date;
-  emailSent: boolean;
+  createdAt: Date;
+  emailService: {
+    id: string | null;
+    error: string | null;
+  };
 }
 
 const QuoteSchema = new Schema({
@@ -30,8 +33,14 @@ const QuoteSchema = new Schema({
   ageOfKidsTo: { type: String, trim: true },
   extraInfo: { type: String, trim: true },
   createdAt: { type: Date, default: Date.now() },
-  emailSent: { type: Boolean, default: false },
+  emailService: {
+    id: { type: String, default: null },
+    error: { type: String, default: null },
+  },
 });
+
+// delete require.cache[require.resolve("./models/Quote")];
+// const Quote = require("./models/Quote");
 
 const Quote = models.Quote || model<IQuote>("Quote", QuoteSchema);
 
