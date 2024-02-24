@@ -1,4 +1,7 @@
 import { IPage } from "@/lib/database/models/page.model";
+import { setDate } from "@/lib/utils";
+
+export const today = setDate(new Date());
 
 export const headerLinks = [
   {
@@ -260,7 +263,7 @@ export const aboutUsDetails = [
 ];
 
 export const quoteDefaultValues = {
-  fullName: "",
+  cstName: "",
   mobile: "",
   location: "",
   email: "",

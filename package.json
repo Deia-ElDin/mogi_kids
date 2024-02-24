@@ -33,6 +33,7 @@
     "react-datepicker": "^6.1.0",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
+    "resend": "^3.2.0",
     "svix": "^1.17.0",
     "swiper": "^11.0.6",
     "tailwind-merge": "^2.2.1",

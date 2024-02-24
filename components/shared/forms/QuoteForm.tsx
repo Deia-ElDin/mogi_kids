@@ -15,6 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { quoteDefaultValues } from "@/constants";
+import { createQuote } from "@/lib/actions/quote.actions";
+import { handleError } from "@/lib/utils";
+import { sendEmail } from "@/app/api/send/route";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
@@ -25,10 +28,21 @@ const QuoteForm = () => {
     defaultValues: quoteDefaultValues,
   });
 
-  function onSubmit(values: z.infer<typeof quoteSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof quoteSchema>) {
     console.log(values);
+    try {
+      const response = sendEmail({ ...values });
+
+      console.log("response", response);
+    } catch (error) {
+      console.log("Error sending quote", error);
+    }
+    try {
+      await createQuote({ ...values });
+      form.reset();
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   return (
@@ -39,23 +53,10 @@ const QuoteForm = () => {
       >
         <FormField
           control={form.control}
-          name="fullName"
+          name="cstName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Full name</FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="mobile"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">Mobile number</FormLabel>
+              <FormLabel className="label-style">Your Name</FormLabel>
               <FormControl>
                 <Input {...field} className="input-style text-style" />
               </FormControl>
@@ -68,7 +69,20 @@ const QuoteForm = () => {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Your location</FormLabel>
+              <FormLabel className="label-style">Your Location</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="mobile"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">Mobile Number</FormLabel>
               <FormControl>
                 <Input {...field} className="input-style text-style" />
               </FormControl>
@@ -81,7 +95,7 @@ const QuoteForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Email address</FormLabel>
+              <FormLabel className="label-style">Email Address</FormLabel>
               <FormControl>
                 <Input {...field} className="input-style text-style" />
               </FormControl>
@@ -94,7 +108,7 @@ const QuoteForm = () => {
           name="from"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="label-style">From date</FormLabel>
+              <FormLabel className="label-style">From Date</FormLabel>
               <FormControl>
                 <DatePicker
                   selected={field.value}
@@ -112,7 +126,7 @@ const QuoteForm = () => {
           name="to"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="label-style">To date</FormLabel>
+              <FormLabel className="label-style">To Date</FormLabel>
               <FormControl>
                 <DatePicker
                   selected={field.value}
@@ -130,7 +144,7 @@ const QuoteForm = () => {
           name="numberOfHours"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Number of Hours</FormLabel>
+              <FormLabel className="label-style">Number Of Hours</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -147,7 +161,7 @@ const QuoteForm = () => {
           name="numberOfKids"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Number of your kids</FormLabel>
+              <FormLabel className="label-style">Number Of Your Kids</FormLabel>
               <FormControl>
                 <Input {...field} className="input-style text-style" />
               </FormControl>
@@ -160,9 +174,7 @@ const QuoteForm = () => {
           name="ageOfKidsFrom"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">
-                Age of your kids from
-              </FormLabel>
+              <FormLabel className="label-style">Age Of Youngest Kid</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -179,7 +191,7 @@ const QuoteForm = () => {
           name="ageOfKidsTo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Age of your kids to</FormLabel>
+              <FormLabel className="label-style">Age Of Oldest Kid</FormLabel>
               <FormControl>
                 <Input {...field} className="input-style text-style" />
               </FormControl>
@@ -193,7 +205,7 @@ const QuoteForm = () => {
           render={({ field }) => (
             <FormItem className="col-span-2">
               <FormLabel className="label-style">
-                Anything else we should know?
+                Anything Else We Should Know?
               </FormLabel>
               <FormControl>
                 <Textarea {...field} className="textarea-style text-style" />

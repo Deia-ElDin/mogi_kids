@@ -1,4 +1,10 @@
 import * as z from "zod";
+import { today } from "@/constants";
+import { setDate } from "./utils";
+
+let fromDate: Date = today;
+let toDate: Date = today;
+let fromAge: number;
 
 // const [formErrors, setFormErrors] = useState({});
 
@@ -15,51 +21,72 @@ import * as z from "zod";
 // };
 
 export const quoteSchema = z.object({
-  fullName: z
+  cstName: z
     .string()
-    // .min(15, "Full name must be at least of 15 characters.")
-    .max(100, "Full name must not exceed 100 characters.")
+    .min(1, "Kindly provide your name.")
+    .max(20, "Name must not exceed 20 characters.")
     .refine(
-      (value) => !/\d/.test(value),
-      "Full name must not contain any numbers"
+      (value) => /^[a-zA-Z\s]+$/.test(value),
+      "Name must not contain any numbers or special characters."
     ),
   mobile: z
     .string()
-    // .min(9, "Mobile / landline number must be at least 9 characters.")
-    .max(25, "Mobile / landline number not exceed 25 characters.")
+    .min(1, "Kindly provide your mobile number.")
+    .max(14, "Mobile / landline number must not exceed 14 characters.")
     .refine(
       (value) =>
-        /^(?:\+971|00971|0)(?:2|3|4|6|7|9|50|51|52|55|56)[0-9]{7}$/.test(value),
-      "Invalid mobile number format"
+        /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/.test(
+          value
+        ),
+      "Invalid mobile number."
     ),
-  location: z
-    .string()
-    // .min(3, "Location must be at least 3 characters.")
-    .max(150, "Location must not exceed 60 characters.")
-    .nullable(),
+  location: z.string().max(150, "Location must not exceed 60 characters."),
   email: z
     .string()
-    .email()
-    .refine(
-      (value) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value),
-      "Invalid email address format"
-    ),
-  from: z
-    .date()
-    .nullable()
+    .min(1, "Kindly provide your email address.")
+    .email("Invalid email address."),
+  from: z.date().refine((value) => {
+    if (value !== null && value !== undefined) {
+      fromDate = setDate(value);
+      return value >= today;
+    }
+  }, "The service can't start in the past."),
+  to: z.date().refine((value) => {
+    if (value !== null && value !== undefined) {
+      toDate = setDate(value);
+      return value >= fromDate && value >= today;
+    }
+  }, "The service can't end in the past."),
+  numberOfHours: z
+    .string()
+    .min(1, "Kindly let us know how many hours you need.")
     .refine((value) => {
-      // Check if the "from" date is not before today
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Set to midnight
-      if (value !== null && value !== undefined) return value >= today;
-      return true;
-    }, "From date must be today or later"),
-  to: z.date().nullable(),
-  numberOfHours: z.string().nullable(),
-  numberOfKids: z.string().nullable(),
-  ageOfKidsFrom: z.string().nullable(),
-  ageOfKidsTo: z.string().nullable(),
-  extraInfo: z.string().max(5000, "maximum 5000 characters.").nullable(),
+      const hours = parseInt(value);
+      return hours >= 1 && hours <= 24;
+    }, "The number of hours must be between 1 and 24."),
+  numberOfKids: z
+    .string()
+    .min(1, "Kindly let us know how many kids you have.")
+    .refine((value) => {
+      const kids = parseInt(value);
+      return kids > 0;
+    }, "The number of kids must be bigger than 0."),
+  ageOfKidsFrom: z
+    .string()
+    .min(1, "Kindly let us know the age of your youngest kid.")
+    .refine((value) => {
+      const ageFrom = parseInt(value);
+      fromAge = ageFrom;
+      return ageFrom <= 17;
+    }, "Kids ages must be less than 18."),
+  ageOfKidsTo: z
+    .string()
+    .min(1, "Kindly let us know the age of your oldest kid.")
+    .refine((value) => {
+      const ageTo = parseInt(value);
+      return ageTo <= 17 && ageTo >= fromAge;
+    }, "Please ensure the age range begins with the youngest child or remains equal."),
+  extraInfo: z.string().max(5000, "maximum 5000 characters."),
 });
 
 export const careerSchema = z.object({

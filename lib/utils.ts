@@ -10,7 +10,6 @@ export function cn(...inputs: ClassValue[]) {
 
 export const handleError = (error: unknown): string => {
   console.log("error = ", error);
-
   throw new Error(typeof error === "string" ? error : JSON.stringify(error));
 };
 
@@ -80,4 +79,17 @@ export const formatBytes = (
   }
 
   return `${size.toFixed(2)} ${units[i]}`;
+};
+
+export const setDate = (someDate: Date) => {
+  const newData = someDate;
+  newData.setHours(0, 0, 0, 0);
+  return newData;
+};
+
+export const formatDate = (date: Date): string => {
+  const day: string = String(date.getDate()).padStart(2, "0");
+  const month: string = String(date.getMonth() + 1).padStart(2, "0");
+  const year: number = date.getFullYear();
+  return `${day}/${month}/${year}`;
 };

@@ -2,7 +2,7 @@ import { Document, Schema, models, model } from "mongoose";
 
 export interface IQuote extends Document {
   _id: string;
-  fullName?: string;
+  cstName?: string;
   mobile?: string;
   location?: string;
   email?: string;
@@ -17,7 +17,7 @@ export interface IQuote extends Document {
 }
 
 const QuoteSchema = new Schema({
-  fullName: { type: String, trim: true },
+  cstName: { type: String, trim: true },
   mobile: { type: String, trim: true },
   location: { type: String, trim: true },
   email: { type: String, trim: true },

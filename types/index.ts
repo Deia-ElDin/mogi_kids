@@ -90,15 +90,15 @@ export type UpdateContactsParams = {
 
 // Quote Params
 export type CreateQuoteParams = {
-  fullName?: string;
-  mobile?: string;
+  cstName: string;
+  mobile: string;
   location?: string;
-  email?: string;
-  from?: Date;
-  to?: Date;
-  numberOfHours?: string;
-  numberOfKids?: string;
-  ageOfKidsFrom?: string;
-  ageOfKidsTo?: string;
+  email: string;
+  from: Date;
+  to: Date;
+  numberOfHours: string;
+  numberOfKids: string;
+  ageOfKidsFrom: string;
+  ageOfKidsTo: string;
   extraInfo?: string;
 };
