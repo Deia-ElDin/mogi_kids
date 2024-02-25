@@ -73,8 +73,11 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
           path: pathname,
         });
       } else await createPage({ ...values, path: pathname });
+
       setDisplayForm(false);
+
       form.reset();
+
       toast({ description: `${pageName} Created Successfully.` });
     } catch (error) {
       toast({
@@ -82,6 +85,7 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
         title: "Uh oh! Something went wrong.",
         description: `Failed to Create ${pageName}.`,
       });
+
       handleError(error);
     }
   }

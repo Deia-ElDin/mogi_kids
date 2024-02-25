@@ -45,12 +45,12 @@ const Questions: React.FC<QuestionsProps> = (props) => {
     try {
       if (questionsPage?._id) await deletePage(questionsPage._id, "/");
       if (questions.length > 0) await deleteAllQuestions();
-      toast({ description: "Question Page Deleted Successfully." });
+      toast({ description: "Questions Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete Question Page.",
+        description: "Failed to Delete The Questions Page.",
       });
       handleError(error);
     }

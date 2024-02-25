@@ -25,12 +25,12 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
   const handleDelete = async () => {
     try {
       if (welcomePage?._id) await deletePage(welcomePage._id, "/");
-      toast({ description: "Welcome Page Deleted Successfully." });
+      toast({ description: "Welcomes Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete Welcome Page.",
+        description: "Failed to Delete The Welcomes Page.",
       });
       handleError(error);
     }

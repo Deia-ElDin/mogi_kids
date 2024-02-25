@@ -19,6 +19,7 @@ import { IRecord } from "@/lib/database/models/record.model";
 import { createRecord } from "@/lib/actions/record.actions";
 import { recordSchema } from "@/lib/validators";
 import { recordDefaultValues } from "@/constants";
+import { useToast } from "@/components/ui/use-toast";
 import AddBtn from "../btns/AddBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
@@ -32,6 +33,7 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof recordSchema>>({
     resolver: zodResolver(recordSchema),
@@ -59,6 +61,7 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length === 0) return;
+
       const uploadedImgs = await startUpload(files);
 
       if (!uploadedImgs) return;
@@ -69,9 +72,18 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
         imgUrl: uploadedImgUrl,
         imgSize: uploadedImgs[0].size,
       });
+
+      toast({ description: "Record Created Successfully." });
+
       setDisplayForm(false);
+
       form.reset();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete The Record.",
+      });
       handleError(error);
     }
   }

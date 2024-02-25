@@ -37,12 +37,12 @@ const Services: React.FC<ServicesProps> = (props) => {
     try {
       if (servicesPage?._id) await deletePage(servicesPage._id, "/");
       if (services.length > 0) await deleteAllServices();
-      toast({ description: "Service Page Deleted Successfully." });
+      toast({ description: "Services Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete Service Page.",
+        description: "Failed to Delete The Services Page.",
       });
       handleError(error);
     }

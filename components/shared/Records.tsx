@@ -3,6 +3,7 @@
 import { IPage } from "@/lib/database/models/page.model";
 import { IRecord } from "@/lib/database/models/record.model";
 import { getPageTitle, getPageContent } from "@/lib/utils";
+import { useToast } from "../ui/use-toast";
 import { Separator } from "../ui/separator";
 import { deletePage } from "@/lib/actions/page.actions";
 import { deleteAllRecords } from "@/lib/actions/record.actions";
@@ -20,6 +21,7 @@ type RecordsProps = {
 };
 
 const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
+  const { toast } = useToast();
   const pageTitle = getPageTitle(recordsPage, isAdmin, "Records Section Title");
 
   const pageContent = getPageContent(recordsPage, isAdmin);
@@ -28,7 +30,13 @@ const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
     try {
       if (recordsPage?._id) await deletePage(recordsPage._id, "/");
       if (records.length > 0) await deleteAllRecords();
+      toast({ description: "Records Page Deleted Successfully." });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete The Records Page.",
+      });
       handleError(error);
     }
   };

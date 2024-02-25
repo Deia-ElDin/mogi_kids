@@ -77,8 +77,11 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ service }) => {
         imgSize: uploadedImgs[0].size,
         path: pathname,
       });
+
       toast({ description: "Service Created Successfully." });
+
       setDisplayForm(false);
+
       form.reset();
     } catch (error) {
       toast({

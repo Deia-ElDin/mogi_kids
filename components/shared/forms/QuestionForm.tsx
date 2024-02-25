@@ -57,8 +57,11 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
   async function onSubmit(values: z.infer<typeof questionSchema>) {
     try {
       await createQuestion({ ...values });
+
       toast({ description: "Question Created Successfully." });
+
       setDisplayForm(false);
+
       form.reset();
     } catch (error) {
       toast({
@@ -66,6 +69,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
         title: "Uh oh! Something went wrong.",
         description: "Failed to Create The Question.",
       });
+
       handleError(error);
     }
   }

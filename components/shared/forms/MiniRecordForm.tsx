@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormControl,
@@ -32,6 +33,7 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof recordSchema>>({
     resolver: zodResolver(recordSchema),
@@ -74,9 +76,17 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
         });
       }
 
+      toast({ description: "Record Updated Successfully." });
+
       setDisplayForm(false);
+
       form.reset();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Update The Record.",
+      });
       handleError(error);
     }
   }
@@ -88,7 +98,7 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (
-        <div className="w-full absolute">
+        <div className="w-full absolute left-0 right-0">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
               <CloseBtn handleClick={() => setDisplayForm(false)} />

@@ -2,6 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IRecord } from "@/lib/database/models/record.model";
 import { deleteRecord } from "@/lib/actions/record.actions";
 import { handleError } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 import MiniRecordForm from "../forms/MiniRecordForm";
 import DeleteBtn from "../btns/DeleteBtn";
 import Image from "next/image";
@@ -12,10 +13,18 @@ type RecordCardParams = {
 };
 
 const RecordCard: React.FC<RecordCardParams> = ({ isAdmin, record }) => {
+  const { toast } = useToast();
+
   const handleDelete = async () => {
     try {
       await deleteRecord(record._id);
+      toast({ description: "Record Deleted Successfully." });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete The Record.",
+      });
       handleError(error);
     }
   };
