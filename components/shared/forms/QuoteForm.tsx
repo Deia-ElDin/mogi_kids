@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { quoteDefaultValues } from "@/constants";
 import { createQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
-import { sendEmail } from "@/app/api/send/route";
+// import { sendEmail } from "@/app/api/send/route";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
@@ -39,7 +39,7 @@ const QuoteForm = ({ user }: { user: IUser | undefined }) => {
   async function onSubmit(values: z.infer<typeof quoteSchema>) {
     console.log(values);
     try {
-      sendEmail({ ...values, user });
+      // sendEmail({ ...values, user });
       form.reset();
     } catch (error) {
       handleError(error);
