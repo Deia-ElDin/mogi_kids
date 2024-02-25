@@ -321,3 +321,9 @@ export const contactDefaultValues = {
   imgUrl: "",
   content: "",
 };
+
+export const aboutUsDefaultValues = {
+  title: "",
+  content: "",
+  imgUrl: "",
+}

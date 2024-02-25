@@ -177,3 +177,9 @@ export const contactSchema = z.object({
   imgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
   content: z.string().min(1, "Kindly provide us the contact content."),
 });
+
+export const aboutUsSchema = z.object({
+  title: z.string().min(1, "Kindly provide us the article title."),
+  content: z.string().min(1, "Kindly provide us the article content."),
+  imgUrl: z.string().min(1, "Kindly provide us the article image."),
+});

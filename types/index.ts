@@ -106,3 +106,22 @@ export type CreateQuoteParams = {
     error: string | null;
   };
 };
+
+// About Us Params
+export type CreateAboutUsParams = {
+  title: string;
+  content: string;
+  imgUrl: string;
+  imgSize: number;
+  path: string;
+};
+
+export type UpdateAboutUsParams = {
+  _id: string;
+  title: string;
+  content: string;
+  imgUrl?: string;
+  imgSize?: number;
+  path: string;
+  newImg: boolean;
+};
