@@ -2,30 +2,45 @@
 
 import {
   EmailTemplate,
-  EmailTemplateProps,
+  // EmailTemplateProps,
 } from "../../../components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function sendEmail(props: EmailTemplateProps) {
+export async function POST() {
   try {
     const { data, error } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
       to: ["it.alqabda@gmail.com"],
-      subject: `Quotation new - ${props.cstName ?? "Unknown"}`,
-      react: EmailTemplate({ ...props }) as React.ReactElement,
+      subject: `Quotation new - "Unknown"}`,
+      react: EmailTemplate({ firstName: "deia" }) as React.ReactElement,
     });
 
-    await createQuote({
-      ...props,
-      emailService: { id: data?.id ?? null, error: error?.message ?? null },
-    });
-
-    if (data) return { data, success: true };
-    return { data: null, success: false };
+    return null;
   } catch (error) {
-    return { msg: "fail", error };
+    return null;
   }
 }
+
+// export async function sendEmail(props: EmailTemplateProps) {
+//   try {
+//     const { data, error } = await resend.emails.send({
+//       from: "Resend Email Service <onboarding@resend.dev>",
+//       to: ["it.alqabda@gmail.com"],
+//       subject: `Quotation new - ${props.cstName ?? "Unknown"}`,
+//       react: EmailTemplate({ ...props }) as React.ReactElement,
+//     });
+
+//     await createQuote({
+//       ...props,
+//       emailService: { id: data?.id ?? null, error: error?.message ?? null },
+//     });
+
+//     if (data) return { data, success: true };
+//     return { data: null, success: false };
+//   } catch (error) {
+//     return { msg: "fail", error };
+//   }
+// }

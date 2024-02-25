@@ -13,9 +13,9 @@ export async function getAllAboutUs() {
   try {
     await connectToDb();
 
-    const aboutUs = await AboutUs.find();
+    const aboutUsArr = await AboutUs.find();
 
-    return JSON.parse(JSON.stringify(aboutUs));
+    return JSON.parse(JSON.stringify(aboutUsArr));
   } catch (error) {
     handleError(error);
   }
