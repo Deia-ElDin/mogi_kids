@@ -1,6 +1,7 @@
 import Header from "@/components/shared/Header";
 import Gallery from "@/components/shared/Gallery";
 import Footer from "@/components/shared/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({
   children,
@@ -15,6 +16,7 @@ export default function RootLayout({
         {children}
       </main>
       <Footer />
+      <Toaster />
     </div>
   );
 }

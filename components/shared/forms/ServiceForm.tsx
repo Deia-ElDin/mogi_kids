@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -33,8 +34,9 @@ type ServiceFormProps = {
 const ServiceForm: React.FC<ServiceFormProps> = ({ service }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-  const pathname = usePathname();
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof serviceSchema>>({
     resolver: zodResolver(serviceSchema),
@@ -75,9 +77,15 @@ const ServiceForm: React.FC<ServiceFormProps> = ({ service }) => {
         imgSize: uploadedImgs[0].size,
         path: pathname,
       });
+      toast({ description: "Service Created Successfully." });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete The Service.",
+      });
       handleError(error);
     }
   }

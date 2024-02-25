@@ -79,17 +79,25 @@ export async function updateService(params: UpdateServiceParams) {
       if (!imgName) throw new Error("Failed to read the image name.");
       await utapi.deleteFiles(imgName);
 
-      updatedService = await Service.findByIdAndUpdate(_id, {
-        serviceName,
-        imgUrl,
-        imgSize,
-        serviceContent,
-      });
+      updatedService = await Service.findByIdAndUpdate(
+        _id,
+        {
+          serviceName,
+          imgUrl,
+          imgSize,
+          serviceContent,
+        },
+        { new: true }
+      );
     } else {
-      updatedService = await Service.findByIdAndUpdate(_id, {
-        serviceName,
-        serviceContent,
-      });
+      updatedService = await Service.findByIdAndUpdate(
+        _id,
+        {
+          serviceName,
+          serviceContent,
+        },
+        { new: true }
+      );
     }
 
     revalidatePath(path);

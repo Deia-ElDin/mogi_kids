@@ -3,6 +3,7 @@
 import { IPage } from "@/lib/database/models/page.model";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { Separator } from "../ui/separator";
+import { useToast } from "@/components/ui/use-toast";
 import { deletePage } from "@/lib/actions/page.actions";
 import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
@@ -15,6 +16,8 @@ type WelcomeProps = {
 };
 
 const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
+  const { toast } = useToast();
+
   const pageTitle = getPageTitle(welcomePage, isAdmin, "Welcome Section Title");
 
   const pageContent = getPageContent(welcomePage, isAdmin);
@@ -22,7 +25,13 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
   const handleDelete = async () => {
     try {
       if (welcomePage?._id) await deletePage(welcomePage._id, "/");
+      toast({ description: "Welcome Page Deleted Successfully." });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete Welcome Page.",
+      });
       handleError(error);
     }
   };

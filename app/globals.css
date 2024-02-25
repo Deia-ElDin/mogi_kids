@@ -249,7 +249,7 @@ body {
   }
 
   .form-style {
-    @apply flex flex-col gap-5 absolute h-fit w-full bg-black p-10 rounded-lg z-10 border-white border-4;
+    @apply flex flex-col gap-5 absolute h-fit w-full bg-slate-900 p-10 rounded-lg z-10 border-none shadow-2xl;
   }
 
   form h1 {

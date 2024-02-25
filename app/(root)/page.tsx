@@ -15,6 +15,7 @@ import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
 import { getAllContacts } from "@/lib/actions/contact.actions";
+import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 
 import { findPage, formatBytes } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ export default async function Home() {
   const records: IRecord[] = await getAllRecords();
   const reviews: IReview[] = await getAllReviews();
   const contacts: IContact[] = await getAllContacts();
+  const aboutUs = await getAllAboutUs();
   const isAdmin = user?.role === "Admin";
 
   console.log("size = ", formatBytes(services, records));

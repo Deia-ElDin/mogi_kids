@@ -19,17 +19,19 @@ import { handleError } from "@/lib/utils";
 import { aboutUsSchema } from "@/lib/validators";
 import { aboutUsDefaultValues } from "@/constants";
 import { IAboutUs } from "@/lib/database/models/about-us.model";
-import { createAboutUs } from "@/lib/actions/aboutUs.actions";
-import AddBtn from "../btns/AddBtn";
+import { updateAboutUs } from "@/lib/actions/aboutUs.actions";
+import UpdateBtn from "../btns/UpdateBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type AboutUsFormProps = {
-  aboutUsArticle: IAboutUs | null;
+type MiniAboutUsFormProps = {
+  aboutUsArticle: IAboutUs;
 };
 
-const AboutUsForm: React.FC<AboutUsFormProps> = ({ aboutUsArticle }) => {
+const MiniAboutUsForm: React.FC<MiniAboutUsFormProps> = ({
+  aboutUsArticle,
+}) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const pathname = usePathname();
@@ -61,18 +63,28 @@ const AboutUsForm: React.FC<AboutUsFormProps> = ({ aboutUsArticle }) => {
     try {
       let uploadedImgUrl = values.imgUrl;
 
-      if (files.length === 0) return;
-      const uploadedImgs = await startUpload(files);
+      if (files.length > 0) {
+        const uploadedImgs = await startUpload(files);
+        if (!uploadedImgs) return;
+        uploadedImgUrl = uploadedImgs[0].url;
 
-      if (!uploadedImgs) return;
-      uploadedImgUrl = uploadedImgs[0].url;
+        await updateAboutUs({
+          ...values,
+          _id: aboutUsArticle._id,
+          imgUrl: uploadedImgUrl,
+          imgSize: uploadedImgs[0].size,
+          newImg: true,
+          path: pathname,
+        });
+      } else {
+        await updateAboutUs({
+          ...values,
+          _id: aboutUsArticle._id,
+          newImg: false,
+          path: pathname,
+        });
+      }
 
-      await createAboutUs({
-        ...values,
-        imgUrl: uploadedImgUrl,
-        imgSize: uploadedImgs[0].size,
-        path: pathname,
-      });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -82,12 +94,16 @@ const AboutUsForm: React.FC<AboutUsFormProps> = ({ aboutUsArticle }) => {
 
   return (
     <>
-      {!aboutUsArticle && (
-        <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
-      )}
+      <UpdateBtn
+        updateTarget="Update Article"
+        handleClick={() => setDisplayForm((prev) => !prev)}
+      />
       {displayForm && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="form-style absolute bottom-0 w-full"
+          >
             <CloseBtn handleClick={handleClose} />
             <h1 className="title-style text-white">AboutUs Form</h1>
             <FormField
@@ -145,4 +161,4 @@ const AboutUsForm: React.FC<AboutUsFormProps> = ({ aboutUsArticle }) => {
   );
 };
 
-export default AboutUsForm;
+export default MiniAboutUsForm;

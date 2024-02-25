@@ -2,6 +2,7 @@
 
 import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { getUserByClerkId } from "@/lib/actions/user.actions";
 import { getServiceById, deleteService } from "@/lib/actions/service.actions";
@@ -25,6 +26,8 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
 
   const { user: clerkUser } = useUser();
 
+  const { toast } = useToast();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -42,7 +45,6 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
     const fetchService = async () => {
       try {
         const serviceObj = await getServiceById(id);
-
         setService(serviceObj as IService);
       } catch (error) {
         handleError(error);
@@ -52,13 +54,19 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
     if (clerkUser) fetchUser();
     fetchService();
     setLoading(false);
-  }, [clerkUser?.id, service]);
+  }, [clerkUser?.id, id]);
 
   const handleDelete = async () => {
     try {
       await deleteService(id);
       router.push("/services");
+      toast({ description: "Service Deleted Successfully." });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete Service.",
+      });
       handleError(error);
     }
   };
@@ -87,11 +95,7 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
           deletionTarget="Delete Service"
           handleClick={handleDelete}
         />
-        <MiniServiceForm
-          isAdmin={isAdmin}
-          servicesPageId={"true"}
-          service={service}
-        />
+        <MiniServiceForm service={service} setService={setService} />
       </section>
     )
   );

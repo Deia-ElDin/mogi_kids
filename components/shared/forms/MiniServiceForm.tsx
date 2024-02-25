@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,20 +29,19 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type MiniServiceForm = {
-  isAdmin: boolean | undefined;
-  servicesPageId: string | undefined;
   service: IService;
+  setService: (service: IService) => void;
 };
 
-const MiniServiceForm: React.FC<MiniServiceForm> = (props) => {
-  const { isAdmin, servicesPageId, service } = props;
-
-  if (!isAdmin || !servicesPageId) return null;
-
+const MiniServiceForm: React.FC<MiniServiceForm> = ({
+  service,
+  setService,
+}) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-  const pathname = usePathname();
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof serviceSchema>>({
     resolver: zodResolver(serviceSchema),
@@ -68,12 +68,16 @@ const MiniServiceForm: React.FC<MiniServiceForm> = (props) => {
   async function onSubmit(values: z.infer<typeof serviceSchema>) {
     try {
       let uploadedImgUrl = values.imgUrl;
+
+      let newService;
+
       if (files.length > 0) {
         const uploadedImgs = await startUpload(files);
 
         if (!uploadedImgs) return;
+
         uploadedImgUrl = uploadedImgs[0].url;
-        await updateService({
+        newService = await updateService({
           ...values,
           _id: service._id,
           imgUrl: uploadedImgUrl,
@@ -81,8 +85,9 @@ const MiniServiceForm: React.FC<MiniServiceForm> = (props) => {
           newImg: true,
           path: pathname,
         });
+        setFiles([]);
       } else {
-        await updateService({
+        newService = await updateService({
           ...values,
           _id: service._id,
           newImg: false,
@@ -90,9 +95,16 @@ const MiniServiceForm: React.FC<MiniServiceForm> = (props) => {
         });
       }
 
+      toast({ description: "Service Updated Successfully." });
+      form.reset(newService);
+      setService(newService);
       setDisplayForm(false);
-      form.reset();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Update The Service.",
+      });
       handleError(error);
     }
   }
@@ -105,10 +117,7 @@ const MiniServiceForm: React.FC<MiniServiceForm> = (props) => {
       />
       {displayForm && (
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="form-style flex flex-col"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
             <CloseBtn handleClick={handleClose} />
             <Tabs defaultValue="image">
               <TabsList className="mobile-edit-tab">

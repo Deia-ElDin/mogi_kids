@@ -5,7 +5,7 @@ import { CreateAboutUsParams, UpdateAboutUsParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import AboutUs from "../database/models/aboutUs.model";
+import AboutUs from "../database/models/about-us.model";
 
 const utapi = new UTApi();
 
@@ -23,6 +23,8 @@ export async function getAllAboutUs() {
 
 export async function createAboutUs(params: CreateAboutUsParams) {
   const { title, content, imgUrl, imgSize, path } = params;
+
+  console.log("params = ", params);
 
   try {
     await connectToDb();
@@ -52,6 +54,7 @@ export async function updateAboutUs(params: UpdateAboutUsParams) {
   if (!_id || !title || !content || !imgUrl || !path) return;
 
   let updatedAboutUsArticle;
+
   try {
     await connectToDb();
 

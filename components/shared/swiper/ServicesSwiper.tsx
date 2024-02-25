@@ -20,7 +20,9 @@ type ServicesSwiperProps = {
   services: IService[];
 };
 
-const ServicesSwiper: React.FC<ServicesSwiperProps> = ({ services }) => {
+const ServicesSwiper: React.FC<ServicesSwiperProps> = (props) => {
+  const { services } = props;
+
   if (services.length === 0) return;
 
   const router = useRouter();

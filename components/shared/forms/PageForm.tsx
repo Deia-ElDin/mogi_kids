@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -32,13 +33,13 @@ type PageProps = {
     | "Questions Page"
     | "Records Page"
     | "Customers Page"
-    | "Customers Welcoming Page"
     | "Quote Page"
     | "Contacts Page";
 };
 
 const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
+  const { toast } = useToast();
   const pathname = usePathname();
 
   const form = useForm<z.infer<typeof pageSchema>>({
@@ -74,7 +75,13 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
       } else await createPage({ ...values, path: pathname });
       setDisplayForm(false);
       form.reset();
+      toast({ description: `${pageName} Created Successfully.` });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Create ${pageName}.`,
+      });
       handleError(error);
     }
   }

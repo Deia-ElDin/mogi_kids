@@ -15,6 +15,6 @@ const AboutUsSchema: Schema = new Schema<IAboutUs>({
   imgSize: { type: Number, required: true },
 });
 
-const AboutUs = models.AboutUs || model<IAboutUs>("About Us", AboutUsSchema);
+const AboutUs = models.About_Us || model<IAboutUs>("About_Us", AboutUsSchema);
 
 export default AboutUs;

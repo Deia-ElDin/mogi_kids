@@ -19,10 +19,10 @@ import { IRecord } from "@/lib/database/models/record.model";
 import { updateRecord } from "@/lib/actions/record.actions";
 import { recordSchema } from "@/lib/validators";
 import { recordDefaultValues } from "@/constants";
+import UpdateBtn from "../btns/UpdateBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
-import UpdateBtn from "../btns/UpdateBtn";
 
 type MiniRecordFormProps = {
   record: IRecord;
@@ -37,10 +37,6 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
     resolver: zodResolver(recordSchema),
     defaultValues: record ? record : recordDefaultValues,
   });
-
-  useEffect(() => {
-    form.reset(record ? record : recordDefaultValues);
-  }, [record]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -92,7 +88,7 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (
-        <div className="w-full absolute left-0 right-0">
+        <div className="w-full absolute">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
               <CloseBtn handleClick={() => setDisplayForm(false)} />
