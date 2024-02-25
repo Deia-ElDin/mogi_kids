@@ -3,7 +3,7 @@
 import {
   EmailTemplate,
   // EmailTemplateProps,
-} from "../../../components/email-template";
+} from "../../../email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
 
