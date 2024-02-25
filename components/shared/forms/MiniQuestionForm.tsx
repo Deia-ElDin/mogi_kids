@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormControl,
@@ -30,6 +31,8 @@ type MiniQuestionFormProps = {
 const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
     defaultValues: question ? question : questionDefaultValues,
@@ -52,13 +55,17 @@ const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof questionSchema>) {
-    if (!isValidForm(values)) return;
-
     try {
       await updateQuestion({ ...values, _id: question._id! });
+      toast({ description: "Question Updated Successfully." });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Update The Question.",
+      });
       handleError(error);
     }
   }

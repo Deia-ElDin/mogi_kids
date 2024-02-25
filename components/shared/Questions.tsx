@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useToast } from "../ui/use-toast";
 import {
   Accordion,
   AccordionContent,
@@ -32,6 +32,8 @@ type QuestionsProps = {
 const Questions: React.FC<QuestionsProps> = (props) => {
   const { isAdmin, questionsPage, questions } = props;
 
+  const { toast } = useToast();
+
   const pageTitle = getPageTitle(
     questionsPage,
     isAdmin,
@@ -39,13 +41,24 @@ const Questions: React.FC<QuestionsProps> = (props) => {
   );
   const pageContent = getPageContent(questionsPage, isAdmin);
 
-  const handleDelete = async () => {
+  const handleDeleteAll = async () => {
     try {
       if (questionsPage?._id) await deletePage(questionsPage._id, "/");
       if (questions.length > 0) await deleteAllQuestions();
+      toast({ description: "Question Page Deleted Successfully." });
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Delete Question Page.",
+      });
       handleError(error);
     }
+  };
+
+  const handleDeleteQuestion = async (id: string) => {
+    await deleteQuestion(id);
+    toast({ description: "Question Deleted Successfully." });
   };
 
   return (
@@ -73,8 +86,8 @@ const Questions: React.FC<QuestionsProps> = (props) => {
                         pageId={questionsPage?._id}
                         isAdmin={isAdmin}
                         deletionTarget="Delete Question"
-                        handleClick={async () =>
-                          await deleteQuestion(questionObj._id)
+                        handleClick={() =>
+                          handleDeleteQuestion(questionObj._id)
                         }
                       />
                     </div>
@@ -90,8 +103,8 @@ const Questions: React.FC<QuestionsProps> = (props) => {
       <DeleteBtn
         pageId={questionsPage?._id}
         isAdmin={isAdmin}
-        deletionTarget="Questions Section"
-        handleClick={handleDelete}
+        deletionTarget="Delete Questions Section"
+        handleClick={handleDeleteAll}
       />
       <Separator pageId={questionsPage?._id} isAdmin={isAdmin} />
     </section>

@@ -102,7 +102,7 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
               <CloseBtn handleClick={() => setDisplayForm(false)} />
               <h1 className="title-style text-white">
-                {pageName.split(" ").slice(0, -1).join(" ")} Form
+                {pageName.split(" ").slice(0, -1).join(" ")} Page Form
               </h1>
               <FormField
                 control={form.control}

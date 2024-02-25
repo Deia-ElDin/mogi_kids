@@ -26,7 +26,7 @@ const ReviewsSwiper = ({ reviews }: ReviewsSwiperProps) => {
   const router = useRouter();
 
   return (
-    <div className="py-10 relative">
+    <div className="py-10">
       <Swiper
         spaceBetween={100}
         slidesPerView="auto"

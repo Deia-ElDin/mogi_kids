@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormControl,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { isValidForm, handleError } from "@/lib/utils";
+import { handleError } from "@/lib/utils";
 import { IQuestion } from "@/lib/database/models/question.model";
 import { createQuestion } from "@/lib/actions/question.actions";
 import { questionSchema } from "@/lib/validators";
@@ -29,6 +30,8 @@ type QuestionFormProps = {
 
 const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
+
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
@@ -52,13 +55,17 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof questionSchema>) {
-    if (!isValidForm(values)) return;
-
     try {
       await createQuestion({ ...values });
+      toast({ description: "Question Created Successfully." });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to Create The Question.",
+      });
       handleError(error);
     }
   }
