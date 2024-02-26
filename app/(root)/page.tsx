@@ -42,6 +42,7 @@ export default async function Home() {
   const isAdmin = user?.role === "Admin";
 
   console.log("size = ", formatBytes(services, records));
+  console.log("Home review = ", reviews);
 
   return (
     <>
@@ -66,9 +67,9 @@ export default async function Home() {
         records={records}
       />
       <Customers
+        user={user}
         isAdmin={isAdmin}
         customersPage={findPage(pages, "Customers Page")}
-        customersWelcomingPage={findPage(pages, "Customers Welcoming Page")}
         reviews={reviews}
       />
       <Quote

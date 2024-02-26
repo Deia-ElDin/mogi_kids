@@ -272,6 +272,10 @@ body {
     @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-white h-0 rounded-lg px-4 py-3 focus:outline-4 text-white focus:bg-white focus:text-black focus:h-[50px] transition-all duration-500;
   }
 
+  .replay-input-style {
+    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-4 border-black p-3 placeholder:text-gray-500 focus-within:border-none focus-within:outline-none;
+  }
+
   .textarea-style {
     @apply bg-gray-50 rounded-sm px-4 py-3 border-none outline-none w-full h-0 text-left focus:h-[200px] transition-all duration-500;
   }

@@ -11,6 +11,7 @@ export default authMiddleware({
     "/services/:id",
     "/careers",
     "/contact-us",
+    "/users/:id",
     "/api/webhook/clerk",
     "/api/uploadthing",
   ],

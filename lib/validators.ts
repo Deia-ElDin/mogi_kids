@@ -161,16 +161,19 @@ export const recordSchema = z.object({
   imgUrl: z.string().min(1, "Kindly provide us the record svg icon."),
   value: z.string().min(1, "Kindly provide us the record number."),
   label: z.string().min(1, "Kindly provide us the record label."),
-  // .min(1)
-  // .refine(
-  //   (value) => {
-  //     return value === undefined || /^#[0-9A-Fa-f]{3}$/.test(value);
-  //   },
-  //   {
-  //     message:
-  //       "Background color must start with '#' & (0 - 9, a - f, A - F), i.e. #ffeae6",
-  //   }
-  // ),
+});
+
+export const reviewSchema = z.object({
+  review: z
+    .string()
+    .max(1000, "Customers Review can't exceed 1000 letters. Thank you."),
+  rating: z.string(),
+});
+
+export const commentSchema = z.object({
+  comment: z
+    .string()
+    .max(1000, "Comments can't exceed 1000 letters. Thank you."),
 });
 
 export const contactSchema = z.object({

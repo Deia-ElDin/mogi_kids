@@ -1,13 +1,15 @@
 "use client";
 
-import { useUser } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 import { IUser } from "@/lib/database/models/user.model";
-import { IPage } from "@/lib/database/models/page.model";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { handleError } from "@/lib/utils";
 import ReviewsSwiper from "@/components/shared/swiper/ReviewsSwiper";
 import Loading from "@/components/shared/helpers/Loading";
+import Text from "@/components/shared/helpers/Text";
+import CstReviewForm from "@/components/shared/forms/ReviewForm";
+import UserDeleteBtn from "@/components/shared/btns/UserDeleteBtn";
+import { deleteUserReview } from "@/lib/actions/review.actions";
 
 type ServicePageProps = {
   params: { id: string };
@@ -20,8 +22,9 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const dbUser = await await getUserByUserId(id);
-        setUser(dbUser as IUser);
+        const dbUser = await getUserByUserId(id);
+        console.log("dbUser.reviews = ", dbUser.reviews);
+        setUser(dbUser);
         setLoading(false);
       } catch (error) {
         handleError(error);
@@ -30,6 +33,10 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
 
     fetchUser();
   }, []);
+
+  const handleDeleteAllUserReviews = async (userId: string) => {
+    await deleteUserReview(userId);
+  };
 
   if (loading) return <Loading />;
 
@@ -41,34 +48,23 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
           {user?.firstName && (
             <span className="text-orange-500"> {user?.firstName} </span>
           )}
-          Welcome to MOGiKiDS
+          Welcome to MOGiKiDS, We value your feedback! Share your experience
+          with Mogi Kids.
         </h1>
-        <ReviewsSwiper reviews={user?.reviews || []} />
+        <Text text="At Mogi Kids, we are committed to providing the best child care experience for you and your little ones. We strive to create a safe, nurturing, and stimulating environment where children can learn and grow." />
+        <Text text="We greatly value your opinion and would love to hear about your experience with Mogi Kids. Your feedback helps us understand what we're doing well and where we can improve to better serve you and your family." />
+        <Text text="Would you take a moment to share your thoughts by writing a review? Whether it's a story about your child's progress, a positive experience with our staff, or suggestions for how we can enhance our services, your input is invaluable to us." />
+        <Text text="To leave a review, simply click on the button below:" />
+        <CstReviewForm user={user} review={null} />
+        <Text text="Thank you for choosing Mogi Kids for your child care needs. We appreciate your trust in us and look forward to hearing from you soon." />
+        <ReviewsSwiper user={user} reviews={user?.reviews} />
+        <UserDeleteBtn
+          deletionTarget="Delete All Reviews"
+          handleClick={() => handleDeleteAllUserReviews(user._id)}
+        />
       </section>
     )
   );
 };
 
 export default UserPage;
-
-/**
- * Welcome to MogiKids Child Care Website!
- *
- * At MogiKids, we're dedicated to providing a safe, nurturing, and enriching environment
- * for your children. Our team of passionate educators and caregivers are committed to
- * fostering the growth and development of each child, ensuring they thrive in every aspect
- * of their early years.
- *
- * Explore our website to discover our comprehensive range of child care programs, designed
- * to cater to the unique needs of children at different stages of their development. Whether
- * it's our interactive learning activities, stimulating play areas, or nutritious meals,
- * we strive to create an engaging and supportive atmosphere where every child can flourish.
- *
- * We understand that choosing the right child care provider is a significant decision for
- * your family, and we're honored that you're considering MogiKids. Feel free to reach out
- * to us with any questions or to schedule a tour of our facilities. We look forward to
- * welcoming you and your child to the MogiKids family!
- *
- * Best regards,
- * The MogiKids Team
- */

@@ -315,7 +315,14 @@ export const recordDefaultValues = {
   label: "",
 };
 
-export const reviewDefaultValues = {};
+export const reviewDefaultValues = {
+  review: "",
+  rating: "",
+};
+
+export const commentDefaultValues = {
+  comment: "",
+};
 
 export const contactDefaultValues = {
   imgUrl: "",
@@ -326,4 +333,4 @@ export const aboutUsDefaultValues = {
   title: "",
   content: "",
   imgUrl: "",
-}
+};

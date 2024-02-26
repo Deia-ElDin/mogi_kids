@@ -43,7 +43,7 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
       <DeleteBtn
         pageId={welcomePage._id}
         isAdmin={isAdmin}
-        deletionTarget="Delete Welcome Section"
+        deletionTarget="Delete Welcomes Section"
         handleClick={handleDelete}
       />
       <Separator pageId={welcomePage?._id} isAdmin={isAdmin} />

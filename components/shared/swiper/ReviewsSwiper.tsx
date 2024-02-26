@@ -8,19 +8,21 @@ import {
   Autoplay,
 } from "swiper/modules";
 import { useRouter } from "next/navigation";
+import { IUser } from "@/lib/database/models/user.model";
 import { IReview } from "@/lib/database/models/review.model";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
-import CstReviewCard from "../cards/CstCard";
+import ReviewCard from "../cards/ReviewCard";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 type ReviewsSwiperProps = {
+  user: IUser | undefined;
   reviews: IReview[];
 };
 
-const ReviewsSwiper = ({ reviews }: ReviewsSwiperProps) => {
+const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
   if (reviews.length === 0) return;
 
   const router = useRouter();
@@ -54,12 +56,13 @@ const ReviewsSwiper = ({ reviews }: ReviewsSwiperProps) => {
       >
         {reviews.map((reviewObj, index) => (
           <SwiperSlide
-            key={`${reviewObj.user._id}-${index}`}
+            key={`${reviewObj?.user._id}-${index}`}
             className="max-w-[300px] mb-3"
           >
-            <CstReviewCard
+            <ReviewCard
+              user={user}
               reviewObj={reviewObj}
-              handleNavigate={() => router.push(`/users/${reviewObj.user._id}`)}
+              // handleNavigate={() => router.push(`/users/${reviewObj.user._id}`)}
             />
           </SwiperSlide>
         ))}
@@ -72,3 +75,5 @@ const ReviewsSwiper = ({ reviews }: ReviewsSwiperProps) => {
 };
 
 export default ReviewsSwiper;
+
+// Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi minima quia voluptatem ad cumque nisi! Ea similique nemo doloremque temporibus! Fuga obcaecati unde neque ipsa molestias nostrum, voluptatum reiciendis ipsum aspernatur corporis atque quod cum? Ex, quasi nam debitis quibusdam tenetur earum consequuntur quia beatae quas consectetur dignissimos omnis delectus ipsam, sed sapiente adipisci temporibus non blanditiis, voluptas ut vitae. Dolorum nostrum, aliquam possimus nesciunt praesentium eum veritatis pariatur ducimus laborum numquam corporis voluptatem cumque soluta non error illum saepe? Obcaecati placeat laborum tempore assumenda magni animi voluptatum ad veritatis dolor, fugit asperiores consequatur quo ex reprehenderit quos officiis distinctio.

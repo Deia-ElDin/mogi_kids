@@ -107,7 +107,6 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}
-                      // imgClass="w-full object-cover object-center"
                       imgClass="max-w-[100px] max-h-[100px]"
                     />
                   </FormControl>

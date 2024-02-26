@@ -4,7 +4,6 @@ import { useCallback, Dispatch, SetStateAction } from "react";
 import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { convertFileToUrl } from "@/lib/utils";
-import Image from "next/image";
 
 type FileUploaderProps = {
   imageUrl: string;
@@ -37,20 +36,13 @@ export function FileUploader({
       <input {...getInputProps()} className="cursor-pointer" />
       {imageUrl ? (
         <div className="flex h-full w-full flex-1 justify-center border-2 border-white">
-          {/* <Image
-            src={imageUrl}
-            alt="Service image"
-            width={300}
-            height={300}
-            className={imgClass}
-          /> */}
-          <img src={imageUrl} alt="Service image"  className={imgClass} />
+          <img src={imageUrl} alt="Service image" className={imgClass} />
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center">
-          <Image
+          <img
             src="/assets/icons/upload.svg"
-            alt="Upload button"
+            alt="Upload image"
             width={150}
             height={150}
           />

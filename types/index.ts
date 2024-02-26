@@ -1,3 +1,5 @@
+import { IComment } from "@/lib/database/models/comment.model";
+
 // User Params
 export type CreateUserParams = {
   clerkId: string;
@@ -70,11 +72,12 @@ export type UpdateRecordParams = {
 export type CreateReviewParams = {
   review?: string;
   rating?: string;
-  user: { _id: string; firstName: string; lastName?: string; photo?: string };
+  userId: string;
 };
 
 export type UpdateReviewParams = {
   _id: string;
+  comments: IComment[] | [];
 } & CreateReviewParams;
 
 // Contacts Params

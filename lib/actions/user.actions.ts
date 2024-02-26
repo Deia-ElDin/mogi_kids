@@ -5,6 +5,7 @@ import { CreateUserParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User from "../database/models/user.model";
+import Review from "../database/models/review.model";
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -29,7 +30,15 @@ export async function getUserByUserId(userId: string) {
   try {
     await connectToDb();
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({
+      path: "reviews",
+      model: Review,
+      populate: {
+        path: "user",
+        model: User,
+        select: "-_id firstName lastName photo",
+      },
+    });
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);

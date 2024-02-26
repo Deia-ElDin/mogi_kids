@@ -6,7 +6,7 @@ import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User from "../database/models/user.model";
 import Review from "../database/models/review.model";
-
+import { ObjectId } from "mongoose";
 
 export async function getAllReviews() {
   try {
@@ -15,7 +15,7 @@ export async function getAllReviews() {
     const reviews = await Review.find().populate({
       path: "user",
       model: User,
-      select: "_id firstName lastName photo",
+      select: "firstName lastName photo",
     });
 
     const invalidReviews = reviews.filter(
@@ -34,8 +34,11 @@ export async function getAllReviews() {
   }
 }
 
-export async function createReview(reviewObj: CreateReviewParams) {
-  const { user, review, rating } = reviewObj;
+export async function createReview(params: CreateReviewParams) {
+  const { userId, review, rating } = params;
+
+  // delete require.cache[require.resolve(Review)];
+  // const Review = require("../database/models/review.model");
 
   try {
     await connectToDb();
@@ -43,27 +46,30 @@ export async function createReview(reviewObj: CreateReviewParams) {
     const createdReview = await Review.create({
       review,
       rating,
-      user: user._id,
+      user: userId,
     });
 
     if (!createdReview) throw new Error("Failed to create user review.");
 
     const dbUser = await User.findByIdAndUpdate(
-      user._id,
+      userId,
       { $addToSet: { reviews: createdReview._id } },
       { new: true }
     );
 
     if (!dbUser) throw new Error("User not found.");
 
-    revalidatePath(`/users/${user._id}`);
+    // revalidatePath(`/users/${user._id}`);
+    revalidatePath("/");
+
+    return JSON.parse(JSON.stringify(createdReview));
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function updateReview(reviewObj: UpdateReviewParams) {
-  const { _id, user, review, rating } = reviewObj;
+export async function updateReview(params: UpdateReviewParams) {
+  const { _id, userId, review, rating, comments } = params;
 
   try {
     await connectToDb();
@@ -71,12 +77,14 @@ export async function updateReview(reviewObj: UpdateReviewParams) {
     const updatedReview = await Review.findByIdAndUpdate(_id, {
       review,
       rating,
-      user: user._id,
+      userId,
+      comments,
     });
 
     if (!updatedReview) throw new Error("Failed to create user review.");
 
-    revalidatePath(`/users/${user._id}`);
+    revalidatePath(`/users/${userId}`);
+    return JSON.parse(JSON.stringify(updatedReview));
   } catch (error) {
     handleError(error);
   }
@@ -120,6 +128,31 @@ export async function deleteAllReviews() {
     revalidatePath("/");
 
     return "All reviews deleted successfully";
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function deleteUserReview(userId: string) {
+  try {
+    await connectToDb();
+
+    const user = await User.findById(userId);
+
+    if (!user) throw new Error("Failed to find the user.");
+
+    const reviewIds: ObjectId[] = user.reviews;
+
+    await Promise.all(
+      reviewIds.map((reviewId) => Review.findByIdAndDelete(reviewId))
+    );
+
+    user.reviews = [];
+    await user.save();
+
+    revalidatePath("/");
+
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);
   }
