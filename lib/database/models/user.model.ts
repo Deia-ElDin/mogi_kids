@@ -12,18 +12,20 @@ export interface IUser extends Document {
   phoneNumbers: string[] | [];
   reviews: IReview[] | [];
   role: "Admin" | "User";
+  ban: boolean;
 }
 
 const UserSchema = new Schema({
-  clerkId: { type: "string", required: true, unique: true },
-  firstName: { type: "string", default: "" },
-  lastName: { type: "string", default: "" },
-  email: { type: "string", default: "" },
-  photo: { type: "string", default: "" },
-  gender: { type: "string", default: "" },
+  clerkId: { type: String, required: true, unique: true },
+  firstName: { type: String, default: "" },
+  lastName: { type: String, default: "" },
+  email: { type: String, default: "" },
+  photo: { type: String, default: "" },
+  gender: { type: String, default: "" },
   phoneNumbers: Array,
   reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
-  role: { type: "string", default: "User" },
+  role: { type: String, default: "User" },
+  ban: { type: Boolean, default: false },
 });
 
 const User = models.User || model<IUser>("User", UserSchema);

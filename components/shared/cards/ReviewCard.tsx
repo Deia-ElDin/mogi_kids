@@ -19,22 +19,13 @@ import CommentForm from "../forms/CommentForm";
 
 type ReviewCardParams = {
   user: IUser | undefined;
-  reviewObj: {
-    user: {
-      _id: string | undefined;
-      firstName: string | undefined;
-      lastName: string | undefined;
-      photo: string | undefined;
-    };
-    review: string | undefined;
-    rating: string | undefined;
-  };
+  reviewObj: IReview;
 };
 
 const ReviewCard: React.FC<ReviewCardParams> = ({ user, reviewObj }) => {
   const [userReplay, setUserReplay] = useState("");
   const { user: reviewUser, review, rating } = reviewObj;
-  const { firstName, lastName, photo } = reviewUser;
+  const { firstName, lastName, photo } = reviewUser as IUser | Partial<IUser>;
 
   return (
     <Sheet>
