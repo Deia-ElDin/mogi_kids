@@ -80,6 +80,17 @@ export type UpdateReviewParams = {
   comments: IComment[] | [];
 } & CreateReviewParams;
 
+// Comment Params
+export type CreateCommentParams = {
+  comment: string;
+  reviewId: string;
+  createdBy: string;
+};
+
+export type UpdateCommentParams = {
+  _id: string;
+} & CreateCommentParams;
+
 // Contacts Params
 export type CreateContactsParams = {
   imgUrl: string;

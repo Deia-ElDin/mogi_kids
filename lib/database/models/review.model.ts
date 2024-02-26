@@ -1,4 +1,5 @@
-import { Document, Schema, models, model } from "mongoose";
+import { Document, Schema, models, model, Types } from "mongoose";
+import { IUser } from "./user.model";
 import { IComment } from "./comment.model";
 
 export interface IReview extends Document {
@@ -6,7 +7,11 @@ export interface IReview extends Document {
   review?: string;
   rating?: string;
   comments: IComment[] | [];
-  createdBy: { _id: string };
+  createdBy: Types.ObjectId | string;
+  likes: Types.ObjectId[];
+  dislikes: Types.ObjectId[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 const ReviewSchema = new Schema<IReview>(
@@ -15,6 +20,8 @@ const ReviewSchema = new Schema<IReview>(
     rating: String,
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    dislikes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

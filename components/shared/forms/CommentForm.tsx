@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -9,26 +8,26 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { commentSchema } from "@/lib/validators";
 import { commentDefaultValues } from "@/constants";
+import { createComment, updateComment } from "@/lib/actions/comment.actions";
 import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { IComment } from "@/lib/database/models/comment.model";
-import { IReview } from "@/lib/database/models/review.model";
-import Text from "../helpers/Text";
+import { Button } from "@/components/ui/button";
 import * as z from "zod";
 
 type CommentFormProps = {
-  user: IUser | undefined;
-  comment: IComment | null;
+  user: IUser;
+  reviewId: string;
+  comment: IComment | Partial<IComment> | null;
 };
 
-const CommentForm = ({ user, comment }: CommentFormProps) => {
+const CommentForm = ({ user, reviewId, comment }: CommentFormProps) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof commentSchema>>({
@@ -37,18 +36,23 @@ const CommentForm = ({ user, comment }: CommentFormProps) => {
   });
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
-    // try {
-    //   if (review?._id) {
-    //     await updateReview({
-    //       ...values,
-    //       user: user,
-    //       _id: review._id,
-    //     });
-    //   } else await createReview({ ...values, user: user! });
-    //   form.reset();
-    // } catch (error) {
-    //   handleError(error);
-    // }
+    try {
+      const newComment = comment?._id
+        ? await updateComment({
+            ...values,
+            _id: comment._id,
+            reviewId,
+            createdBy: user._id,
+          })
+        : await createComment({
+            ...values,
+            reviewId,
+            createdBy: user._id,
+          });
+      form.reset();
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   return (
@@ -86,6 +90,20 @@ const CommentForm = ({ user, comment }: CommentFormProps) => {
             </FormItem>
           )}
         />
+        <div className="w-full flex justify-end gap-5">
+          <Button
+            className="bg-transparent hover:bg-transparent text-black rounded-sm border-2 border-gray-300 active:text-xs w-20"
+            type="button"
+          >
+            Cancel
+          </Button>
+          <Button
+            className="bg-gray-100 hover:bg-transparent text-black rounded-sm border-2 border-gray-300 active:text-base w-20"
+            type="submit"
+          >
+            Create
+          </Button>
+        </div>
       </form>
     </Form>
   );

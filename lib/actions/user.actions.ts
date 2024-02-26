@@ -34,7 +34,7 @@ export async function getUserByUserId(userId: string) {
       path: "reviews",
       model: Review,
       populate: {
-        path: "user",
+        path: "createdBy",
         model: User,
         select: "-_id firstName lastName photo",
       },

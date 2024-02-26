@@ -53,7 +53,7 @@ const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
       >
         {reviews.map((reviewObj, index) => (
           <SwiperSlide
-            key={`${reviewObj?.user._id}-${index}`}
+            key={`${reviewObj?._id}-${index}`}
             className="max-w-[300px] mb-3"
           >
             <ReviewCard user={user} reviewObj={reviewObj} />

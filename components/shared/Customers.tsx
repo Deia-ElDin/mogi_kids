@@ -47,7 +47,7 @@ const Customers: React.FC<CustomersProps> = (props) => {
       handleError(error);
     }
   };
-  
+
   return (
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />

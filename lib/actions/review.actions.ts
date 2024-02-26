@@ -6,20 +6,31 @@ import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User from "../database/models/user.model";
 import Review from "../database/models/review.model";
+import Comment from "../database/models/comment.model";
 import { ObjectId } from "mongoose";
 
 export async function getAllReviews() {
   try {
     await connectToDb();
 
-    const reviews = await Review.find().populate({
-      path: "user",
-      model: User,
-      select: "firstName lastName photo",
-    });
+    const reviews = await Review.find()
+      .populate({
+        path: "comments",
+        model: Comment,
+        populate: {
+          path: "createdBy",
+          model: User,
+          select: "_id firstName lastName photo",
+        },
+      })
+      .populate({
+        path: "createdBy",
+        model: User,
+        select: "_id firstName lastName photo",
+      });
 
     const invalidReviews = reviews.filter(
-      (review) => !review.user || !review.user._id
+      (review) => !review.createdBy || !review.createdBy._id
     );
 
     if (invalidReviews.length > 0) {
@@ -43,7 +54,7 @@ export async function createReview(params: CreateReviewParams) {
     const createdReview = await Review.create({
       review,
       rating,
-      createdBy: createdBy,
+      createdBy,
     });
 
     if (!createdReview) throw new Error("Failed to create user review.");
@@ -150,6 +161,74 @@ export async function deleteUserReview(userId: string) {
     revalidatePath("/");
 
     return JSON.parse(JSON.stringify(user));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function updateReviewLikes(reviewId: string, updaterId: string) {
+  try {
+    await connectToDb();
+
+    const review = await Review.findById(reviewId);
+
+    if (!review) throw new Error("Review not found");
+
+    const likesIndex = review.likes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    const dislikesIndex = review.dislikes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    if (dislikesIndex !== -1) review.dislikes.splice(dislikesIndex, 1);
+
+    if (likesIndex !== -1) review.likes.splice(likesIndex, 1);
+    else review.likes.push(updaterId);
+
+    const updatedReview = await review.save();
+
+    if (!updatedReview) throw new Error("Failed to update review likes.");
+
+    revalidatePath("/");
+
+    return JSON.parse(JSON.stringify(updatedReview));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function updateReviewDislikes(
+  reviewId: string,
+  updaterId: string
+) {
+  try {
+    await connectToDb();
+
+    const review = await Review.findById(reviewId);
+
+    if (!review) throw new Error("Review not found");
+
+    const likesIndex = review.likes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+    const dislikesIndex = review.dislikes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    if (likesIndex !== -1) review.likes.splice(likesIndex, 1);
+
+    if (dislikesIndex !== -1) review.dislikes.splice(dislikesIndex, 1);
+    else review.dislikes.push(updaterId);
+
+    const updatedReview = await review.save();
+
+    if (!updatedReview) throw new Error("Failed to update review dislikes.");
+
+    revalidatePath("/");
+
+    return JSON.parse(JSON.stringify(updatedReview));
   } catch (error) {
     handleError(error);
   }

@@ -197,32 +197,6 @@ body {
     overflow-y: scroll;
   }
 
-  /* .hidden-text {
-    opacity: 0;
-    height: 100%;
-    width: 100%;
-    max-width: 300px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    border-radius: 8px;
-    transition: opacity 1s ease-in-out;
-    margin: 0 auto;
-    overflow-wrap: anywhere;
-    z-index: 1;
-  } */
-
-  /* .hidden-text:hover {
-    opacity: 1;
-    color: #fff;
-    background-color: #d2a989;
-    padding: 20px;
-    margin: 0 auto;
-    z-index: 1;
-  } */
-
   .section-style {
     @apply flex flex-col w-[65%] py-4 relative;
   }
@@ -281,7 +255,7 @@ body {
   }
 
   .replay-input-style {
-    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-2 border-black;
+    @apply bg-transparent border-t-0 border-r-0 border-l-0 border-b-2 border-black shadow-inner;
   }
 
   .mobile-edit-textarea-style {

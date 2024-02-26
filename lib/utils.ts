@@ -93,3 +93,49 @@ export const formatDate = (date: Date): string => {
   const year: number = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
+
+export function formatMongoDbDate(dateString: string): string {
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+export function formatMongoDbDateInDays(dateString: string): string {
+  const date = new Date(dateString);
+  const currentDate = new Date();
+
+  // Calculate the difference in milliseconds
+  const differenceMs = currentDate.getTime() - date.getTime();
+
+  // Convert milliseconds to days
+  const differenceDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+
+  // If the difference is less than 1 day, return "Today"
+  if (differenceDays < 1) {
+    return "Today";
+  }
+
+  // If the difference is less than 7 days, return "X days ago"
+  if (differenceDays < 7) {
+    return `${differenceDays} day${differenceDays > 1 ? "s" : ""} ago`;
+  }
+
+  // If the difference is less than 30 days, return "X weeks ago"
+  if (differenceDays < 30) {
+    const weeks = Math.floor(differenceDays / 7);
+    return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+  }
+
+  // If the difference is less than 365 days, return "X months ago"
+  if (differenceDays < 365) {
+    const months = Math.floor(differenceDays / 30);
+    return `${months} month${months > 1 ? "s" : ""} ago`;
+  }
+
+  // Otherwise, return "X years ago"
+  const years = Math.floor(differenceDays / 365);
+  return `${years} year${years > 1 ? "s" : ""} ago`;
+}
