@@ -34,7 +34,6 @@ export async function createQuestion(params: CreateQuestionParams) {
 
     return JSON.parse(JSON.stringify(newQuestion));
   } catch (error) {
-    console.log("here 3");
     handleError(error);
   }
 }

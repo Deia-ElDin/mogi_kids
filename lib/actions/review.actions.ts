@@ -35,26 +35,21 @@ export async function getAllReviews() {
 }
 
 export async function createReview(params: CreateReviewParams) {
-  const { userId, review, rating } = params;
-
-  // delete require.cache[require.resolve(Review)];
-  // const Review = require("../database/models/review.model");
+  const { createdBy, review, rating } = params;
 
   try {
     await connectToDb();
 
-    Review.updateMany({}, { $set: { comments: [] } });
-
     const createdReview = await Review.create({
       review,
       rating,
-      user: userId,
+      createdBy: createdBy,
     });
 
     if (!createdReview) throw new Error("Failed to create user review.");
 
     const dbUser = await User.findByIdAndUpdate(
-      userId,
+      createdBy,
       { $addToSet: { reviews: createdReview._id } },
       { new: true }
     );
@@ -71,7 +66,7 @@ export async function createReview(params: CreateReviewParams) {
 }
 
 export async function updateReview(params: UpdateReviewParams) {
-  const { _id, userId, review, rating, comments } = params;
+  const { _id, createdBy, review, rating, comments } = params;
 
   try {
     await connectToDb();
@@ -79,13 +74,13 @@ export async function updateReview(params: UpdateReviewParams) {
     const updatedReview = await Review.findByIdAndUpdate(_id, {
       review,
       rating,
-      userId,
+      createdBy: createdBy,
       comments,
     });
 
     if (!updatedReview) throw new Error("Failed to create user review.");
 
-    revalidatePath(`/users/${userId}`);
+    revalidatePath(`/users/${createdBy}`);
     return JSON.parse(JSON.stringify(updatedReview));
   } catch (error) {
     handleError(error);

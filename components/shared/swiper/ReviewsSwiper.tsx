@@ -7,7 +7,6 @@ import {
   Pagination,
   Autoplay,
 } from "swiper/modules";
-import { useRouter } from "next/navigation";
 import { IUser } from "@/lib/database/models/user.model";
 import { IReview } from "@/lib/database/models/review.model";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
@@ -19,13 +18,11 @@ import "swiper/css/navigation";
 
 type ReviewsSwiperProps = {
   user: IUser | undefined;
-  reviews: IReview[];
+  reviews: IReview[] | [];
 };
 
 const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
   if (reviews.length === 0) return;
-
-  const router = useRouter();
 
   return (
     <div className="py-10">
@@ -59,11 +56,7 @@ const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
             key={`${reviewObj?.user._id}-${index}`}
             className="max-w-[300px] mb-3"
           >
-            <ReviewCard
-              user={user}
-              reviewObj={reviewObj}
-              // handleNavigate={() => router.push(`/users/${reviewObj.user._id}`)}
-            />
+            <ReviewCard user={user} reviewObj={reviewObj} />
           </SwiperSlide>
         ))}
       </Swiper>

@@ -53,18 +53,15 @@ const ReviewForm = ({ user, review }: ReviewFormProps) => {
   async function onSubmit(values: z.infer<typeof reviewSchema>) {
     values.rating = String(rating);
 
-    console.log("values", values);
-    console.log("review", review);
-
     try {
       if (review?._id) {
         await updateReview({
           ...values,
-          userId: user._id,
+          createdBy: user._id,
           comments: review.comments,
           _id: review._id,
         });
-      } else await createReview({ ...values, userId: user._id });
+      } else await createReview({ ...values, createdBy: user._id });
       setDisplayForm(false);
       form.reset();
     } catch (error) {

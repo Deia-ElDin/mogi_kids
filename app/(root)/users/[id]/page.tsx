@@ -23,7 +23,6 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
     const fetchUser = async () => {
       try {
         const dbUser = await getUserByUserId(id);
-        console.log("dbUser.reviews = ", dbUser.reviews);
         setUser(dbUser);
         setLoading(false);
       } catch (error) {

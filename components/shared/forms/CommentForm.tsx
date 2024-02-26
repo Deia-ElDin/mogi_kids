@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -19,7 +20,7 @@ import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { IComment } from "@/lib/database/models/comment.model";
 import { IReview } from "@/lib/database/models/review.model";
-import { createReview, updateReview } from "@/lib/actions/review.actions";
+import Text from "../helpers/Text";
 import * as z from "zod";
 
 type CommentFormProps = {
@@ -28,6 +29,8 @@ type CommentFormProps = {
 };
 
 const CommentForm = ({ user, comment }: CommentFormProps) => {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
     defaultValues: comment ? comment : commentDefaultValues,
@@ -54,9 +57,19 @@ const CommentForm = ({ user, comment }: CommentFormProps) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-3 w-full"
       >
-        <Avatar className="rounded-full h-[40px] w-[40px]">
-          <AvatarImage src={user?.photo ?? "/assets/icons/user.svg"} />
-        </Avatar>
+        <div
+          className="flex gap-2 items-end cursor-pointer"
+          onClick={() => router.push(`/users/${user?._id}`)}
+        >
+          <Avatar className="rounded-full h-[40px] w-[40px]">
+            <AvatarImage src={user?.photo ?? "/assets/icons/user.svg"} />
+          </Avatar>
+          <p>
+            {user?.firstName
+              ? user?.firstName + " " + user?.lastName
+              : "Customer"}
+          </p>
+        </div>
         <FormField
           control={form.control}
           name="comment"

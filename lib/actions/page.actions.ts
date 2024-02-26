@@ -11,7 +11,7 @@ export async function getAllPages() {
     await connectToDb();
 
     const pages = await Page.find();
-    
+
     return JSON.parse(JSON.stringify(pages));
   } catch (error) {
     handleError(error);
@@ -42,15 +42,12 @@ export async function createPage(params: CreatePageParams) {
 
     return JSON.parse(JSON.stringify(newPage));
   } catch (error) {
-    console.log(error);
     handleError(error);
   }
 }
 
 export async function updatePage(params: UpdatePageParams) {
   const { _id, pageName, pageTitle, pageContent, path } = params;
-
-  console.log("params = ", params);
 
   try {
     await connectToDb();

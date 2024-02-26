@@ -24,8 +24,6 @@ export async function getAllAboutUs() {
 export async function createAboutUs(params: CreateAboutUsParams) {
   const { title, content, imgUrl, imgSize, path } = params;
 
-  console.log("params = ", params);
-
   try {
     await connectToDb();
 

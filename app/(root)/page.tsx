@@ -42,7 +42,6 @@ export default async function Home() {
   const isAdmin = user?.role === "Admin";
 
   console.log("size = ", formatBytes(services, records));
-  console.log("Home review = ", reviews);
 
   return (
     <>

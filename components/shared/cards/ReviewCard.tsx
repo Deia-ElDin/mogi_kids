@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Sheet,
@@ -23,9 +22,11 @@ type ReviewCardParams = {
 };
 
 const ReviewCard: React.FC<ReviewCardParams> = ({ user, reviewObj }) => {
-  const [userReplay, setUserReplay] = useState("");
-  const { user: reviewUser, review, rating } = reviewObj;
-  const { firstName, lastName, photo } = reviewUser as IUser | Partial<IUser>;
+  const { createdBy, review, rating } = reviewObj;
+  const { firstName, lastName, photo } = createdBy as Partial<IUser>;
+
+  console.log("user = ", user);
+  console.log("reviewObj = ", reviewObj);
 
   return (
     <Sheet>
