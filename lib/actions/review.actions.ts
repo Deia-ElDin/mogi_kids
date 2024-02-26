@@ -43,6 +43,8 @@ export async function createReview(params: CreateReviewParams) {
   try {
     await connectToDb();
 
+    Review.updateMany({}, { $set: { comments: [] } });
+
     const createdReview = await Review.create({
       review,
       rating,

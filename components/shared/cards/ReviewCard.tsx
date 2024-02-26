@@ -19,7 +19,16 @@ import CommentForm from "../forms/CommentForm";
 
 type ReviewCardParams = {
   user: IUser | undefined;
-  reviewObj: IReview;
+  reviewObj: {
+    user: {
+      _id: string | undefined;
+      firstName: string | undefined;
+      lastName: string | undefined;
+      photo: string | undefined;
+    };
+    review: string | undefined;
+    rating: string | undefined;
+  };
 };
 
 const ReviewCard: React.FC<ReviewCardParams> = ({ user, reviewObj }) => {
@@ -79,7 +88,7 @@ const ReviewCard: React.FC<ReviewCardParams> = ({ user, reviewObj }) => {
           </SheetDescription>
         </SheetHeader>
         <SheetDescription className="flex flex-col gap-3 text-black">
-          <CommentForm user={user} review={userReplay} />
+          <CommentForm user={user} comment={null} />
         </SheetDescription>
         {/* <SheetFooter>
           <SheetClose>
