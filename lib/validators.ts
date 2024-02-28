@@ -1,10 +1,7 @@
 import * as z from "zod";
-import { today } from "@/constants";
+// import { today } from "@/constants";
 import { setDate } from "./utils";
-
-let fromDate: Date = today;
-let toDate: Date = today;
-let fromAge: number;
+import { addYears, isAfter } from "date-fns";
 
 // const [formErrors, setFormErrors] = useState({});
 
@@ -19,6 +16,11 @@ let fromAge: number;
 //     setFormErrors(validationResult.error.flatten().fieldErrors);
 //   }
 // };
+
+const today = new Date();
+let fromDate: Date = today;
+let toDate: Date = today;
+let fromAge: number;
 
 export const quoteSchema = z.object({
   cstName: z
@@ -45,16 +47,29 @@ export const quoteSchema = z.object({
     .string()
     .min(1, "Kindly provide your email address.")
     .email("Invalid email address."),
+  // from: z.date().refine((value) => {
+  //   if (value !== null && value !== undefined) {
+  //     fromDate = setDate(value);
+  //     return value >= today;
+  //   }
+  // }, "The service can't start in the past."),
+  // to: z.date().refine((value) => {
+  //   if (value !== null && value !== undefined) {
+  //     toDate = setDate(value);
+  //     return value >= fromDate && value >= today;
+  //   }
+  // }, "The service can't end in the past."),
   from: z.date().refine((value) => {
     if (value !== null && value !== undefined) {
-      fromDate = setDate(value);
-      return value >= today;
+      fromDate = value;
+      const maxDate = addYears(today, 1);
+      return isAfter(value, today) && isAfter(maxDate, value);
     }
-  }, "The service can't start in the past."),
+  }, "The service can't start in the past or exceed one year from now."),
   to: z.date().refine((value) => {
     if (value !== null && value !== undefined) {
-      toDate = setDate(value);
-      return value >= fromDate && value >= today;
+      toDate = value;
+      return isAfter(value, fromDate) && isAfter(value, today);
     }
   }, "The service can't end in the past."),
   numberOfHours: z

@@ -28,7 +28,7 @@ const ServicesSwiper: React.FC<ServicesSwiperProps> = (props) => {
   const router = useRouter();
 
   return (
-    <div className="pt-10">
+    <div className="pt-10 relative">
       <Swiper
         spaceBetween={100}
         slidesPerView="auto"
