@@ -15,7 +15,7 @@ const ReviewCard: React.FC<ReviewCardParams> = ({ reviewObj }) => {
   const { firstName, lastName, photo } = createdBy as Partial<IUser>;
 
   return (
-    <Card className="flex flex-col justify-between items-start w-full sm:w-[300px] h-[450px] max-w-[300px] p-3 rounded-lg cursor-pointer shadow-xl relative overflow-x-hidden">
+    <Card className="flex flex-col justify-between items-start sm:w-[300px] h-[450px] w-full min-w-[300px] max-w-[300px] p-3 rounded-lg cursor-pointer shadow-xl relative overflow-x-hidden">
       <div className="flex flex-col gap-3 p-0">
         <Text
           text={review!}
