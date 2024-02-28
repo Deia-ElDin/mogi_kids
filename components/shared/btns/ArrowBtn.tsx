@@ -16,7 +16,7 @@ const ArrowBtn: React.FC<ArrowBtnProps> = ({ btnClass, img }) => {
     <Button
       className={`${btnClass} flex justify-center items-center h-8 w-8 p-1 border rounded-lg bg-white active:p-2 hover:bg-custom-yellow absolute ${
         img === "Left arrow" ? "left-[-40px] " : "right-[-40px]"
-      } top-0 sm:top-[50%]`}
+      } hidden sm:block sm:top-[50%]`}
     >
       <Image src={imgSrc} alt={img} height={25} width={25} />
     </Button>
