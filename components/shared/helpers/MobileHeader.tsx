@@ -92,7 +92,12 @@ const MobileHeader = () => {
             </Button>
           ))}
           {user && (
-            <Button asChild className="btn active-btn">
+            <Button
+              asChild
+              className={`btn ${
+                pathname === `/users/${user._id}` ? "active-btn" : ""
+              }`}
+            >
               <Link href={`/users/${user._id}`}>
                 {user.firstName.length < 15 ? user.firstName : "Hi"}
               </Link>
