@@ -19,7 +19,7 @@ import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 
 import { findPage, formatBytes, getUsername } from "@/lib/utils";
 
-import AdminPanel from "@/components/shared/AdminPanel";
+import AdminPanel from "@/components/shared/Admin";
 import Welcome from "@/components/shared/Welcome";
 import Services from "@/components/shared/Services";
 import Questions from "@/components/shared/Questions";

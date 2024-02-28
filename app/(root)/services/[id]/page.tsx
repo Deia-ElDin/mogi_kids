@@ -95,7 +95,9 @@ const ServicePage: React.FC<ServicePageProps> = ({ params: { id } }) => {
           deletionTarget="Delete Service"
           handleClick={handleDelete}
         />
-        <MiniServiceForm service={service} setService={setService} />
+        {isAdmin && (
+          <MiniServiceForm service={service} setService={setService} />
+        )}
       </section>
     )
   );

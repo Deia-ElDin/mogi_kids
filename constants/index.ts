@@ -62,6 +62,8 @@ export const userWelcomePageText = [
   "To leave a review, simply click on the button below:",
 ];
 
+// Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ab similique cum asperiores dolorum obcaecati quas blanditiis voluptatibus quos neque, aliquam numquam mollitia repellendus aliquid corporis odit voluptate, est dignissimos quidem. Odio earum libero optio provident quas error nobis ut quasi voluptas ducimus? Earum temporibus asperiores labore, officiis adipisci soluta.
+
 export const serviceImgs = [
   {
     title: "Emergency Child Care",
@@ -181,7 +183,7 @@ export const contacts = [
   {
     icon: "/assets/icons/email.svg",
     title: "Email",
-    details: "info@mogi-kids.com",
+    details: "info@mogikids.com",
   },
 ];
 
