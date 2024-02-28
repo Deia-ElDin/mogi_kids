@@ -8,7 +8,7 @@ import { IRecord } from "@/lib/database/models/record.model";
 import { IReview } from "@/lib/database/models/review.model";
 import { IContact } from "@/lib/database/models/contact.model";
 
-import { getUserByUserId } from "@/lib/actions/user.actions";
+import { getUserByUserId, getAllUsers } from "@/lib/actions/user.actions";
 import { getAllPages } from "@/lib/actions/page.actions";
 import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
@@ -17,7 +17,7 @@ import { getAllReviews } from "@/lib/actions/review.actions";
 import { getAllContacts } from "@/lib/actions/contact.actions";
 import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 
-import { findPage, formatBytes } from "@/lib/utils";
+import { findPage, formatBytes, getUsername } from "@/lib/utils";
 
 import AdminPanel from "@/components/shared/AdminPanel";
 import Welcome from "@/components/shared/Welcome";
@@ -41,7 +41,12 @@ export default async function Home() {
   const aboutUs = await getAllAboutUs();
   const isAdmin = user?.role === "Admin";
 
-  console.log("size = ", formatBytes(services, records));
+  // const allUsers = await getAllUsers();
+  // console.log("size = ", formatBytes(services, records));
+  // console.log("allUsers = ", allUsers);
+  // allUsers.map((user) => {
+  //   console.log("username = ", getUsername(user.firstName, user.lastName));
+  // });
 
   return (
     <>

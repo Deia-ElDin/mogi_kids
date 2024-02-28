@@ -19,6 +19,8 @@ import { IUser } from "@/lib/database/models/user.model";
 import { Button } from "@/components/ui/button";
 import * as z from "zod";
 
+import { getUsername } from "@/lib/utils";
+
 type CommentFormProps = {
   user: IUser;
   reviewId: string;
@@ -49,11 +51,7 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
           <Avatar className="rounded-full h-[40px] w-[40px]">
             <AvatarImage src={user?.photo ?? "/assets/icons/user.svg"} />
           </Avatar>
-          <p>
-            {user?.firstName
-              ? user?.firstName + " " + user?.lastName
-              : "Customer"}
-          </p>
+          <p>{getUsername(user.firstName, user.lastName)}</p>
         </div>
         <FormField
           control={form.control}

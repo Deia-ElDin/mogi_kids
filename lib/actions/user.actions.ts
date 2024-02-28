@@ -71,3 +71,14 @@ export async function getUserByClerkId(clerkId: string) {
     handleError(error);
   }
 }
+
+export async function getAllUsers() {
+  try {
+    await connectToDb();
+
+    const users = await populateUser(User.find());
+    return JSON.parse(JSON.stringify(users));
+  } catch (error) {
+    handleError(error);
+  }
+}
