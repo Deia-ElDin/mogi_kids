@@ -38,7 +38,7 @@ const UserDeleteBtn: React.FC<UserDeleteBtnProps> = (props) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete
+              This action cannot be undone. This will permanently delete this
               <span className="text-red-500">
                 {" "}
                 {deletionTarget.split(" ").slice(1).join(" ")}

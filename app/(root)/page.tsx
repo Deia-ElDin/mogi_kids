@@ -84,3 +84,6 @@ export default async function Home() {
     </>
   );
 }
+
+// function to handle a certain amount of chars
+// handle reviewCard responsive mode

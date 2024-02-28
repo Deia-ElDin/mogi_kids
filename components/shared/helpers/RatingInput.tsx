@@ -13,6 +13,7 @@ const RatingInput = ({ rating, setRating }: RatingProps) => {
     setRating(value);
   };
 
+
   return (
     <div className="flex gap-2">
       {[...Array(5)].map((_, index) => {
@@ -21,7 +22,7 @@ const RatingInput = ({ rating, setRating }: RatingProps) => {
           <FaStar
             key={index}
             className={`text-white w-[30px] h-[30px] cursor-pointer  ${
-              starValue <= rating ? "text-yellow-500" : ""
+              starValue <= rating ? "text-yellow-500" : "text-gray-200"
             }`}
             onClick={() => handleClick(starValue)}
           />

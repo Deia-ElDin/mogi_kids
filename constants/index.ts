@@ -26,6 +26,17 @@ export const headerLinks = [
   },
 ];
 
+// w: 1024, h: 768, aspect ratio: 4.3
+export const careImgs = [
+  "/assets/images/care0.jpg",
+  "/assets/images/care1.jpg",
+  "/assets/images/care2.jpg",
+  "/assets/images/care3.jpg",
+  "/assets/images/care4.jpg",
+  "/assets/images/care5.jpg",
+  "/assets/images/care6.jpg",
+];
+
 export const socialMediaSvgs = [
   {
     label: "facebook",
@@ -44,15 +55,11 @@ export const socialMediaSvgs = [
   },
 ];
 
-// w: 1024, h: 768, aspect ratio: 4.3
-export const careImgs = [
-  "/assets/images/care0.jpg",
-  "/assets/images/care1.jpg",
-  "/assets/images/care2.jpg",
-  "/assets/images/care3.jpg",
-  "/assets/images/care4.jpg",
-  "/assets/images/care5.jpg",
-  "/assets/images/care6.jpg",
+export const userWelcomePageText = [
+  "At Mogi Kids, we are committed to providing the best child care experience for you and your little ones. We strive to create a safe, nurturing, and stimulating environment where children can learn and grow.",
+  "We greatly value your opinion and would love to hear about your experience with Mogi Kids. Your feedback helps us understand what we're doing well and where we can improve to better serve you and your family.",
+  "Would you take a moment to share your thoughts by writing a review? Whether it's a story about your child's progress, a positive experience with our staff, or suggestions for how we can enhance our services, your input is invaluable to us.",
+  "To leave a review, simply click on the button below:",
 ];
 
 export const serviceImgs = [

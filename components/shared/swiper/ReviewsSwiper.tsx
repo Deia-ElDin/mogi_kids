@@ -10,7 +10,7 @@ import {
 import { IUser } from "@/lib/database/models/user.model";
 import { IReview } from "@/lib/database/models/review.model";
 import ArrowBtn from "@/components/shared/btns/ArrowBtn";
-import ReviewCard from "../cards/ReviewCard";
+import ReviewSheet from "../sheets/ReviewSheet";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
@@ -56,7 +56,7 @@ const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
             key={`${reviewObj?._id}-${index}`}
             className="max-w-[300px] mb-3"
           >
-            <ReviewCard user={user} reviewObj={reviewObj} />
+            <ReviewSheet user={user} reviewObj={reviewObj} />
           </SwiperSlide>
         ))}
       </Swiper>
@@ -68,5 +68,3 @@ const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
 };
 
 export default ReviewsSwiper;
-
-// Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi minima quia voluptatem ad cumque nisi! Ea similique nemo doloremque temporibus! Fuga obcaecati unde neque ipsa molestias nostrum, voluptatum reiciendis ipsum aspernatur corporis atque quod cum? Ex, quasi nam debitis quibusdam tenetur earum consequuntur quia beatae quas consectetur dignissimos omnis delectus ipsam, sed sapiente adipisci temporibus non blanditiis, voluptas ut vitae. Dolorum nostrum, aliquam possimus nesciunt praesentium eum veritatis pariatur ducimus laborum numquam corporis voluptatem cumque soluta non error illum saepe? Obcaecati placeat laborum tempore assumenda magni animi voluptatum ad veritatis dolor, fugit asperiores consequatur quo ex reprehenderit quos officiis distinctio.

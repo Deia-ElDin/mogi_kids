@@ -4,6 +4,7 @@ import { connectToDb } from "../database";
 import { CreateCommentParams, UpdateCommentParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
+import { ObjectId } from "mongoose";
 import Comment from "../database/models/comment.model";
 import Review from "../database/models/review.model";
 
@@ -42,6 +43,8 @@ export async function createComment(params: CreateCommentParams) {
 export async function updateComment(params: UpdateCommentParams) {
   const { _id, comment, reviewId, createdBy } = params;
 
+  console.log("params = ", params);
+
   if (!_id || !comment || !reviewId || !createdBy) return;
 
   try {
@@ -77,6 +80,74 @@ export async function deleteComment(commentId: string) {
     revalidatePath("/");
 
     return JSON.parse(JSON.stringify(deletedComment));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function updateCommentLikes(commentId: string, updaterId: string) {
+  try {
+    await connectToDb();
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) throw new Error("Comment not found");
+
+    const likesIndex = comment.likes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    const dislikesIndex = comment.dislikes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    if (dislikesIndex !== -1) comment.dislikes.splice(dislikesIndex, 1);
+
+    if (likesIndex !== -1) comment.likes.splice(likesIndex, 1);
+    else comment.likes.push(updaterId);
+
+    const updatedComment = await comment.save();
+
+    if (!updatedComment) throw new Error("Failed to update comment likes.");
+
+    revalidatePath("/");
+
+    return JSON.parse(JSON.stringify(updatedComment));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function updateCommentDislikes(
+  commentId: string,
+  updaterId: string
+) {
+  try {
+    await connectToDb();
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) throw new Error("Comment not found");
+
+    const likesIndex = comment.likes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+    const dislikesIndex = comment.dislikes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    if (likesIndex !== -1) comment.likes.splice(likesIndex, 1);
+
+    if (dislikesIndex !== -1) comment.dislikes.splice(dislikesIndex, 1);
+    else comment.dislikes.push(updaterId);
+
+    const updatedComment = await comment.save();
+
+    if (!updatedComment) throw new Error("Failed to update comment dislikes.");
+
+    revalidatePath("/");
+
+    return JSON.parse(JSON.stringify(updatedComment));
   } catch (error) {
     handleError(error);
   }

@@ -33,11 +33,22 @@ export async function getUserByUserId(userId: string) {
     const user = await User.findById(userId).populate({
       path: "reviews",
       model: Review,
-      populate: {
-        path: "createdBy",
-        model: User,
-        select: "-_id firstName lastName photo",
-      },
+      populate: [
+        {
+          path: "createdBy",
+          model: "User",
+          select: "_id firstName lastName photo",
+        },
+        {
+          path: "comments",
+          model: "Comment",
+          populate: {
+            path: "createdBy",
+            model: "User",
+            select: "_id firstName lastName photo",
+          },
+        },
+      ],
     });
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
@@ -49,7 +60,27 @@ export async function getUserByClerkId(clerkId: string) {
   try {
     await connectToDb();
 
-    const user = await User.findOne({ clerkId: clerkId });
+    const user = await User.findOne({ clerkId: clerkId }).populate({
+      path: "reviews",
+      model: Review,
+      populate: [
+        {
+          path: "createdBy",
+          model: "User",
+          select: "_id firstName lastName photo",
+        },
+        {
+          path: "comments",
+          model: "Comment",
+          populate: {
+            path: "createdBy",
+            model: "User",
+            select: "_id firstName lastName photo",
+          },
+        },
+      ],
+    });
+
     return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);

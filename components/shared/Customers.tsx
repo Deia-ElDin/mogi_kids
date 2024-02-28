@@ -5,7 +5,6 @@ import { IPage } from "@/lib/database/models/page.model";
 import { IReview } from "@/lib/database/models/review.model";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { deletePage } from "@/lib/actions/page.actions";
-import { deleteAllReviews } from "@/lib/actions/review.actions";
 import { handleError } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import { useToast } from "../ui/use-toast";

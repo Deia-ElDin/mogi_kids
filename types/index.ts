@@ -77,8 +77,9 @@ export type CreateReviewParams = {
 
 export type UpdateReviewParams = {
   _id: string;
-  comments: IComment[] | [];
-} & CreateReviewParams;
+  review?: string;
+  rating?: string;
+};
 
 // Comment Params
 export type CreateCommentParams = {

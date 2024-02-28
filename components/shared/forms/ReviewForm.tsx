@@ -26,21 +26,25 @@ import * as z from "zod";
 
 type ReviewFormProps = {
   user: IUser;
-  review: IReview | null;
+  reviewObj: IReview | null;
 };
 
-const ReviewForm = ({ user, review }: ReviewFormProps) => {
+const ReviewForm = ({ user, reviewObj }: ReviewFormProps) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [rating, setRating] = useState(0);
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: review ? review : reviewDefaultValues,
+    defaultValues: reviewObj ? reviewObj : reviewDefaultValues,
   });
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") setDisplayForm(false);
+      if (event.key === "Escape") {
+        setDisplayForm(false);
+        setRating(0);
+        form.reset();
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -54,14 +58,8 @@ const ReviewForm = ({ user, review }: ReviewFormProps) => {
     values.rating = String(rating);
 
     try {
-      if (review?._id) {
-        await updateReview({
-          ...values,
-          createdBy: user._id,
-          comments: review.comments,
-          _id: review._id,
-        });
-      } else await createReview({ ...values, createdBy: user._id });
+      if (reviewObj?._id) await updateReview({ ...values, _id: reviewObj._id });
+      else await createReview({ ...values, createdBy: user._id });
       setDisplayForm(false);
       form.reset();
     } catch (error) {
@@ -100,7 +98,7 @@ const ReviewForm = ({ user, review }: ReviewFormProps) => {
               )}
             />
             <FormBtn
-              text={`${review?._id ? "Edit" : "Submit"} Rating`}
+              text={`${reviewObj?._id ? "Edit" : "Submit"} Review`}
               isSubmitting={form.formState.isSubmitting}
             />
           </form>

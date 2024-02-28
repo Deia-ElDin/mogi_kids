@@ -17,7 +17,7 @@ export interface IReview extends Document {
 const ReviewSchema = new Schema<IReview>(
   {
     review: { type: String, trim: true },
-    rating: String,
+    rating: { type: String, default: "0" },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],

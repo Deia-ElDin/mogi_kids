@@ -103,39 +103,31 @@ export function formatMongoDbDate(dateString: string): string {
   return `${day}/${month}/${year}`;
 }
 
-export function formatMongoDbDateInDays(dateString: string): string {
+export function postedSince(dateString: string): string {
   const date = new Date(dateString);
   const currentDate = new Date();
 
-  // Calculate the difference in milliseconds
-  const differenceMs = currentDate.getTime() - date.getTime();
+  date.setHours(0, 0, 0, 0);
+  currentDate.setHours(0, 0, 0, 0);
 
-  // Convert milliseconds to days
-  const differenceDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+  const diffMs = currentDate.getTime() - date.getTime();
 
-  // If the difference is less than 1 day, return "Today"
-  if (differenceDays < 1) {
-    return "Today";
-  }
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  // If the difference is less than 7 days, return "X days ago"
-  if (differenceDays < 7) {
-    return `${differenceDays} day${differenceDays > 1 ? "s" : ""} ago`;
-  }
+  if (diffDays === 0) return "Today";
 
-  // If the difference is less than 30 days, return "X weeks ago"
-  if (differenceDays < 30) {
-    const weeks = Math.floor(differenceDays / 7);
-    return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
-  }
+  if (diffDays === 1) return "Yesterday";
 
-  // If the difference is less than 365 days, return "X months ago"
-  if (differenceDays < 365) {
-    const months = Math.floor(differenceDays / 30);
-    return `${months} month${months > 1 ? "s" : ""} ago`;
-  }
+  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
 
-  // Otherwise, return "X years ago"
-  const years = Math.floor(differenceDays / 365);
-  return `${years} year${years > 1 ? "s" : ""} ago`;
+  const diffMonths = Math.floor(diffDays / 30);
+
+  if (diffMonths === 0) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+
+  if (diffMonths < 12)
+    return `${diffMonths} month${diffMonths > 1 ? "s" : ""} ago`;
+
+  const diffYears = Math.floor(diffMonths / 12);
+
+  return `${diffYears} year${diffYears > 1 ? "s" : ""} ago`;
 }
