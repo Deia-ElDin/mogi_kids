@@ -29,7 +29,7 @@ import {
   updateReviewDislikes,
 } from "@/lib/actions/review.actions";
 import { createReport } from "@/lib/actions/report.actions";
-import { handleError, postedSince } from "@/lib/utils";
+import { handleError, postedSince, getUsername } from "@/lib/utils";
 import { reviewSchema } from "@/lib/validators";
 import DotsBtn from "../btns/DotsBtn";
 import ReviewCard from "../cards/ReviewCard";
@@ -164,7 +164,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({
         <AvatarImage src={photo ?? "/assets/icons/user.svg"} />
       </Avatar>
       <p className="font-bold text-center text-[16px] leading-[24px] md:text-[18px] md:leading-[28px] lg:text-[20px] lg:leading-[32px] xl:text-[22px] xl:leading-[36px">
-        {firstName ? firstName + " " + lastName : "Customer"}
+        {getUsername(firstName, lastName)}
       </p>
     </>
   );

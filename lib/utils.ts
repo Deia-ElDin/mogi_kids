@@ -131,3 +131,12 @@ export function postedSince(dateString: string): string {
 
   return `${diffYears} year${diffYears > 1 ? "s" : ""} ago`;
 }
+
+export const getUsername = (
+  firstName: string | undefined,
+  lastName: string | undefined
+) => {
+  if (firstName && lastName) return `${firstName} ${lastName}`;
+  else if (firstName) return firstName;
+  else return "Customer";
+};

@@ -14,6 +14,9 @@ export async function createComment(params: CreateCommentParams) {
   try {
     await connectToDb();
 
+    await Comment.updateMany({}, { $set: { block: false } });
+    await Review.updateMany({}, { $set: { block: false } });
+
     const newComment = await Comment.create({
       comment,
       createdBy,
