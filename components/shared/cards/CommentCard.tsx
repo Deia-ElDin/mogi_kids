@@ -24,7 +24,7 @@ import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { IComment } from "@/lib/database/models/comment.model";
 import { IReview } from "@/lib/database/models/review.model";
-
+import { ReportToast } from "../toasts";
 import DotsBtn from "../btns/DotsBtn";
 import LikesCard from "./LikesCard";
 import Image from "next/image";
@@ -94,11 +94,19 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
   }
 
   const handleReviewLikeClick = async () => {
-    await updateCommentLikes(commentObj._id, user?._id!);
+    try {
+      await updateCommentLikes(commentObj._id, user?._id!);
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const handleReviewDisLikeClick = async () => {
-    await updateCommentDislikes(commentObj._id, user?._id!);
+    try {
+      await updateCommentDislikes(commentObj._id, user?._id!);
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const handleEditComment = () => {
@@ -125,6 +133,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         variant: "destructive",
         title: "Report sent successfully. Thank you.",
       });
+      setDisplayList(false);
     } catch (error) {
       handleError(error);
     }

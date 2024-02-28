@@ -21,7 +21,7 @@ const RatingInput = ({ rating, setRating }: RatingProps) => {
           <FaStar
             key={index}
             className={`text-white w-[30px] h-[30px] cursor-pointer  ${
-              starValue <= rating ? "text-yellow-500" : "text-gray-300"
+              starValue <= rating ? "text-yellow-500" : "text-gray-900"
             }`}
             onClick={() => handleClick(starValue)}
           />

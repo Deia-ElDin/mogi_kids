@@ -14,15 +14,15 @@ const ReviewCard: React.FC<ReviewCardParams> = ({ reviewObj }) => {
   const { firstName, lastName, photo } = createdBy as Partial<IUser>;
 
   return (
-    <Card className="flex flex-col justify-between items-start w-full sm:w-[300px] h-[450px] p-3 rounded-lg cursor-pointer shadow-xl relative">
+    <Card className="flex flex-col justify-between items-start w-full sm:w-[300px] h-[450px] max-w-[300px] p-3 rounded-lg cursor-pointer shadow-xl relative overflow-x-hidden">
       <div className="flex flex-col gap-3 p-0">
         <Text
           text={review!}
           targetClass={2}
-          textClass="max-h-[350px] overflow-y-auto break-normal"
+          textClass="max-h-[350px] overflow-y-auto"
         />
       </div>
-      <div className="flex items-center gap-3 w-full p-0  border-t-2 border-gray-100 py-1 h-fit">
+      <div className="flex items-center gap-3 w-full p-0 border-t-2 border-gray-100 py-1 h-fit">
         <Avatar className="rounded-full h-[60px] w-[60px]">
           <AvatarImage src={photo ?? "/assets/icons/user.svg"} />
         </Avatar>

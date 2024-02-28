@@ -7,11 +7,12 @@ export interface IReview extends Document {
   review?: string;
   rating?: string;
   comments: IComment[] | [];
-  createdBy: Types.ObjectId | string;
   likes: Types.ObjectId[];
   dislikes: Types.ObjectId[];
+  edited: boolean;
   createdAt: string;
   updatedAt: string;
+  createdBy: Types.ObjectId | string;
 }
 
 const ReviewSchema = new Schema<IReview>(
@@ -19,9 +20,10 @@ const ReviewSchema = new Schema<IReview>(
     review: { type: String, trim: true },
     rating: { type: String, default: "0" },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    edited: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

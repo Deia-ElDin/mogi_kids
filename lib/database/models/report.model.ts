@@ -12,7 +12,7 @@ const ReportSchema = new Schema<IReport>(
     target: { type: String, required: true },
     targetId: {
       type: Schema.Types.ObjectId,
-      ref: "User" || "Review" || "Comment",
+      ref: "Review" || "Comment",
     },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },

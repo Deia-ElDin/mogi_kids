@@ -136,6 +136,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({
         variant: "destructive",
         title: "Report sent successfully. Thank you.",
       });
+      setDisplayList(false);
     } catch (error) {
       handleError(error);
     }

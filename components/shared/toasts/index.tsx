@@ -11,3 +11,16 @@ export const CreateReviewToast = () => {
     </div>
   );
 };
+
+export const ReportToast = () => {
+  return (
+    <div>
+      <img
+        src="/assets/images/logo.png"
+        alt="Logo"
+        style={{ width: "180px", height: "100px" }}
+      />
+      Report sent successfully. Thank you.
+    </div>
+  );
+};
