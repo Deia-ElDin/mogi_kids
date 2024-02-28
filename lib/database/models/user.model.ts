@@ -25,7 +25,7 @@ const UserSchema = new Schema({
   phoneNumbers: Array,
   reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   role: { type: String, default: "User" },
-  ban: { type: Boolean, default: false },
+  block: { type: Boolean, default: false },
 });
 
 const User = models.User || model<IUser>("User", UserSchema);

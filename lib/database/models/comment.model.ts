@@ -7,6 +7,7 @@ export interface IComment extends Document {
   likes: Types.ObjectId[];
   dislikes: Types.ObjectId[];
   edited: boolean;
+  block: boolean;
   createdAt: string;
   updatedAt: string;
   createdBy: Types.ObjectId | string;
@@ -19,6 +20,7 @@ const CommentSchema = new Schema<IComment>(
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     edited: { type: Boolean, default: false },
+    block: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
