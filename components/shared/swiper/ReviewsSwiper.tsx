@@ -18,10 +18,11 @@ import "swiper/css/navigation";
 
 type ReviewsSwiperProps = {
   user: IUser | undefined;
+  setUser?: React.Dispatch<React.SetStateAction<IUser | null>>;
   reviews: IReview[] | [];
 };
 
-const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
+const ReviewsSwiper = ({ user, setUser, reviews }: ReviewsSwiperProps) => {
   if (reviews.length === 0) return;
 
   return (
@@ -56,7 +57,7 @@ const ReviewsSwiper = ({ user, reviews }: ReviewsSwiperProps) => {
             key={`${reviewObj?._id}-${index}`}
             className="max-w-[300px] mb-3"
           >
-            <ReviewSheet user={user} reviewObj={reviewObj} />
+            <ReviewSheet user={user} setUser={setUser} reviewObj={reviewObj} />
           </SwiperSlide>
         ))}
       </Swiper>

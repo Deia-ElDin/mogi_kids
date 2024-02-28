@@ -61,7 +61,7 @@ const DotsBtn = (props: DotsBtnProps) => {
 
   const DeleteBtn = () => (
     <AlertDialog>
-      <AlertDialogTrigger className="w-full p-1 bg-transparent hover:bg-transparent text-black border-b-2 border-gray-300 rounded-none hover:bg-gray-100 text-sm font-medium">
+      <AlertDialogTrigger className="w-full p-1 bg-transparent hover:bg-transparent text-black border-b-2 border-gray-300 text-sm h-[40px] hover:bg-gray-100">
         Delete
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -82,17 +82,9 @@ const DotsBtn = (props: DotsBtnProps) => {
     </AlertDialog>
   );
 
-  const UserBtns = () =>
-    user?._id === creatorId && (
-      <>
-        <EditBtn />
-        <DeleteBtn />
-      </>
-    );
-
   const ReportBtn = () => (
     <Button
-      className="w-full p-1 text-red-500 bg-white hover:text-white hover:bg-red-500 border-b-2 border-gray-300 rounded-none"
+      className="w-full p-1 text-red-500 bg-white hover:text-white hover:bg-red-500 rounded-none"
       onClick={handleReport}
     >
       Report
@@ -102,14 +94,20 @@ const DotsBtn = (props: DotsBtnProps) => {
   const Btns = () =>
     displayList && (
       <PopoverContent className="w-[100px] p-0 flex flex-col items-center mr-[30px] border-2 border-gray-300">
-        <UserBtns />
-        <ReportBtn />
+        {user?._id === creatorId ? (
+          <>
+            <EditBtn />
+            <DeleteBtn />
+          </>
+        ) : (
+          <ReportBtn />
+        )}
       </PopoverContent>
     );
 
   return (
     <Popover open={displayList} onOpenChange={setDisplayList}>
-      <PopoverTrigger className="bg-gray-200 py-2 rounded-lg w-fit">
+      <PopoverTrigger className="bg-gray-200 py-2 border-2 rounded-lg w-fit ">
         <Trigger />
       </PopoverTrigger>
       <Btns />

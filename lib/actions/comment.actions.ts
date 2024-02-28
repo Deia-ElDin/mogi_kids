@@ -41,21 +41,16 @@ export async function createComment(params: CreateCommentParams) {
 }
 
 export async function updateComment(params: UpdateCommentParams) {
-  const { _id, comment, reviewId, createdBy } = params;
+  const { _id, comment } = params;
 
-  console.log("params = ", params);
-
-  if (!_id || !comment || !reviewId || !createdBy) return;
+  if (!_id || !comment) return;
 
   try {
     await connectToDb();
 
     const updatedComment = await Comment.findByIdAndUpdate(
       _id,
-      {
-        comment,
-        createdBy,
-      },
+      { comment },
       { new: true }
     );
 
@@ -69,7 +64,7 @@ export async function updateComment(params: UpdateCommentParams) {
   }
 }
 
-export async function deleteComment(commentId: string) {
+export async function deleteComment(commentId: string, reviewId: string) {
   try {
     await connectToDb();
 
@@ -77,9 +72,15 @@ export async function deleteComment(commentId: string) {
 
     if (!deletedComment) throw new Error("Couldn't delete the comment.");
 
+    const parentReview = await Review.findByIdAndUpdate(
+      reviewId,
+      { $pull: { comments: commentId } },
+      { new: true }
+    );
+
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(deletedComment));
+    return JSON.parse(JSON.stringify(parentReview));
   } catch (error) {
     handleError(error);
   }

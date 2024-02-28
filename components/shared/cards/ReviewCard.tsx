@@ -10,7 +10,7 @@ type ReviewCardParams = {
 };
 
 const ReviewCard: React.FC<ReviewCardParams> = ({ reviewObj }) => {
-  const { createdBy, review, rating, createdAt } = reviewObj;
+  const { createdBy, review, rating } = reviewObj;
   const { firstName, lastName, photo } = createdBy as Partial<IUser>;
 
   return (
@@ -19,7 +19,7 @@ const ReviewCard: React.FC<ReviewCardParams> = ({ reviewObj }) => {
         <Text
           text={review!}
           targetClass={2}
-          textClass="max-h-[350px] overflow-auto"
+          textClass="max-h-[350px] overflow-y-auto break-normal"
         />
       </div>
       <div className="flex items-center gap-3 w-full p-0  border-t-2 border-gray-100 py-1 h-fit">

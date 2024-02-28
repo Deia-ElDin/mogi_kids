@@ -5,6 +5,7 @@ import { CreateReviewParams, UpdateReviewParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
+import { populateUser } from "./user.actions";
 import User from "../database/models/user.model";
 import Review from "../database/models/review.model";
 import Comment from "../database/models/comment.model";
@@ -51,18 +52,19 @@ export async function createReview(params: CreateReviewParams) {
 
     if (!createdReview) throw new Error("Failed to create user review.");
 
-    const dbUser = await User.findByIdAndUpdate(
-      createdBy,
-      { $addToSet: { reviews: createdReview._id } },
-      { new: true }
+    const user = await populateUser(
+      User.findByIdAndUpdate(
+        createdBy,
+        { $addToSet: { reviews: createdReview._id } },
+        { new: true }
+      )
     );
 
-    if (!dbUser) throw new Error("User not found.");
+    if (!user) throw new Error("User not found.");
 
-    // revalidatePath(`/users/${user._id}`);
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(createdReview));
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);
   }
@@ -83,9 +85,11 @@ export async function updateReview(params: UpdateReviewParams) {
 
     if (!updatedReview) throw new Error("Failed to create user review.");
 
+    const user = await populateUser(User.findById(updatedReview.createdBy));
+
     // revalidatePath(`/users/${updatedReview.createdBy}`);
     revalidatePath("/");
-    return JSON.parse(JSON.stringify(updatedReview));
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);
   }
@@ -95,19 +99,26 @@ export async function deleteReview(reviewId: string) {
   try {
     await connectToDb();
 
-    const deleteReview = await Review.findByIdAndUpdate(reviewId);
+    const deletedReview = await Review.findByIdAndDelete(reviewId);
 
-    if (!deleteReview) throw new Error("Review not found or already deleted.");
+    if (!deletedReview) throw new Error("Review not found or already deleted.");
 
-    const dbUser = await User.findByIdAndUpdate(
-      deleteReview.user._id,
-      { $pull: { reviews: deleteReview._id } },
-      { new: true }
+    await Promise.all(
+      deletedReview.comments.map(async (id: ObjectId) => {
+        await Comment.findByIdAndDelete(id);
+      })
     );
 
-    revalidatePath(`/users/${dbUser._id}`);
+    const user = await populateUser(
+      User.findByIdAndUpdate(
+        deletedReview.createdBy,
+        { $pull: { reviews: deletedReview._id } },
+        { new: true }
+      )
+    );
 
-    return "Review deleted successfully";
+    revalidatePath("/");
+    return JSON.parse(JSON.stringify(user));
   } catch (error) {
     handleError(error);
   }
@@ -134,31 +145,6 @@ export async function deleteReview(reviewId: string) {
 //   }
 // }
 
-export async function deleteUserReview(userId: string) {
-  try {
-    await connectToDb();
-
-    const user = await User.findById(userId);
-
-    if (!user) throw new Error("Failed to find the user.");
-
-    const reviewIds: ObjectId[] = user.reviews;
-
-    await Promise.all(
-      reviewIds.map((reviewId) => Review.findByIdAndDelete(reviewId))
-    );
-
-    user.reviews = [];
-    await user.save();
-
-    revalidatePath("/");
-
-    return JSON.parse(JSON.stringify(user));
-  } catch (error) {
-    handleError(error);
-  }
-}
-
 export async function updateReviewLikes(reviewId: string, updaterId: string) {
   try {
     await connectToDb();
@@ -184,9 +170,13 @@ export async function updateReviewLikes(reviewId: string, updaterId: string) {
 
     if (!updatedReview) throw new Error("Failed to update review likes.");
 
+    const isLiked = updatedReview.likes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(updatedReview));
+    return isLiked >= 0 ? true : false;
   } catch (error) {
     handleError(error);
   }
@@ -219,9 +209,13 @@ export async function updateReviewDislikes(
 
     if (!updatedReview) throw new Error("Failed to update review dislikes.");
 
+    const isDisLiked = updatedReview.dislikes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(updatedReview));
+    return isDisLiked >= 0 ? true : false;
   } catch (error) {
     handleError(error);
   }

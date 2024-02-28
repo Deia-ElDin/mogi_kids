@@ -37,6 +37,8 @@ const MobileHeader = () => {
       }
     };
 
+    if (!clerkUser && user?._id) setUser(null);
+
     fetchUser();
   }, [clerkUser]);
 

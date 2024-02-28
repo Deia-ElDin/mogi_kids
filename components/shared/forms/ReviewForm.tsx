@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormControl,
@@ -16,9 +17,9 @@ import { reviewSchema } from "@/lib/validators";
 import { reviewDefaultValues } from "@/constants";
 import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
-import { IReview } from "@/lib/database/models/review.model";
-import { createReview, updateReview } from "@/lib/actions/review.actions";
-import AddBtn from "../btns/AddBtn";
+import { createReview } from "@/lib/actions/review.actions";
+import { CreateReviewToast } from "../toasts";
+import UpdateBtn from "../btns/UpdateBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import RatingInput from "../helpers/RatingInput";
@@ -26,16 +27,17 @@ import * as z from "zod";
 
 type ReviewFormProps = {
   user: IUser;
-  reviewObj: IReview | null;
+  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
 };
 
-const ReviewForm = ({ user, reviewObj }: ReviewFormProps) => {
+const ReviewForm = ({ user, setUser }: ReviewFormProps) => {
+  const { toast } = useToast();
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [rating, setRating] = useState(0);
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: reviewObj ? reviewObj : reviewDefaultValues,
+    defaultValues: reviewDefaultValues,
   });
 
   useEffect(() => {
@@ -58,21 +60,32 @@ const ReviewForm = ({ user, reviewObj }: ReviewFormProps) => {
     values.rating = String(rating);
 
     try {
-      if (reviewObj?._id) await updateReview({ ...values, _id: reviewObj._id });
-      else await createReview({ ...values, createdBy: user._id });
-      setDisplayForm(false);
+      const updatedUser = await createReview({
+        ...values,
+        createdBy: user._id,
+      });
+      setUser(updatedUser);
+      toast({ description: <CreateReviewToast /> });
+      setRating(0);
       form.reset();
+      setDisplayForm(false);
     } catch (error) {
       handleError(error);
     }
   }
 
   return (
-    <>
-      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
+    <div className="relative">
+      <UpdateBtn
+        updateTarget="Create Review"
+        handleClick={() => setDisplayForm((prev) => !prev)}
+      />
       {displayForm && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className={`form-style absolute bottom-0`}
+          >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
             <h1 className="title-style text-white">Review Form</h1>
             <FormField
@@ -98,13 +111,13 @@ const ReviewForm = ({ user, reviewObj }: ReviewFormProps) => {
               )}
             />
             <FormBtn
-              text={`${reviewObj?._id ? "Edit" : "Submit"} Review`}
+              text="Create Review"
               isSubmitting={form.formState.isSubmitting}
             />
           </form>
         </Form>
       )}
-    </>
+    </div>
   );
 };
 

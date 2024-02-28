@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Sheet,
   SheetContent,
@@ -27,6 +28,7 @@ import {
   updateReviewLikes,
   updateReviewDislikes,
 } from "@/lib/actions/review.actions";
+import { createReport } from "@/lib/actions/report.actions";
 import { handleError, postedSince } from "@/lib/utils";
 import { reviewSchema } from "@/lib/validators";
 import DotsBtn from "../btns/DotsBtn";
@@ -37,17 +39,21 @@ import CommentCard from "../cards/CommentCard";
 import LikesCard from "../cards/LikesCard";
 import Rating from "../helpers/Rating";
 import Text from "../helpers/Text";
-
-import UpdateBtn from "../btns/UpdateBtn";
-import UserDeleteBtn from "../btns/UserDeleteBtn";
 import * as z from "zod";
 
 type ReviewSheetParams = {
   user: IUser | undefined;
+  setUser?: React.Dispatch<React.SetStateAction<IUser | null>>;
   reviewObj: IReview;
 };
 
-const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
+const ReviewSheet: React.FC<ReviewSheetParams> = ({
+  user,
+  setUser,
+  reviewObj,
+}) => {
+  const { toast } = useToast();
+
   const { createdBy, review, rating, comments, likes, dislikes, createdAt } =
     reviewObj;
 
@@ -88,6 +94,53 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
       ? "text-red-500"
       : "text-gray-400";
 
+  const form = useForm<z.infer<typeof reviewSchema>>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: { review, rating },
+  });
+
+  async function onSubmit(values: z.infer<typeof reviewSchema>) {
+    values.rating = stateRating.toString();
+
+    try {
+      const updatedUser = await updateReview({ ...values, _id: reviewObj._id });
+      if (setUser) setUser(updatedUser);
+      setDisplayForm(false);
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  const handleEditBtnClick = () => {
+    setDisplayList(false);
+    setDisplayForm((prev) => !prev);
+  };
+
+  const handleDeleteBtnClick = async () => {
+    try {
+      const updatedUser = await deleteReview(reviewObj._id);
+      if (setUser) setUser(updatedUser);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleReport = async () => {
+    try {
+      await createReport({
+        target: "Review",
+        targetId: reviewObj._id,
+        createdBy: user?._id ? user._id : null,
+      });
+      toast({
+        variant: "destructive",
+        title: "Report sent successfully. Thank you.",
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const handleLikes = async () => {
     try {
       await updateReviewLikes(reviewObj._id, user?._id!);
@@ -103,31 +156,6 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
       handleError(error);
     }
   };
-
-  const handleEditReview = () => {
-    setDisplayList(false);
-    setDisplayForm(true);
-  };
-
-  const handleDeleteReview = async () => {
-    console.log("Edit Review");
-  };
-
-  const form = useForm<z.infer<typeof reviewSchema>>({
-    resolver: zodResolver(reviewSchema),
-    defaultValues: { review, rating },
-  });
-
-  async function onSubmit(values: z.infer<typeof reviewSchema>) {
-    values.rating = stateRating.toString();
-
-    try {
-      await updateReview({ ...values, _id: reviewObj._id });
-      setDisplayForm(false);
-    } catch (error) {
-      handleError(error);
-    }
-  }
 
   const UserInfo = () => (
     <>
@@ -193,10 +221,12 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
 
   const UserReview = () => (
     <div className="flex flex-col gap-3 text-black">
-      <div className="flex justify-center">
-        {rating && parseInt(rating) > 0 && <Rating rating={parseInt(rating)} />}
-      </div>
-      <div className="relative">
+      {rating && parseInt(rating) > 0 && (
+        <div className="flex justify-center">
+          <Rating rating={parseInt(rating)} />
+        </div>
+      )}
+      <div>
         <Text
           text={review!}
           targetClass={2}
@@ -206,7 +236,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
     </div>
   );
 
-  const UserCard = () => (
+  const UserReviewCard = () => (
     <div className="relative w-full">
       {displayForm ? <UserReviewForm /> : <UserReview />}
       <div className="absolute top-0 right-0">
@@ -216,9 +246,9 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
           displayList={displayList}
           deletionTarget="Review"
           setDisplayList={setDisplayList}
-          handleEdit={handleEditReview}
-          handleDelete={() => console.log("Delete")}
-          handleReport={() => console.log("Report")}
+          handleEdit={handleEditBtnClick}
+          handleDelete={handleDeleteBtnClick}
+          handleReport={handleReport}
         />
       </div>
     </div>
@@ -226,14 +256,16 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
 
   const ReviewDetailsDiv = () => (
     <div className="flex gap-8 w-full">
-      <LikesCard
-        likes={likes.length}
-        dislikes={dislikes.length}
-        likesColor={likesColor}
-        dislikesColor={dislikesColor}
-        handleLikesClick={handleLikes}
-        handleDislikesClick={handleDisLike}
-      />
+      {user && user._id && (
+        <LikesCard
+          likes={likes.length}
+          dislikes={dislikes.length}
+          likesColor={likesColor}
+          dislikesColor={dislikesColor}
+          handleLikesClick={handleLikes}
+          handleDislikesClick={handleDisLike}
+        />
+      )}
       <p className="text-gray-500 text-sm ml-auto">{postedSince(createdAt)}</p>
     </div>
   );
@@ -268,7 +300,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
         <SheetHeader className="flex flex-col mt-5 p-0">
           <SheetTitle className="flex flex-col items-center">
             <UserInfo />
-            <UserCard />
+            <UserReviewCard />
           </SheetTitle>
           <ReviewDetailsDiv />
         </SheetHeader>

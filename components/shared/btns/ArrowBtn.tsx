@@ -14,7 +14,7 @@ const ArrowBtn: React.FC<ArrowBtnProps> = ({ btnClass, img }) => {
 
   return (
     <Button
-      className={`${btnClass} flex justify-center items-center h-8 w-8 p-1 border rounded-lg bg-white active:p-2 hover:bg-custom-red absolute ${
+      className={`${btnClass} flex justify-center items-center h-8 w-8 p-1 border rounded-lg bg-white active:p-2 hover:bg-custom-yellow absolute ${
         img === "Left arrow" ? "left-[-40px]" : "right-[-40px]"
       } top-[50%]`}
     >

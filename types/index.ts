@@ -90,7 +90,8 @@ export type CreateCommentParams = {
 
 export type UpdateCommentParams = {
   _id: string;
-} & CreateCommentParams;
+  comment: string;
+};
 
 // Contacts Params
 export type CreateContactsParams = {
@@ -139,4 +140,11 @@ export type UpdateAboutUsParams = {
   imgSize?: number;
   path: string;
   newImg: boolean;
+};
+
+// Report Params
+export type CreateReportParams = {
+  target: string;
+  targetId: string;
+  createdBy: string | null;
 };

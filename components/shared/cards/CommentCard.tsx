@@ -9,23 +9,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { commentSchema } from "@/lib/validators";
 import { postedSince } from "@/lib/utils";
-import { updateComment } from "@/lib/actions/comment.actions";
+import {
+  updateComment,
+  deleteComment,
+  updateCommentLikes,
+  updateCommentDislikes,
+} from "@/lib/actions/comment.actions";
 import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { IComment } from "@/lib/database/models/comment.model";
 import { IReview } from "@/lib/database/models/review.model";
-import {
-  updateCommentLikes,
-  updateCommentDislikes,
-} from "@/lib/actions/comment.actions";
+
 import DotsBtn from "../btns/DotsBtn";
 import LikesCard from "./LikesCard";
 import Image from "next/image";
 import * as z from "zod";
+import { createReport } from "@/lib/actions/report.actions";
 
 type CommentCardProps = {
   user: IUser | undefined;
@@ -34,6 +38,8 @@ type CommentCardProps = {
 };
 
 const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
+  const { toast } = useToast();
+
   const [displayList, setDisplayList] = useState<boolean>(false);
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
@@ -79,9 +85,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
     try {
       await updateComment({
         ...values,
-        reviewId: reviewObj._id,
         _id: commentObj._id,
-        createdBy: creatorId!,
       });
       setDisplayForm(false);
     } catch (error) {
@@ -102,8 +106,28 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
     setDisplayList((prev) => !prev);
   };
 
-  const handleDeleteComment = () => {
-    console.log("Edit Review");
+  const handleDeleteComment = async () => {
+    try {
+      await deleteComment(commentObj._id, reviewObj._id);
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const handleReport = async () => {
+    try {
+      await createReport({
+        target: "Comment",
+        targetId: commentObj._id,
+        createdBy: user?._id ? user._id : null,
+      });
+      toast({
+        variant: "destructive",
+        title: "Report sent successfully. Thank you.",
+      });
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   return (
@@ -125,10 +149,11 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
             user={user}
             creatorId={creatorId!}
             displayList={displayList}
+            deletionTarget="Comment"
             setDisplayList={setDisplayList}
             handleEdit={handleEditComment}
             handleDelete={handleDeleteComment}
-            handleReport={() => console.log("Report")}
+            handleReport={handleReport}
           />
         </div>
       </CardContent>
@@ -175,16 +200,18 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       ) : (
         <CardContent>
           <p>{comment}</p>
-          <div className="my-3">
-            <LikesCard
-              likes={likes.length}
-              dislikes={dislikes.length}
-              likesColor={likesColor}
-              dislikesColor={dislikesColor}
-              handleLikesClick={handleReviewLikeClick}
-              handleDislikesClick={handleReviewDisLikeClick}
-            />
-          </div>
+          {user && user._id && (
+            <div className="my-3">
+              <LikesCard
+                likes={likes.length}
+                dislikes={dislikes.length}
+                likesColor={likesColor}
+                dislikesColor={dislikesColor}
+                handleLikesClick={handleReviewLikeClick}
+                handleDislikesClick={handleReviewDisLikeClick}
+              />
+            </div>
+          )}
         </CardContent>
       )}
     </Card>
