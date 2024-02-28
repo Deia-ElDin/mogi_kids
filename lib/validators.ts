@@ -166,16 +166,20 @@ export const recordSchema = z.object({
 export const reviewSchema = z.object({
   review: z
     .string()
-    .min(1, "Kindly leave us a comment :) Thank you.")
-    .max(1000, "Customers Review can't exceed 1000 letters. Thank you."),
+    .max(1000, "Customers Review can't exceed 1000 letters. Thank you.")
+    .refine((value) => value.trim().length > 0, {
+      message: "Kindly leave us a review :) Thank you.",
+    }),
   rating: z.string(),
 });
 
 export const commentSchema = z.object({
   comment: z
     .string()
-    .min(1, "Kindly provide us a comment.")
-    .max(1000, "Comments can't exceed 1000 letters. Thank you."),
+    .max(1000, "Customers Review can't exceed 1000 letters. Thank you.")
+    .refine((value) => value.trim().length > 0, {
+      message: "Kindly leave us a comment :) Thank you.",
+    }),
 });
 
 export const contactSchema = z.object({

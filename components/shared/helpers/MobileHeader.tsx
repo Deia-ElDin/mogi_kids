@@ -97,6 +97,7 @@ const MobileHeader = () => {
               className={`btn ${
                 pathname === `/users/${user._id}` ? "active-btn" : ""
               }`}
+              onClick={() => setIsOpen(false)}
             >
               <Link href={`/users/${user._id}`}>
                 {user.firstName.length < 15 ? user.firstName : "Hi"}
