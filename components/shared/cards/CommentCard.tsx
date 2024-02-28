@@ -13,7 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { commentSchema } from "@/lib/validators";
-import { postedSince } from "@/lib/utils";
+import { getUsername, postedSince } from "@/lib/utils";
 import {
   updateComment,
   deleteComment,
@@ -150,7 +150,9 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
           className="rounded-full"
         />
         <div className="flex items-center gap-5">
-          <p className="font-bold tracking-wide">{`${firstName} ${lastName}`}</p>
+          <p className="font-bold tracking-wide">
+            {getUsername(firstName, lastName)}
+          </p>
           <p className="text-gray-500 text-sm">{postedSince(createdAt)}</p>
         </div>
         <div className="ml-auto">

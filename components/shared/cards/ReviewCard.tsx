@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { IUser } from "@/lib/database/models/user.model";
 import { IReview } from "@/lib/database/models/review.model";
+import { getUsername } from "@/lib/utils";
 import Text from "../helpers/Text";
 import Rating from "../helpers/Rating";
 
@@ -27,7 +28,7 @@ const ReviewCard: React.FC<ReviewCardParams> = ({ reviewObj }) => {
           <AvatarImage src={photo ?? "/assets/icons/user.svg"} />
         </Avatar>
         <div className="h-[60px] pt-[8px]">
-          <Text text={firstName ? firstName + " " + lastName : "Customer"} />
+          <Text text={getUsername(firstName, lastName)} />
         </div>
       </div>
       <div className="flex justify-center absolute bottom-[5px] right-[5px]">

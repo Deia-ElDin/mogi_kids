@@ -51,7 +51,9 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
           <Avatar className="rounded-full h-[40px] w-[40px]">
             <AvatarImage src={user?.photo ?? "/assets/icons/user.svg"} />
           </Avatar>
-          <p>{getUsername(user.firstName, user.lastName)}</p>
+          <p className="font-bold tracking-wide">
+            {getUsername(user.firstName, user.lastName)}
+          </p>
         </div>
         <FormField
           control={form.control}
@@ -90,3 +92,4 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
 };
 
 export default CommentForm;
+

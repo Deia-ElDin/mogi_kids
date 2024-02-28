@@ -54,9 +54,6 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({
 }) => {
   const { toast } = useToast();
 
-
-
-
   const { createdBy, review, rating, comments, likes, dislikes, createdAt } =
     reviewObj;
 
