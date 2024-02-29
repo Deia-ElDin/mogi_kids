@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
@@ -30,7 +31,9 @@ type logoProps = {
 const logoForm: React.FC<logoProps> = ({ logo }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
+
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof logoSchema>>({
     resolver: zodResolver(logoSchema),
@@ -39,6 +42,7 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
 
   const handleClose = () => {
     form.reset();
+    setFiles([]);
     setDisplayForm(false);
   };
 
@@ -90,13 +94,15 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
               <CloseBtn handleClick={handleClose} />
-              <h1 className="title-style text-white">logo Form</h1>
+              <h1 className="title-style text-white">MOGi KiDS Logo Form</h1>
               <FormField
                 control={form.control}
                 name="imgUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="label-style">logo Icon</FormLabel>
+                    <FormLabel className="label-style">
+                      MOGi KiDS Logo
+                    </FormLabel>
                     <FormControl>
                       <FileUploader
                         imageUrl={field.value}
