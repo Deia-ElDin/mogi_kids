@@ -17,6 +17,7 @@ import { reviewSchema } from "@/lib/validators";
 import { reviewDefaultValues } from "@/constants";
 import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
+import { ILogo } from "@/lib/database/models/logo.model";
 import { createReview } from "@/lib/actions/review.actions";
 import { CreateReviewToast } from "../toasts";
 import UpdateBtn from "../btns/UpdateBtn";
@@ -28,9 +29,10 @@ import * as z from "zod";
 type ReviewFormProps = {
   user: IUser;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
+  logo: ILogo | null;
 };
 
-const ReviewForm = ({ user, setUser }: ReviewFormProps) => {
+const ReviewForm = ({ user, setUser, logo }: ReviewFormProps) => {
   const { toast } = useToast();
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [rating, setRating] = useState(0);
@@ -65,7 +67,7 @@ const ReviewForm = ({ user, setUser }: ReviewFormProps) => {
         createdBy: user._id,
       });
       setUser(updatedUser);
-      toast({ description: <CreateReviewToast /> });
+      toast({ description: <CreateReviewToast logo={logo} /> });
       setRating(0);
       form.reset();
       setDisplayForm(false);

@@ -9,14 +9,6 @@ import Logo from "../database/models/logo.model";
 
 const utapi = new UTApi();
 
-// try {
-//   const logo = await getLogo();
-//   // Do something with the logo
-// } catch (error) {
-//   // Handle the error
-//   console.error("Error fetching logo:", error.message);
-//   // Optionally, show a message to the user or perform other actions
-
 export async function getLogo() {
   try {
     await connectToDb();

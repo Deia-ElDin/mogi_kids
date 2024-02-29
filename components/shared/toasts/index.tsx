@@ -1,10 +1,17 @@
 import { logoImg } from "@/constants";
+import { ILogo } from "@/lib/database/models/logo.model";
 
-export const CreateReviewToast = (logo: string) => {
+interface CreateReviewToastProps {
+  logo: ILogo | null;
+}
+
+export const CreateReviewToast: React.FC<CreateReviewToastProps> = ({
+  logo,
+}) => {
   return (
     <div>
       <img
-        src={logo ?? logoImg}
+        src={logo?.imgUrl || logoImg}
         alt="Logo"
         style={{ width: "180px", height: "100px" }}
       />

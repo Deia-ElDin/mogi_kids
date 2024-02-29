@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { IUser } from "@/lib/database/models/user.model";
+import { ILogo } from "@/lib/database/models/logo.model";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { handleError } from "@/lib/utils";
 import { userWelcomePageText } from "@/constants";
+import { getLogo } from "@/lib/actions/logo.actions";
 import ReviewsSwiper from "@/components/shared/swiper/ReviewsSwiper";
 import Loading from "@/components/shared/helpers/Loading";
 import Text from "@/components/shared/helpers/Text";
@@ -16,6 +18,7 @@ type ServicePageProps = {
 
 const UserPage = ({ params: { id } }: ServicePageProps) => {
   const [user, setUser] = useState<IUser | null>(null);
+  const [logo, setLogo] = useState<ILogo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -29,7 +32,19 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
       }
     };
 
+    const fetchLogo = async () => {
+      let dbLogo = null;
+
+      try {
+        dbLogo = await getLogo();
+      } catch (error) {
+        handleError(error);
+      }
+      setLogo(dbLogo);
+    };
+
     fetchUser();
+    fetchLogo();
   }, []);
 
   if (loading) return <Loading />;
@@ -49,7 +64,7 @@ const UserPage = ({ params: { id } }: ServicePageProps) => {
           with MOGi KiDS.
         </h1>
         <WelcomeText />
-        <ReviewForm user={user} setUser={setUser} />
+        <ReviewForm user={user} setUser={setUser} logo={logo}/>
         <ReviewsSwiper user={user} setUser={setUser} reviews={user?.reviews} />
       </section>
     )

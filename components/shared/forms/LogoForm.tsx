@@ -61,25 +61,32 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
   async function onSubmit(values: z.infer<typeof logoSchema>) {
     let uploadedImgUrl = values.imgUrl;
 
-    if (files.length > 0) {
-      const uploadedImgs = await startUpload(files);
-      if (!uploadedImgs) return;
-      uploadedImgUrl = uploadedImgs[0].url;
+    try {
+      if (files.length > 0) {
+        const uploadedImgs = await startUpload(files);
+        if (!uploadedImgs)
+          throw new Error(
+            "Failed to add the image / icon to uploadthing database."
+          );
+        // uploadedImgUrl = uploadedImgs[0].url;
 
-      if (logo?._id) {
-        await updateLogo({
-          _id: logo._id,
-          imgUrl: uploadedImgUrl,
-          imgSize: uploadedImgs[0].size,
-        });
-      } else {
-        await createLogo({
-          imgUrl: uploadedImgUrl,
-          imgSize: uploadedImgs[0].size,
-        });
+        // if (logo?._id) {
+        //   await updateLogo({
+        //     _id: logo._id,
+        //     imgUrl: uploadedImgUrl,
+        //     imgSize: uploadedImgs[0].size,
+        //   });
+        // } else {
+        //   await createLogo({
+        //     imgUrl: uploadedImgUrl,
+        //     imgSize: uploadedImgs[0].size,
+        //   });
+        // }
+        // setFiles([]);
+        // setDisplayForm(false);
       }
-      setFiles([]);
-      setDisplayForm(false);
+    } catch (error) {
+      handleError(error);
     }
   }
 

@@ -9,12 +9,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const handleError = (error: unknown): void => {
-  console.error("Error:", error);
-  // Throw the error without stopping the execution flow
-  if (typeof error === "string") {
-    throw new Error(error);
+  if (error && typeof error === "object" && "message" in error) {
+    throw new Error((error as Error).message);
   } else {
-    throw error;
+    throw new Error("An unknown error occurred");
   }
 };
 
