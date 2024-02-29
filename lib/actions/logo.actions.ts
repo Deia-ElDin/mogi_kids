@@ -3,11 +3,16 @@
 import { connectToDb } from "../database";
 import { CreateLogoParams, UpdateLogoParams } from "@/types";
 import { getImgName, handleError } from "../utils";
-import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import Logo from "../database/models/logo.model";
+import Logo, { ILogo } from "../database/models/logo.model";
 
 const utapi = new UTApi();
+
+type LogoOperationResult = {
+  success: boolean;
+  data: ILogo | null;
+  error: string | null;
+};
 
 export async function getLogo() {
   try {
@@ -15,34 +20,41 @@ export async function getLogo() {
 
     const logo = await Logo.findOne({});
 
-    if (!logo) return null;
-
     return JSON.parse(JSON.stringify(logo));
   } catch (error) {
     handleError(error);
   }
 }
 
-export async function createLogo(params: CreateLogoParams) {
+export async function createLogo(
+  params: CreateLogoParams
+): Promise<LogoOperationResult> {
   try {
     await connectToDb();
 
-    const newLogo = await Logo.create(params);
+    const logo = await Logo.create(params);
 
-    if (!newLogo) throw new Error("Failed to create the logo.");
+    if (!logo) throw new Error("Failed to create the logo.");
 
-    revalidatePath("/");
-
-    return JSON.parse(JSON.stringify(newLogo));
+    const data = JSON.parse(JSON.stringify(logo));
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function updateLogo(params: UpdateLogoParams) {
+export async function updateLogo(
+  params: UpdateLogoParams
+): Promise<LogoOperationResult> {
   const { _id, imgUrl, imgSize } = params;
 
-  if (!_id || !imgUrl || !imgSize) return;
+  if (!_id || !imgUrl || !imgSize)
+    return {
+      success: false,
+      data: null,
+      error:
+        "Something is missing either the model _id or the image url or the image size.",
+    };
 
   try {
     await connectToDb();
@@ -59,9 +71,9 @@ export async function updateLogo(params: UpdateLogoParams) {
     logo.imgSize = imgSize;
     await logo.save();
 
-    revalidatePath("/");
-    return JSON.parse(JSON.stringify(logo));
+    const data = JSON.parse(JSON.stringify(logo));
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }

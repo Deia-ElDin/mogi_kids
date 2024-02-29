@@ -34,7 +34,7 @@ export default async function Home() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const user: IUser = await getUserByUserId(userId);
-  const logo: ILogo = await getLogo();
+  const { data: logo } = await getLogo();
   const pages: IPage[] = await getAllPages();
   const services: IService[] = await getAllServices();
   const questions: IQuestion[] = await getAllQuestions();

@@ -8,11 +8,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const handleError = (error: unknown): void => {
-  if (error && typeof error === "object" && "message" in error) {
-    throw new Error((error as Error).message);
+export const handleError = (error: unknown): string => {
+  if (
+    error &&
+    typeof error === "object" &&
+    "message" in error &&
+    typeof error.message === "string"
+  ) {
+    return error.message;
   } else {
-    throw new Error("An unknown error occurred");
+    return "An unknown error occurred";
   }
 };
 
@@ -61,8 +66,11 @@ export const getImgSize = (file: File): number => {
   return file.size / 1024;
 };
 
-export const getImgName = (serviceObj: IService): string | undefined => {
-  return new URL(serviceObj.imgUrl).pathname.split("/").pop();
+export const splitImgName = (url: string) => {
+  return new URL(url).pathname.split("/").pop()
+}
+export const getImgName = (obj: any): string | undefined => {
+  return new URL(obj.imgUrl).pathname.split("/").pop();
 };
 
 export const formatBytes = (

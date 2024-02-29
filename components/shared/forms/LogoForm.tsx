@@ -64,29 +64,34 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
     try {
       if (files.length > 0) {
         const uploadedImgs = await startUpload(files);
+
         if (!uploadedImgs)
           throw new Error(
             "Failed to add the image / icon to uploadthing database."
           );
-        // uploadedImgUrl = uploadedImgs[0].url;
 
-        // if (logo?._id) {
-        //   await updateLogo({
-        //     _id: logo._id,
-        //     imgUrl: uploadedImgUrl,
-        //     imgSize: uploadedImgs[0].size,
-        //   });
-        // } else {
-        //   await createLogo({
-        //     imgUrl: uploadedImgUrl,
-        //     imgSize: uploadedImgs[0].size,
-        //   });
-        // }
-        // setFiles([]);
-        // setDisplayForm(false);
+        uploadedImgUrl = uploadedImgs[0].url;
+
+        const { success, error } = logo?._id
+          ? await updateLogo({
+              _id: logo._id,
+              imgUrl: uploadedImgUrl,
+              imgSize: uploadedImgs[0].size,
+            })
+          : await createLogo({
+              imgUrl: uploadedImgUrl,
+              imgSize: uploadedImgs[0].size,
+            });
+
+        if (success) handleClose();
+        else if (error) throw new Error(error);
       }
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: handleError(error),
+      });
     }
   }
 
