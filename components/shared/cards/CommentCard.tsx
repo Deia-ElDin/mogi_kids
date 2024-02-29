@@ -83,10 +83,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
     try {
-      await updateComment({
-        ...values,
-        _id: commentObj._id,
-      });
+      await updateComment({ ...values, _id: commentObj._id });
       setDisplayForm(false);
     } catch (error) {
       handleError(error);
@@ -210,7 +207,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         </Form>
       ) : (
         <CardContent>
-          <p>{comment}</p>
+          <p className="truncate">{comment}</p>
           {user && user._id && (
             <div className="my-3">
               <LikesCard

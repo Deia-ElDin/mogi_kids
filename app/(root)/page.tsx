@@ -19,7 +19,7 @@ import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 
 import { findPage, formatBytes, getUsername } from "@/lib/utils";
 
-import AdminPanel from "@/components/shared/Admin";
+import Admin from "@/components/shared/Admin";
 import Welcome from "@/components/shared/Welcome";
 import Services from "@/components/shared/Services";
 import Questions from "@/components/shared/Questions";
@@ -42,7 +42,8 @@ export default async function Home() {
   const isAdmin = user?.role === "Admin";
 
   // const allUsers = await getAllUsers();
-  // console.log("size = ", formatBytes(services, records));
+  console.log("size = ", formatBytes(services, records));
+
   // console.log("allUsers = ", allUsers);
   // allUsers.map((user) => {
   //   console.log("username = ", getUsername(user.firstName, user.lastName));
@@ -50,7 +51,7 @@ export default async function Home() {
 
   return (
     <>
-      <AdminPanel />
+      <Admin isAdmin={isAdmin} />
       <Welcome
         isAdmin={isAdmin}
         welcomePage={findPage(pages, "Welcome Page")}

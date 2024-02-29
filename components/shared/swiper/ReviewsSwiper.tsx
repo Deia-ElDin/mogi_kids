@@ -26,7 +26,7 @@ const ReviewsSwiper = ({ user, setUser, reviews }: ReviewsSwiperProps) => {
   if (reviews.length === 0) return;
 
   return (
-    <div className="py-10 relative">
+    <div className="py-10 relative max-w-[860px] self-center">
       <Swiper
         spaceBetween={100}
         slidesPerView="auto"

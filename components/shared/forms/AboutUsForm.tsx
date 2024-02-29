@@ -87,7 +87,10 @@ const AboutUsForm: React.FC<AboutUsFormProps> = ({ aboutUsArticle }) => {
       )}
       {displayForm && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="form-style absolute bottom-0 left-0 right-0"
+          >
             <CloseBtn handleClick={handleClose} />
             <h1 className="title-style text-white">AboutUs Form</h1>
             <FormField
