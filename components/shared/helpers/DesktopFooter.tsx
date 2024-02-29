@@ -1,17 +1,18 @@
+import { socialMediaSvgs } from "@/constants";
+import { ILogo } from "@/lib/database/models/logo.model";
+import { logoImg } from "@/constants";
 import Link from "next/link";
 import Image from "next/image";
-import { socialMediaSvgs } from "@/constants";
 
-const DesktopFooter = () => {
+const DesktopFooter = ({ logo }: { logo: ILogo | null }) => {
   return (
     <footer className="hidden sm:flex sm:flex-col items-center relative">
       <div>
         <Link href="/" className="absolute left-10 bottom-14">
-          <Image
-            src="/assets/images/logo.png"
+          <img
+            src={logo?.imgUrl || logoImg}
             alt="Logo"
-            width={128}
-            height={38}
+            className="cursor-pointer w-[160px] h-100%"
           />
         </Link>
         <div className="flex flex-col justify-center items-center gap-4 h-28">
@@ -34,7 +35,7 @@ const DesktopFooter = () => {
       <div className="flex justify-center bg-gray-400 w-full">
         <p className="text-white p-2">
           Copyright &copy; {`${new Date().getFullYear()} `} MOGi KiDS. All
-          Rights Reserved
+          Rights Reserved.
         </p>
       </div>
     </footer>

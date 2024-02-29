@@ -10,7 +10,7 @@ const EditBtn: React.FC<EditBtnProps> = ({ centeredPosition, handleClick }) => {
     <div
       className={`${
         !centeredPosition &&
-        "absolute right-[-50px] sm:right-[-70px] top-[20px]"
+        "absolute hidden md:block md:right-[-50px] sm:block sm:right-[-70px] top-[20px]"
       }`}
     >
       <Button

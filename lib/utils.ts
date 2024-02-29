@@ -8,9 +8,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const handleError = (error: unknown): string => {
-  console.log("error = ", error);
-  throw new Error(typeof error === "string" ? error : JSON.stringify(error));
+export const handleError = (error: unknown): void => {
+  console.error("Error:", error);
+  // Throw the error without stopping the execution flow
+  if (typeof error === "string") {
+    throw new Error(error);
+  } else {
+    throw error;
+  }
 };
 
 export const findPage = (

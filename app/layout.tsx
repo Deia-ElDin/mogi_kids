@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins, Courgette } from "next/font/google";
-import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { logoImg } from "@/constants";
+import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -18,7 +19,7 @@ const courgette = Courgette({
 export const metadata: Metadata = {
   title: "MOGi KiDS",
   description: "MOGi KiDS is a website for professional child care services",
-  icons: { icon: "/assets/images/logo.png" },
+  icons: { icon: logoImg },
 };
 
 export default function RootLayout({

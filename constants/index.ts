@@ -1,7 +1,6 @@
 import { IPage } from "@/lib/database/models/page.model";
-import { setDate } from "@/lib/utils";
 
-export const today = setDate(new Date());
+export const logoImg = "/assets/images/logo.png";
 
 export const headerLinks = [
   {
@@ -61,8 +60,6 @@ export const userWelcomePageText = [
   "Would you take a moment to share your thoughts by writing a review? Whether it's a story about your child's progress, a positive experience with our staff, or suggestions for how we can enhance our services, your input is invaluable to us.",
   "To leave a review, simply click on the button below:",
 ];
-
-// Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur ab similique cum asperiores dolorum obcaecati quas blanditiis voluptatibus quos neque, aliquam numquam mollitia repellendus aliquid corporis odit voluptate, est dignissimos quidem. Odio earum libero optio provident quas error nobis ut quasi voluptas ducimus? Earum temporibus asperiores labore, officiis adipisci soluta.
 
 export const serviceImgs = [
   {
@@ -270,6 +267,10 @@ export const aboutUsDetails = [
       "We aim to reach all children in the current state and the future Arab Gulf region through schools, nurseries, and both governmental and private institutions. Every place where a child or their guardian is present is a target for us. We strive for the widespread availability of our services, benefiting everyone in need, and highlighting their importance everywhere.",
   },
 ];
+
+export const logoDefaultValues = {
+  imgUrl: "",
+};
 
 export const quoteDefaultValues = {
   cstName: "",

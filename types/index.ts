@@ -1,5 +1,3 @@
-import { IComment } from "@/lib/database/models/comment.model";
-
 // User Params
 export type CreateUserParams = {
   clerkId: string;
@@ -9,6 +7,16 @@ export type CreateUserParams = {
   photo: string;
   role: string;
 };
+
+// Logo
+export type CreateLogoParams = {
+  imgUrl: string;
+  imgSize: number;
+};
+
+export type UpdateLogoParams = {
+  _id: string;
+} & CreateLogoParams;
 
 // Page Params
 export type CreatePageParams = {

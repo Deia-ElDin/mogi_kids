@@ -1,8 +1,10 @@
-export const CreateReviewToast = () => {
+import { logoImg } from "@/constants";
+
+export const CreateReviewToast = (logo: string) => {
   return (
     <div>
       <img
-        src="/assets/images/logo.png"
+        src={logo ?? logoImg}
         alt="Logo"
         style={{ width: "180px", height: "100px" }}
       />
@@ -12,11 +14,11 @@ export const CreateReviewToast = () => {
   );
 };
 
-export const ReportToast = () => {
+export const ReportToast = (logo: string) => {
   return (
     <div>
       <img
-        src="/assets/images/logo.png"
+        src={logo ?? logoImg}
         alt="Logo"
         style={{ width: "180px", height: "100px" }}
       />

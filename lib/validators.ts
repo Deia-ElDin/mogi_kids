@@ -1,6 +1,4 @@
 import * as z from "zod";
-// import { today } from "@/constants";
-import { setDate } from "./utils";
 import { addYears, isAfter } from "date-fns";
 
 // const [formErrors, setFormErrors] = useState({});
@@ -21,6 +19,10 @@ const today = new Date();
 let fromDate: Date = today;
 let toDate: Date = today;
 let fromAge: number;
+
+export const logoSchema = z.object({
+  imgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
+});
 
 export const quoteSchema = z.object({
   cstName: z

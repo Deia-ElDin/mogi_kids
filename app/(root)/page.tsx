@@ -9,6 +9,7 @@ import { IReview } from "@/lib/database/models/review.model";
 import { IContact } from "@/lib/database/models/contact.model";
 
 import { getUserByUserId, getAllUsers } from "@/lib/actions/user.actions";
+import { getLogo } from "@/lib/actions/logo.actions";
 import { getAllPages } from "@/lib/actions/page.actions";
 import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
@@ -27,11 +28,13 @@ import Records from "@/components/shared/Records";
 import Customers from "@/components/shared/Customers";
 import Quote from "@/components/shared/Quote";
 import Contacts from "@/components/shared/Contacts";
+import { ILogo } from "@/lib/database/models/logo.model";
 
 export default async function Home() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const user: IUser = await getUserByUserId(userId);
+  const logo: ILogo = await getLogo();
   const pages: IPage[] = await getAllPages();
   const services: IService[] = await getAllServices();
   const questions: IQuestion[] = await getAllQuestions();
@@ -42,6 +45,7 @@ export default async function Home() {
   const isAdmin = user?.role === "Admin";
 
   // const allUsers = await getAllUsers();
+  // logo
   console.log("size = ", formatBytes(services, records));
 
   // console.log("allUsers = ", allUsers);
@@ -51,7 +55,7 @@ export default async function Home() {
 
   return (
     <>
-      <Admin isAdmin={isAdmin} />
+      <Admin isAdmin={isAdmin} logo={logo} />
       <Welcome
         isAdmin={isAdmin}
         welcomePage={findPage(pages, "Welcome Page")}
