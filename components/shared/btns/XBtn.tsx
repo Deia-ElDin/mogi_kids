@@ -12,22 +12,22 @@ import {
 import Image from "next/image";
 
 type XBtnProps = {
+  btnClass?: string;
   deletionTarget: string;
   handleClick: () => void;
 };
 
 const XBtn: React.FC<XBtnProps> = (props) => {
-  const { deletionTarget, handleClick } = props;
+  const { btnClass, deletionTarget, handleClick } = props;
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger className={btnClass}>
         <Image
           src="/assets/icons/x.svg"
           alt="Delete button"
           height={20}
           width={20}
-          className="absolute top-[5px] right-[5px] cursor-pointer hover:h-[25px] hover:w-[25px]"
         />
       </AlertDialogTrigger>
       <AlertDialogContent>

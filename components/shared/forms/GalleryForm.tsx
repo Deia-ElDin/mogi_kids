@@ -25,9 +25,7 @@ import {
 import UpdateBtn from "../btns/UpdateBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
-import XBtn from "../btns/XBtn";
-import Image from "next/image";
-import GalleryImgCard from "../cards/GalleryCard";
+import GalleryImgCard from "../cards/GalleryImgCard";
 import * as z from "zod";
 
 type GalleryFormProps = {
@@ -35,7 +33,7 @@ type GalleryFormProps = {
 };
 
 const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
-  const [displayForm, setDisplayForm] = useState<boolean>(true);
+  const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const [img, setImg] = useState<IGallery | null>(null);
 
@@ -94,7 +92,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
             });
 
         toast({
-          description: `Gallery Image ${
+          description: `Gallery ${
             Array.isArray(gallery) && gallery.length > 0 ? "Updated" : "Created"
           } Successfully`,
         });
@@ -110,43 +108,22 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
       });
     }
   }
-  console.log("img = ", img);
 
   const ImgsList = () => (
-    <div className="w-full my-5 p-2 border-4 border-gray-300 rounded-sm flex gap-5 overflow-x-auto">
+    <div className="w-full my-5 p-2 border-4 border-gray-300 rounded-sm flex gap-5 overflow-x-auto relative">
+      <div className="static">
+        <GalleryImgCard galleryImg={null} img={img} setImg={setImg} />
+      </div>
       {Array.isArray(gallery) &&
         gallery.length > 0 &&
         gallery.map((galleryImg) => (
-          <div
+          <GalleryImgCard
             key={galleryImg._id}
-            className="h-[100px] w-[100px] rounded-sm relative"
-          >
-            <XBtn
-              deletionTarget="image"
-              handleClick={() => console.log("deleted")}
-            />
-            <Image
-              src={galleryImg.imgUrl}
-              alt="Gallery Image"
-              height={100}
-              width={100}
-              className={`h-full w-full cursor-pointer border-4 ${
-                img && img._id === galleryImg._id ? "border-green-700" : ""
-              }`}
-              onClick={() => setImg(galleryImg)}
-            />
-          </div>
+            galleryImg={galleryImg}
+            img={img}
+            setImg={setImg}
+          />
         ))}
-      <div className="h-[100px] w-[100px] rounded-sm">
-        <Image
-          src="/assets/icons/upload.svg"
-          alt="Upload image"
-          width={100}
-          height={100}
-          className={`cursor-pointer border-4 ${!img && "border-green-700"}`}
-          onClick={() => setImg(null)}
-        />
-      </div>
     </div>
   );
 
@@ -177,7 +154,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
                         imageUrl={field.value}
                         onFieldChange={field.onChange}
                         setFiles={setFiles}
-                        imgClass="max-w-[500px] h-fit"
+                        imgClass="max-w-[500px] max-h-[500px]"
                       />
                     </FormControl>
                     <FormMessage />
@@ -187,11 +164,13 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
               <ImgsList />
               <div className="w-full">
                 <FormBtn
-                  text={`${
-                    Array.isArray(gallery) && gallery.length > 0
-                      ? "Add to"
-                      : "Create"
-                  } gallery`}
+                  text={
+                    img
+                      ? "Change Image"
+                      : (Array.isArray(gallery) && gallery.length > 0
+                          ? "Add to"
+                          : "Create") + " Gallery"
+                  }
                   isSubmitting={form.formState.isSubmitting}
                 />
               </div>

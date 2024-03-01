@@ -4,6 +4,7 @@ import { IPage } from "./database/models/page.model";
 import { ILogo } from "./database/models/logo.model";
 import { IService } from "./database/models/service.model";
 import { IRecord } from "./database/models/record.model";
+import { IGallery } from "./database/models/gallery.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -87,6 +88,7 @@ export const getImgName = (obj: any): string | undefined => {
 
 export const formatBytes = (
   logo: ILogo | null,
+  gallery: IGallery[] | [] | IGallery | null,
   services: IService[],
   records: IRecord[]
 ): string => {
@@ -94,8 +96,12 @@ export const formatBytes = (
   let size = 0;
 
   size += logo ? logo.imgSize : 0;
+  if (Array.isArray(gallery) && gallery.length > 0)
+    gallery.forEach((img) => (size += img.imgSize));
   services.forEach((service) => (size += service.imgSize));
   records.forEach((record) => (size += record.imgSize));
+
+  console.log("size = ", size);
 
   let i = 0;
   while (size >= 1024 && i < units.length - 1) {

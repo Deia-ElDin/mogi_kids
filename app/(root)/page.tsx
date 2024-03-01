@@ -42,10 +42,8 @@ export default async function Home() {
   const contacts: IContact[] = await getAllContacts();
   const isAdmin = user?.role === "Admin";
 
-  console.log("size = ", formatBytes(logo, services, records));
+  console.log("size = ", formatBytes(logo, gallery, services, records));
 
-  console.log("gallery = ", gallery);
-  
   return (
     <>
       <Admin isAdmin={isAdmin} logo={logo} gallery={gallery} />

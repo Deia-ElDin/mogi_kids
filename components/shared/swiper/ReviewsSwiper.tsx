@@ -22,7 +22,11 @@ type ReviewsSwiperProps = {
   reviews: IReview[] | [];
 };
 
-const ReviewsSwiper = ({ user, setUser, reviews }: ReviewsSwiperProps) => {
+const ReviewsSwiper: React.FC<ReviewsSwiperProps> = ({
+  user,
+  setUser,
+  reviews,
+}) => {
   if (reviews.length === 0) return;
 
   return (
