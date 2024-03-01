@@ -47,13 +47,18 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
     defaultValues: page ? page : pageDefaultValues,
   });
 
+  const handleClose = () => {
+    form.reset();
+    setDisplayForm(false);
+  };
+
   useEffect(() => {
     form.reset(page ? page : pageDefaultValues);
   }, [page]);
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") setDisplayForm(false);
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -65,25 +70,29 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
 
   async function onSubmit(values: z.infer<typeof pageSchema>) {
     values.pageName = pageName;
+
     try {
-      if (page?._id) {
-        await updatePage({
-          ...values,
-          _id: page._id!,
-          path: pathname,
-        });
-      } else await createPage({ ...values, path: pathname });
+      const { success, error } = page?._id
+        ? await updatePage({
+            ...values,
+            _id: page._id!,
+            path: pathname,
+          })
+        : await createPage({ ...values, path: pathname });
 
-      setDisplayForm(false);
+      toast({
+        description: `${pageName} ${
+          page?._id ? "Updated" : "Created"
+        } Successfully`,
+      });
 
-      form.reset();
-
-      toast({ description: `${pageName} Created Successfully.` });
+      if (success) handleClose();
+      else if (error) throw new Error(error);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Create ${pageName}.`,
+        description: handleError(error),
       });
 
       handleError(error);

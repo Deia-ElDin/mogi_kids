@@ -95,35 +95,19 @@ export const formatBytes = (
   const units = ["B", "KB", "MB", "GB"];
   let totalBytes = 0;
 
-  // Calculate total size in bytes
   totalBytes += logo ? logo.imgSize : 0;
   if (gallery && Array.isArray(gallery) && gallery.length > 0)
     gallery.forEach((img) => (totalBytes += img.imgSize));
   services.forEach((service) => (totalBytes += service.imgSize));
   records.forEach((record) => (totalBytes += record.imgSize));
 
-  console.log("totalBytes = ", totalBytes);
-
   let i = 0;
-  let size = totalBytes;
-
-  // Determine the appropriate unit
-  while (size >= 1024 && i < units.length - 1) {
-    size /= 1024;
+  while (totalBytes >= 1000 && i < units.length - 1) {
+    totalBytes /= 1000;
     i++;
   }
 
-  // Make sure the size is equal to totalBytes
-  size *= Math.pow(1024, i);
-
-  // Format the size
-  const formattedSize = `${i < 2 ? size.toFixed(2) : size.toFixed(1)} ${
-    units[i]
-  }`;
-
-  console.log("formattedSize = ", formattedSize);
-
-  return formattedSize;
+  return `${totalBytes.toFixed(2)} ${units[i]}`;
 };
 
 export const setDate = (someDate: Date) => {

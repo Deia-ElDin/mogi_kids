@@ -18,7 +18,7 @@ const Admin = async (props: AdminProps) => {
   return (
     <section className="section-style relative gap-3">
       <LogoForm logo={logo} />
-      <GalleryForm gallery={gallery} />
+      <GalleryForm logo={logo} gallery={gallery} />
     </section>
   );
 };

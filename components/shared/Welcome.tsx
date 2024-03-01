@@ -30,9 +30,8 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Welcomes Page.",
+        description: handleError(error),
       });
-      handleError(error);
     }
   };
 

@@ -17,6 +17,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { gallerySchema } from "@/lib/validators";
 import { galleryDefaultValues } from "@/constants";
+import { ILogo } from "@/lib/database/models/logo.model";
 import { IGallery } from "@/lib/database/models/gallery.model";
 import {
   createGalleryImg,
@@ -29,10 +30,11 @@ import GalleryImgCard from "../cards/GalleryImgCard";
 import * as z from "zod";
 
 type GalleryFormProps = {
+  logo: ILogo | null;
   gallery: IGallery[] | [] | IGallery | null;
 };
 
-const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
+const GalleryForm: React.FC<GalleryFormProps> = ({ logo, gallery }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const [img, setImg] = useState<IGallery | null>(null);
