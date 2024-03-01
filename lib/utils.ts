@@ -93,23 +93,37 @@ export const formatBytes = (
   records: IRecord[]
 ): string => {
   const units = ["B", "KB", "MB", "GB"];
-  let size = 0;
+  let totalBytes = 0;
 
-  size += logo ? logo.imgSize : 0;
-  if (Array.isArray(gallery) && gallery.length > 0)
-    gallery.forEach((img) => (size += img.imgSize));
-  services.forEach((service) => (size += service.imgSize));
-  records.forEach((record) => (size += record.imgSize));
+  // Calculate total size in bytes
+  totalBytes += logo ? logo.imgSize : 0;
+  if (gallery && Array.isArray(gallery) && gallery.length > 0)
+    gallery.forEach((img) => (totalBytes += img.imgSize));
+  services.forEach((service) => (totalBytes += service.imgSize));
+  records.forEach((record) => (totalBytes += record.imgSize));
 
-  console.log("size = ", size);
+  console.log("totalBytes = ", totalBytes);
 
   let i = 0;
+  let size = totalBytes;
+
+  // Determine the appropriate unit
   while (size >= 1024 && i < units.length - 1) {
     size /= 1024;
     i++;
   }
 
-  return `${size.toFixed(2)} ${units[i]}`;
+  // Make sure the size is equal to totalBytes
+  size *= Math.pow(1024, i);
+
+  // Format the size
+  const formattedSize = `${i < 2 ? size.toFixed(2) : size.toFixed(1)} ${
+    units[i]
+  }`;
+
+  console.log("formattedSize = ", formattedSize);
+
+  return formattedSize;
 };
 
 export const setDate = (someDate: Date) => {
