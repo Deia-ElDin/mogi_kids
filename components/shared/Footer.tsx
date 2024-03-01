@@ -5,22 +5,26 @@ import { getLogo } from "@/lib/actions/logo.actions";
 import { ILogo } from "@/lib/database/models/logo.model";
 import { handleError } from "@/lib/utils";
 import { logoImg, socialMediaSvgs } from "@/constants";
+import { useToast } from "../ui/use-toast";
 import Link from "next/link";
 import Image from "next/image";
 
 const Footer = () => {
   const [logo, setLogo] = useState<ILogo | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchLogo = async () => {
-      let dbLogo = null;
-
       try {
-        dbLogo = await getLogo();
+        const { data } = await getLogo();
+        setLogo(data);
       } catch (error) {
-        handleError(error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: handleError(error),
+        });
       }
-      setLogo(dbLogo);
     };
 
     fetchLogo();

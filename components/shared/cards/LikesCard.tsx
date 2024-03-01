@@ -34,7 +34,6 @@ const LikesCard = (props: LikesCardProps) => {
         <p
           className={`absolute top-[-3px] right-[-16px] font-bold text-base ${likesColor}`}
         >
-          {/* {likes ? likes : ""} */}
           {likes}
         </p>
       </CardContent>
@@ -50,7 +49,6 @@ const LikesCard = (props: LikesCardProps) => {
         <p
           className={`absolute top-[-3px] right-[-16px] font-bold text-base ${dislikesColor}`}
         >
-          {/* {dislikes ? dislikes : ""} */}
           {dislikes}
         </p>
       </CardContent>

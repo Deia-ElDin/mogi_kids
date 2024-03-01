@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { IPage } from "./database/models/page.model";
+import { ILogo } from "./database/models/logo.model";
 import { IService } from "./database/models/service.model";
 import { IRecord } from "./database/models/record.model";
 
@@ -22,12 +23,23 @@ export const handleError = (error: unknown): string => {
 };
 
 export const findPage = (
-  pages: IPage[],
+  pages: IPage[] | IPage | null,
   requiredPage: string
 ): IPage | Partial<IPage> => {
-  const page = pages.find((page) => page.pageName === requiredPage);
-  if (!page) return { pageName: requiredPage, pageTitle: "", pageContent: "" };
-  return page;
+  if (!pages) return { pageName: requiredPage, pageTitle: "", pageContent: "" };
+
+  if (Array.isArray(pages)) {
+    const page = pages.find((page) => page.pageName === requiredPage);
+    if (!page)
+      return { pageName: requiredPage, pageTitle: "", pageContent: "" };
+    return page;
+  } else {
+    if (pages.pageName === requiredPage) {
+      return pages;
+    } else {
+      return { pageName: requiredPage, pageTitle: "", pageContent: "" };
+    }
+  }
 };
 
 export const getPageTitle = (
@@ -67,19 +79,21 @@ export const getImgSize = (file: File): number => {
 };
 
 export const splitImgName = (url: string) => {
-  return new URL(url).pathname.split("/").pop()
-}
+  return new URL(url).pathname.split("/").pop();
+};
 export const getImgName = (obj: any): string | undefined => {
   return new URL(obj.imgUrl).pathname.split("/").pop();
 };
 
 export const formatBytes = (
+  logo: ILogo | null,
   services: IService[],
   records: IRecord[]
 ): string => {
   const units = ["B", "KB", "MB", "GB"];
   let size = 0;
 
+  size += logo ? logo.imgSize : 0;
   services.forEach((service) => (size += service.imgSize));
   records.forEach((record) => (size += record.imgSize));
 

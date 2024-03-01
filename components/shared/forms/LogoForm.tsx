@@ -66,9 +66,7 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
         const uploadedImgs = await startUpload(files);
 
         if (!uploadedImgs)
-          throw new Error(
-            "Failed to add the image / icon to uploadthing database."
-          );
+          throw new Error("Failed to add the image to uploadthing database.");
 
         uploadedImgUrl = uploadedImgs[0].url;
 
@@ -82,6 +80,10 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
               imgUrl: uploadedImgUrl,
               imgSize: uploadedImgs[0].size,
             });
+
+        toast({
+          description: `Logo ${logo?._id ? "Updated" : "Created"} Successfully`,
+        });
 
         if (success) handleClose();
         else if (error) throw new Error(error);
@@ -112,9 +114,7 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
                 name="imgUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="label-style">
-                      MOGi KiDS Logo
-                    </FormLabel>
+                    <FormLabel className="label-style">Logo</FormLabel>
                     <FormControl>
                       <FileUploader
                         imageUrl={field.value}

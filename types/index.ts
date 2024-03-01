@@ -18,6 +18,16 @@ export type UpdateLogoParams = {
   _id: string;
 } & CreateLogoParams;
 
+// Gallery 
+export type CreateGalleryParams = {
+  imgUrl: string;
+  imgSize: number;
+};
+
+export type UpdateGalleryParams = {
+  _id: string;
+} & CreateLogoParams;
+
 // Page Params
 export type CreatePageParams = {
   pageName: string;

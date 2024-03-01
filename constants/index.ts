@@ -272,6 +272,10 @@ export const logoDefaultValues = {
   imgUrl: "",
 };
 
+export const galleryDefaultValues = {
+  imgUrl: "",
+};
+
 export const quoteDefaultValues = {
   cstName: "",
   mobile: "",

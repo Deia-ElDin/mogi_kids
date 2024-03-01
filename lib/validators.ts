@@ -21,8 +21,13 @@ let toDate: Date = today;
 let fromAge: number;
 
 export const logoSchema = z.object({
-  imgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
+  imgUrl: z.string().min(1, "Kindly provide us the the logo image."),
 });
+
+export const gallerySchema = z.object({
+  imgUrl: z.string().min(1, "Kindly provide us an image."),
+});
+
 
 export const quoteSchema = z.object({
   cstName: z

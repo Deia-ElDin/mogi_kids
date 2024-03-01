@@ -10,6 +10,7 @@ import { IUser } from "@/lib/database/models/user.model";
 import { ILogo } from "@/lib/database/models/logo.model";
 import { getUserByClerkId } from "@/lib/actions/user.actions";
 import { Button } from "@/components/ui/button";
+import { useToast } from "../ui/use-toast";
 import { logoImg, headerLinks } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,17 +21,20 @@ const Header = () => {
   const [logo, setLogo] = useState<ILogo | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchLogo = async () => {
-      let dbLogo = null;
-
       try {
-        dbLogo = await getLogo();
+        const { data } = await getLogo();
+        setLogo(data);
       } catch (error) {
-        handleError(error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: handleError(error),
+        });
       }
-      setLogo(dbLogo);
     };
 
     fetchLogo();
