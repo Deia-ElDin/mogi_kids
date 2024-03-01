@@ -96,7 +96,7 @@ export async function updateService(
     params;
 
   let updatedService;
-  
+
   try {
     await connectToDb();
 
@@ -143,7 +143,8 @@ export async function updateService(
 
 export async function deleteService(
   serviceId: string,
-  revalidate: boolean = true
+  revalidate: boolean,
+  path: string
 ): Promise<DeleteResult> {
   try {
     await connectToDb();
@@ -156,7 +157,7 @@ export async function deleteService(
     if (!imgName) throw new Error("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
-    if (revalidate) revalidatePath("/");
+    if (revalidate) revalidatePath(path);
 
     return { success: true, data: null, error: null };
   } catch (error) {
@@ -170,7 +171,9 @@ export async function deleteAllServices(): Promise<DeleteResult> {
 
     const allServices = await Service.find();
 
-    allServices.map(async (service) => await deleteService(service._id, false));
+    allServices.map(
+      async (service) => await deleteService(service._id, false, "/")
+    );
 
     revalidatePath("/");
 

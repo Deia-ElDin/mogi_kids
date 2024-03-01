@@ -24,16 +24,23 @@ const ServiceRoute: React.FC<ServiceRouteProps> = ({ isAdmin, service }) => {
 
   const handleDelete = async () => {
     try {
-      await deleteService(service._id);
-      router.push("/services");
+      const { success, error } = await deleteService(
+        service._id,
+        true,
+        pathname
+      );
+
+      if (!success && error) throw new Error(error);
+
       toast({ description: "Service Deleted Successfully." });
+
+      router.push("/services");
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete Service.",
+        description: `Failed to Delete Service, ${handleError(error)}`,
       });
-      handleError(error);
     }
   };
 
