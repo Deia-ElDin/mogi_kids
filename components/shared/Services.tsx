@@ -17,7 +17,7 @@ import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 type ServicesProps = {
   isAdmin: boolean | undefined;
   servicesPage: IPage | Partial<IPage>;
-  services: IService[] | [];
+  services: IService[] ;
 };
 
 const Services: React.FC<ServicesProps> = (props) => {
@@ -35,16 +35,23 @@ const Services: React.FC<ServicesProps> = (props) => {
 
   const handleDelete = async () => {
     try {
-      if (servicesPage?._id) await deletePage(servicesPage._id, "/");
-      if (services.length > 0) await deleteAllServices();
+      if (servicesPage?._id) {
+        const { error } = await deletePage(servicesPage._id, "/");
+        if (error) throw new Error(error);
+      }
+      if (services.length > 0) {
+        const { error } = await deleteAllServices();
+        if (error) throw new Error(error);
+      }
       toast({ description: "Services Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Services Page.",
+        description: `Failed to Delete The Services Page, ${handleError(
+          error
+        )}`,
       });
-      handleError(error);
     }
   };
 

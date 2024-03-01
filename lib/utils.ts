@@ -24,27 +24,16 @@ export const handleError = (error: unknown): string => {
 };
 
 export const findPage = (
-  pages: IPage[] | IPage | null,
+  pages: IPage[],
   requiredPage: string
 ): IPage | Partial<IPage> => {
-  if (!pages) return { pageName: requiredPage, pageTitle: "", pageContent: "" };
-
-  if (Array.isArray(pages)) {
-    const page = pages.find((page) => page.pageName === requiredPage);
-    if (!page)
-      return { pageName: requiredPage, pageTitle: "", pageContent: "" };
-    return page;
-  } else {
-    if (pages.pageName === requiredPage) {
-      return pages;
-    } else {
-      return { pageName: requiredPage, pageTitle: "", pageContent: "" };
-    }
-  }
+  const page = pages.find((page) => page.pageName === requiredPage);
+  if (page) return page;
+  return { pageName: requiredPage, pageTitle: "", pageContent: "" };
 };
 
 export const getPageTitle = (
-  page: IPage | Partial<IPage> | undefined,
+  page: IPage | Partial<IPage> | null,
   isAdmin: boolean | undefined,
   text: string
 ): string | null => {
@@ -54,7 +43,7 @@ export const getPageTitle = (
 };
 
 export const getPageContent = (
-  page: IPage | Partial<IPage> | undefined,
+  page: IPage | Partial<IPage> | null,
   isAdmin: boolean | undefined
 ): string | null => {
   if (page?.pageContent) return page.pageContent;
@@ -89,7 +78,7 @@ export const getImgName = (obj: any): string | undefined => {
 export const formatBytes = (
   logo: ILogo | null,
   gallery: IGallery[] | [] | IGallery | null,
-  services: IService[],
+  services: IService[] | [] | IService | null,
   records: IRecord[]
 ): string => {
   const units = ["B", "KB", "MB", "GB"];
@@ -98,7 +87,8 @@ export const formatBytes = (
   totalBytes += logo ? logo.imgSize : 0;
   if (gallery && Array.isArray(gallery) && gallery.length > 0)
     gallery.forEach((img) => (totalBytes += img.imgSize));
-  services.forEach((service) => (totalBytes += service.imgSize));
+  if (services && Array.isArray(services) && services.length > 0)
+    services.forEach((service) => (totalBytes += service.imgSize));
   records.forEach((record) => (totalBytes += record.imgSize));
 
   let i = 0;

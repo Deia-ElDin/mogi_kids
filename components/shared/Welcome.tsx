@@ -30,7 +30,9 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: handleError(error),
+        description: `Failed to Delete The Welcomes Page, ${handleError(
+          error
+        )}`,
       });
     }
   };
@@ -38,7 +40,7 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
   return (
     <section className="section-style relative">
       <Article title={pageTitle} content={pageContent} />
-      {isAdmin && <PageForm page={welcomePage} pageName="Welcome Page" />}
+      {isAdmin && <PageForm page={welcomePage} pageName="Welcomes Page" />}
       <DeleteBtn
         pageId={welcomePage._id}
         isAdmin={isAdmin}

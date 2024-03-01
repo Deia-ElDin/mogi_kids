@@ -32,15 +32,20 @@ export default async function Home() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const user: IUser = await getUserByUserId(userId);
-  const { data: logo } = await getLogo();
-  const { data: gallery } = await getGallery();
-  const { data: pages } = await getAllPages();
-  const services: IService[] = await getAllServices();
+  const logoResult = await getLogo();
+  const galleryResult = await getGallery();
+  const pagesResult = await getAllPages();
+  const servicesResult = await getAllServices();
   const questions: IQuestion[] = await getAllQuestions();
   const records: IRecord[] = await getAllRecords();
   const reviews: IReview[] = await getAllReviews();
   const contacts: IContact[] = await getAllContacts();
   const isAdmin = user?.role === "Admin";
+
+  const logo = logoResult.success ? logoResult.data || null : null;
+  const gallery = galleryResult.success ? galleryResult.data || [] : [];
+  const pages = pagesResult.success ? pagesResult.data || [] : [];
+  const services = servicesResult.success ? servicesResult.data || [] : [];
 
   console.log("size = ", formatBytes(logo, gallery, services, records));
 

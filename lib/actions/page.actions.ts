@@ -6,13 +6,25 @@ import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import Page, { IPage } from "../database/models/page.model";
 
-type PageFnResult = {
+type GetAllPagesResult = {
   success: boolean;
-  data: IPage[] | IPage | null;
+  data: IPage[] | null;
   error: string | null;
 };
 
-export async function getAllPages(): Promise<PageFnResult> {
+type DefaultResult = {
+  success: boolean;
+  data: IPage | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+export async function getAllPages(): Promise<GetAllPagesResult> {
   try {
     await connectToDb();
 
@@ -28,7 +40,7 @@ export async function getAllPages(): Promise<PageFnResult> {
 
 export async function getPageByPageName(
   pageName: string
-): Promise<PageFnResult> {
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
@@ -46,7 +58,7 @@ export async function getPageByPageName(
 
 export async function createPage(
   params: CreatePageParams
-): Promise<PageFnResult> {
+): Promise<DefaultResult> {
   const { pageName, pageTitle, pageContent, path } = params;
 
   try {
@@ -68,7 +80,7 @@ export async function createPage(
 
 export async function updatePage(
   params: UpdatePageParams
-): Promise<PageFnResult> {
+): Promise<DefaultResult> {
   const { _id, pageName, pageTitle, pageContent, path } = params;
 
   try {
@@ -95,7 +107,7 @@ export async function updatePage(
 export async function deletePage(
   pageId: string,
   path: string
-): Promise<PageFnResult> {
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -105,9 +117,7 @@ export async function deletePage(
 
     revalidatePath(path);
 
-    const data = JSON.parse(JSON.stringify(deletedPage));
-
-    return { success: true, data, error: null };
+    return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

@@ -5,36 +5,63 @@ import { CreateServiceParams, UpdateServiceParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import Service from "../database/models/service.model";
+import Service, { IService } from "../database/models/service.model";
 
 const utapi = new UTApi();
 
-export async function getAllServices() {
+type GetALLServicesResult = {
+  success: boolean;
+  data: IService[] | [] | null;
+  error: string | null;
+};
+
+type DefaultResult = {
+  success: boolean;
+  data: IService | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+export async function getAllServices(): Promise<GetALLServicesResult> {
   try {
     await connectToDb();
 
     const services = await Service.find().sort({ createdAt: -1 });
 
-    return JSON.parse(JSON.stringify(services));
+    const data = JSON.parse(JSON.stringify(services));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function getServiceById(serviceId: string) {
+export async function getServiceById(
+  serviceId: string
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
     const service = await Service.findById(serviceId);
+
     if (!service) throw new Error("Service not found");
 
-    return JSON.parse(JSON.stringify(service));
+    const data = JSON.parse(JSON.stringify(service));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function createService(params: CreateServiceParams) {
+export async function createService(
+  params: CreateServiceParams
+): Promise<DefaultResult> {
   const { serviceName, imgUrl, imgSize, serviceContent, path } = params;
 
   try {
@@ -46,6 +73,7 @@ export async function createService(params: CreateServiceParams) {
       imgSize,
       serviceContent,
     });
+
     if (!newService)
       throw new Error(
         "Couldn't create a service & kindly check the uploadthing database"
@@ -53,19 +81,22 @@ export async function createService(params: CreateServiceParams) {
 
     revalidatePath(path);
 
-    return JSON.parse(JSON.stringify(newService));
+    const data = JSON.parse(JSON.stringify(newService));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function updateService(params: UpdateServiceParams) {
+export async function updateService(
+  params: UpdateServiceParams
+): Promise<DefaultResult> {
   const { _id, serviceName, imgUrl, imgSize, newImg, serviceContent, path } =
     params;
 
-  if (!_id || !serviceName || !imgUrl || !serviceContent || !path) return;
-
   let updatedService;
+  
   try {
     await connectToDb();
 
@@ -101,15 +132,19 @@ export async function updateService(params: UpdateServiceParams) {
     }
 
     revalidatePath(path);
-    return JSON.parse(JSON.stringify(updatedService));
+
+    const data = JSON.parse(JSON.stringify(updatedService));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteService(serviceId: string) {
-  if (!serviceId) return null;
-
+export async function deleteService(
+  serviceId: string,
+  revalidate: boolean = true
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -121,26 +156,26 @@ export async function deleteService(serviceId: string) {
     if (!imgName) throw new Error("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
-    revalidatePath("/");
+    if (revalidate) revalidatePath("/");
 
-    return "Service deleted successfully";
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteAllServices() {
+export async function deleteAllServices(): Promise<DeleteResult> {
   try {
     await connectToDb();
 
     const allServices = await Service.find();
 
-    allServices.map(async (service) => await deleteService(service._id));
+    allServices.map(async (service) => await deleteService(service._id, false));
 
     revalidatePath("/");
 
-    return "All services deleted successfully";
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }

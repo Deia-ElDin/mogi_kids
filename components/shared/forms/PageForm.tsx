@@ -28,7 +28,7 @@ import * as z from "zod";
 type PageProps = {
   page: IPage | Partial<IPage> | undefined;
   pageName:
-    | "Welcome Page"
+    | "Welcomes Page"
     | "Services Page"
     | "Questions Page"
     | "Records Page"
@@ -94,8 +94,6 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
         title: "Uh oh! Something went wrong.",
         description: handleError(error),
       });
-
-      handleError(error);
     }
   }
 

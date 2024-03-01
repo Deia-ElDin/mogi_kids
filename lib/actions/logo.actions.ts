@@ -55,7 +55,7 @@ export async function updateLogo(
       success: false,
       data: null,
       error:
-        "Something is missing either the model _id or the image url or the image size.",
+        "Something is missing, can not update the logo. Please try again later.",
     };
 
   try {
