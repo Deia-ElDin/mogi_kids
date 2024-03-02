@@ -38,13 +38,14 @@ const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
     defaultValues: question ? question : questionDefaultValues,
   });
 
-  useEffect(() => {
-    form.reset(question ? question : questionDefaultValues);
-  }, [question]);
+  const handleClose = () => {
+    form.reset(question);
+    setDisplayForm(false);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") setDisplayForm(false);
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -54,19 +55,25 @@ const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
     };
   }, []);
 
+  useEffect(() => {
+    form.reset(question ? question : questionDefaultValues);
+  }, [question]);
+
   async function onSubmit(values: z.infer<typeof questionSchema>) {
     try {
-      await updateQuestion({ ...values, _id: question._id! });
+      const { success, error } = await updateQuestion({
+        ...values,
+        _id: question._id!,
+      });
+      if (!success && error) throw new Error(error);
       toast({ description: "Question Updated Successfully." });
-      setDisplayForm(false);
-      form.reset();
+      handleClose();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Update The Question.",
+        description: `Failed to Update The Question, ${handleError(error)}`,
       });
-      handleError(error);
     }
   }
 

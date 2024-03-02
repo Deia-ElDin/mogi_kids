@@ -36,7 +36,7 @@ export default async function Home() {
   const galleryResult = await getGallery();
   const pagesResult = await getAllPages();
   const servicesResult = await getAllServices();
-  const questions: IQuestion[] = await getAllQuestions();
+  const questionsResult = await getAllQuestions();
   const records: IRecord[] = await getAllRecords();
   const reviews: IReview[] = await getAllReviews();
   const contacts: IContact[] = await getAllContacts();
@@ -46,6 +46,7 @@ export default async function Home() {
   const gallery = galleryResult.success ? galleryResult.data || [] : [];
   const pages = pagesResult.success ? pagesResult.data || [] : [];
   const services = servicesResult.success ? servicesResult.data || [] : [];
+  const questions = questionsResult.success ? questionsResult.data || [] : [];
 
   console.log("size = ", formatBytes(logo, gallery, services, records));
 
@@ -54,7 +55,7 @@ export default async function Home() {
       <Admin isAdmin={isAdmin} logo={logo} gallery={gallery} />
       <Welcome
         isAdmin={isAdmin}
-        welcomePage={findPage(pages, "Welcome Page")}
+        welcomePage={findPage(pages, "Welcomes Page")}
       />
       <Services
         isAdmin={isAdmin}
@@ -90,7 +91,3 @@ export default async function Home() {
     </>
   );
 }
-
-// function to handle a certain amount of chars
-// handle reviewCard responsive mode
-// check the forms submit btns

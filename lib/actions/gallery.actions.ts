@@ -53,14 +53,6 @@ export async function updateGalleryImg(
 ): Promise<GalleryFnResult> {
   const { _id, imgUrl, imgSize } = params;
 
-  if (!_id || !imgUrl || !imgSize)
-    return {
-      success: false,
-      data: null,
-      error:
-        "Something is missing either the model _id or the image url or the image size.",
-    };
-
   try {
     await connectToDb();
 

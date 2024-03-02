@@ -4,76 +4,106 @@ import { connectToDb } from "../database";
 import { CreateQuestionParams, UpdateQuestionParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
-import Question from "../database/models/question.model";
+import Question, { IQuestion } from "../database/models/question.model";
 
-export async function getAllQuestions() {
+type GetALLResult = {
+  success: boolean;
+  data: IQuestion[] | [] | null;
+  error: string | null;
+};
+
+type DefaultResult = {
+  success: boolean;
+  data: IQuestion | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+export async function getAllQuestions(): Promise<GetALLResult> {
   try {
     await connectToDb();
 
     const questions = await Question.find();
 
-    return JSON.parse(JSON.stringify(questions));
+    const data = JSON.parse(JSON.stringify(questions));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
-    return null;
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function createQuestion(params: CreateQuestionParams) {
+export async function createQuestion(
+  params: CreateQuestionParams
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
-    const newQuestion = await Question.create(params);
+    const question = await Question.create(params);
 
-    if (!newQuestion)
+    if (!question)
       throw new Error(
-        "Couldn't create a service & kindly check the uploadthing database"
+        "Couldn't create a question & kindly check the uploadthing database"
       );
 
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(newQuestion));
+    const data = JSON.parse(JSON.stringify(question));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function updateQuestion(params: UpdateQuestionParams) {
+export async function updateQuestion(
+  params: UpdateQuestionParams
+): Promise<DefaultResult> {
   const { _id, question, answer } = params;
 
   try {
     await connectToDb();
 
-    const newQuestion = await Question.findByIdAndUpdate(_id, {
+    const updatedQuestion = await Question.findByIdAndUpdate(_id, {
       question,
       answer,
     });
 
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(newQuestion));
+    const data = JSON.parse(JSON.stringify(updatedQuestion));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteQuestion(questionId: string) {
+export async function deleteQuestion(
+  questionId: string
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
-    const deletedQuestion = await Question.findByIdAndDelete(questionId);
+    // const deletedQuestion = await Question.findByIdAndDelete(questionId);
+    const deletedQuestion = null;
     if (!deletedQuestion)
       throw new Error("Question not found or already deleted.");
 
     revalidatePath("/");
 
-    return "Question deleted successfully";
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteAllQuestions() {
+export async function deleteAllQuestions(): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -84,8 +114,8 @@ export async function deleteAllQuestions() {
 
     revalidatePath("/");
 
-    return "All questions deleted successfully";
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }

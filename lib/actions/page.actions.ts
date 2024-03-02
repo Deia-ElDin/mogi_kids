@@ -6,7 +6,7 @@ import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import Page, { IPage } from "../database/models/page.model";
 
-type GetAllPagesResult = {
+type GetAllResult = {
   success: boolean;
   data: IPage[] | null;
   error: string | null;
@@ -24,7 +24,7 @@ type DeleteResult = {
   error: string | null;
 };
 
-export async function getAllPages(): Promise<GetAllPagesResult> {
+export async function getAllPages(): Promise<GetAllResult> {
   try {
     await connectToDb();
 

@@ -25,7 +25,7 @@ import DeleteBtn from "./btns/DeleteBtn";
 
 type QuestionsProps = {
   isAdmin: boolean | undefined;
-  questionsPage: IPage | Partial<IPage> | undefined;
+  questionsPage: IPage | Partial<IPage>;
   questions: IQuestion[] | [];
 };
 
@@ -43,22 +43,40 @@ const Questions: React.FC<QuestionsProps> = (props) => {
 
   const handleDeleteAll = async () => {
     try {
-      if (questionsPage?._id) await deletePage(questionsPage._id, "/");
-      if (questions.length > 0) await deleteAllQuestions();
+      if (questionsPage?._id) {
+        const { success, error } = await deletePage(questionsPage._id, "/");
+        if (!success && error) throw new Error(error);
+      }
+      if (questions.length > 0) {
+        const { success, error } = await deleteAllQuestions();
+        if (!success && error) throw new Error(error);
+      }
       toast({ description: "Questions Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Questions Page.",
+        description: `Failed to Delete The Questions Page or the Questions, ${handleError(
+          error
+        )}`,
       });
-      handleError(error);
     }
   };
 
   const handleDeleteQuestion = async (id: string) => {
-    await deleteQuestion(id);
-    toast({ description: "Question Deleted Successfully." });
+    try {
+      const { success, error } = await deleteQuestion(id);
+
+      if (!success && error) throw new Error(error);
+
+      toast({ description: "Question Deleted Successfully." });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Question, ${handleError(error)}`,
+      });
+    }
   };
 
   return (

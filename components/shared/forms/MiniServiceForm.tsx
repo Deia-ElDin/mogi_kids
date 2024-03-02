@@ -84,6 +84,7 @@ const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
           newImg: true,
           path: pathname,
         });
+
         if (!success && error) throw new Error(error);
       } else {
         const { success, error } = await updateService({
@@ -97,6 +98,7 @@ const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
       }
 
       toast({ description: "Service Updated Successfully." });
+
       handleClose();
     } catch (error) {
       toast({

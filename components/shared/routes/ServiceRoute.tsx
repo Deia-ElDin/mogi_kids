@@ -69,4 +69,5 @@ const ServiceRoute: React.FC<ServiceRouteProps> = ({ isAdmin, service }) => {
     </section>
   );
 };
+
 export default ServiceRoute;

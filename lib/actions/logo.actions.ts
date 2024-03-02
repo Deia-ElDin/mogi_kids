@@ -8,13 +8,13 @@ import Logo, { ILogo } from "../database/models/logo.model";
 
 const utapi = new UTApi();
 
-type LogoFnResult = {
+type DefaultResult = {
   success: boolean;
   data: ILogo | null;
   error: string | null;
 };
 
-export async function getLogo(): Promise<LogoFnResult> {
+export async function getLogo(): Promise<DefaultResult> {
   try {
     await connectToDb();
 
@@ -30,7 +30,7 @@ export async function getLogo(): Promise<LogoFnResult> {
 
 export async function createLogo(
   params: CreateLogoParams
-): Promise<LogoFnResult> {
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
@@ -47,16 +47,8 @@ export async function createLogo(
 
 export async function updateLogo(
   params: UpdateLogoParams
-): Promise<LogoFnResult> {
+): Promise<DefaultResult> {
   const { _id, imgUrl, imgSize } = params;
-
-  if (!_id || !imgUrl || !imgSize)
-    return {
-      success: false,
-      data: null,
-      error:
-        "Something is missing, can not update the logo. Please try again later.",
-    };
 
   try {
     await connectToDb();

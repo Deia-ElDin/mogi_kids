@@ -9,7 +9,7 @@ import Service, { IService } from "../database/models/service.model";
 
 const utapi = new UTApi();
 
-type GetALLServicesResult = {
+type GetALLResult = {
   success: boolean;
   data: IService[] | [] | null;
   error: string | null;
@@ -27,7 +27,7 @@ type DeleteResult = {
   error: string | null;
 };
 
-export async function getAllServices(): Promise<GetALLServicesResult> {
+export async function getAllServices(): Promise<GetALLResult> {
   try {
     await connectToDb();
 

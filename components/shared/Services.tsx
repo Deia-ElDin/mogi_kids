@@ -36,19 +36,19 @@ const Services: React.FC<ServicesProps> = (props) => {
   const handleDelete = async () => {
     try {
       if (servicesPage?._id) {
-        const { error } = await deletePage(servicesPage._id, "/");
-        if (error) throw new Error(error);
+        const { success, error } = await deletePage(servicesPage._id, "/");
+        if (!success && error) throw new Error(error);
       }
       if (services.length > 0) {
-        const { error } = await deleteAllServices();
-        if (error) throw new Error(error);
+        const { success, error } = await deleteAllServices();
+        if (!success && error) throw new Error(error);
       }
       toast({ description: "Services Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Services Page, ${handleError(
+        description: `Failed to Delete The Services Page or the Services, ${handleError(
           error
         )}`,
       });
