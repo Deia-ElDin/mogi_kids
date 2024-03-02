@@ -121,6 +121,12 @@ export type UpdateCommentParams = {
   path: string;
 };
 
+export type DeleteCommentParams = {
+  commentId: string;
+  reviewId: string;
+  path: string;
+};
+
 export type CommentLikesParams = {
   commentId: string;
   updaterId: string;

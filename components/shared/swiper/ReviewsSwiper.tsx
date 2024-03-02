@@ -45,7 +45,7 @@ const ReviewsSwiper: React.FC<ReviewsSwiperProps> = ({ user, reviews }) => {
           prevEl: ".swiper-prev-img2",
         }}
         autoplay={{
-          delay: 2500,
+          delay: 3000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}

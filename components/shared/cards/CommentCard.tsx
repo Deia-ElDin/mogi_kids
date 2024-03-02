@@ -93,7 +93,6 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
-
       toast({ description: "Comment Updated Successfully." });
       setDisplayForm(false);
     } catch (error) {
@@ -180,26 +179,43 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
 
   const handleDeleteComment = async () => {
     try {
-      await deleteComment(commentObj._id, reviewObj._id);
+      const { success, error } = await deleteComment({
+        commentId: commentObj._id,
+        reviewId: reviewObj._id,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
+      toast({ description: "Comment Deleted Successfully." });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Comment, ${handleError(error)}`,
+      });
     }
   };
 
   const handleReport = async () => {
     try {
-      await createReport({
+      const { success, error } = await createReport({
         target: "Comment",
         targetId: commentObj._id,
         createdBy: user?._id ? user._id : null,
       });
+
+      if (!success && error) throw new Error(error);
       toast({
         variant: "destructive",
         title: "Report sent successfully. Thank you.",
       });
       setDisplayList(false);
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Report this Comment, ${handleError(error)}`,
+      });
     }
   };
 

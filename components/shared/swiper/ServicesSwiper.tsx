@@ -48,7 +48,7 @@ const ServicesSwiper: React.FC<ServicesSwiperProps> = (props) => {
           prevEl: ".swiper-prev-img1",
         }}
         autoplay={{
-          delay: 2500,
+          delay: 3000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}

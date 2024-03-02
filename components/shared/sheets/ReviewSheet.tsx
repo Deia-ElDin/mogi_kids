@@ -143,7 +143,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Report The Review, ${handleError(error)}`,
+        description: `Failed to Report this Review, ${handleError(error)}`,
       });
     }
   };

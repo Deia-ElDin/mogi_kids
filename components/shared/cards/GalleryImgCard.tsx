@@ -27,7 +27,9 @@ const GalleryImgCard: React.FC<GalleryImgCardParams> = ({
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: handleError(error),
+        description: `Failed to Delete The Gallery Image, ${handleError(
+          error
+        )}`,
       });
     }
   };

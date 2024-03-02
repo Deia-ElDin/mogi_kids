@@ -5,6 +5,7 @@ import {
   CreateCommentParams,
   UpdateCommentParams,
   CommentLikesParams,
+  DeleteCommentParams,
 } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -48,7 +49,6 @@ export async function createComment(
     if (!updatedReview) throw new Error("Couldn't update the review.");
 
     revalidatePath(path);
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -89,7 +89,6 @@ export async function updateCommentLikes(
     );
 
     revalidatePath(path);
-
     return { success: true, data: index >= 0 ? true : false, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -138,7 +137,7 @@ export async function updateCommentDislikes(
 export async function updateComment(
   params: UpdateCommentParams
 ): Promise<DefaultResult> {
-  const { _id, comment } = params;
+  const { _id, comment, path } = params;
 
   try {
     await connectToDb();
@@ -151,8 +150,7 @@ export async function updateComment(
 
     if (!updatedComment) throw new Error("Couldn't update the comment.");
 
-    revalidatePath("/");
-
+    revalidatePath(path);
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -160,9 +158,10 @@ export async function updateComment(
 }
 
 export async function deleteComment(
-  commentId: string,
-  reviewId: string
+  params: DeleteCommentParams
 ): Promise<DefaultResult> {
+  const { commentId, reviewId, path } = params;
+
   try {
     await connectToDb();
 
@@ -176,7 +175,9 @@ export async function deleteComment(
       { new: true }
     );
 
-    revalidatePath("/");
+    if (!parentReview) throw new Error("Couldn't update the parent review.");
+
+    revalidatePath(path);
 
     return { success: true, data: null, error: null };
   } catch (error) {
