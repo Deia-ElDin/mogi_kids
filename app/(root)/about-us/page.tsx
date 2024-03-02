@@ -9,7 +9,8 @@ import AboutUsForm from "@/components/shared/forms/AboutUsForm";
 const AboutUs = async () => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
-  const user: IUser = await getUserByUserId(userId);
+  const userResult = await getUserByUserId(userId);
+  const user = userResult.success ? userResult.data || null : null;
   const allAboutUs: IAboutUs[] = await getAllAboutUs();
 
   const isAdmin = user?.role === "Admin";

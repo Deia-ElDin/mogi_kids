@@ -30,6 +30,7 @@ export async function getAllQuestions(): Promise<GetALLResult> {
 
     const questions = await Question.find();
 
+    
     const data = JSON.parse(JSON.stringify(questions));
 
     return { success: true, data, error: null };

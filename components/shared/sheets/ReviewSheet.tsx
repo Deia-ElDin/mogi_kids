@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Sheet,
@@ -31,6 +32,7 @@ import {
 import { createReport } from "@/lib/actions/report.actions";
 import { handleError, postedSince, getUsername } from "@/lib/utils";
 import { reviewSchema } from "@/lib/validators";
+import { LikedToast, DisLikedToast, FaceToast } from "../toasts";
 import DotsBtn from "../btns/DotsBtn";
 import ReviewCard from "../cards/ReviewCard";
 import RatingInput from "../helpers/RatingInput";
@@ -42,18 +44,11 @@ import Text from "../helpers/Text";
 import * as z from "zod";
 
 type ReviewSheetParams = {
-  user: IUser | undefined;
-  setUser?: React.Dispatch<React.SetStateAction<IUser | null>>;
+  user: IUser | null;
   reviewObj: IReview;
 };
 
-const ReviewSheet: React.FC<ReviewSheetParams> = ({
-  user,
-  setUser,
-  reviewObj,
-}) => {
-  const { toast } = useToast();
-
+const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
   const { createdBy, review, rating, comments, likes, dislikes, createdAt } =
     reviewObj;
 
@@ -67,6 +62,9 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({
   const [displayList, setDisplayList] = useState<boolean>(false);
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [stateRating, setStateRating] = useState(parseInt(rating!));
+
+  const { toast } = useToast();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -103,11 +101,21 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({
     values.rating = stateRating.toString();
 
     try {
-      const updatedUser = await updateReview({ ...values, _id: reviewObj._id });
-      if (setUser) setUser(updatedUser);
+      const { success, error } = await updateReview({
+        ...values,
+        _id: reviewObj._id,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
       setDisplayForm(false);
+      toast({ description: "Review Updated Successfully." });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Update The Review, ${handleError(error)}`,
+      });
     }
   }
 
@@ -116,45 +124,110 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({
     setDisplayForm((prev) => !prev);
   };
 
-  const handleDeleteBtnClick = async () => {
-    try {
-      const updatedUser = await deleteReview(reviewObj._id);
-      if (setUser) setUser(updatedUser);
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   const handleReport = async () => {
     try {
-      await createReport({
+      const { success, error } = await createReport({
         target: "Review",
         targetId: reviewObj._id,
         createdBy: user?._id ? user._id : null,
       });
+
+      if (!success && error) throw new Error(error);
       toast({
         variant: "destructive",
         title: "Report sent successfully. Thank you.",
       });
+
       setDisplayList(false);
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Report The Review, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const handleDeleteBtnClick = async () => {
+    try {
+      const { success, error } = await deleteReview(reviewObj._id, pathname);
+
+      if (!success && error) throw new Error(error);
+      toast({ description: "Review Deleted Successfully." });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Review, ${handleError(error)}`,
+      });
     }
   };
 
   const handleLikes = async () => {
     try {
-      await updateReviewLikes(reviewObj._id, user?._id!);
+      const { success, data, error } = await updateReviewLikes({
+        reviewId: reviewObj._id,
+        updaterId: user?._id!,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
+      toast({
+        description: data ? (
+          <LikedToast
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ) : (
+          <FaceToast
+            face="sad face"
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ),
+      });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Like this Review, ${handleError(error)}`,
+      });
     }
   };
 
   const handleDisLike = async () => {
     try {
-      await updateReviewDislikes(reviewObj._id, user?._id!);
+      const { success, data, error } = await updateReviewDislikes({
+        reviewId: reviewObj._id,
+        updaterId: user?._id!,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
+      toast({
+        description: data ? (
+          <DisLikedToast
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ) : (
+          <FaceToast
+            face="happy face"
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ),
+      });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Dislike this Review, ${handleError(error)}`,
+      });
     }
   };
 

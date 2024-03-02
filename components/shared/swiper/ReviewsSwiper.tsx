@@ -17,16 +17,11 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 type ReviewsSwiperProps = {
-  user: IUser | undefined;
-  setUser?: React.Dispatch<React.SetStateAction<IUser | null>>;
+  user: IUser | null;
   reviews: IReview[] | [];
 };
 
-const ReviewsSwiper: React.FC<ReviewsSwiperProps> = ({
-  user,
-  setUser,
-  reviews,
-}) => {
+const ReviewsSwiper: React.FC<ReviewsSwiperProps> = ({ user, reviews }) => {
   if (reviews.length === 0) return;
 
   return (
@@ -61,7 +56,7 @@ const ReviewsSwiper: React.FC<ReviewsSwiperProps> = ({
             key={`${reviewObj?._id}-${index}`}
             className="max-w-[300px] mb-3"
           >
-            <ReviewSheet user={user} setUser={setUser} reviewObj={reviewObj} />
+            <ReviewSheet user={user} reviewObj={reviewObj} />
           </SwiperSlide>
         ))}
       </Swiper>

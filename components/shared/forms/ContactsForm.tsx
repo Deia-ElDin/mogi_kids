@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
-import { isValidForm, handleError } from "@/lib/utils";
+import {  handleError } from "@/lib/utils";
 import { contactSchema } from "@/lib/validators";
 import { contactDefaultValues } from "@/constants";
 import { IContact } from "@/lib/database/models/contact.model";
@@ -58,7 +58,6 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof contactSchema>) {
-    if (!isValidForm(values)) return;
     try {
       let uploadedImgUrl = values.imgUrl;
 

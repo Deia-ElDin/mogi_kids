@@ -18,7 +18,7 @@ export type UpdateLogoParams = {
   _id: string;
 } & CreateLogoParams;
 
-// Gallery 
+// Gallery
 export type CreateGalleryParams = {
   imgUrl: string;
   imgSize: number;
@@ -90,6 +90,7 @@ export type UpdateRecordParams = {
 export type CreateReviewParams = {
   review?: string;
   rating?: string;
+  path: string;
   createdBy: string;
 };
 
@@ -97,6 +98,13 @@ export type UpdateReviewParams = {
   _id: string;
   review?: string;
   rating?: string;
+  path: string;
+};
+
+export type LikesParams = {
+  reviewId: string;
+  updaterId: string;
+  path: string;
 };
 
 // Comment Params

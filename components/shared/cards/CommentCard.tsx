@@ -32,7 +32,7 @@ import * as z from "zod";
 import { createReport } from "@/lib/actions/report.actions";
 
 type CommentCardProps = {
-  user: IUser | undefined;
+  user: IUser | null;
   reviewObj: IReview;
   commentObj: IComment;
 };

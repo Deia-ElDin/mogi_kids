@@ -14,7 +14,7 @@ import PageForm from "@/components/shared/forms/PageForm";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 
 type CustomersProps = {
-  user: IUser | undefined;
+  user: IUser | null;
   isAdmin: boolean | undefined;
   customersPage: IPage | Partial<IPage>;
   reviews: IReview[] | [];
@@ -35,15 +35,20 @@ const Customers: React.FC<CustomersProps> = (props) => {
 
   const handleDelete = async () => {
     try {
-      if (customersPage?._id) await deletePage(customersPage._id, "/");
+      if (customersPage?._id) {
+        const { success, error } = await deletePage(customersPage._id, "/");
+        if (!success && error) throw new Error(error);
+      }
+
       toast({ description: "Customers Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Customers Page.",
+        description: `Failed to Delete The Customers Page, ${handleError(
+          error
+        )}`,
       });
-      handleError(error);
     }
   };
 

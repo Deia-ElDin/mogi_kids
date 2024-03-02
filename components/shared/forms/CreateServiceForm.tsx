@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
-import { isValidForm, handleError } from "@/lib/utils";
+import {  handleError } from "@/lib/utils";
 import { serviceSchema } from "@/lib/validators";
 import { serviceDefaultValues } from "@/constants";
 import { createService } from "@/lib/actions/service.actions";
@@ -56,7 +56,6 @@ const CreateServiceForm: React.FC = () => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof serviceSchema>) {
-    if (!isValidForm(values)) return;
     try {
       let uploadedImgUrl = values.imgUrl;
 
@@ -82,7 +81,7 @@ const CreateServiceForm: React.FC = () => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Service, ${handleError(error)}`,
+        description: `Failed to Create The Service, ${handleError(error)}`,
       });
     }
   }

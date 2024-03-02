@@ -16,8 +16,8 @@ const Footer = () => {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
-        const { data } = await getLogo();
-        setLogo(data);
+        const logoResult = await getLogo();
+        setLogo(logoResult.success ? logoResult.data || null : null);
       } catch (error) {
         toast({
           variant: "destructive",

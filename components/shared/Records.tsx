@@ -11,7 +11,7 @@ import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
 import PageForm from "./forms/PageForm";
 import RecordCard from "./cards/RecordCard";
-import RecordForm from "./forms/CreateRecordForm";
+import CreateRecordForm from "./forms/CreateRecordForm";
 import DeleteBtn from "./btns/DeleteBtn";
 
 type RecordsProps = {
@@ -41,7 +41,9 @@ const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete Either The Records Page or The Records, ${handleError(error)}`,
+        description: `Failed to Delete Either The Records Page or The Records, ${handleError(
+          error
+        )}`,
       });
     }
   };
@@ -61,7 +63,7 @@ const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
           ))}
         </div>
       )}
-      {isAdmin && recordsPage?._id && <RecordForm record={null} />}
+      {isAdmin && recordsPage?._id && <CreateRecordForm />}
       <DeleteBtn
         pageId={recordsPage?._id}
         isAdmin={isAdmin}

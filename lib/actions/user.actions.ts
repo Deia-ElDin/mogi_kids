@@ -4,8 +4,26 @@ import { connectToDb } from "../database";
 import { CreateUserParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
-import User from "../database/models/user.model";
+import User, { IUser } from "../database/models/user.model";
 import Review from "../database/models/review.model";
+
+type GetALLResult = {
+  success: boolean;
+  data: IUser[] | null;
+  error: string | null;
+};
+
+type DefaultResult = {
+  success: boolean;
+  data: IUser | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
 
 export const populateUser = (query: any) => {
   return query.populate({
@@ -30,55 +48,81 @@ export const populateUser = (query: any) => {
   });
 };
 
-export async function createUser(user: CreateUserParams) {
+export async function getAllUsers(): Promise<GetALLResult> {
+  try {
+    await connectToDb();
+
+    const users = await populateUser(User.find());
+
+    revalidatePath("/");
+
+    const data = JSON.parse(JSON.stringify(users));
+
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function createUser(
+  user: CreateUserParams
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
     const isUserExists = await User.findOne({ email: user.email });
-    if (isUserExists) return null;
+
+    if (isUserExists) return { success: false, data: null, error: null };
 
     const adminMails = ["deia.tech2021@gmail.com", "mohagtareg@gmail.com"];
     const role = adminMails.includes(user.email) ? "Admin" : "User";
 
     const newUser = await User.create({ ...user, role });
 
+    if (!newUser) throw new Error("Failed to create user.");
+
     revalidatePath("/");
-    return JSON.parse(JSON.stringify(newUser));
+
+    const data = JSON.parse(JSON.stringify(newUser));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function getUserByUserId(userId: string) {
+export async function getUserByUserId(userId: string): Promise<DefaultResult> {
   try {
     await connectToDb();
 
-    const user = await populateUser(User.findById(userId));
-    return JSON.parse(JSON.stringify(user));
+    const foundUser = await populateUser(User.findById(userId));
+
+    if (!foundUser) throw new Error("User not found.");
+
+    const data = JSON.parse(JSON.stringify(foundUser));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function getUserByClerkId(clerkId: string) {
+export async function getUserByClerkId(
+  clerkId: string
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
-    const user = await populateUser(User.findOne({ clerkId }));
+    const foundUser = await populateUser(User.findOne({ clerkId }));
 
-    return JSON.parse(JSON.stringify(user));
+    if (!foundUser) throw new Error("User not found.");
+
+    revalidatePath("/");
+
+    const data = JSON.parse(JSON.stringify(foundUser));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
-  }
-}
-
-export async function getAllUsers() {
-  try {
-    await connectToDb();
-
-    const users = await populateUser(User.find());
-    return JSON.parse(JSON.stringify(users));
-  } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }

@@ -20,8 +20,6 @@ const RatingInput = ({ rating, setRating }: RatingProps) => {
     <div className="flex gap-2">
       {[...Array(5)].map((_, index) => {
         const starValue = index + 1;
-        console.log("starValue = ", starValue);
-        console.log("rating = ", rating);
         return (
           <FaStar
             key={index}

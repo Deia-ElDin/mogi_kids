@@ -31,7 +31,7 @@ export async function getGallery(): Promise<GetALLResult> {
   try {
     await connectToDb();
 
-    const gallery = await Gallery.find();
+    const gallery = await Gallery.find().sort({ createdAt: -1 });
 
     const data = JSON.parse(JSON.stringify(gallery));
 

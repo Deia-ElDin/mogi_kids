@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,27 +29,30 @@ import * as z from "zod";
 
 type ReviewFormProps = {
   user: IUser;
-  setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
   logo: ILogo | null;
 };
 
-const ReviewForm = ({ user, setUser, logo }: ReviewFormProps) => {
-  const { toast } = useToast();
+const ReviewForm = ({ user, logo }: ReviewFormProps) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [rating, setRating] = useState(0);
+
+  const { toast } = useToast();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
     defaultValues: reviewDefaultValues,
   });
 
+  const handleClose = () => {
+    setDisplayForm(false);
+    setRating(0);
+    form.reset();
+  };
+
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") {
-        setDisplayForm(false);
-        setRating(0);
-        form.reset();
-      }
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -62,17 +66,21 @@ const ReviewForm = ({ user, setUser, logo }: ReviewFormProps) => {
     values.rating = String(rating);
 
     try {
-      const updatedUser = await createReview({
+      const { success, error } = await createReview({
         ...values,
         createdBy: user._id,
+        path: pathname,
       });
-      setUser(updatedUser);
+
+      if (!success && error) throw new Error(error);
       toast({ description: <CreateReviewToast logo={logo} /> });
-      setRating(0);
-      form.reset();
-      setDisplayForm(false);
+      handleClose();
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Create The Review, ${handleError(error)}`,
+      });
     }
   }
 

@@ -26,8 +26,8 @@ const Header = () => {
   useEffect(() => {
     const fetchLogo = async () => {
       try {
-        const { data } = await getLogo();
-        setLogo(data);
+        const logoResult = await getLogo();
+        setLogo(logoResult.success ? logoResult.data || null : null);
       } catch (error) {
         toast({
           variant: "destructive",
@@ -51,8 +51,8 @@ const Header = () => {
   useEffect(() => {
     const fetchUser = async () => {
       if (clerkUser) {
-        const user = await getUserByClerkId(clerkUser.id);
-        setUser(user);
+        const userResult = await getUserByClerkId(clerkUser.id);
+        setUser(userResult.success ? userResult.data || null : null);
       }
     };
 

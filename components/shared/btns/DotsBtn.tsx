@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 type DotsBtnProps = {
-  user: IUser | undefined;
+  user: IUser | null;
   creatorId: string;
   displayList: boolean;
   deletionTarget: string;

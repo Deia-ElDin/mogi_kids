@@ -2,23 +2,44 @@
 
 import { connectToDb } from "../database";
 import { CreateReportParams } from "@/types";
-import { getImgName, handleError } from "../utils";
-import { revalidatePath } from "next/cache";
-import Report from "../database/models/report.model";
+import { handleError } from "../utils";
+import Report, { IReport } from "../database/models/report.model";
 
-export async function getAllReports() {
+type GetAllResult = {
+  success: boolean;
+  data: IReport[] | [] | null;
+  error: string | null;
+};
+
+type DefaultResult = {
+  success: boolean;
+  data: IReport | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+export async function getAllReports(): Promise<GetAllResult> {
   try {
     await connectToDb();
 
     const reports = await Report.find();
 
-    return JSON.parse(JSON.stringify(reports));
+    const data = JSON.parse(JSON.stringify(reports));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function createReport(params: CreateReportParams) {
+export async function createReport(
+  params: CreateReportParams
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
@@ -26,13 +47,15 @@ export async function createReport(params: CreateReportParams) {
 
     if (!report) throw new Error("Failed to create the report.");
 
-    return JSON.parse(JSON.stringify(report));
+    const data = JSON.parse(JSON.stringify(report));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteReport(reportId: string) {
+export async function deleteReport(reportId: string): Promise<DeleteResult> {
   try {
     const deleteReport = await Report.findByIdAndDelete(reportId);
 
@@ -41,20 +64,25 @@ export async function deleteReport(reportId: string) {
         "Failed to delete the report or the report already deleted."
       );
 
-    return "Successfully deleted the report.";
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteAllReports() {
+export async function deleteAllReports(): Promise<DeleteResult> {
   try {
     await connectToDb();
 
-    await Report.deleteMany();
+    const deletedReports = await Report.deleteMany();
 
-    return "Successfully deleted all reports.";
+    if (!deletedReports)
+      throw new Error(
+        "Failed to delete all the reports or the report already deleted."
+      );
+
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }

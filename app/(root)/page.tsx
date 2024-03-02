@@ -31,7 +31,7 @@ import Contacts from "@/components/shared/Contacts";
 export default async function Home() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
-  const user: IUser = await getUserByUserId(userId);
+  const userResult = await getUserByUserId(userId);
   const logoResult = await getLogo();
   const galleryResult = await getGallery();
   const pagesResult = await getAllPages();
@@ -40,8 +40,8 @@ export default async function Home() {
   const recordsResult = await getAllRecords();
   const reviewsResult = await getAllReviews();
   const contacts: IContact[] = await getAllContacts();
-  const isAdmin = user?.role === "Admin";
 
+  const user = userResult.success ? userResult.data || null : null;
   const logo = logoResult.success ? logoResult.data || null : null;
   const gallery = galleryResult.success ? galleryResult.data || [] : [];
   const pages = pagesResult.success ? pagesResult.data || [] : [];
@@ -49,6 +49,8 @@ export default async function Home() {
   const questions = questionsResult.success ? questionsResult.data || [] : [];
   const records = recordsResult.success ? recordsResult.data || [] : [];
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
+
+  const isAdmin = user?.role === "Admin";
 
   const uploadthingDb = formatBytes(logo, gallery, services, records);
   return (

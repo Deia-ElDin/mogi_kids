@@ -30,7 +30,7 @@ import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
-const QuoteForm = ({ user }: { user: IUser | undefined }) => {
+const QuoteForm = ({ user }: { user: IUser | null }) => {
   const form = useForm<z.infer<typeof quoteSchema>>({
     resolver: zodResolver(quoteSchema),
     defaultValues: quoteDefaultValues,

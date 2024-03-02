@@ -51,16 +51,6 @@ export const getPageContent = (
   else return null;
 };
 
-export const isValidForm = (obj: any): boolean => {
-  for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const value = obj[key].trim();
-      if (value === "") return false;
-    }
-  }
-  return true;
-};
-
 export const convertFileToUrl = (file: File): string =>
   URL.createObjectURL(file);
 

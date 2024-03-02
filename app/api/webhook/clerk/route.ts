@@ -76,7 +76,11 @@ export async function POST(req: Request) {
       role: "User",
     };
 
-    const newUser = await createUser(user);
+    const { success, data, error } = await createUser(user);
+
+    if (!success && error) throw new Error(error);
+
+    const newUser = data;
 
     if (newUser) {
       await clerkClient.users.updateUserMetadata(id, {

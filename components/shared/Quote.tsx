@@ -12,7 +12,7 @@ import QuoteForm from "./forms/QuoteForm";
 import DeleteBtn from "./btns/DeleteBtn";
 
 type QuoteProps = {
-  user: IUser | undefined;
+  user: IUser | null;
   isAdmin: boolean | undefined;
   quotePage: IPage | Partial<IPage>;
 };
