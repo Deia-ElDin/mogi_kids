@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { addYears, isAfter } from "date-fns";
+import { addYears, isAfter, subDays, isEqual } from "date-fns";
 
 // const [formErrors, setFormErrors] = useState({});
 
@@ -28,7 +28,6 @@ export const gallerySchema = z.object({
   imgUrl: z.string().min(1, "Kindly provide us an image."),
 });
 
-
 export const quoteSchema = z.object({
   cstName: z
     .string()
@@ -37,7 +36,10 @@ export const quoteSchema = z.object({
     .refine(
       (value) => /^[a-zA-Z\s]+$/.test(value),
       "Name must not contain any numbers or special characters."
-    ),
+    )
+    .refine((value) => value.trim().length > 0, {
+      message: "Kindly tell us your name.",
+    }),
   mobile: z
     .string()
     .min(1, "Kindly provide your mobile number.")
@@ -54,31 +56,25 @@ export const quoteSchema = z.object({
     .string()
     .min(1, "Kindly provide your email address.")
     .email("Invalid email address."),
-  // from: z.date().refine((value) => {
-  //   if (value !== null && value !== undefined) {
-  //     fromDate = setDate(value);
-  //     return value >= today;
-  //   }
-  // }, "The service can't start in the past."),
-  // to: z.date().refine((value) => {
-  //   if (value !== null && value !== undefined) {
-  //     toDate = setDate(value);
-  //     return value >= fromDate && value >= today;
-  //   }
-  // }, "The service can't end in the past."),
   from: z.date().refine((value) => {
     if (value !== null && value !== undefined) {
       fromDate = value;
       const maxDate = addYears(today, 1);
-      return isAfter(value, today) && isAfter(maxDate, value);
+      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
     }
-  }, "The service can't start in the past or exceed one year from now."),
-  to: z.date().refine((value) => {
-    if (value !== null && value !== undefined) {
-      toDate = value;
-      return isAfter(value, fromDate) && isAfter(value, today);
-    }
-  }, "The service can't end in the past."),
+  }, "The service can't start in the past or exceed a year from now."),
+  to: z
+    .date()
+    .refine((value) => {
+      if (value !== null && value !== undefined) {
+        toDate = value;
+        return isEqual(value, fromDate) || isAfter(value, fromDate);
+      }
+    }, "The service can't end in the past or before to the service start date.")
+    .refine((value) => {
+      const maxToDate = addYears(fromDate, 17);
+      return isAfter(maxToDate, value);
+    }, "The service duration can't exceed 17 years."),
   numberOfHours: z
     .string()
     .min(1, "Kindly let us know how many hours you need.")
@@ -92,22 +88,22 @@ export const quoteSchema = z.object({
     .refine((value) => {
       const kids = parseInt(value);
       return kids > 0;
-    }, "The number of kids must be bigger than 0."),
+    }, "The number of kids must be greater than 0."),
   ageOfKidsFrom: z
     .string()
     .min(1, "Kindly let us know the age of your youngest kid.")
     .refine((value) => {
       const ageFrom = parseInt(value);
       fromAge = ageFrom;
-      return ageFrom <= 17;
-    }, "Kids age must be less than 18."),
+      return ageFrom <= 17 && ageFrom > 0;
+    }, "Kids age must be a positive number and less than 18."),
   ageOfKidsTo: z
     .string()
     .min(1, "Kindly let us know the age of your oldest kid.")
     .refine((value) => {
       const ageTo = parseInt(value);
-      return ageTo <= 17;
-    }, "Kids age must be less than 18.")
+      return ageTo <= 17 && ageTo > 0;
+    }, "Kids age must be a positive number and less than 18.")
     .refine((value) => {
       const ageTo = parseInt(value);
       return ageTo >= fromAge;
@@ -214,3 +210,16 @@ export const aboutUsSchema = z.object({
   content: z.string().min(1, "Kindly provide us the article content."),
   imgUrl: z.string().min(1, "Kindly provide us the article image."),
 });
+
+// from: z.date().refine((value) => {
+//   if (value !== null && value !== undefined) {
+//     fromDate = setDate(value);
+//     return value >= today;
+//   }
+// }, "The service can't start in the past."),
+// to: z.date().refine((value) => {
+//   if (value !== null && value !== undefined) {
+//     toDate = setDate(value);
+//     return value >= fromDate && value >= today;
+//   }
+// }, "The service can't end in the past."),

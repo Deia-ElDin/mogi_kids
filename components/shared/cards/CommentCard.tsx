@@ -31,6 +31,7 @@ import LikesCard from "./LikesCard";
 import Image from "next/image";
 import * as z from "zod";
 import { createReport } from "@/lib/actions/report.actions";
+import { classNames } from "uploadthing/client";
 
 type CommentCardProps = {
   user: IUser | null;
@@ -93,7 +94,9 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
-      toast({ description: "Comment Updated Successfully." });
+      toast({
+        description: "Comment Updated Successfully.",
+      });
       setDisplayForm(false);
     } catch (error) {
       toast({

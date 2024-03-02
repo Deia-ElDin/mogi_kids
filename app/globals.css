@@ -274,26 +274,6 @@ body {
     @apply max-h-[350px];
   }
 
-  .admin-tab {
-    @apply flex flex-1 shrink h-fit text-yellow-600 font-bold text-[18px] leading-[32px] md:text-[20px] md:leading-[38px] lg:text-[22px] lg:leading-[42px] xl:text-[26px] xl:leading-[48px] focus:text-white focus:bg-yellow-600;
-  }
-
-  .admin-tab-style {
-    flex: 1;
-    padding: 10px 20px;
-    text-align: center;
-    color: #fff; /* Tab text color */
-    background-color: #6b3406; /* Tab background color */
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    transition: background-color 0.3s ease;
-  }
-
-  .admin-tab-style:hover {
-    background-color: #de9a62;
-  }
-
   .form-btn {
     @apply btn active-btn;
     padding: 30px;

@@ -40,7 +40,7 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
     console.log(values);
     try {
       // sendEmail({ ...values, user });
-      form.reset();
+      // form.reset();
     } catch (error) {
       handleError(error);
     }
@@ -122,7 +122,7 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
           name="from"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="label-style">From Date</FormLabel>
+              <FormLabel className="label-style">Service Start Date</FormLabel>
               <FormControl>
                 <DatePicker
                   selected={field.value}
@@ -140,7 +140,7 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
           name="to"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="label-style">To Date</FormLabel>
+              <FormLabel className="label-style">Service End Date</FormLabel>
               <FormControl>
                 <DatePicker
                   selected={field.value}
@@ -164,6 +164,9 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
                   {...field}
                   type="number"
                   className="input-style text-style"
+                  onKeyDown={(evt) =>
+                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  }
                 />
               </FormControl>
               <FormMessage />
@@ -177,7 +180,14 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
             <FormItem>
               <FormLabel className="label-style">Number Of Your Kids</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style text-style" />
+                <Input
+                  {...field}
+                  type="number"
+                  className="input-style text-style"
+                  onKeyDown={(evt) =>
+                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  }
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -194,6 +204,9 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
                   {...field}
                   type="number"
                   className="input-style text-style"
+                  onKeyDown={(evt) =>
+                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  }
                 />
               </FormControl>
               <FormMessage />
@@ -207,7 +220,14 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
             <FormItem>
               <FormLabel className="label-style">Age Of Oldest Kid</FormLabel>
               <FormControl>
-                <Input {...field} className="input-style text-style" />
+                <Input
+                  {...field}
+                  type="number"
+                  className="input-style text-style"
+                  onKeyDown={(evt) =>
+                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  }
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
