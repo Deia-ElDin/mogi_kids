@@ -64,7 +64,8 @@ const AboutUsForm: React.FC<AboutUsFormProps> = ({ aboutUsArticle }) => {
       if (files.length === 0) return;
       const uploadedImgs = await startUpload(files);
 
-      if (!uploadedImgs) return;
+      if (!uploadedImgs)
+      throw new Error("Failed to upload the image to uploadthing database.");
       uploadedImgUrl = uploadedImgs[0].url;
 
       await createAboutUs({

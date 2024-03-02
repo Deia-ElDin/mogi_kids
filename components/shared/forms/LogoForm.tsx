@@ -106,7 +106,10 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
       <div className="w-full">
         {displayForm && (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="form-style absolute left-0 right-0"
+            >
               <CloseBtn handleClick={handleClose} />
               <h1 className="title-style text-white">MOGi KiDS Logo Form</h1>
               <FormField

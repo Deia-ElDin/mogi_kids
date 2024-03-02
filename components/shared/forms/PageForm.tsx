@@ -26,7 +26,7 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type PageProps = {
-  page: IPage | Partial<IPage> | undefined;
+  page: IPage | Partial<IPage>;
   pageName:
     | "Welcomes Page"
     | "Services Page"

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -12,41 +14,38 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
-import { handleError } from "@/lib/utils";
-import { IRecord } from "@/lib/database/models/record.model";
-import { createRecord } from "@/lib/actions/record.actions";
-import { recordSchema } from "@/lib/validators";
-import { recordDefaultValues } from "@/constants";
-import { useToast } from "@/components/ui/use-toast";
+import { isValidForm, handleError } from "@/lib/utils";
+import { serviceSchema } from "@/lib/validators";
+import { serviceDefaultValues } from "@/constants";
+import { createService } from "@/lib/actions/service.actions";
 import AddBtn from "../btns/AddBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type RecordFormProps = {
-  record: IRecord | Partial<IRecord> | undefined | null;
-};
-
-const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
+const CreateServiceForm: React.FC = () => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
   const { toast } = useToast();
+  const pathname = usePathname();
 
-  const form = useForm<z.infer<typeof recordSchema>>({
-    resolver: zodResolver(recordSchema),
-    defaultValues: record ? record : recordDefaultValues,
+  const form = useForm<z.infer<typeof serviceSchema>>({
+    resolver: zodResolver(serviceSchema),
+    defaultValues: serviceDefaultValues,
   });
 
-  useEffect(() => {
-    form.reset(record ? record : recordDefaultValues);
-  }, [record]);
+  const handleClose = () => {
+    form.reset();
+    setDisplayForm(false);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") setDisplayForm(false);
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -56,35 +55,35 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
     };
   }, []);
 
-  async function onSubmit(values: z.infer<typeof recordSchema>) {
+  async function onSubmit(values: z.infer<typeof serviceSchema>) {
+    if (!isValidForm(values)) return;
     try {
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length === 0) return;
-
       const uploadedImgs = await startUpload(files);
 
-      if (!uploadedImgs) return;
+      if (!uploadedImgs)
+        throw new Error("Failed to upload the image to uploadthing database.");
+
       uploadedImgUrl = uploadedImgs[0].url;
 
-      await createRecord({
+      const { success, error } = await createService({
         ...values,
         imgUrl: uploadedImgUrl,
         imgSize: uploadedImgs[0].size,
+        path: pathname,
       });
 
-      toast({ description: "Record Created Successfully." });
-
-      setDisplayForm(false);
-
-      form.reset();
+      if (!success && error) throw new Error(error);
+      toast({ description: "Service Created Successfully." });
+      handleClose();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Record.",
+        description: `Failed to Delete The Service, ${handleError(error)}`,
       });
-      handleError(error);
     }
   }
 
@@ -94,20 +93,20 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
       {displayForm && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
-            <CloseBtn handleClick={() => setDisplayForm(false)} />
-            <h1 className="title-style text-white">Record Form</h1>
+            <CloseBtn handleClick={handleClose} />
+            <h1 className="title-style text-white">Service Form</h1>
             <FormField
               control={form.control}
               name="imgUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">SVG</FormLabel>
+                  <FormLabel className="label-style">Image</FormLabel>
                   <FormControl>
                     <FileUploader
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}
-                      imgClass="max-w-[100px] max-h-[100px]"
+                      imgClass="max-w-[300px] max-h-[300px]"
                     />
                   </FormControl>
                   <FormMessage />
@@ -116,16 +115,12 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
             />
             <FormField
               control={form.control}
-              name="value"
+              name="serviceName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Record</FormLabel>
+                  <FormLabel className="label-style">Service Title</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      className="edit-input-style text-style"
-                    />
+                    <Input {...field} className="edit-input-style text-style" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -133,24 +128,22 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
             />
             <FormField
               control={form.control}
-              name="label"
+              name="serviceContent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="label-style">Record Name</FormLabel>
+                  <FormLabel className="label-style">Service Content</FormLabel>
                   <FormControl>
-                    <Input
+                    <Textarea
                       {...field}
-                      className="edit-input-style text-style"
-                      placeholder="i.e. Clients, Staff Members, Google Rating etc."
+                      className="edit-textarea-style text-style"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormBtn
-              text={`${record?._id ? "Edit" : "Create"} Record`}
+              text="Create Service"
               isSubmitting={form.formState.isSubmitting}
             />
           </form>
@@ -160,4 +153,4 @@ const RecordForm: React.FC<RecordFormProps> = ({ record }) => {
   );
 };
 
-export default RecordForm;
+export default CreateServiceForm;

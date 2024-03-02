@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { handleError } from "@/lib/utils";
-import { IQuestion } from "@/lib/database/models/question.model";
 import { createQuestion } from "@/lib/actions/question.actions";
 import { questionSchema } from "@/lib/validators";
 import { questionDefaultValues } from "@/constants";
@@ -24,27 +23,24 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type QuestionFormProps = {
-  question: IQuestion | Partial<IQuestion> | undefined | null;
-};
-
-const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
+const CreateQuestionForm: React.FC = () => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof questionSchema>>({
     resolver: zodResolver(questionSchema),
-    defaultValues: question ? question : questionDefaultValues,
+    defaultValues: questionDefaultValues,
   });
 
-  useEffect(() => {
-    form.reset(question ? question : questionDefaultValues);
-  }, [question]);
+  const handleClose = () => {
+    form.reset();
+    setDisplayForm(false);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
-      if (event.key === "Escape") setDisplayForm(false);
+      if (event.key === "Escape") handleClose();
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -56,21 +52,17 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
 
   async function onSubmit(values: z.infer<typeof questionSchema>) {
     try {
-      await createQuestion({ ...values });
+      const { success, error } = await createQuestion({ ...values });
 
+      if (!success && error) throw new Error(error);
       toast({ description: "Question Created Successfully." });
-
-      setDisplayForm(false);
-
-      form.reset();
+      handleClose();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Create The Question.",
+        description: `Failed to Create The Question, ${handleError(error)}`,
       });
-
-      handleError(error);
     }
   }
 
@@ -112,7 +104,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
               )}
             />
             <FormBtn
-              text={`${question?._id ? "Edit" : "Create"} Question`}
+              text="Create Question"
               isSubmitting={form.formState.isSubmitting}
             />
           </form>
@@ -122,4 +114,4 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ question }) => {
   );
 };
 
-export default QuestionForm;
+export default CreateQuestionForm;

@@ -16,7 +16,7 @@ import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 type CustomersProps = {
   user: IUser | undefined;
   isAdmin: boolean | undefined;
-  customersPage: IPage | Partial<IPage> | undefined;
+  customersPage: IPage | Partial<IPage>;
   reviews: IReview[] | [];
 };
 

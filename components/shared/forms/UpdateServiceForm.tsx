@@ -28,11 +28,11 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type MiniServiceFormProps = {
+type UpdateServiceFormProps = {
   service: IService;
 };
 
-const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
+const UpdateServiceForm: React.FC<UpdateServiceFormProps> = ({ service }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
@@ -73,9 +73,13 @@ const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
       if (files.length > 0) {
         const uploadedImgs = await startUpload(files);
 
-        if (!uploadedImgs) return;
+        if (!uploadedImgs)
+          throw new Error(
+            "Failed to upload the image to uploadthing database."
+          );
 
         uploadedImgUrl = uploadedImgs[0].url;
+
         const { success, error } = await updateService({
           ...values,
           _id: service._id,
@@ -86,6 +90,8 @@ const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
         });
 
         if (!success && error) throw new Error(error);
+        toast({ description: "Service Updated Successfully." });
+        handleClose();
       } else {
         const { success, error } = await updateService({
           ...values,
@@ -95,11 +101,9 @@ const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
         });
 
         if (!success && error) throw new Error(error);
+        toast({ description: "Service Updated Successfully." });
+        handleClose();
       }
-
-      toast({ description: "Service Updated Successfully." });
-
-      handleClose();
     } catch (error) {
       toast({
         variant: "destructive",
@@ -198,4 +202,4 @@ const MiniServiceForm: React.FC<MiniServiceFormProps> = ({ service }) => {
   );
 };
 
-export default MiniServiceForm;
+export default UpdateServiceForm;

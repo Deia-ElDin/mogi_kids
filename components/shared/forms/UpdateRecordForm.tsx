@@ -25,11 +25,11 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type MiniRecordFormProps = {
+type UpdateRecordFormProps = {
   record: IRecord;
 };
 
-const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
+const UpdateRecordForm: React.FC<UpdateRecordFormProps> = ({ record }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("imageUploader");
@@ -39,6 +39,11 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
     resolver: zodResolver(recordSchema),
     defaultValues: record ? record : recordDefaultValues,
   });
+
+  const handleClose = () => {
+    form.reset(record);
+    setDisplayForm(false);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: any) => {
@@ -58,36 +63,42 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
 
       if (files.length > 0) {
         const uploadedImgs = await startUpload(files);
-        if (!uploadedImgs) return;
+
+        if (!uploadedImgs)
+          throw new Error(
+            "Failed to upload the image to uploadthing database."
+          );
+
         uploadedImgUrl = uploadedImgs[0].url;
 
-        await updateRecord({
+        const { success, error } = await updateRecord({
           ...values,
           _id: record._id,
           imgUrl: uploadedImgUrl,
           imgSize: uploadedImgs[0].size,
           newImg: true,
         });
+
+        if (!success && error) throw new Error(error);
+        toast({ description: "Record Updated Successfully." });
+        handleClose();
       } else {
-        await updateRecord({
+        const { success, error } = await updateRecord({
           ...values,
           _id: record._id,
           newImg: false,
         });
+        
+        if (!success && error) throw new Error(error);
+        toast({ description: "Record Updated Successfully." });
+        handleClose();
       }
-
-      toast({ description: "Record Updated Successfully." });
-
-      setDisplayForm(false);
-
-      form.reset();
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Update The Record.",
+        description: `Failed to Update The Record, ${handleError(error)}`,
       });
-      handleError(error);
     }
   }
 
@@ -167,4 +178,4 @@ const MiniRecordForm: React.FC<MiniRecordFormProps> = ({ record }) => {
   );
 };
 
-export default MiniRecordForm;
+export default UpdateRecordForm;

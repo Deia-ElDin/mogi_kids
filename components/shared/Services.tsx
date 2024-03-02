@@ -11,13 +11,13 @@ import { Separator } from "@/components/ui/separator";
 import Article from "@/components/shared/helpers/Article";
 import ServicesSwiper from "@/components/shared/swiper/ServicesSwiper";
 import PageForm from "@/components/shared/forms/PageForm";
-import ServiceForm from "@/components/shared/forms/ServiceForm";
+import CreateServiceForm from "@/components/shared/forms/CreateServiceForm";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 
 type ServicesProps = {
   isAdmin: boolean | undefined;
   servicesPage: IPage | Partial<IPage>;
-  services: IService[] ;
+  services: IService[];
 };
 
 const Services: React.FC<ServicesProps> = (props) => {
@@ -48,7 +48,7 @@ const Services: React.FC<ServicesProps> = (props) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Services Page or the Services, ${handleError(
+        description: `Failed to Delete Either The Services Page or the Services, ${handleError(
           error
         )}`,
       });
@@ -60,7 +60,7 @@ const Services: React.FC<ServicesProps> = (props) => {
       <Article title={pageTitle} content={pageContent} />
       <ServicesSwiper services={services} />
       {isAdmin && <PageForm page={servicesPage} pageName="Services Page" />}
-      {isAdmin && servicesPage?._id && <ServiceForm service={null} />}
+      {isAdmin && servicesPage?._id && <CreateServiceForm />}
       <DeleteBtn
         pageId={servicesPage?._id}
         isAdmin={isAdmin}

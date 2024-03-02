@@ -3,7 +3,7 @@ import { IRecord } from "@/lib/database/models/record.model";
 import { deleteRecord } from "@/lib/actions/record.actions";
 import { handleError } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
-import MiniRecordForm from "../forms/MiniRecordForm";
+import UpdateRecordForm from "../forms/UpdateRecordForm";
 import DeleteBtn from "../btns/DeleteBtn";
 import Image from "next/image";
 
@@ -17,7 +17,7 @@ const RecordCard: React.FC<RecordCardParams> = ({ isAdmin, record }) => {
 
   const handleDelete = async () => {
     try {
-      await deleteRecord(record._id);
+      await deleteRecord(record._id, true);
       toast({ description: "Record Deleted Successfully." });
     } catch (error) {
       toast({
@@ -47,7 +47,7 @@ const RecordCard: React.FC<RecordCardParams> = ({ isAdmin, record }) => {
       </Card>
 
       <div className="bg-orange-50 flex flex-col gap-2 border-none mt-5">
-        {isAdmin && record._id && <MiniRecordForm record={record} />}
+        {isAdmin && record._id && <UpdateRecordForm record={record} />}
         <DeleteBtn
           pageId={record._id}
           isAdmin={isAdmin}

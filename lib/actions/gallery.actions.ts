@@ -9,13 +9,25 @@ import Gallery, { IGallery } from "../database/models/gallery.model";
 
 const utapi = new UTApi();
 
-type GalleryFnResult = {
+type GetALLResult = {
   success: boolean;
-  data: IGallery[] | [] | IGallery | null;
+  data: IGallery[] | [] | null;
   error: string | null;
 };
 
-export async function getGallery(): Promise<GalleryFnResult> {
+type DefaultResult = {
+  success: boolean;
+  data: IGallery | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+export async function getGallery(): Promise<GetALLResult> {
   try {
     await connectToDb();
 
@@ -31,7 +43,7 @@ export async function getGallery(): Promise<GalleryFnResult> {
 
 export async function createGalleryImg(
   params: CreateGalleryParams
-): Promise<GalleryFnResult> {
+): Promise<DefaultResult> {
   try {
     await connectToDb();
 
@@ -50,7 +62,7 @@ export async function createGalleryImg(
 
 export async function updateGalleryImg(
   params: UpdateGalleryParams
-): Promise<GalleryFnResult> {
+): Promise<DefaultResult> {
   const { _id, imgUrl, imgSize } = params;
 
   try {
@@ -78,9 +90,7 @@ export async function updateGalleryImg(
   }
 }
 
-export async function deleteGalleryImg(
-  imgId: string
-): Promise<GalleryFnResult> {
+export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
   try {
     await connectToDb();
 

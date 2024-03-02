@@ -65,7 +65,8 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
       if (files.length === 0) return;
       const uploadedImgs = await startUpload(files);
 
-      if (!uploadedImgs) return;
+      if (!uploadedImgs)
+        throw new Error("Failed to upload the image to uploadthing database.");
       uploadedImgUrl = uploadedImgs[0].url;
 
       await createContact({

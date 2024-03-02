@@ -24,11 +24,13 @@ import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type MiniQuestionFormProps = {
-  question: IQuestion | Partial<IQuestion>;
+type UpdateQuestionFormProps = {
+  question: IQuestion;
 };
 
-const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
+const UpdateQuestionForm: React.FC<UpdateQuestionFormProps> = ({
+  question,
+}) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
 
   const { toast } = useToast();
@@ -65,6 +67,7 @@ const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
         ...values,
         _id: question._id!,
       });
+
       if (!success && error) throw new Error(error);
       toast({ description: "Question Updated Successfully." });
       handleClose();
@@ -128,4 +131,4 @@ const MiniQuestionForm: React.FC<MiniQuestionFormProps> = ({ question }) => {
   );
 };
 
-export default MiniQuestionForm;
+export default UpdateQuestionForm;

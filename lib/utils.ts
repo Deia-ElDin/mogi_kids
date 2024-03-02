@@ -77,18 +77,16 @@ export const getImgName = (obj: any): string | undefined => {
 
 export const formatBytes = (
   logo: ILogo | null,
-  gallery: IGallery[] | [] | IGallery | null,
-  services: IService[] | [] | IService | null,
-  records: IRecord[]
+  gallery: IGallery[] | [],
+  services: IService[] | [],
+  records: IRecord[] | []
 ): string => {
   const units = ["B", "KB", "MB", "GB"];
   let totalBytes = 0;
 
   totalBytes += logo ? logo.imgSize : 0;
-  if (gallery && Array.isArray(gallery) && gallery.length > 0)
-    gallery.forEach((img) => (totalBytes += img.imgSize));
-  if (services && Array.isArray(services) && services.length > 0)
-    services.forEach((service) => (totalBytes += service.imgSize));
+  gallery.forEach((img) => (totalBytes += img.imgSize));
+  services.forEach((service) => (totalBytes += service.imgSize));
   records.forEach((record) => (totalBytes += record.imgSize));
 
   let i = 0;

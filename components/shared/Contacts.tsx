@@ -14,7 +14,7 @@ import DeleteBtn from "./btns/DeleteBtn";
 
 type ContactsProps = {
   isAdmin: boolean | undefined;
-  contactsPage: IPage | Partial<IPage> | undefined;
+  contactsPage: IPage | Partial<IPage>;
   contacts: IContact[] | [];
 };
 

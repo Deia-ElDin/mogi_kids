@@ -44,16 +44,16 @@ export async function createQuestion(
   try {
     await connectToDb();
 
-    const question = await Question.create(params);
+    const newQuestion = await Question.create(params);
 
-    if (!question)
+    if (!newQuestion)
       throw new Error(
         "Couldn't create a question & kindly check the uploadthing database"
       );
 
     revalidatePath("/");
 
-    const data = JSON.parse(JSON.stringify(question));
+    const data = JSON.parse(JSON.stringify(newQuestion));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -90,8 +90,7 @@ export async function deleteQuestion(
   try {
     await connectToDb();
 
-    // const deletedQuestion = await Question.findByIdAndDelete(questionId);
-    const deletedQuestion = null;
+    const deletedQuestion = await Question.findByIdAndDelete(questionId);
     if (!deletedQuestion)
       throw new Error("Question not found or already deleted.");
 

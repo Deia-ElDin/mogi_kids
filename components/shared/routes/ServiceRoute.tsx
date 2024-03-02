@@ -10,7 +10,7 @@ import { handleError } from "@/lib/utils";
 import Title from "@/components/shared/helpers/Title";
 import Text from "@/components/shared/helpers/Text";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
-import MiniServiceForm from "../forms/MiniServiceForm";
+import UpdateServiceForm from "../forms/UpdateServiceForm";
 
 type ServiceRouteProps = {
   isAdmin: boolean;
@@ -65,7 +65,7 @@ const ServiceRoute: React.FC<ServiceRouteProps> = ({ isAdmin, service }) => {
         deletionTarget="Delete Service"
         handleClick={handleDelete}
       />
-      {isAdmin && <MiniServiceForm service={service} />}
+      {isAdmin && <UpdateServiceForm service={service} />}
     </section>
   );
 };

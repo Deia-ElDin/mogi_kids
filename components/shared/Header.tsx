@@ -63,7 +63,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="hidden lg:flex lg:justify-between lg:items-center py-1 px-8 sticky top-0 bg-white border-b-4 border-red-500 z-20">
+      <header className="hidden lg:flex lg:justify-between lg:items-center py-1 px-8 sticky top-0 bg-white border-b-4 border-red-500 z-30">
         <div className="w-fit">
           <Link href="/">
             <img
@@ -113,7 +113,7 @@ const Header = () => {
           </div>
         </nav>
       </header>
-      <header className="lg:hidden flex flex-col py-1 px-8 sticky top-0 bg-white border-b-4 border-custom-red z-20">
+      <header className="lg:hidden flex flex-col py-1 px-8 sticky top-0 bg-white border-b-4 border-custom-red z-30">
         <div className="flex justify-between items-center">
           <Link href="/">
             <img

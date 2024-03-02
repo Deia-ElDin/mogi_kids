@@ -17,7 +17,6 @@ import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { gallerySchema } from "@/lib/validators";
 import { galleryDefaultValues } from "@/constants";
-import { ILogo } from "@/lib/database/models/logo.model";
 import { IGallery } from "@/lib/database/models/gallery.model";
 import {
   createGalleryImg,
@@ -30,11 +29,10 @@ import GalleryImgCard from "../cards/GalleryImgCard";
 import * as z from "zod";
 
 type GalleryFormProps = {
-  logo: ILogo | null;
-  gallery: IGallery[] | [] | IGallery | null;
+  gallery: IGallery[] | [];
 };
 
-const GalleryForm: React.FC<GalleryFormProps> = ({ logo, gallery }) => {
+const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
   const [img, setImg] = useState<IGallery | null>(null);
@@ -95,7 +93,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ logo, gallery }) => {
 
         toast({
           description: `Gallery ${
-            Array.isArray(gallery) && gallery.length > 0 ? "Updated" : "Created"
+            gallery.length > 0 ? "Updated" : "Created"
           } Successfully`,
         });
 
@@ -116,8 +114,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ logo, gallery }) => {
       <div className="static">
         <GalleryImgCard galleryImg={null} img={img} setImg={setImg} />
       </div>
-      {Array.isArray(gallery) &&
-        gallery.length > 0 &&
+      {gallery.length > 0 &&
         gallery.map((galleryImg) => (
           <GalleryImgCard
             key={galleryImg._id}
@@ -132,15 +129,16 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ logo, gallery }) => {
   return (
     <>
       <UpdateBtn
-        updateTarget={`${
-          Array.isArray(gallery) && gallery.length > 0 ? "Update" : "Create"
-        } Gallery`}
+        updateTarget={`${gallery.length > 0 ? "Update" : "Create"} Gallery`}
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (
         <div className="w-full">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="form-style absolute left-0 right-0"
+            >
               <CloseBtn handleClick={handleClose} />
               <h1 className="title-style text-white">Gallery Form</h1>
               <FormField
@@ -169,9 +167,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ logo, gallery }) => {
                   text={
                     img
                       ? "Change Image"
-                      : (Array.isArray(gallery) && gallery.length > 0
-                          ? "Add to"
-                          : "Create") + " Gallery"
+                      : (gallery.length > 0 ? "Add to" : "Create") + " Gallery"
                   }
                   isSubmitting={form.formState.isSubmitting}
                 />

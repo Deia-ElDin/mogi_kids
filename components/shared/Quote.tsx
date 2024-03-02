@@ -14,7 +14,7 @@ import DeleteBtn from "./btns/DeleteBtn";
 type QuoteProps = {
   user: IUser | undefined;
   isAdmin: boolean | undefined;
-  quotePage: IPage | Partial<IPage> | undefined;
+  quotePage: IPage | Partial<IPage>;
 };
 
 const Quote: React.FC<QuoteProps> = ({ user, isAdmin, quotePage }) => {

@@ -19,8 +19,8 @@ import { handleError } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 import Article from "./helpers/Article";
 import PageForm from "./forms/PageForm";
-import QuestionForm from "./forms/QuestionForm";
-import MiniQuestionForm from "./forms/MiniQuestionForm";
+import CreateQuestionForm from "./forms/CreateQuestionForm";
+import UpdateQuestionForm from "./forms/UpdateQuestionForm";
 import DeleteBtn from "./btns/DeleteBtn";
 
 type QuestionsProps = {
@@ -56,7 +56,7 @@ const Questions: React.FC<QuestionsProps> = (props) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Questions Page or the Questions, ${handleError(
+        description: `Failed to Delete Either The Questions Page or the Questions, ${handleError(
           error
         )}`,
       });
@@ -98,7 +98,7 @@ const Questions: React.FC<QuestionsProps> = (props) => {
                     {questionObj.answer}
                     <div className="flex">
                       {isAdmin && questionObj._id && (
-                        <MiniQuestionForm question={questionObj} />
+                        <UpdateQuestionForm question={questionObj} />
                       )}
                       <DeleteBtn
                         pageId={questionsPage?._id}
@@ -117,7 +117,7 @@ const Questions: React.FC<QuestionsProps> = (props) => {
         </>
       )}
       {isAdmin && <PageForm page={questionsPage} pageName="Questions Page" />}
-      {isAdmin && questionsPage?._id && <QuestionForm question={null} />}
+      {isAdmin && questionsPage?._id && <CreateQuestionForm />}
       <DeleteBtn
         pageId={questionsPage?._id}
         isAdmin={isAdmin}

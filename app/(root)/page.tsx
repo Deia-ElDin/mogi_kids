@@ -37,8 +37,8 @@ export default async function Home() {
   const pagesResult = await getAllPages();
   const servicesResult = await getAllServices();
   const questionsResult = await getAllQuestions();
-  const records: IRecord[] = await getAllRecords();
-  const reviews: IReview[] = await getAllReviews();
+  const recordsResult = await getAllRecords();
+  const reviewsResult = await getAllReviews();
   const contacts: IContact[] = await getAllContacts();
   const isAdmin = user?.role === "Admin";
 
@@ -47,12 +47,18 @@ export default async function Home() {
   const pages = pagesResult.success ? pagesResult.data || [] : [];
   const services = servicesResult.success ? servicesResult.data || [] : [];
   const questions = questionsResult.success ? questionsResult.data || [] : [];
+  const records = recordsResult.success ? recordsResult.data || [] : [];
+  const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
 
-  console.log("size = ", formatBytes(logo, gallery, services, records));
-
+  const uploadthingDb = formatBytes(logo, gallery, services, records);
   return (
     <>
-      <Admin isAdmin={isAdmin} logo={logo} gallery={gallery} />
+      <Admin
+        isAdmin={isAdmin}
+        logo={logo}
+        gallery={gallery}
+        uploadthingDb={uploadthingDb}
+      />
       <Welcome
         isAdmin={isAdmin}
         welcomePage={findPage(pages, "Welcomes Page")}

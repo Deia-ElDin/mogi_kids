@@ -11,12 +11,12 @@ import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
 import PageForm from "./forms/PageForm";
 import RecordCard from "./cards/RecordCard";
-import RecordForm from "./forms/RecordForm";
+import RecordForm from "./forms/CreateRecordForm";
 import DeleteBtn from "./btns/DeleteBtn";
 
 type RecordsProps = {
   isAdmin: boolean | undefined;
-  recordsPage: IPage | Partial<IPage> | undefined;
+  recordsPage: IPage | Partial<IPage>;
   records: IRecord[] | [];
 };
 
@@ -28,16 +28,21 @@ const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
 
   const handleDelete = async () => {
     try {
-      if (recordsPage?._id) await deletePage(recordsPage._id, "/");
-      if (records.length > 0) await deleteAllRecords();
+      if (recordsPage?._id) {
+        const { success, error } = await deletePage(recordsPage._id, "/");
+        if (!success && error) throw new Error(error);
+      }
+      if (records.length > 0) {
+        const { success, error } = await deleteAllRecords();
+        if (!success && error) throw new Error(error);
+      }
       toast({ description: "Records Page Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Records Page.",
+        description: `Failed to Delete Either The Records Page or The Records, ${handleError(error)}`,
       });
-      handleError(error);
     }
   };
 
