@@ -1,7 +1,11 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { CreateReviewParams, UpdateReviewParams, LikesParams } from "@/types";
+import {
+  CreateReviewParams,
+  UpdateReviewParams,
+  ReviewLikesParams,
+} from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
@@ -32,24 +36,6 @@ type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
-};
-
-const populateReview = (query: any) => {
-  return query
-    .populate({
-      path: "createdBy",
-      model: "User",
-      select: "_id firstName lastName photo",
-    })
-    .populate({
-      path: "comments",
-      model: Comment,
-      populate: {
-        path: "createdBy",
-        model: "User",
-        select: "_id firstName lastName photo",
-      },
-    });
 };
 
 export async function getAllReviews(): Promise<GetAllResult> {
@@ -108,10 +94,9 @@ export async function createReview(
 
     if (!user) throw new Error("User not found.");
 
-    revalidatePath(path);
-
     const data = JSON.parse(JSON.stringify(user));
 
+    revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -119,7 +104,7 @@ export async function createReview(
 }
 
 export async function updateReviewLikes(
-  params: LikesParams
+  params: ReviewLikesParams
 ): Promise<LikesResult> {
   const { reviewId, updaterId, path } = params;
 
@@ -147,18 +132,11 @@ export async function updateReviewLikes(
 
     if (!updatedReview) throw new Error("Failed to update review likes.");
 
-    // const user = await populateUser(User.findById(review.createdBy));
-
-    // if (!user) throw new Error("User not found.");
-
-    revalidatePath(path);
-
-    console.log("updatedReview.likes = ", updatedReview.likes);
-
     const index = updatedReview.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
     );
 
+    revalidatePath(path);
     return { success: true, data: index >= 0 ? true : false, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -166,7 +144,7 @@ export async function updateReviewLikes(
 }
 
 export async function updateReviewDislikes(
-  params: LikesParams
+  params: ReviewLikesParams
 ): Promise<LikesResult> {
   const { reviewId, updaterId, path } = params;
 
@@ -198,7 +176,6 @@ export async function updateReviewDislikes(
     );
 
     revalidatePath(path);
-
     return { success: true, data: index >= 0 ? true : false, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -235,7 +212,7 @@ export async function updateReview(
 export async function deleteReview(
   reviewId: string,
   path: string
-): Promise<DefaultResult> {
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -249,42 +226,9 @@ export async function deleteReview(
       })
     );
 
-    const user = await populateUser(
-      User.findByIdAndUpdate(
-        deletedReview.createdBy,
-        { $pull: { reviews: deletedReview._id } },
-        { new: true }
-      )
-    );
-
     revalidatePath(path);
-
-    const data = JSON.parse(JSON.stringify(user));
-
-    return { success: true, data, error: null };
+    return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
 }
-
-// export async function deleteAllReviews() {
-//   try {
-//     await connectToDb();
-
-//     const reviews = await Review.find();
-
-//     for (const review of reviews) {
-//       await Review.findByIdAndDelete(review._id);
-//       await User.findByIdAndUpdate(review.user._id, {
-//         $pull: { reviews: review._id },
-//       });
-//     }
-
-//     revalidatePath("/");
-
-//     return "All reviews deleted successfully";
-//   } catch (error) {
-//         return { success: false, data: null, error: handleError(error) };
-
-//   }
-// }

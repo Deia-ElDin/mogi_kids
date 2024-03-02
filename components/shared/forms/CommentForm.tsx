@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -27,6 +28,8 @@ type CommentFormProps = {
 };
 
 const CommentForm = ({ user, reviewId }: CommentFormProps) => {
+  const pathname = usePathname();
+
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
     defaultValues: commentDefaultValues,
@@ -34,7 +37,12 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
     try {
-      await createComment({ ...values, reviewId, createdBy: user._id });
+      await createComment({
+        ...values,
+        reviewId,
+        createdBy: user._id,
+        path: pathname,
+      });
       form.reset();
     } catch (error) {
       handleError(error);
@@ -92,4 +100,3 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
 };
 
 export default CommentForm;
-

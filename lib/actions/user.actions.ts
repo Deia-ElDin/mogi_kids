@@ -54,10 +54,9 @@ export async function getAllUsers(): Promise<GetALLResult> {
 
     const users = await populateUser(User.find());
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(users));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -81,10 +80,9 @@ export async function createUser(
 
     if (!newUser) throw new Error("Failed to create user.");
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(newUser));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -117,10 +115,9 @@ export async function getUserByClerkId(
 
     if (!foundUser) throw new Error("User not found.");
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(foundUser));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

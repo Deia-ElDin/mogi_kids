@@ -79,10 +79,9 @@ export async function createService(
         "Couldn't create a service & kindly check the uploadthing database"
       );
 
-    revalidatePath(path);
-
     const data = JSON.parse(JSON.stringify(newService));
 
+    revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -131,10 +130,9 @@ export async function updateService(
       );
     }
 
-    revalidatePath(path);
-
     const data = JSON.parse(JSON.stringify(updatedService));
 
+    revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -158,7 +156,6 @@ export async function deleteService(
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath(path);
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -176,7 +173,6 @@ export async function deleteAllServices(): Promise<DeleteResult> {
     );
 
     revalidatePath("/");
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

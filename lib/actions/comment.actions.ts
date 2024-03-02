@@ -1,21 +1,36 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { CreateCommentParams, UpdateCommentParams } from "@/types";
+import {
+  CreateCommentParams,
+  UpdateCommentParams,
+  CommentLikesParams,
+} from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import Comment from "../database/models/comment.model";
 import Review from "../database/models/review.model";
 
-export async function createComment(params: CreateCommentParams) {
-  const { comment, reviewId, createdBy } = params;
+type DefaultResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+type LikesResult = {
+  success: boolean;
+  data: boolean | null;
+  error: string | null;
+};
+
+export async function createComment(
+  params: CreateCommentParams
+): Promise<DefaultResult> {
+  const { comment, reviewId, createdBy, path } = params;
 
   try {
     await connectToDb();
-
-    await Comment.updateMany({}, { $set: { block: false } });
-    await Review.updateMany({}, { $set: { block: false } });
 
     const newComment = await Comment.create({
       comment,
@@ -32,64 +47,19 @@ export async function createComment(params: CreateCommentParams) {
 
     if (!updatedReview) throw new Error("Couldn't update the review.");
 
-    revalidatePath("/");
+    revalidatePath(path);
 
-    return {
-      newComment: JSON.parse(JSON.stringify(newComment)),
-      updatedReview: JSON.parse(JSON.stringify(updatedReview)),
-    };
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function updateComment(params: UpdateCommentParams) {
-  const { _id, comment } = params;
+export async function updateCommentLikes(
+  params: CommentLikesParams
+): Promise<LikesResult> {
+  const { commentId, updaterId, path } = params;
 
-  if (!_id || !comment) return;
-
-  try {
-    await connectToDb();
-
-    const updatedComment = await Comment.findByIdAndUpdate(
-      _id,
-      { comment },
-      { new: true }
-    );
-
-    if (!updatedComment) throw new Error("Couldn't update the comment.");
-
-    revalidatePath("/");
-
-    return JSON.parse(JSON.stringify(updatedComment));
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-export async function deleteComment(commentId: string, reviewId: string) {
-  try {
-    await connectToDb();
-
-    const deletedComment = await Comment.findByIdAndDelete(commentId);
-
-    if (!deletedComment) throw new Error("Couldn't delete the comment.");
-
-    const parentReview = await Review.findByIdAndUpdate(
-      reviewId,
-      { $pull: { comments: commentId } },
-      { new: true }
-    );
-
-    revalidatePath("/");
-
-    return JSON.parse(JSON.stringify(parentReview));
-  } catch (error) {
-    handleError(error);
-  }
-}
-
-export async function updateCommentLikes(commentId: string, updaterId: string) {
   try {
     await connectToDb();
 
@@ -114,18 +84,23 @@ export async function updateCommentLikes(commentId: string, updaterId: string) {
 
     if (!updatedComment) throw new Error("Failed to update comment likes.");
 
-    revalidatePath("/");
+    const index = updatedComment.likes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
 
-    return JSON.parse(JSON.stringify(updatedComment));
+    revalidatePath(path);
+
+    return { success: true, data: index >= 0 ? true : false, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
 export async function updateCommentDislikes(
-  commentId: string,
-  updaterId: string
-) {
+  params: CommentLikesParams
+): Promise<LikesResult> {
+  const { commentId, updaterId, path } = params;
+
   try {
     await connectToDb();
 
@@ -149,10 +124,62 @@ export async function updateCommentDislikes(
 
     if (!updatedComment) throw new Error("Failed to update comment dislikes.");
 
+    const index = updatedComment.dislikes.findIndex(
+      (id: ObjectId) => id.toString() === updaterId
+    );
+
+    revalidatePath(path);
+    return { success: true, data: index >= 0 ? true : false, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function updateComment(
+  params: UpdateCommentParams
+): Promise<DefaultResult> {
+  const { _id, comment } = params;
+
+  try {
+    await connectToDb();
+
+    const updatedComment = await Comment.findByIdAndUpdate(
+      _id,
+      { comment },
+      { new: true }
+    );
+
+    if (!updatedComment) throw new Error("Couldn't update the comment.");
+
     revalidatePath("/");
 
-    return JSON.parse(JSON.stringify(updatedComment));
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function deleteComment(
+  commentId: string,
+  reviewId: string
+): Promise<DefaultResult> {
+  try {
+    await connectToDb();
+
+    const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+    if (!deletedComment) throw new Error("Couldn't delete the comment.");
+
+    const parentReview = await Review.findByIdAndUpdate(
+      reviewId,
+      { $pull: { comments: commentId } },
+      { new: true }
+    );
+
+    revalidatePath("/");
+
+    return { success: true, data: null, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
   }
 }

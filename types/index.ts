@@ -101,7 +101,7 @@ export type UpdateReviewParams = {
   path: string;
 };
 
-export type LikesParams = {
+export type ReviewLikesParams = {
   reviewId: string;
   updaterId: string;
   path: string;
@@ -112,11 +112,19 @@ export type CreateCommentParams = {
   comment: string;
   reviewId: string;
   createdBy: string;
+  path: string;
 };
 
 export type UpdateCommentParams = {
   _id: string;
   comment: string;
+  path: string;
+};
+
+export type CommentLikesParams = {
+  commentId: string;
+  updaterId: string;
+  path: string;
 };
 
 // Contacts Params

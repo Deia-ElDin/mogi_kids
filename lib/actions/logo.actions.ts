@@ -5,6 +5,7 @@ import { CreateLogoParams, UpdateLogoParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { UTApi } from "uploadthing/server";
 import Logo, { ILogo } from "../database/models/logo.model";
+import { revalidatePath } from "next/cache";
 
 const utapi = new UTApi();
 
@@ -39,6 +40,8 @@ export async function createLogo(
     if (!logo) throw new Error("Failed to create the logo.");
 
     const data = JSON.parse(JSON.stringify(logo));
+
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -66,6 +69,8 @@ export async function updateLogo(
     await logo.save();
 
     const data = JSON.parse(JSON.stringify(logo));
+
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

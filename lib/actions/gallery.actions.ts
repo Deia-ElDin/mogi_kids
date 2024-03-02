@@ -83,7 +83,6 @@ export async function updateGalleryImg(
     const data = JSON.parse(JSON.stringify(gallery));
 
     revalidatePath("/");
-
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -105,7 +104,6 @@ export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
     const data = JSON.parse(JSON.stringify(deletedImg));
 
     revalidatePath("/");
-
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

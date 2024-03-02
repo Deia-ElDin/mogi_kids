@@ -51,10 +51,9 @@ export async function createRecord(
 
     if (!newRecord) throw new Error("Failed to create a record.");
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(newRecord));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -93,10 +92,9 @@ export async function updateRecord(
       });
     }
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(updatedRecord));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -119,7 +117,6 @@ export async function deleteRecord(
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath("/");
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -135,7 +132,6 @@ export async function deleteAllRecords(): Promise<DeleteResult> {
     allRecords.map(async (record) => await deleteRecord(record._id, false));
 
     revalidatePath("/");
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

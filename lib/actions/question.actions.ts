@@ -30,7 +30,6 @@ export async function getAllQuestions(): Promise<GetALLResult> {
 
     const questions = await Question.find();
 
-    
     const data = JSON.parse(JSON.stringify(questions));
 
     return { success: true, data, error: null };
@@ -52,10 +51,9 @@ export async function createQuestion(
         "Couldn't create a question & kindly check the uploadthing database"
       );
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(newQuestion));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -75,10 +73,9 @@ export async function updateQuestion(
       answer,
     });
 
-    revalidatePath("/");
-
     const data = JSON.parse(JSON.stringify(updatedQuestion));
 
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -113,7 +110,6 @@ export async function deleteAllQuestions(): Promise<DeleteResult> {
       throw new Error("Questions not found or already deleted.");
 
     revalidatePath("/");
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
