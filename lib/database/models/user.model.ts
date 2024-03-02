@@ -13,8 +13,8 @@ export interface IUser extends Document {
   reviews: IReview[] | [];
   role: "Admin" | "User";
   block: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const UserSchema = new Schema(

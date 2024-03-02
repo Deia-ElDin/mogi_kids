@@ -17,8 +17,8 @@ export interface IQuote extends Document {
     id: string | null;
     error: string | null;
   };
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const QuoteSchema = new Schema(

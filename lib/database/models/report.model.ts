@@ -5,8 +5,8 @@ export interface IReport extends Document {
   target: string;
   targetId: Types.ObjectId | string;
   createdBy: Types.ObjectId | string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const ReportSchema = new Schema<IReport>(

@@ -10,9 +10,9 @@ export interface IReview extends Document {
   dislikes: Types.ObjectId[];
   edited: boolean;
   block: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
   createdBy: Types.ObjectId | string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const ReviewSchema = new Schema<IReview>(

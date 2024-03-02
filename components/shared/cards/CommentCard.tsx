@@ -25,7 +25,7 @@ import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { IComment } from "@/lib/database/models/comment.model";
 import { IReview } from "@/lib/database/models/review.model";
-import { ReportToast } from "../toasts";
+import { LikedToast, DisLikedToast, FaceToast } from "../toasts";
 import DotsBtn from "../btns/DotsBtn";
 import LikesCard from "./LikesCard";
 import Image from "next/image";
@@ -86,32 +86,90 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
     try {
-      await updateComment({ ...values, _id: commentObj._id });
+      const { success, error } = await updateComment({
+        ...values,
+        _id: commentObj._id,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
+
+      toast({ description: "Comment Updated Successfully." });
       setDisplayForm(false);
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Update The Comment, ${handleError(error)}`,
+      });
     }
   }
 
   const handleReviewLikeClick = async () => {
     try {
-      const { success, error } = await updateCommentLikes({
+      const { success, data, error } = await updateCommentLikes({
         commentId: commentObj._id,
         updaterId: user?._id!,
         path: pathname,
       });
 
-      toast({ description: "Gallery Image Deleted Successfully." });
+      if (!success && error) throw new Error(error);
+      toast({
+        description: data ? (
+          <LikedToast
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ) : (
+          <FaceToast
+            face="sad face"
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ),
+      });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Like this Comment, ${handleError(error)}`,
+      });
     }
   };
 
   const handleReviewDisLikeClick = async () => {
     try {
-      await updateCommentDislikes(commentObj._id, user?._id!);
+      const { success, data, error } = await updateCommentDislikes({
+        commentId: commentObj._id,
+        updaterId: user?._id!,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
+      toast({
+        description: data ? (
+          <DisLikedToast
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ) : (
+          <FaceToast
+            face="happy face"
+            photo={user?.photo ?? "/assets/icons/user.svg"}
+            firstName={user?.firstName ?? "Customer"}
+            lastName={user?.lastName}
+          />
+        ),
+      });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Dislike this Comment, ${handleError(error)}`,
+      });
     }
   };
 

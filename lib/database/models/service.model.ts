@@ -6,8 +6,8 @@ export interface IService extends Document {
   imgUrl: string;
   imgSize: number;
   serviceContent: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const ServiceSchema = new Schema<IService>(
