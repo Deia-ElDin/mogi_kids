@@ -6,16 +6,19 @@ export interface IService extends Document {
   imgUrl: string;
   imgSize: number;
   serviceContent: string;
-  createdAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const ServiceSchema = new Schema<IService>({
-  serviceName: { type: String, trim: true, required: true },
-  imgUrl: { type: String, trim: true, required: true },
-  imgSize: { type: Number, required: true },
-  serviceContent: { type: String, trim: true },
-  createdAt: { type: Date, default: Date.now() },
-});
+const ServiceSchema = new Schema<IService>(
+  {
+    serviceName: { type: String, trim: true, required: true },
+    imgUrl: { type: String, trim: true, required: true },
+    imgSize: { type: Number, required: true },
+    serviceContent: { type: String, trim: true },
+  },
+  { timestamps: true }
+);
 
 const Service = models.Service || model<IService>("Service", ServiceSchema);
 

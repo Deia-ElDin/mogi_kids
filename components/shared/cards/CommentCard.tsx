@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -39,6 +40,8 @@ type CommentCardProps = {
 
 const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
   const { toast } = useToast();
+
+  const pathname = usePathname();
 
   const [displayList, setDisplayList] = useState<boolean>(false);
   const [displayForm, setDisplayForm] = useState<boolean>(false);
@@ -92,7 +95,13 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
 
   const handleReviewLikeClick = async () => {
     try {
-      await updateCommentLikes(commentObj._id, user?._id!);
+      const { success, error } = await updateCommentLikes({
+        commentId: commentObj._id,
+        updaterId: user?._id!,
+        path: pathname,
+      });
+
+      toast({ description: "Gallery Image Deleted Successfully." });
     } catch (error) {
       handleError(error);
     }

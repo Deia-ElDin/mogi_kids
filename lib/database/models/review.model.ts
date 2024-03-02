@@ -1,5 +1,4 @@
 import { Document, Schema, models, model, Types } from "mongoose";
-import { IUser } from "./user.model";
 import { IComment } from "./comment.model";
 
 export interface IReview extends Document {
@@ -11,8 +10,8 @@ export interface IReview extends Document {
   dislikes: Types.ObjectId[];
   edited: boolean;
   block: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   createdBy: Types.ObjectId | string;
 }
 

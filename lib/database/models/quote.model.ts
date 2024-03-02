@@ -13,32 +13,36 @@ export interface IQuote extends Document {
   ageOfKidsFrom: string;
   ageOfKidsTo: string;
   extraInfo?: string;
-  createdAt: Date;
   emailService: {
     id: string | null;
     error: string | null;
   };
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const QuoteSchema = new Schema({
-  cstName: { type: String, trim: true },
-  mobile: { type: String, trim: true },
-  location: { type: String, trim: true },
-  email: { type: String, trim: true },
-  from: { type: Date },
-  to: { type: Date },
-  numberOfHours: { type: String, trim: true },
-  numberOfKids: { type: String, trim: true },
-  ageOfKidsFrom: { type: String, trim: true },
-  ageOfKidsTo: { type: String, trim: true },
-  extraInfo: { type: String, trim: true },
-  createdAt: { type: Date, default: Date.now() },
-  createdBy: { type: Schema.Types.ObjectId, ref: "User" },
-  emailService: {
-    id: { type: String, default: null },
-    error: { type: String, default: null },
+const QuoteSchema = new Schema(
+  {
+    cstName: { type: String, trim: true },
+    mobile: { type: String, trim: true },
+    location: { type: String, trim: true },
+    email: { type: String, trim: true },
+    from: { type: Date },
+    to: { type: Date },
+    numberOfHours: { type: String, trim: true },
+    numberOfKids: { type: String, trim: true },
+    ageOfKidsFrom: { type: String, trim: true },
+    ageOfKidsTo: { type: String, trim: true },
+    extraInfo: { type: String, trim: true },
+    createdAt: { type: Date, default: Date.now() },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    emailService: {
+      id: { type: String, default: null },
+      error: { type: String, default: null },
+    },
   },
-});
+  { timestamps: true }
+);
 
 // delete require.cache[require.resolve("./models/Quote")];
 // const Quote = require("./models/Quote");
