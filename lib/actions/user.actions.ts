@@ -33,11 +33,13 @@ export const populateUser = (query: any) => {
       {
         path: "createdBy",
         model: "User",
+        options: { sort: { createdAt: -1 } },
         select: "_id firstName lastName photo",
       },
       {
         path: "comments",
         model: "Comment",
+        options: { sort: { createdAt: -1 } },
         populate: {
           path: "createdBy",
           model: "User",

@@ -10,6 +10,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { commentSchema } from "@/lib/validators";
@@ -18,9 +19,8 @@ import { createComment } from "@/lib/actions/comment.actions";
 import { handleError } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { Button } from "@/components/ui/button";
-import * as z from "zod";
-
 import { getUsername } from "@/lib/utils";
+import * as z from "zod";
 
 type CommentFormProps = {
   user: IUser;
@@ -30,6 +30,8 @@ type CommentFormProps = {
 const CommentForm = ({ user, reviewId }: CommentFormProps) => {
   const pathname = usePathname();
 
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof commentSchema>>({
     resolver: zodResolver(commentSchema),
     defaultValues: commentDefaultValues,
@@ -37,15 +39,22 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
     try {
-      await createComment({
+      const { success, error } = await createComment({
         ...values,
         reviewId,
         createdBy: user._id,
         path: pathname,
       });
+
+      if (!success && error) throw new Error(error);
+      toast({ description: "Comment Created Successfully." });
       form.reset();
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Create The Comment, ${handleError(error)}`,
+      });
     }
   }
 
