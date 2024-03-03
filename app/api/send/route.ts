@@ -41,11 +41,11 @@ export async function POST(props: any) {
     });
 
     if (error) {
-      return (Response as any).json({ error });
+      return { error };
     }
 
-    return (Response as any).json({ data });
+    return { data };
   } catch (error) {
-    return (Response as any).json({ error });
+    return { error };
   }
 }
