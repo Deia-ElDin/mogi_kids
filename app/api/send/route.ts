@@ -41,11 +41,11 @@ export async function POST(props: any) {
     });
 
     if (error) {
-      return { error };
+      return new Response(JSON.stringify({ error }), { status: 500 });
     }
 
-    return { data };
+    return new Response(JSON.stringify({ data }), { status: 200 });
   } catch (error) {
-    return { error };
+    return new Response(JSON.stringify({ error }), { status: 500 });
   }
 }
