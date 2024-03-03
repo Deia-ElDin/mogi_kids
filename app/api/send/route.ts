@@ -1,3 +1,5 @@
+"use server";
+
 import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
@@ -38,12 +40,8 @@ export async function POST(props: any) {
       react: EmailTemplate({ ...props }) as React.ReactElement,
     });
 
-    if (error) {
-      return new Response(JSON.stringify({ error }), { status: 500 });
-    }
-
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return null;
   } catch (error) {
-    return new Response(JSON.stringify({ error }), { status: 500 });
+    return null;
   }
 }
