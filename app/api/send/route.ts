@@ -1,6 +1,6 @@
 "use server";
 
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
@@ -21,9 +21,9 @@ export async function POST(req: NextRequest, props: EmailTemplateProps) {
     //   emailService: { id: data?.id ?? null, error: error?.message ?? null },
     // });
 
-    if (data) return { data, success: true };
-    return { data: null, success: false };
+    return NextResponse.json({ data, success: true });
   } catch (error) {
-    return { msg: "fail", error };
+    // Return an error response with status code 500
+    return NextResponse.json({ msg: "fail", error }, { status: 500 });
   }
 }
