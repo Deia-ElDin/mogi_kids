@@ -2,9 +2,10 @@
 
 import { IUser } from "@/lib/database/models/user.model";
 import { IPage } from "@/lib/database/models/page.model";
+import { ILogo } from "@/lib/database/models/logo.model";
+import { deletePage } from "@/lib/actions/page.actions";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { Separator } from "../ui/separator";
-import { deletePage } from "@/lib/actions/page.actions";
 import { handleError } from "@/lib/utils";
 import Article from "./helpers/Article";
 import PageForm from "./forms/PageForm";
@@ -13,11 +14,12 @@ import DeleteBtn from "./btns/DeleteBtn";
 
 type QuoteProps = {
   user: IUser | null;
+  logo: ILogo | null;
   isAdmin: boolean | undefined;
   quotePage: IPage | Partial<IPage>;
 };
 
-const Quote: React.FC<QuoteProps> = ({ user, isAdmin, quotePage }) => {
+const Quote: React.FC<QuoteProps> = ({ user, logo, isAdmin, quotePage }) => {
   const pageTitle = getPageTitle(quotePage, isAdmin, "Quote Section Title");
 
   const pageContent = getPageContent(quotePage, isAdmin);
@@ -34,7 +36,7 @@ const Quote: React.FC<QuoteProps> = ({ user, isAdmin, quotePage }) => {
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       {isAdmin && <PageForm page={quotePage} pageName="Quote Page" />}
-      {quotePage?._id && <QuoteForm user={user} />}
+      {quotePage?._id && <QuoteForm user={user} logo={logo} />}
       <DeleteBtn
         pageId={quotePage?._id}
         isAdmin={isAdmin}

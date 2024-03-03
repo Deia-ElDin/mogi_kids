@@ -19,12 +19,15 @@ export async function POST(props: any) {
       react: EmailTemplate({ ...props }) as React.ReactElement,
     });
 
-    if (error) return { error };
+    if (error) {
+      console.log("error", error);
+      return (Response as any).json({ error });
+    }
 
-    return { data };
+    return (Response as any).json({ data });
   } catch (error) {
     console.log("error", error);
-    return { error };
+    return (Response as any).json({ error });
   }
 }
 

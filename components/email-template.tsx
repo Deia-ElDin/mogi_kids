@@ -90,7 +90,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                   <Row>
                     <Column style={informationTableColumn}>
                       <Text style={informationTableLabel}>
-                        Requesting The Service From Date:
+                        Service Starts At:
                       </Text>
                       <Text style={informationTableValue}>
                         {formatDate(from) ?? "Not Mentioned."}
@@ -100,7 +100,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                   <Row>
                     <Column style={informationTableColumn}>
                       <Text style={informationTableLabel}>
-                        Requesting The Service To Date:
+                        Service Ends At:
                       </Text>
                       <Text style={informationTableValue}>
                         {formatDate(to) ?? "Not Mentioned."}

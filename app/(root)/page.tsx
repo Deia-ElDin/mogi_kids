@@ -88,6 +88,7 @@ export default async function Home() {
       />
       <Quote
         user={user}
+        logo={logo}
         isAdmin={isAdmin}
         quotePage={findPage(pages, "Quote Page")}
       />

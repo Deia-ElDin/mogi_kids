@@ -1,6 +1,7 @@
 "use client";
 
 import { IUser } from "@/lib/database/models/user.model";
+import { ILogo } from "@/lib/database/models/logo.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { quoteSchema } from "@/lib/validators";
@@ -29,7 +30,14 @@ import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
-const QuoteForm = ({ user }: { user: IUser | null }) => {
+type QuoteFormProps = {
+  user: IUser | null;
+  logo: ILogo | null;
+};
+
+const QuoteForm = (props: QuoteFormProps) => {
+  const { user, logo } = props;
+
   const form = useForm<z.infer<typeof quoteSchema>>({
     resolver: zodResolver(quoteSchema),
     defaultValues: quoteDefaultValues,
@@ -47,6 +55,7 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
           email: user?.email ?? null,
           photo: user?.photo ?? null,
         },
+        logo,
       });
       // form.reset();
     } catch (error) {
