@@ -12,9 +12,15 @@ export async function POST(props: any) {
       react: EmailTemplate(props) as React.ReactElement,
     });
 
-    return Response.json(data);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(data),
+    };
   } catch (error) {
-    return Response.json({ error });
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error }),
+    };
   }
 }
 
