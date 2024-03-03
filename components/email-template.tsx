@@ -1,4 +1,3 @@
-// import React from "react";
 import {
   Body,
   Container,
@@ -13,17 +12,17 @@ import {
 } from "@react-email/components";
 import { IUser } from "@/lib/database/models/user.model";
 import { formatDate } from "@/lib/utils";
-import Logo from "@/public/assets/images/logo.png";
 import { ILogo } from "@/lib/database/models/logo.model";
 
 export interface EmailTemplateProps {
-  values: {
+  target: string;
+  quoteValues: {
     cstName: string;
     location?: string;
     mobile: string;
     email: string;
-    from: Date;
-    to: Date;
+    from: string;
+    to: string;
     numberOfHours: string;
     numberOfKids: string;
     ageOfKidsFrom: string;
@@ -37,7 +36,7 @@ export interface EmailTemplateProps {
 export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
   props
 ) => {
-  const { values, user } = props;
+  const { quoteValues, user, logo } = props;
   const {
     cstName,
     location,
@@ -50,10 +49,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
     ageOfKidsFrom,
     ageOfKidsTo,
     extraInfo,
-  } = values;
-  console.log("props = ", props);
-  console.log("from = ", from);
-  console.log("formatDate(from) = ", formatDate(from));
+  } = quoteValues;
 
   return (
     <Html>
@@ -66,9 +62,9 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
             <Row>
               <Column>
                 <Img
-                  src={user?.photo ?? "https://www.svgrepo.com/svg/499764/user"}
-                  width="180"
-                  height="101"
+                  src={logo?.imgUrl ?? "/assets/images/logo.png"}
+                  width="150"
+                  height="auto"
                   alt="Mogi kids logo"
                 />
               </Column>
@@ -79,10 +75,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
           </Section>
 
           <Section>
-            <Text style={cupomText}>
-              Hi, my name is {cstName}, and I am interested in obtaining a
-              quotation.
-            </Text>
+            <Text style={cupomText}>{cstName}</Text>
           </Section>
 
           <Section style={informationTable}>
@@ -141,7 +134,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                       <Row>
                         <Column style={informationTableColumn}>
                           <Text style={informationTableLabel}>
-                            Age OF The Youngest:
+                            Age Of The Youngest:
                           </Text>
                           <Text style={informationTableValue}>
                             {ageOfKidsFrom ?? "Not Mentioned."}
@@ -151,7 +144,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                       <Row>
                         <Column style={informationTableColumn}>
                           <Text style={informationTableLabel}>
-                            Age OF The Oldest:
+                            Age Of The Oldest:
                           </Text>
                           <Text style={informationTableValue}>
                             {ageOfKidsTo ?? "Not Mentioned."}
@@ -174,30 +167,23 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
               </Column>
             </Row>
           </Section>
+
           <Section style={productTitleTable}>
-            <Text style={productsTitle}>Customer Information</Text>
+            <Text style={productsTitle}>Client Information</Text>
           </Section>
 
           <Section>
             <Row>
               <Column style={{ width: "64px" }}>
                 <Img
-                  src={user?.photo ?? "https://www.svgrepo.com/svg/499764/user"}
+                  src={user?.photo ?? "/assets/icons/user.svg"}
                   width="64"
                   height="64"
                   alt="Customer image"
-                  style={productIcon}
+                  style={userImgStyle}
                 />
               </Column>
               <Column style={{ paddingLeft: "22px" }}>
-                <Row>
-                  <Column style={informationTableColumn}>
-                    <Text style={informationTableLabel}>My Location</Text>
-                    <Text style={informationTableValue}>
-                      {location ?? "Not Mentioned."}
-                    </Text>
-                  </Column>
-                </Row>
                 <Row>
                   <Column style={informationTableColumn}>
                     <Text style={informationTableLabel}>Mobile Number</Text>
@@ -208,6 +194,14 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                   <Column style={informationTableColumn}>
                     <Text style={informationTableLabel}>Email Address</Text>
                     <Text style={informationTableValue}>{email}</Text>
+                  </Column>
+                </Row>
+                <Row>
+                  <Column style={informationTableColumn}>
+                    <Text style={informationTableLabel}>My Location</Text>
+                    <Text style={informationTableValue}>
+                      {location ?? "Not Mentioned."}
+                    </Text>
                   </Column>
                 </Row>
               </Column>
@@ -283,7 +277,7 @@ const informationTableLabel = {
 const informationTableValue = {
   fontSize: "16px",
   margin: "0",
-  padding: "0",
+  padding: "0 0 0 20px",
   lineHeight: 1.4,
 };
 
@@ -301,7 +295,7 @@ const productsTitle = {
   margin: "0",
 };
 
-const productIcon = {
+const userImgStyle = {
   margin: "0 0 0 20px",
   borderRadius: "14px",
   border: "1px solid rgba(128,128,128,0.2)",

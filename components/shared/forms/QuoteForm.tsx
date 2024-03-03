@@ -1,7 +1,5 @@
 "use client";
 
-import { IUser } from "@/lib/database/models/user.model";
-import { ILogo } from "@/lib/database/models/logo.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { quoteSchema } from "@/lib/validators";
@@ -24,35 +22,28 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { quoteDefaultValues } from "@/constants";
-import { POST } from "@/app/api/send/route";
 import { handleError } from "@/lib/utils";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
-type QuoteFormProps = {
-  user: IUser | null;
-  logo: ILogo | null;
-};
-
-const QuoteForm = (props: QuoteFormProps) => {
-  const { user, logo } = props;
-
+const QuoteForm = () => {
   const form = useForm<z.infer<typeof quoteSchema>>({
     resolver: zodResolver(quoteSchema),
     defaultValues: quoteDefaultValues,
   });
 
   async function onSubmit(values: z.infer<typeof quoteSchema>) {
-    console.log("values = ", values);
-    console.log("user = ", user);
     try {
-      POST({
-        values,
-        user,
-        logo,
+      const response = await fetch("/api/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ quoteValues: values }),
       });
-      // form.reset();
+
+      if (response.status === 200) console.log("sent successfully");
     } catch (error) {
       handleError(error);
     }

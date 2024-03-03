@@ -94,9 +94,8 @@ export const setDate = (someDate: Date) => {
   return newData;
 };
 
-export const formatDate = (date: Date) => {
-  console.log("date = ", date);
-
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
   const day = date.getDate().toString().padStart(2, "0");
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();

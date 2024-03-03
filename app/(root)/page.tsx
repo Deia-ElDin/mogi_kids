@@ -1,10 +1,5 @@
 import { auth } from "@clerk/nextjs";
 
-import { IUser } from "@/lib/database/models/user.model";
-import { IService } from "@/lib/database/models/service.model";
-import { IQuestion } from "@/lib/database/models/question.model";
-import { IRecord } from "@/lib/database/models/record.model";
-import { IReview } from "@/lib/database/models/review.model";
 import { IContact } from "@/lib/database/models/contact.model";
 
 import { getUserByUserId } from "@/lib/actions/user.actions";
@@ -87,8 +82,6 @@ export default async function Home() {
         reviews={reviews}
       />
       <Quote
-        user={user}
-        logo={logo}
         isAdmin={isAdmin}
         quotePage={findPage(pages, "Quote Page")}
       />
