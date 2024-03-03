@@ -105,7 +105,8 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
       />
       <div
         className={`${
-          pageName === "Contacts Page" && "w-full absolute bottom-[500px]"
+          pageName === "Contacts Page" &&
+          "w-full absolute bottom-[500px] left-0 right-0"
         }`}
       >
         {displayForm && (

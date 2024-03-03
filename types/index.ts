@@ -142,7 +142,11 @@ export type CreateContactsParams = {
 
 export type UpdateContactsParams = {
   _id: string;
-} & CreateContactsParams;
+  imgUrl?: string;
+  imgSize?: number;
+  content: string;
+  newImg?: boolean;
+};
 
 // Quote Params
 export type CreateQuoteParams = {

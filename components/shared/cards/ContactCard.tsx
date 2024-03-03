@@ -2,8 +2,9 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IContact } from "@/lib/database/models/contact.model";
 import { deleteContact } from "@/lib/actions/contact.actions";
 import { handleError } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
-import UpdateBtn from "../btns/UpdateBtn";
+import UpdateContactForm from "../forms/UpdateContactForm";
 import DeleteBtn from "../btns/DeleteBtn";
 
 type ContactCardParams = {
@@ -12,11 +13,21 @@ type ContactCardParams = {
 };
 
 const ContactCard: React.FC<ContactCardParams> = ({ isAdmin, contact }) => {
+  const { toast } = useToast();
+
   const handleDelete = async () => {
     try {
-      await deleteContact(contact._id);
+      const { success, error } = await deleteContact(contact._id, true);
+
+      if (!success && error) throw new Error(error);
+
+      toast({ description: "Contact Deleted Successfully." });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Contact, ${handleError(error)}`,
+      });
     }
   };
 
@@ -33,7 +44,7 @@ const ContactCard: React.FC<ContactCardParams> = ({ isAdmin, contact }) => {
       </CardContent>
       {isAdmin && (
         <CardFooter className="flex items-center gap-3 w-full">
-          <UpdateBtn updateTarget="Update Contact" handleClick={() => {}} />
+          <UpdateContactForm contact={contact} />
           <DeleteBtn
             pageId={contact._id}
             isAdmin={isAdmin}

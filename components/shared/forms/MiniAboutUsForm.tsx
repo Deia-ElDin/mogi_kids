@@ -103,7 +103,7 @@ const MiniAboutUsForm: React.FC<MiniAboutUsFormProps> = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="form-style absolute bottom-0 w-full"
+            className="form-style absolute bottom-0 left-0 right-0 w-full"
           >
             <CloseBtn handleClick={handleClose} />
             <h1 className="title-style text-white">AboutUs Form</h1>

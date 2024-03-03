@@ -94,7 +94,7 @@ const ReviewForm = ({ user, logo }: ReviewFormProps) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className={`form-style absolute bottom-0`}
+            className="form-style absolute bottom-0 left-0 right-0"
           >
             <CloseBtn handleClick={() => setDisplayForm(false)} />
             <h1 className="title-style text-white">Review Form</h1>

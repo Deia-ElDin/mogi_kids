@@ -6,9 +6,10 @@ import { deletePage } from "@/lib/actions/page.actions";
 import { deleteAllContacts } from "@/lib/actions/contact.actions";
 import { getPageTitle, getPageContent } from "@/lib/utils";
 import { handleError } from "@/lib/utils";
+import { useToast } from "../ui/use-toast";
 import Article from "./helpers/Article";
 import ContactCard from "./cards/ContactCard";
-import ContactForm from "./forms/ContactsForm";
+import ContactForm from "./forms/ContactForm";
 import PageForm from "./forms/PageForm";
 import DeleteBtn from "./btns/DeleteBtn";
 
@@ -19,6 +20,8 @@ type ContactsProps = {
 };
 
 const Contacts: React.FC<ContactsProps> = (props) => {
+  const { toast } = useToast();
+
   const { isAdmin, contactsPage, contacts } = props;
 
   const pageTitle = getPageTitle(
@@ -31,10 +34,23 @@ const Contacts: React.FC<ContactsProps> = (props) => {
 
   const handleDelete = async () => {
     try {
-      if (contactsPage?._id) await deletePage(contactsPage._id, "/");
-      if (contacts.length > 0) await deleteAllContacts();
+      if (contactsPage?._id) {
+        const { success, error } = await deletePage(contactsPage._id, "/");
+        if (!success && error) throw new Error(error);
+      }
+      if (contacts.length > 0) {
+        const { success, error } = await deleteAllContacts();
+        if (!success && error) throw new Error(error);
+      }
+      toast({ description: "Contacts Page Deleted Successfully." });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete Either The Contacts Page or the Contacts, ${handleError(
+          error
+        )}`,
+      });
     }
   };
 
@@ -47,7 +63,7 @@ const Contacts: React.FC<ContactsProps> = (props) => {
         ))}
       </div>
       {isAdmin && <PageForm page={contactsPage} pageName="Contacts Page" />}
-      {isAdmin && contactsPage?._id && <ContactForm contact={null} />}
+      {isAdmin && contactsPage?._id && <ContactForm />}
       <DeleteBtn
         pageId={contactsPage?._id}
         isAdmin={isAdmin}

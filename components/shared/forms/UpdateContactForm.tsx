@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -13,27 +12,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
-import {  handleError } from "@/lib/utils";
+import { handleError } from "@/lib/utils";
 import { contactSchema } from "@/lib/validators";
 import { contactDefaultValues } from "@/constants";
 import { IContact } from "@/lib/database/models/contact.model";
-import { createContact } from "@/lib/actions/contact.actions";
-import AddBtn from "../btns/AddBtn";
+import { updateContact } from "@/lib/actions/contact.actions";
+import UpdateBtn from "../btns/UpdateBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type ContactProps = {
-  contact: IContact | null;
+type UpdateContactFormProps = {
+  contact: IContact;
 };
 
-const ContactForm: React.FC<ContactProps> = ({ contact }) => {
+const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-  const pathname = usePathname();
+
+  console.log("displayForm", displayForm);
+
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
@@ -57,35 +60,66 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
     };
   }, []);
 
+  useEffect(() => {
+    form.reset(contact ? contact : contactDefaultValues);
+  }, [contact]);
+
   async function onSubmit(values: z.infer<typeof contactSchema>) {
     try {
       let uploadedImgUrl = values.imgUrl;
 
-      if (files.length === 0) return;
-      const uploadedImgs = await startUpload(files);
+      if (files.length > 0) {
+        const uploadedImgs = await startUpload(files);
 
-      if (!uploadedImgs)
-        throw new Error("Failed to upload the image to uploadthing database.");
-      uploadedImgUrl = uploadedImgs[0].url;
+        if (!uploadedImgs)
+          throw new Error(
+            "Failed to upload the image to uploadthing database."
+          );
 
-      await createContact({
-        ...values,
-        imgUrl: uploadedImgUrl,
-        imgSize: uploadedImgs[0].size,
-      });
-      setDisplayForm(false);
-      form.reset();
+        uploadedImgUrl = uploadedImgs[0].url;
+
+        const { success, error } = await updateContact({
+          ...values,
+          _id: contact._id,
+          imgUrl: uploadedImgUrl,
+          imgSize: uploadedImgs[0].size,
+          newImg: true,
+        });
+
+        if (!success && error) throw new Error(error);
+
+        toast({ description: "Contact Updated Successfully." });
+
+        handleClose();
+      } else {
+        const { success, error } = await updateContact({
+          ...values,
+          _id: contact._id,
+          newImg: false,
+        });
+
+        if (!success && error) throw new Error(error);
+
+        toast({ description: "Contact Updated Successfully." });
+        
+        handleClose();
+      }
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Update The Contact, ${handleError(error)}`,
+      });
     }
   }
 
   return (
     <>
-      {!contact && (
-        <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
-      )}
-      <div className="absolute bottom-[700px] w-full">
+      <UpdateBtn
+        updateTarget="Update Contact"
+        handleClick={() => setDisplayForm((prev) => !prev)}
+      />
+      <div className="absolute bottom-[700px] left-0 right-0 w-full">
         {displayForm && (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="form-style">
@@ -139,4 +173,4 @@ const ContactForm: React.FC<ContactProps> = ({ contact }) => {
   );
 };
 
-export default ContactForm;
+export default UpdateContactForm;

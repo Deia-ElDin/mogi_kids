@@ -148,6 +148,7 @@ export async function deleteService(
     await connectToDb();
 
     const deletedService = await Service.findByIdAndDelete(serviceId);
+
     if (!deletedService)
       throw new Error("Service not found or already deleted.");
 

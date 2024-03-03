@@ -1,7 +1,5 @@
 import { auth } from "@clerk/nextjs";
 
-import { IContact } from "@/lib/database/models/contact.model";
-
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getLogo } from "@/lib/actions/logo.actions";
 import { getGallery } from "@/lib/actions/gallery.actions";
@@ -36,7 +34,7 @@ export default async function Home() {
   const recordsResult = await getAllRecords();
   const reviewsResult = await getAllReviews();
   const quotesResult = await getAllQuotes();
-  const contacts: IContact[] = await getAllContacts();
+  const contactsResult = await getAllContacts();
 
   const user = userResult.success ? userResult.data || null : null;
   const logo = logoResult.success ? logoResult.data || null : null;
@@ -47,12 +45,11 @@ export default async function Home() {
   const records = recordsResult.success ? recordsResult.data || [] : [];
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
   const quotes = quotesResult.success ? quotesResult.data || [] : [];
+  const contacts = contactsResult.success ? contactsResult.data || [] : [];
 
   const isAdmin = user?.role === "Admin";
 
-  console.log("quotes", quotes);
-  
-  const uploadthingDb = formatBytes(logo, gallery, services, records);
+  const uploadthingDb = formatBytes(logo, gallery, services, records, contacts);
   return (
     <>
       <Admin

@@ -27,8 +27,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { SendQuoteToast } from "../toasts";
 import { ILogo } from "@/lib/database/models/logo.model";
 import DatePicker from "react-datepicker";
-import FormBtn from "../btns/FormBtn";
-import SubmittingBtn from "../btns/SubmittingBtn";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 

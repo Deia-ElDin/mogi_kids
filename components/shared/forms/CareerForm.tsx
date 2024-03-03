@@ -256,7 +256,11 @@ const CareerForm = () => {
           )}
         />
         <div className="w-full flex justify-center md:col-span-2">
-          <Button type="submit" className="form-btn label-style">
+          <Button
+            type="submit"
+            className="form-btn label-style"
+            disabled={form.formState.isSubmitting}
+          >
             SUBMIT APPLICATION
           </Button>
         </div>

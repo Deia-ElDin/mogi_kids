@@ -101,10 +101,8 @@ export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
     if (!imgName) throw new Error("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
-    const data = JSON.parse(JSON.stringify(deletedImg));
-
     revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

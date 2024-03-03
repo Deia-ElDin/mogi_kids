@@ -94,9 +94,9 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
-      toast({
-        description: "Comment Updated Successfully.",
-      });
+
+      toast({ description: "Comment Updated Successfully." });
+
       setDisplayForm(false);
     } catch (error) {
       toast({
@@ -116,6 +116,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
+
       toast({
         description: data ? (
           <LikedToast
@@ -150,6 +151,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
+
       toast({
         description: data ? (
           <DisLikedToast
@@ -189,6 +191,7 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
+
       toast({ description: "Comment Deleted Successfully." });
     } catch (error) {
       toast({
@@ -208,10 +211,12 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       });
 
       if (!success && error) throw new Error(error);
+
       toast({
         variant: "destructive",
         title: "Report sent successfully. Thank you.",
       });
+
       setDisplayList(false);
     } catch (error) {
       toast({

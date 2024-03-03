@@ -6,6 +6,7 @@ import { IService } from "./database/models/service.model";
 import { IRecord } from "./database/models/record.model";
 import { IGallery } from "./database/models/gallery.model";
 import { IQuote } from "./database/models/quote.model";
+import { IContact } from "./database/models/contact.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,7 +71,8 @@ export const formatBytes = (
   logo: ILogo | null,
   gallery: IGallery[] | [],
   services: IService[] | [],
-  records: IRecord[] | []
+  records: IRecord[] | [],
+  contacts: IContact[] | []
 ): string => {
   const units = ["B", "KB", "MB", "GB"];
   let totalBytes = 0;
@@ -79,6 +81,7 @@ export const formatBytes = (
   gallery.forEach((img) => (totalBytes += img.imgSize));
   services.forEach((service) => (totalBytes += service.imgSize));
   records.forEach((record) => (totalBytes += record.imgSize));
+  contacts.forEach((contact) => (totalBytes += contact.imgSize));
 
   let i = 0;
   while (totalBytes >= 1000 && i < units.length - 1) {
