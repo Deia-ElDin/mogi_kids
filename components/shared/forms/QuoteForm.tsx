@@ -22,12 +22,23 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { quoteDefaultValues } from "@/constants";
-import { handleError } from "@/lib/utils";
+import { handleError, onlyPositiveValues } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
+import { SendQuoteToast } from "../toasts";
+import { ILogo } from "@/lib/database/models/logo.model";
 import DatePicker from "react-datepicker";
+import FormBtn from "../btns/FormBtn";
+import SubmittingBtn from "../btns/SubmittingBtn";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
-const QuoteForm = () => {
+type QuoteForm = {
+  logo: ILogo | null;
+};
+
+const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof quoteSchema>>({
     resolver: zodResolver(quoteSchema),
     defaultValues: quoteDefaultValues,
@@ -43,9 +54,19 @@ const QuoteForm = () => {
         body: JSON.stringify({ quoteValues: values }),
       });
 
-      if (response.status === 200) console.log("sent successfully");
+      if (response.ok) {
+        const responseData = await response.json();
+        if (responseData.success) {
+          form.reset();
+          toast({ description: <SendQuoteToast logo={logo} /> });
+        } else throw new Error(responseData.error);
+      } else throw new Error(`Response Status: ${response.status}`);
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Send The Quotation, ${handleError(error)}`,
+      });
     }
   }
 
@@ -161,15 +182,16 @@ const QuoteForm = () => {
           name="numberOfHours"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Number Of Hours</FormLabel>
+              <FormLabel className="label-style">Number of Hours</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   type="number"
                   className="input-style text-style"
-                  onKeyDown={(evt) =>
-                    evt.key.toLowerCase() === "e" && evt.preventDefault()
-                  }
+                  onKeyDown={(evt) => {
+                    if (evt.key.toLowerCase() === "e" || evt.key === "-")
+                      evt.preventDefault();
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -181,14 +203,23 @@ const QuoteForm = () => {
           name="numberOfKids"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Number Of Your Kids</FormLabel>
+              <FormLabel className="label-style">Number of Your Kids</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   type="number"
                   className="input-style text-style"
-                  onKeyDown={(evt) =>
-                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  onKeyDown={(evt) => {
+                    if (
+                      evt.key.toLowerCase() === "e" ||
+                      evt.key === "-" ||
+                      evt.key === "."
+                    )
+                      evt.preventDefault();
+                  }}
+                  onInput={(evt) =>
+                    ((evt.target as HTMLInputElement).value =
+                      onlyPositiveValues(evt))
                   }
                 />
               </FormControl>
@@ -201,14 +232,23 @@ const QuoteForm = () => {
           name="ageOfKidsFrom"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Age Of Youngest Kid</FormLabel>
+              <FormLabel className="label-style">Age of Youngest Kid</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   type="number"
                   className="input-style text-style"
-                  onKeyDown={(evt) =>
-                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  onKeyDown={(evt) => {
+                    if (
+                      evt.key.toLowerCase() === "e" ||
+                      evt.key === "-" ||
+                      evt.key === "."
+                    )
+                      evt.preventDefault();
+                  }}
+                  onInput={(evt) =>
+                    ((evt.target as HTMLInputElement).value =
+                      onlyPositiveValues(evt))
                   }
                 />
               </FormControl>
@@ -221,14 +261,23 @@ const QuoteForm = () => {
           name="ageOfKidsTo"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="label-style">Age Of Oldest Kid</FormLabel>
+              <FormLabel className="label-style">Age of Oldest Kid</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   type="number"
                   className="input-style text-style"
-                  onKeyDown={(evt) =>
-                    evt.key.toLowerCase() === "e" && evt.preventDefault()
+                  onKeyDown={(evt) => {
+                    if (
+                      evt.key.toLowerCase() === "e" ||
+                      evt.key === "-" ||
+                      evt.key === "."
+                    )
+                      evt.preventDefault();
+                  }}
+                  onInput={(evt) =>
+                    ((evt.target as HTMLInputElement).value =
+                      onlyPositiveValues(evt))
                   }
                 />
               </FormControl>
@@ -254,6 +303,7 @@ const QuoteForm = () => {
         <Button
           type="submit"
           className="form-btn label-style absolute bottom-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          disabled={form.formState.isSubmitting}
         >
           REQUEST QUOTE
         </Button>

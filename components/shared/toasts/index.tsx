@@ -17,6 +17,21 @@ type FaceProps = {
   face: string;
 } & LikesProps;
 
+export const SendQuoteToast: React.FC<LogoProps> = ({ logo }) => {
+  return (
+    <div>
+      <img
+        src={logo?.imgUrl || logoImg}
+        alt="Logo"
+        style={{ width: "100px", height: "auto" }}
+      />
+      Thank you for choosing MOGi KiDS for your child care needs. Your quote
+      request has been successfully submitted. We value your trust in us, and
+      our team will review your request promptly. Expect to hear from us soon!
+    </div>
+  );
+};
+
 export const CreateReviewToast: React.FC<LogoProps> = ({ logo }) => {
   return (
     <div>

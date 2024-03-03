@@ -104,7 +104,9 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: handleError(error),
+        description: `Failed to Create The Gallery Image, ${handleError(
+          error
+        )}`,
       });
     }
   }
@@ -129,7 +131,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
   return (
     <>
       <UpdateBtn
-        updateTarget={`${gallery.length > 0 ? "Update" : "Create"} Gallery`}
+        updateTarget="Gallery"
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       {displayForm && (

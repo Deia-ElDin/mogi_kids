@@ -11,6 +11,7 @@ import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
 import { getAllContacts } from "@/lib/actions/contact.actions";
+import { getAllQuotes } from "@/lib/actions/quote.actions";
 
 import { findPage, formatBytes } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ export default async function Home() {
   const questionsResult = await getAllQuestions();
   const recordsResult = await getAllRecords();
   const reviewsResult = await getAllReviews();
+  const quotesResult = await getAllQuotes();
   const contacts: IContact[] = await getAllContacts();
 
   const user = userResult.success ? userResult.data || null : null;
@@ -44,9 +46,12 @@ export default async function Home() {
   const questions = questionsResult.success ? questionsResult.data || [] : [];
   const records = recordsResult.success ? recordsResult.data || [] : [];
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
+  const quotes = quotesResult.success ? quotesResult.data || [] : [];
 
   const isAdmin = user?.role === "Admin";
 
+  console.log("quotes", quotes);
+  
   const uploadthingDb = formatBytes(logo, gallery, services, records);
   return (
     <>
@@ -55,6 +60,7 @@ export default async function Home() {
         logo={logo}
         gallery={gallery}
         uploadthingDb={uploadthingDb}
+        quotes={quotes}
       />
       <Welcome
         isAdmin={isAdmin}
@@ -84,6 +90,7 @@ export default async function Home() {
       <Quote
         isAdmin={isAdmin}
         quotePage={findPage(pages, "Quote Page")}
+        logo={logo}
       />
       <Contacts
         isAdmin={isAdmin}

@@ -63,7 +63,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
               <Column>
                 <Img
                   src={logo?.imgUrl ?? "/assets/images/logo.png"}
-                  width="150"
+                  width="120"
                   height="auto"
                   alt="Mogi kids logo"
                 />
@@ -186,19 +186,19 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
               <Column style={{ paddingLeft: "22px" }}>
                 <Row>
                   <Column style={informationTableColumn}>
-                    <Text style={informationTableLabel}>Mobile Number</Text>
+                    <Text style={informationTableLabel}>Mobile</Text>
                     <Text style={informationTableValue}>{mobile}</Text>
                   </Column>
                 </Row>
                 <Row>
                   <Column style={informationTableColumn}>
-                    <Text style={informationTableLabel}>Email Address</Text>
+                    <Text style={informationTableLabel}>Email</Text>
                     <Text style={informationTableValue}>{email}</Text>
                   </Column>
                 </Row>
                 <Row>
                   <Column style={informationTableColumn}>
-                    <Text style={informationTableLabel}>My Location</Text>
+                    <Text style={informationTableLabel}>Location</Text>
                     <Text style={informationTableValue}>
                       {location ?? "Not Mentioned."}
                     </Text>
@@ -242,7 +242,7 @@ const heading = {
 const cupomText = {
   textAlign: "center" as const,
   margin: "36px 0 40px 0",
-  fontSize: "26px",
+  fontSize: "20px",
   fontWeight: "500",
   color: "#111111",
 };
@@ -271,13 +271,12 @@ const informationTableColumn = {
 const informationTableLabel = {
   ...resetText,
   color: "rgb(102,102,102)",
-  fontSize: "18px",
+  fontSize: "14px",
 };
 
 const informationTableValue = {
   fontSize: "16px",
   margin: "0",
-  padding: "0 0 0 20px",
   lineHeight: 1.4,
 };
 

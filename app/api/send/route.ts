@@ -1,16 +1,26 @@
 import { auth } from "@clerk/nextjs";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getLogo } from "@/lib/actions/logo.actions";
+import { getAllQuotes } from "@/lib/actions/quote.actions";
 import { createQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
-import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
+import { EmailTemplate } from "@/components/email-template";
+import { totalEmailsSentToday } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(NextRequest: any) {
   try {
+    const quotesResult = await getAllQuotes();
+    const quotes = quotesResult.success ? quotesResult.data || [] : [];
+
+    if (totalEmailsSentToday(quotes) >= 100)
+      throw new Error(
+        "unable to send the email today, kindly try again tomorrow. Thank you."
+      );
+
     const { sessionClaims } = auth();
     const userId = sessionClaims?.userId as string;
     const userResult = await getUserByUserId(userId);
@@ -20,18 +30,36 @@ export async function POST(NextRequest: any) {
     const logo = logoResult.success ? logoResult.data || null : null;
     const body = await NextRequest.json();
 
-    const { data, error } = await resend.emails.send({
+    const { data, error: resendError } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
       to: ["it.alqabda@gmail.com"],
-      subject: `Quotation`,
+      subject: `Quotation - ${body.cstName}`,
       react: EmailTemplate({ ...body, user, logo }) as React.ReactElement,
     });
 
-    if (error) throw new Error(error.message ?? "Couldn't send the email.");
+    if (resendError)
+      throw new Error(resendError.message ?? "Couldn't send the email.");
+
+    const { quoteValues } = body;
+
+    if (
+      quoteValues &&
+      typeof quoteValues === "object" &&
+      Object.keys(quoteValues).length > 0
+    ) {
+      const { success, error: mongoDbError } = await createQuote({
+        ...quoteValues,
+        emailService: {
+          id: data?.id ?? null,
+          error: resendError ?? null,
+        },
+      });
+
+      if (!success && mongoDbError) throw new Error(mongoDbError);
+    }
+
     return NextResponse.json({ success: true, data, error: null });
   } catch (error) {
-    console.error("Error:", error);
-
     return NextResponse.json({
       success: false,
       data: null,
@@ -39,11 +67,3 @@ export async function POST(NextRequest: any) {
     });
   }
 }
-
-// console.log("error = ", error);
-
-// await createQuote({
-//   ...props,
-//   emailService: { id: data?.id ?? null, error: error?.message ?? null },
-// });
-// if (error) throw new Error(error.message ?? "Couldn't send the email.");

@@ -100,7 +100,7 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
   return (
     <>
       <UpdateBtn
-        updateTarget={`${logo?._id ? "Update" : "Create"} Logo`}
+        updateTarget="Logo"
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       <div className="w-full">

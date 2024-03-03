@@ -5,6 +5,7 @@ import { ILogo } from "./database/models/logo.model";
 import { IService } from "./database/models/service.model";
 import { IRecord } from "./database/models/record.model";
 import { IGallery } from "./database/models/gallery.model";
+import { IQuote } from "./database/models/quote.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -148,4 +149,21 @@ export const getUsername = (
   if (firstName && lastName) return `${firstName} ${lastName}`;
   else if (firstName) return firstName;
   else return "Customer";
+};
+
+export const totalEmailsSentToday = (quotes: IQuote[] | []) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const total = quotes.filter(
+    (quote) => new Date(quote.createdAt) >= today
+  ).length;
+
+  return total;
+};
+
+export const onlyPositiveValues = (evt: React.FormEvent<HTMLInputElement>) => {
+  let value = parseFloat((evt.target as HTMLInputElement).value);
+  if (value < 0) value = 0;
+  return value.toString();
 };

@@ -79,7 +79,7 @@ export const quoteSchema = z.object({
     .string()
     .min(1, "Kindly let us know how many hours you need.")
     .refine((value) => {
-      const hours = parseInt(value);
+      const hours = parseFloat(value);
       return hours >= 1 && hours <= 24;
     }, "The number of hours must be between 1 and 24."),
   numberOfKids: z
@@ -88,12 +88,12 @@ export const quoteSchema = z.object({
     .refine((value) => {
       const kids = parseInt(value);
       return kids > 0;
-    }, "The number of kids must be greater than 0."),
+    }, "The number of kids must not equal 0."),
   ageOfKidsFrom: z
     .string()
     .min(1, "Kindly let us know the age of your youngest kid.")
     .refine((value) => {
-      const ageFrom = parseInt(value);
+      const ageFrom = parseFloat(value);
       fromAge = ageFrom;
       return ageFrom <= 17 && ageFrom > 0;
     }, "Kids age must be a positive number and less than 18."),
@@ -101,11 +101,11 @@ export const quoteSchema = z.object({
     .string()
     .min(1, "Kindly let us know the age of your oldest kid.")
     .refine((value) => {
-      const ageTo = parseInt(value);
+      const ageTo = parseFloat(value);
       return ageTo <= 17 && ageTo > 0;
     }, "Kids age must be a positive number and less than 18.")
     .refine((value) => {
-      const ageTo = parseInt(value);
+      const ageTo = parseFloat(value);
       return ageTo >= fromAge;
     }, "Please ensure the age range begins with the youngest child or remains equal."),
   extraInfo: z.string().max(5000, "maximum 5000 characters."),
