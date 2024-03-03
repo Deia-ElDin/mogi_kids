@@ -8,29 +8,6 @@ console.log("process.env.RESEND_API_KEY", process.env.RESEND_API_KEY);
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(props: any) {
-  console.log("props", props);
-
-  try {
-    const { data, error } = await resend.emails.send({
-      from: "Resend Email Service <onboarding@resend.dev>",
-      to: ["it.alqabda@gmail.com"],
-      subject: `Quotation - ${props.cstName ?? "Unknown"}`,
-      react: EmailTemplate({ ...props }) as React.ReactElement,
-    });
-
-    if (error) {
-      console.log("error", error);
-      return (Response as any).json({ error });
-    }
-
-    return (Response as any).json({ data });
-  } catch (error) {
-    console.log("error", error);
-    return (Response as any).json({ error });
-  }
-}
-
 // export async function sendEmail(props: EmailTemplateProps) {
 //   try {
 //     const { data, error } = await resend.emails.send({
@@ -51,3 +28,24 @@ export async function POST(props: any) {
 //     return { msg: "fail", error };
 //   }
 // }
+
+export async function POST(props: any) {
+  console.log("props", props);
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Resend Email Service <onboarding@resend.dev>",
+      to: ["it.alqabda@gmail.com"],
+      subject: `Quotation - ${props.cstName ?? "Unknown"}`,
+      react: EmailTemplate({ ...props }) as React.ReactElement,
+    });
+
+    if (error) {
+      return (Response as any).json({ error });
+    }
+
+    return (Response as any).json({ data });
+  } catch (error) {
+    return (Response as any).json({ error });
+  }
+}
