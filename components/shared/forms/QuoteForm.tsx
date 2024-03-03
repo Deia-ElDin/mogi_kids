@@ -49,12 +49,7 @@ const QuoteForm = (props: QuoteFormProps) => {
     try {
       POST({
         values,
-        user: {
-          firstName: user?.firstName ?? null,
-          lastName: user?.lastName ?? null,
-          email: user?.email ?? null,
-          photo: user?.photo ?? null,
-        },
+        user,
         logo,
       });
       // form.reset();

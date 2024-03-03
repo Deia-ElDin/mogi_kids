@@ -14,6 +14,7 @@ import {
 import { IUser } from "@/lib/database/models/user.model";
 import { formatDate } from "@/lib/utils";
 import Logo from "@/public/assets/images/logo.png";
+import { ILogo } from "@/lib/database/models/logo.model";
 
 export interface EmailTemplateProps {
   values: {
@@ -29,7 +30,8 @@ export interface EmailTemplateProps {
     ageOfKidsTo: string;
     extraInfo?: string;
   };
-  user: Partial<IUser> | null;
+  user: IUser | null;
+  logo: ILogo | null;
 }
 
 export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
