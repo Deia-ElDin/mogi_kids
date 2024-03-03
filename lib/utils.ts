@@ -94,10 +94,13 @@ export const setDate = (someDate: Date) => {
   return newData;
 };
 
-export const formatDate = (date: Date): string => {
-  const day: string = String(date.getDate()).padStart(2, "0");
-  const month: string = String(date.getMonth() + 1).padStart(2, "0");
-  const year: number = date.getFullYear();
+export const formatDate = (date: Date) => {
+  console.log("date = ", date);
+
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const year = date.getFullYear();
+
   return `${day}/${month}/${year}`;
 };
 

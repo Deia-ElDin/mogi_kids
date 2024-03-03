@@ -23,9 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { quoteDefaultValues } from "@/constants";
-import { createQuote } from "@/lib/actions/quote.actions";
+import { POST } from "@/app/api/send/route";
 import { handleError } from "@/lib/utils";
-// import { sendEmail } from "@/app/api/send/route";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
@@ -37,9 +36,18 @@ const QuoteForm = ({ user }: { user: IUser | null }) => {
   });
 
   async function onSubmit(values: z.infer<typeof quoteSchema>) {
-    console.log(values);
+    console.log("values = ", values);
+    console.log("user = ", user);
     try {
-      // sendEmail({ ...values, user });
+      POST({
+        values,
+        user: {
+          firstName: user?.firstName ?? null,
+          lastName: user?.lastName ?? null,
+          email: user?.email ?? null,
+          photo: user?.photo ?? null,
+        },
+      });
       // form.reset();
     } catch (error) {
       handleError(error);

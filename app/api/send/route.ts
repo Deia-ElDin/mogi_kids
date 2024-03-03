@@ -1,26 +1,30 @@
 "use server";
 
-import {
-  EmailTemplate,
-  // EmailTemplateProps,
-} from "../../../email-template";
+import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
 
+console.log("process.env.RESEND_API_KEY", process.env.RESEND_API_KEY);
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST() {
+export async function POST(props: any) {
+  console.log("props", props);
+
   try {
     const { data, error } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
       to: ["it.alqabda@gmail.com"],
-      subject: `Quotation new - "Unknown"}`,
-      react: EmailTemplate({ firstName: "deia" }) as React.ReactElement,
+      subject: `Quotation - ${props.cstName ?? "Unknown"}`,
+      react: EmailTemplate({ ...props }) as React.ReactElement,
     });
 
-    return null;
+    if (error) return { error };
+
+    return { data };
   } catch (error) {
-    return null;
+    console.log("error", error);
+    return { error };
   }
 }
 
