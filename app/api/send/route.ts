@@ -1,12 +1,13 @@
 "use server";
 
+import { NextRequest } from "next/server";
 import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(props: EmailTemplateProps) {
+export async function POST(req: NextRequest, props: EmailTemplateProps) {
   try {
     const { data, error } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
