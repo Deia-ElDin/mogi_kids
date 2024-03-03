@@ -1,5 +1,3 @@
-"use server";
-
 import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
