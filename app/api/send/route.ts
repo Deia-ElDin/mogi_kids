@@ -3,10 +3,29 @@
 import { EmailTemplate, EmailTemplateProps } from "@/components/email-template";
 import { Resend } from "resend";
 import { createQuote } from "@/lib/actions/quote.actions";
-
-console.log("process.env.RESEND_API_KEY", process.env.RESEND_API_KEY);
+import { NextResponse } from "next/server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function POST(props: any) {
+  console.log("props", props);
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Resend Email Service <onboarding@resend.dev>",
+      to: ["it.alqabda@gmail.com"],
+      subject: `Quotation - ${props.cstName ?? "Unknown"}`,
+      react: EmailTemplate({ ...props }) as React.ReactElement,
+    });
+    if (error) {
+      return new NextResponse(JSON.stringify({ error }), { status: 500 });
+    }
+
+    return new NextResponse(JSON.stringify({ data }), { status: 200 });
+  } catch (error) {
+    return new NextResponse(JSON.stringify({ error }), { status: 500 });
+  }
+}
 
 // export async function sendEmail(props: EmailTemplateProps) {
 //   try {
@@ -28,20 +47,3 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 //     return { msg: "fail", error };
 //   }
 // }
-
-export async function POST(props: any) {
-  console.log("props", props);
-
-  try {
-    const { data, error } = await resend.emails.send({
-      from: "Resend Email Service <onboarding@resend.dev>",
-      to: ["it.alqabda@gmail.com"],
-      subject: `Quotation - ${props.cstName ?? "Unknown"}`,
-      react: EmailTemplate({ ...props }) as React.ReactElement,
-    });
-
-    return null;
-  } catch (error) {
-    return null;
-  }
-}
