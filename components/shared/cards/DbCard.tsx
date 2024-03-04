@@ -12,13 +12,13 @@ type DBCardParams = {
 };
 
 const DBCard: React.FC<DBCardParams> = (props) => {
-  const { src, alt, text, value, base } = props;
+  const { link, src, alt, text, value, base } = props;
 
   return (
     <Card className="flex shrink p-2 bg-transparent border-2 border-white shadow-md cursor-pointer">
       <CardContent className="p-0">
         <a
-          href="https://uploadthing.com/"
+          href={link}
           target="_blank"
           rel="noopener noreferrer"
           className="font-bold text-[18px] flex gap-3"

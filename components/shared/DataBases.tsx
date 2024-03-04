@@ -5,7 +5,7 @@ type AdminProps = {
   resend: number;
 };
 
-const AdminPanel: React.FC<AdminProps> = ({ uploadthingDb, resend }) => {
+const DataBases: React.FC<AdminProps> = ({ uploadthingDb, resend }) => {
   return (
     <div className="flex flex-wrap justify-center md:justify-between gap-5 mb-3">
       <DBCard
@@ -28,4 +28,4 @@ const AdminPanel: React.FC<AdminProps> = ({ uploadthingDb, resend }) => {
   );
 };
 
-export default AdminPanel;
+export default DataBases;

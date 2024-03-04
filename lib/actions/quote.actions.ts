@@ -3,6 +3,7 @@
 import { connectToDb } from "../database";
 import { CreateQuoteParams } from "@/types";
 import { handleError } from "../utils";
+import { revalidatePath } from "next/cache";
 import Quote, { IQuote } from "../database/models/quote.model";
 
 type GetAllResult = {
@@ -23,11 +24,42 @@ type DeleteResult = {
   error: string | null;
 };
 
+// export async function getRelatedEventsByCategory({
+//   categoryId,
+//   eventId,
+//   limit = 3,
+//   page = 1,
+// }: GetRelatedEventsByCategoryParams) {
+//   try {
+//     await connectToDb();
+
+//     const skipAmount = (Number(page) - 1) * limit;
+//     const conditions = {
+//       $and: [{ category: categoryId }, { _id: { $ne: eventId } }],
+//     };
+
+//     const eventsQuery = Event.find(conditions)
+//       .sort({ createdAt: "desc" })
+//       .skip(skipAmount)
+//       .limit(limit);
+
+//     const events = await populateEvent(eventsQuery);
+//     const eventsCount = await Event.countDocuments(conditions);
+
+//     return {
+//       data: JSON.parse(JSON.stringify(events)),
+//       totalPages: Math.ceil(eventsCount / limit),
+//     };
+//   } catch (error) {
+//     handleError(error);
+//   }
+// }
+
 export async function getAllQuotes(): Promise<GetAllResult> {
   try {
     await connectToDb();
 
-    const quotes = await Quote.find();
+    const quotes = await Quote.find().sort({ createdAt: -1 });
 
     if (!quotes) throw new Error("Failed to get the quotes.");
 
@@ -57,7 +89,10 @@ export async function createQuote(
   }
 }
 
-export async function deleteQuote(quoteId: string): Promise<DeleteResult> {
+export async function deleteQuote(
+  quoteId: string,
+  path: string
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -66,6 +101,7 @@ export async function deleteQuote(quoteId: string): Promise<DeleteResult> {
     if (!deletedQuote)
       throw new Error("Failed to find the quote or the quote already deleted.");
 
+    revalidatePath(path);
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

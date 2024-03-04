@@ -1,6 +1,6 @@
 import LogoForm from "./forms/LogoForm";
 import GalleryForm from "./forms/GalleryForm";
-import AdminPanel from "./AdminPanel";
+import DataBases from "./DataBases";
 import { ILogo } from "@/lib/database/models/logo.model";
 import { IGallery } from "@/lib/database/models/gallery.model";
 import { IQuote } from "@/lib/database/models/quote.model";
@@ -19,9 +19,11 @@ const Admin: React.FC<AdminProps> = async (props) => {
 
   if (!isAdmin) return;
 
+  console.log("totalEmailsSentToday(quotes) = ", totalEmailsSentToday(quotes));
+
   return (
     <section className="section-style relative gap-1">
-      <AdminPanel
+      <DataBases
         uploadthingDb={uploadthingDb}
         resend={totalEmailsSentToday(quotes)}
       />

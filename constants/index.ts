@@ -302,8 +302,12 @@ export const careerDefaultValues = {
   gender: "",
   education: "",
   dha: "",
+  careGiverCertificate: "",
+  previousExperienceInUAE: "",
+  residencyVisa: "",
+  residencyVisaExpireDate: "",
   coverLetter: "",
-  // resume: "",
+  resume: "",
 };
 
 export const pageDefaultValues: Partial<IPage> = {

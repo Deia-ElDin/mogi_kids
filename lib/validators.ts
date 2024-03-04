@@ -32,14 +32,12 @@ export const quoteSchema = z.object({
   cstName: z
     .string()
     .min(1, "Kindly provide your name.")
-    .max(20, "Name must not exceed 20 characters.")
+    .max(20, "Name must not exceed 100 characters.")
     .refine(
       (value) => /^[a-zA-Z\s]+$/.test(value),
       "Name must not contain any numbers or special characters."
     )
-    .refine((value) => value.trim().length > 0, {
-      message: "Kindly tell us your name.",
-    }),
+    .refine((value) => value.trim().length > 0, "Kindly tell us your name."),
   mobile: z
     .string()
     .min(1, "Kindly provide your mobile number.")
@@ -126,13 +124,28 @@ export const quoteSchema = z.object({
 export const careerSchema = z.object({
   fullName: z
     .string()
-    .min(15, "Full name must be at least of 15 characters.")
-    .max(100, "Full name must not exceed 100 characters."),
-  email: z.string({ required_error: "Please select an email" }).email(),
+    .min(1, "Kindly provide your name.")
+    .max(20, "Name must not exceed 100 characters.")
+    .refine(
+      (value) => /^[a-zA-Z\s]+$/.test(value),
+      "Name must not contain any numbers or special characters."
+    )
+    .refine((value) => value.trim().length > 0, "Kindly tell us your name."),
+  email: z
+    .string()
+    .min(1, "Kindly provide us your email address.")
+    .email("Invalid email address."),
   mobile: z
     .string()
-    .min(9, "Mobile / landline number must be at least 9 characters.")
-    .max(25, "Mobile / landline number not exceed 25 characters."),
+    .min(1, "Kindly provide your mobile number.")
+    .max(14, "Mobile / landline number must not exceed 14 characters.")
+    .refine(
+      (value) =>
+        /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/.test(
+          value
+        ),
+      "Invalid mobile number."
+    ),
   applyingFor: z
     .string()
     .min(3, "Career must be at least 3 characters.")
@@ -145,11 +158,13 @@ export const careerSchema = z.object({
     .string()
     .min(3, "Salary must be at least 3 characters.")
     .max(25, "Salary must not exceed 25 characters."),
-  joinDate: z.date(),
-  skills: z
-    .string()
-    .min(3, "Skills must be at least 3 characters.")
-    .max(1000, "Skills must not exceed 1000 characters."),
+  joinDate: z.date().refine((value) => {
+    if (value !== null && value !== undefined) {
+      fromDate = value;
+      const maxDate = addYears(today, 1);
+      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
+    }
+  }, "Joining date can't start in the past or exceed a year from now."),
   gender: z.string({
     required_error: "Please select your gender.",
   }),
