@@ -74,8 +74,12 @@ export async function getAllQuotes(): Promise<GetAllResult> {
 export async function createQuote(
   params: CreateQuoteParams
 ): Promise<DefaultResult> {
+  console.log("params", params);
+
   try {
     await connectToDb();
+
+    
 
     const newQuote = await Quote.create(params);
 

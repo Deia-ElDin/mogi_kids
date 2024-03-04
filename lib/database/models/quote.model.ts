@@ -44,9 +44,9 @@ const QuoteSchema = new Schema(
   { timestamps: true }
 );
 
-// delete require.cache[require.resolve("./models/Quote")];
-// const Quote = require("./models/Quote");
-
 const Quote = models.Quote || model<IQuote>("Quote", QuoteSchema);
 
 export default Quote;
+
+// delete require.cache[require.resolve("../database/models/quote.model")];
+// const Quote = require("../database/models/quote.model");

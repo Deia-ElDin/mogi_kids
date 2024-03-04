@@ -55,7 +55,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
       if (response.ok) {
         const responseData = await response.json();
         if (responseData.success) {
-          form.reset();
+          // form.reset();
           toast({ description: <SendQuoteToast logo={logo} /> });
         } else throw new Error(responseData.error);
       } else throw new Error(`Response Status: ${response.status}`);
