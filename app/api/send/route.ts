@@ -37,6 +37,8 @@ export async function POST(NextRequest: any) {
       react: EmailTemplate({ ...body, user, logo }) as React.ReactElement,
     });
 
+    console.log("data", data);
+
     if (resendError)
       throw new Error(resendError.message ?? "Couldn't send the email.");
 
@@ -53,6 +55,7 @@ export async function POST(NextRequest: any) {
           id: data?.id ?? null,
           error: resendError ?? null,
         },
+        createdBy: user ? user._id : null,
       });
 
       if (!success && mongoDbError) throw new Error(mongoDbError);

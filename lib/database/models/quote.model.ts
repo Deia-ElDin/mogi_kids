@@ -35,6 +35,7 @@ const QuoteSchema = new Schema(
     ageOfKidsTo: { type: String, trim: true },
     extraInfo: { type: String, trim: true },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    block: { type: Boolean, default: false },
     emailService: {
       id: { type: String, default: null },
       error: { type: String, default: null },
