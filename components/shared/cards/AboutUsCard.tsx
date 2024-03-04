@@ -5,9 +5,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IAboutUs } from "@/lib/database/models/about-us.model";
 import { deleteAboutUs } from "@/lib/actions/aboutUs.actions";
 import { handleError } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 import Text from "../helpers/Text";
 import Title from "../helpers/Title";
-import MiniAboutUsForm from "../forms/MiniAboutUsForm";
+import UpdateAboutUsForm from "../forms/UpdateAboutUsForm";
 import DeleteBtn from "../btns/DeleteBtn";
 
 type AboutUsCardParams = {
@@ -18,13 +19,26 @@ type AboutUsCardParams = {
 
 const AboutUsCard: React.FC<AboutUsCardParams> = (props) => {
   const { isAdmin, aboutUsObj, index } = props;
+
   const pathname = usePathname();
+
+  const { toast } = useToast();
 
   const handleDelete = async () => {
     try {
-      await deleteAboutUs(aboutUsObj._id, pathname);
+      const { success, error } = await deleteAboutUs(aboutUsObj._id, pathname);
+
+      if (!success && error) throw new Error(error);
+
+      toast({ description: "About Us Article Deleted Successfully." });
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The About Us Article, ${handleError(
+          error
+        )}`,
+      });
     }
   };
 
@@ -54,7 +68,7 @@ const AboutUsCard: React.FC<AboutUsCardParams> = (props) => {
       {isAdmin && (
         <CardFooter className="flex justify-center items-center gap-3 w-full p-0">
           <div className="w-[50%]">
-            <MiniAboutUsForm aboutUsArticle={aboutUsObj} />
+            <UpdateAboutUsForm aboutUsArticle={aboutUsObj} />
           </div>
           <div className="w-[50%]">
             <DeleteBtn

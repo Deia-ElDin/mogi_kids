@@ -54,7 +54,7 @@ export const quoteSchema = z.object({
   location: z.string().max(150, "Location must not exceed 60 characters."),
   email: z
     .string()
-    .min(1, "Kindly provide your email address.")
+    .min(1, "Kindly provide us your email address.")
     .email("Invalid email address."),
   from: z.date().refine((value) => {
     if (value !== null && value !== undefined) {
@@ -85,13 +85,21 @@ export const quoteSchema = z.object({
   numberOfKids: z
     .string()
     .min(1, "Kindly let us know how many kids you have.")
+    .refine(
+      (value) => !value.includes("."),
+      "The number of kids must not contain any decimal values."
+    )
     .refine((value) => {
-      const kids = parseInt(value);
+      const kids = parseFloat(value);
       return kids > 0;
     }, "The number of kids must not equal 0."),
   ageOfKidsFrom: z
     .string()
     .min(1, "Kindly let us know the age of your youngest kid.")
+    .refine(
+      (value) => !value.includes("."),
+      "Please select the nearest whole number. Decimals are not allowed."
+    )
     .refine((value) => {
       const ageFrom = parseFloat(value);
       fromAge = ageFrom;
@@ -100,6 +108,10 @@ export const quoteSchema = z.object({
   ageOfKidsTo: z
     .string()
     .min(1, "Kindly let us know the age of your oldest kid.")
+    .refine(
+      (value) => !value.includes("."),
+      "Please select the nearest whole number. Decimals are not allowed."
+    )
     .refine((value) => {
       const ageTo = parseFloat(value);
       return ageTo <= 17 && ageTo > 0;

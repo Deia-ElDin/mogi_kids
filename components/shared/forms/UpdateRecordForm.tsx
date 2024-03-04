@@ -88,7 +88,7 @@ const UpdateRecordForm: React.FC<UpdateRecordFormProps> = ({ record }) => {
           _id: record._id,
           newImg: false,
         });
-        
+
         if (!success && error) throw new Error(error);
         toast({ description: "Record Updated Successfully." });
         handleClose();
@@ -167,7 +167,7 @@ const UpdateRecordForm: React.FC<UpdateRecordFormProps> = ({ record }) => {
                 )}
               />
               <FormBtn
-                text={`${record?._id ? "Edit" : "Create"} Record`}
+                text="Update Record"
                 isSubmitting={form.formState.isSubmitting}
               />
             </form>

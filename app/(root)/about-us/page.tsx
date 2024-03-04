@@ -1,23 +1,22 @@
 import { auth } from "@clerk/nextjs";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
-import { IUser } from "@/lib/database/models/user.model";
-import { IAboutUs } from "@/lib/database/models/about-us.model";
 import AboutUsCard from "@/components/shared/cards/AboutUsCard";
-import AboutUsForm from "@/components/shared/forms/AboutUsForm";
+import CreateAboutUsForm from "@/components/shared/forms/CreateAboutUsForm";
 
 const AboutUs = async () => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const userResult = await getUserByUserId(userId);
+  const aboutUsResult = await getAllAboutUs();
   const user = userResult.success ? userResult.data || null : null;
-  const allAboutUs: IAboutUs[] = await getAllAboutUs();
+  const aboutUs = aboutUsResult.success ? aboutUsResult.data || [] : [];
 
   const isAdmin = user?.role === "Admin";
 
   return (
     <section className="section-style gap-4">
-      {allAboutUs.map((aboutUsObj, index) => (
+      {aboutUs.map((aboutUsObj, index) => (
         <AboutUsCard
           key={`${aboutUsObj.title} - ${index}`}
           isAdmin={isAdmin}
@@ -25,7 +24,7 @@ const AboutUs = async () => {
           index={index}
         />
       ))}
-      {isAdmin && <AboutUsForm aboutUsArticle={null} />}
+      {isAdmin && <CreateAboutUsForm />}
     </section>
   );
 };

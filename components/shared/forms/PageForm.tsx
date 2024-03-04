@@ -26,7 +26,7 @@ import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
 type PageProps = {
-  page: IPage | Partial<IPage>;
+  page: IPage | Partial<IPage> | null;
   pageName:
     | "Welcomes Page"
     | "Services Page"
@@ -34,7 +34,8 @@ type PageProps = {
     | "Records Page"
     | "Customers Page"
     | "Quote Page"
-    | "Contacts Page";
+    | "Contacts Page"
+    | "Careers Page";
 };
 
 const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
@@ -71,6 +72,8 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
   async function onSubmit(values: z.infer<typeof pageSchema>) {
     values.pageName = pageName;
 
+    console.log("values", values);
+
     try {
       const { success, error } = page?._id
         ? await updatePage({
@@ -92,7 +95,7 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: handleError(error),
+        description: `Failed to Create ${pageName}, ${handleError(error)}`,
       });
     }
   }

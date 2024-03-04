@@ -12,34 +12,30 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { FileUploader } from "../helpers/FileUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { aboutUsSchema } from "@/lib/validators";
 import { aboutUsDefaultValues } from "@/constants";
-import { IAboutUs } from "@/lib/database/models/about-us.model";
-import { updateAboutUs } from "@/lib/actions/aboutUs.actions";
-import UpdateBtn from "../btns/UpdateBtn";
+import { createAboutUs } from "@/lib/actions/aboutUs.actions";
+import AddBtn from "../btns/AddBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
 
-type MiniAboutUsFormProps = {
-  aboutUsArticle: IAboutUs;
-};
-
-const MiniAboutUsForm: React.FC<MiniAboutUsFormProps> = ({
-  aboutUsArticle,
-}) => {
+const CreateAboutUsForm: React.FC = () => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
-  const pathname = usePathname();
+
   const { startUpload } = useUploadThing("imageUploader");
+  const { toast } = useToast();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof aboutUsSchema>>({
     resolver: zodResolver(aboutUsSchema),
-    defaultValues: aboutUsArticle ? aboutUsArticle : aboutUsDefaultValues,
+    defaultValues: aboutUsDefaultValues,
   });
 
   const handleClose = () => {
@@ -63,47 +59,45 @@ const MiniAboutUsForm: React.FC<MiniAboutUsFormProps> = ({
     try {
       let uploadedImgUrl = values.imgUrl;
 
-      if (files.length > 0) {
-        const uploadedImgs = await startUpload(files);
-        if (!uploadedImgs)
+      if (files.length === 0) return;
+      const uploadedImgs = await startUpload(files);
+
+      if (!uploadedImgs)
         throw new Error("Failed to upload the image to uploadthing database.");
-        uploadedImgUrl = uploadedImgs[0].url;
 
-        await updateAboutUs({
-          ...values,
-          _id: aboutUsArticle._id,
-          imgUrl: uploadedImgUrl,
-          imgSize: uploadedImgs[0].size,
-          newImg: true,
-          path: pathname,
-        });
-      } else {
-        await updateAboutUs({
-          ...values,
-          _id: aboutUsArticle._id,
-          newImg: false,
-          path: pathname,
-        });
-      }
+      uploadedImgUrl = uploadedImgs[0].url;
 
-      setDisplayForm(false);
-      form.reset();
+      const { success, error } = await createAboutUs({
+        ...values,
+        imgUrl: uploadedImgUrl,
+        imgSize: uploadedImgs[0].size,
+        path: pathname,
+      });
+
+      if (!success && error) throw new Error(error);
+
+      toast({ description: "About Us Article Created Successfully." });
+
+      handleClose();
     } catch (error) {
-      handleError(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Create The About Us Article, ${handleError(
+          error
+        )}`,
+      });
     }
   }
 
   return (
     <>
-      <UpdateBtn
-        updateTarget="Update Article"
-        handleClick={() => setDisplayForm((prev) => !prev)}
-      />
+      <AddBtn handleClick={() => setDisplayForm((prev) => !prev)} />
       {displayForm && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="form-style absolute bottom-0 left-0 right-0 w-full"
+            className="form-style absolute bottom-0 left-0 right-0"
           >
             <CloseBtn handleClick={handleClose} />
             <h1 className="title-style text-white">AboutUs Form</h1>
@@ -152,7 +146,7 @@ const MiniAboutUsForm: React.FC<MiniAboutUsFormProps> = ({
               )}
             />
             <FormBtn
-              text={`${aboutUsArticle ? "Update" : "Create"} About Us Article`}
+              text="Create About Us Article"
               isSubmitting={form.formState.isSubmitting}
             />
           </form>
@@ -162,4 +156,4 @@ const MiniAboutUsForm: React.FC<MiniAboutUsFormProps> = ({
   );
 };
 
-export default MiniAboutUsForm;
+export default CreateAboutUsForm;

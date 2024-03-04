@@ -8,8 +8,9 @@ import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
-import { getAllContacts } from "@/lib/actions/contact.actions";
 import { getAllQuotes } from "@/lib/actions/quote.actions";
+import { getAllContacts } from "@/lib/actions/contact.actions";
+import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 
 import { findPage, formatBytes } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ export default async function Home() {
   const reviewsResult = await getAllReviews();
   const quotesResult = await getAllQuotes();
   const contactsResult = await getAllContacts();
+  const aboutUsResult = await getAllAboutUs();
 
   const user = userResult.success ? userResult.data || null : null;
   const logo = logoResult.success ? logoResult.data || null : null;
@@ -46,10 +48,19 @@ export default async function Home() {
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
   const quotes = quotesResult.success ? quotesResult.data || [] : [];
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
+  const aboutUs = aboutUsResult.success ? aboutUsResult.data || [] : [];
 
   const isAdmin = user?.role === "Admin";
 
-  const uploadthingDb = formatBytes(logo, gallery, services, records, contacts);
+  const uploadthingDb = formatBytes(
+    logo,
+    gallery,
+    services,
+    records,
+    contacts,
+    aboutUs
+  );
+
   return (
     <>
       <Admin

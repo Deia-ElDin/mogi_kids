@@ -1,28 +1,33 @@
-import Title from "@/components/shared/helpers/Title";
-import Text from "@/components/shared/helpers/Text";
-import Image from "next/image";
-import { contacts } from "@/constants";
+import { auth } from "@clerk/nextjs";
+import { getUserByUserId } from "@/lib/actions/user.actions";
+import { getPageByPageName } from "@/lib/actions/page.actions";
+import { getAllContacts } from "@/lib/actions/contact.actions";
+import { getPageTitle, getPageContent } from "@/lib/utils";
+import Article from "@/components/shared/helpers/Article";
+import ContactCard from "@/components/shared/cards/ContactCard";
 
-const Contacts = () => {
+const Contacts: React.FC = async () => {
+  const { sessionClaims } = auth();
+  const userId = sessionClaims?.userId as string;
+  const userResult = await getUserByUserId(userId);
+  const pageResult = await getPageByPageName("Contacts Page");
+  const contactsResult = await getAllContacts();
+
+  const user = userResult.success ? userResult.data || null : null;
+  const page = pageResult.success ? pageResult.data || null : null;
+  const contacts = contactsResult.success ? contactsResult.data || [] : [];
+
+  const isAdmin = user?.role === "Admin";
+
+  const pageTitle = getPageTitle(page, isAdmin, "Contacts Page Title");
+  const pageContent = getPageContent(page, isAdmin);
+
   return (
-    <section  className="section-style">
-      <Title text="Contact Information" />
-      <Text text="Get in touch with Sitters Company to take advantage of our wide range of child care services today!" />
-      <div className="flex flex-col items-start gap-5 pt-9">
+    <section className="section-style">
+      <Article title={pageTitle} content={pageContent} />
+      <div className="flex flex-col items-start gap-5">
         {contacts.map((contact) => (
-          <div
-            key={contact.title}
-            className="flex items-center justify-center gap-5"
-          >
-            <Image
-              src={contact.icon}
-              alt={contact.title}
-              height={40}
-              width={40}
-              className="inline-block"
-            />
-            <Text text={contact.details} />
-          </div>
+          <ContactCard key={contact._id} isAdmin={isAdmin} contact={contact} />
         ))}
       </div>
     </section>
@@ -30,3 +35,8 @@ const Contacts = () => {
 };
 
 export default Contacts;
+
+{
+  /* <Title text="Contact Information" />
+<Text text="Get in touch with Sitters Company to take advantage of our wide range of child care services today!" /> */
+}

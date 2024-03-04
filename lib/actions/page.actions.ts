@@ -68,10 +68,9 @@ export async function createPage(
 
     if (!newPage) throw new Error("Failed to create the page.");
 
-    revalidatePath(path);
-
     const data = JSON.parse(JSON.stringify(newPage));
 
+    revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -94,10 +93,9 @@ export async function updatePage(
 
     if (!updatedPage) throw new Error("Failed to update the page.");
 
-    revalidatePath(path);
-
     const data = JSON.parse(JSON.stringify(updatedPage));
 
+    revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -116,7 +114,6 @@ export async function deletePage(
     if (!deletedPage) throw new Error("Could not find the page.");
 
     revalidatePath(path);
-
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

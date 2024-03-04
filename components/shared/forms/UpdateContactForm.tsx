@@ -33,8 +33,6 @@ const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [files, setFiles] = useState<File[]>([]);
 
-  console.log("displayForm", displayForm);
-
   const { startUpload } = useUploadThing("imageUploader");
   const { toast } = useToast();
 
@@ -101,7 +99,7 @@ const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
         if (!success && error) throw new Error(error);
 
         toast({ description: "Contact Updated Successfully." });
-        
+
         handleClose();
       }
     } catch (error) {
@@ -162,7 +160,7 @@ const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
                 )}
               />
               <FormBtn
-                text={`${contact ? "Update" : "Create"} Contact`}
+                text="Update Contact"
                 isSubmitting={form.formState.isSubmitting}
               />
             </form>

@@ -5,53 +5,76 @@ import { CreateAboutUsParams, UpdateAboutUsParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import AboutUs from "../database/models/about-us.model";
+import AboutUs, { IAboutUs } from "../database/models/about-us.model";
 
 const utapi = new UTApi();
 
-export async function getAllAboutUs() {
+type GetALLResult = {
+  success: boolean;
+  data: IAboutUs[] | [] | null;
+  error: string | null;
+};
+
+type DefaultResult = {
+  success: boolean;
+  data: IAboutUs | null;
+  error: string | null;
+};
+
+type DeleteResult = {
+  success: boolean;
+  data: null;
+  error: string | null;
+};
+
+export async function getAllAboutUs(): Promise<GetALLResult> {
   try {
     await connectToDb();
 
-    const aboutUsArr = await AboutUs.find();
+    const allAboutUs = await AboutUs.find();
 
-    return JSON.parse(JSON.stringify(aboutUsArr));
+    const data = JSON.parse(JSON.stringify(allAboutUs));
+
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function createAboutUs(params: CreateAboutUsParams) {
+export async function createAboutUs(
+  params: CreateAboutUsParams
+): Promise<DefaultResult> {
   const { title, content, imgUrl, imgSize, path } = params;
 
   try {
     await connectToDb();
 
-    const newAboutUsArticle = await AboutUs.create({
+    const newAboutUs = await AboutUs.create({
       title,
       content,
       imgUrl,
       imgSize,
     });
-    if (!newAboutUsArticle)
+    if (!newAboutUs)
       throw new Error(
         "Couldn't create the about us article & kindly check the uploadthing database"
       );
 
-    revalidatePath(path);
+    const data = JSON.parse(JSON.stringify(newAboutUs));
 
-    return JSON.parse(JSON.stringify(newAboutUsArticle));
+    revalidatePath(path);
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function updateAboutUs(params: UpdateAboutUsParams) {
+export async function updateAboutUs(
+  params: UpdateAboutUsParams
+): Promise<DefaultResult> {
   const { _id, title, content, imgUrl, imgSize, newImg, path } = params;
 
-  if (!_id || !title || !content || !imgUrl || !path) return;
-
-  let updatedAboutUsArticle;
+  let updatedAboutUs;
 
   try {
     await connectToDb();
@@ -66,29 +89,32 @@ export async function updateAboutUs(params: UpdateAboutUsParams) {
       if (!imgName) throw new Error("Failed to read the image name.");
       await utapi.deleteFiles(imgName);
 
-      updatedAboutUsArticle = await AboutUs.findByIdAndUpdate(_id, {
+      updatedAboutUs = await AboutUs.findByIdAndUpdate(_id, {
         title,
         content,
         imgUrl,
         imgSize,
       });
     } else {
-      updatedAboutUsArticle = await AboutUs.findByIdAndUpdate(_id, {
+      updatedAboutUs = await AboutUs.findByIdAndUpdate(_id, {
         title,
         content,
       });
     }
 
+    const data = JSON.parse(JSON.stringify(updatedAboutUs));
+
     revalidatePath(path);
-    return JSON.parse(JSON.stringify(updatedAboutUsArticle));
+    return { success: true, data, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteAboutUs(aboutUsArticleId: string, path: string) {
-  if (!aboutUsArticleId) return null;
-
+export async function deleteAboutUs(
+  aboutUsArticleId: string,
+  path: string
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -101,9 +127,8 @@ export async function deleteAboutUs(aboutUsArticleId: string, path: string) {
     await utapi.deleteFiles(imgName);
 
     revalidatePath(path);
-
-    return "AboutUs deleted successfully";
+    return { success: true, data: null, error: null };
   } catch (error) {
-    handleError(error);
+    return { success: false, data: null, error: handleError(error) };
   }
 }

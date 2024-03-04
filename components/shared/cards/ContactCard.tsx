@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { IContact } from "@/lib/database/models/contact.model";
 import { deleteContact } from "@/lib/actions/contact.actions";
