@@ -141,7 +141,7 @@ const CareerForm = () => {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="skills"
           render={({ field }) => (
@@ -153,7 +153,7 @@ const CareerForm = () => {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <FormField
           control={form.control}
           name="gender"
