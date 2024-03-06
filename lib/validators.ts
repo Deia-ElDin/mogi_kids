@@ -76,6 +76,10 @@ export const quoteSchema = z.object({
   numberOfHours: z
     .string()
     .min(1, "Kindly let us know how many hours you need.")
+    .refine(
+      (value) => !value.includes("."),
+      "The number of hours must not contain any decimal values."
+    )
     .refine((value) => {
       const hours = parseFloat(value);
       return hours >= 1 && hours <= 24;

@@ -20,14 +20,16 @@ import Text from "../helpers/Text";
 import "react-datepicker/dist/react-datepicker.css";
 
 const QuotePages = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
+  const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
+  const [fetchByMonth, setFetchByMonth] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [quotes, setQuotes] = useState<IQuote[] | []>([]);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedQuotes, setSelectedQuotes] = useState<
     { _id: string; checked: boolean; deleteBtn: boolean }[]
   >([]);
+
   const limit = 2;
 
   useEffect(() => {
@@ -51,11 +53,11 @@ const QuotePages = () => {
   }, [currentPage]);
 
   const handleDayChange = (date: Date | null) => {
-    setSelectedDate(date); // Update selected date state
+    setFetchByDay(date);
   };
 
   const handleMonthChange = (date: Date | null) => {
-    setSelectedMonth(date); // Update selected date state
+    setFetchByMonth(date);
   };
 
   const handleSelectQuote = (quoteId: string) => {
@@ -70,8 +72,13 @@ const QuotePages = () => {
 
   const handleSelectAll = () => {
     setSelectedQuotes((prev) =>
-      prev.map((quote) => ({ ...quote, checked: true, deleteBtn: true }))
+      prev.map((quote) => ({
+        ...quote,
+        checked: !selectAll,
+        deleteBtn: !selectAll,
+      }))
     );
+    setSelectAll((prev) => !prev);
   };
 
   console.log("selectedQuotes", selectedQuotes);
@@ -88,36 +95,39 @@ const QuotePages = () => {
   return (
     <>
       <div className="flex flex-col gap-5 items-center text-bold">
-        <Text text="Fetch Quotation" />
-        <div className="flex justify-between gap-2">
+        <div className="flex flex-col md:flex-row justify-between gap-2">
           <input
             type="text"
-            className="input-style text-style"
-            placeholder="By Client Name"
+            className="fetch-input-style text-style"
+            placeholder="Fetch By Client Name"
           />
           <DatePicker
-            selected={selectedDate}
-            onChange={handleDayChange}
-            dateFormat="dd-MM-yyyy"
-            placeholderText="By Day"
-            className="input-style text-style"
-          />
-          <DatePicker
-            selected={selectedMonth}
+            selected={fetchByMonth}
             onChange={handleMonthChange}
             dateFormat="MM-yyyy"
             showMonthYearPicker
-            placeholderText="By Month"
-            className="input-style text-style"
+            placeholderText="Fetch By Month"
+            className="fetch-input-style text-style whitespace-nowrap"
+          />
+          <DatePicker
+            selected={fetchByDay}
+            onChange={handleDayChange}
+            dateFormat="dd-MM-yyyy"
+            placeholderText="Fetch By Day"
+            className="fetch-input-style text-style whitespace-nowrap"
           />
         </div>
       </div>
-
       <Table className="w-full">
         <TableHeader>
           <TableRow>
-            <TableHead className="table-head" onClick={handleSelectAll}>
-              Select All
+            <TableHead className="table-head">
+              <input
+                type="checkbox"
+                className="h-[18px] w-[18px]"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
             </TableHead>
             <TableHead className="table-head">Client</TableHead>
             <TableHead className="table-head">Location</TableHead>
@@ -125,6 +135,7 @@ const QuotePages = () => {
             <TableHead className="table-head">Hours</TableHead>
             <TableHead className="table-head">Kids</TableHead>
             <TableHead className="table-head">Age</TableHead>
+            <TableHead className="table-head">Total Hours</TableHead>
             <TableHead className="table-head">Date</TableHead>
             {isSelected && <TableHead className="table-head">Delete</TableHead>}
           </TableRow>
@@ -142,7 +153,9 @@ const QuotePages = () => {
               ageOfKidsTo,
               createdAt,
             } = quote;
-
+            const totalDays =
+              differenceInDays(new Date(to), new Date(from)) + 1;
+            const totalHours = totalDays * parseInt(numberOfHours);
             return (
               <TableRow key={quote._id} className="cursor-pointer">
                 <TableCell className="table-cell text-center">
@@ -155,9 +168,7 @@ const QuotePages = () => {
                 </TableCell>
                 <TableCell className="table-cell">{cstName}</TableCell>
                 <TableCell className="table-cell">{location}</TableCell>
-                <TableCell className="table-cell">
-                  {differenceInDays(new Date(to), new Date(from)) + 1}
-                </TableCell>
+                <TableCell className="table-cell">{totalDays}</TableCell>
                 <TableCell className="table-cell">{numberOfHours}</TableCell>
                 <TableCell className="table-cell">{numberOfKids}</TableCell>
                 <TableCell className="table-cell">
@@ -165,6 +176,7 @@ const QuotePages = () => {
                     ? ageOfKidsFrom
                     : `${ageOfKidsFrom} - ${ageOfKidsTo}`}
                 </TableCell>
+                <TableCell className="table-cell">{totalHours}</TableCell>
                 <TableCell className="table-cell">
                   {formatMongoDbDate(createdAt)}
                 </TableCell>

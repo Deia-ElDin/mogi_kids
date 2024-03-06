@@ -187,9 +187,17 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
                   type="number"
                   className="input-style text-style"
                   onKeyDown={(evt) => {
-                    if (evt.key.toLowerCase() === "e" || evt.key === "-")
+                    if (
+                      evt.key.toLowerCase() === "e" ||
+                      evt.key === "-" ||
+                      evt.key === "."
+                    )
                       evt.preventDefault();
                   }}
+                  onInput={(evt) =>
+                    ((evt.target as HTMLInputElement).value =
+                      onlyPositiveValues(evt))
+                  }
                 />
               </FormControl>
               <FormMessage />
