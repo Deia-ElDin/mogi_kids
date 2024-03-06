@@ -57,26 +57,18 @@ export async function POST(NextRequest: any) {
 
     if (!success && mongoDbError) throw new Error(mongoDbError);
 
-    // if (
-    //   quoteValues &&
-    //   typeof quoteValues === "object" &&
-    //   Object.keys(quoteValues).length > 0
-    // ) {
-    //   {
-    //     quoteData.map(async (quote) => {
-    //       const { success, error: mongoDbError } = await createQuote({
-    //         ...quote,
-    //         emailService: {
-    //           id: data?.id ?? null,
-    //           error: resendError ?? null,
-    //         },
-    //         createdBy: user ? user._id : null,
-    //       });
+    // quoteData.map(async (quote) => {
+    //   const { success, error: mongoDbError } = await createQuote({
+    //     ...quote,
+    //     emailService: {
+    //       id: data?.id ?? null,
+    //       error: resendError ?? null,
+    //     },
+    //     createdBy: user ? user._id : null,
+    //   });
 
-    //       if (!success && mongoDbError) throw new Error(mongoDbError);
-    //     });
-    //   }
-    // }
+    //   if (!success && mongoDbError) throw new Error(mongoDbError);
+    // });
 
     return NextResponse.json({ success: true, data, error: null });
   } catch (error) {

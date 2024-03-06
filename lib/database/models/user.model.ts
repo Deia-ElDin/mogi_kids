@@ -12,7 +12,7 @@ export interface IUser extends Document {
   phoneNumbers: string[] | [];
   reviews: IReview[] | [];
   role: "Admin" | "User";
-  block: boolean;
+  blocked: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -28,7 +28,7 @@ const UserSchema = new Schema(
     phoneNumbers: Array,
     reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
     role: { type: String, default: "User" },
-    block: { type: Boolean, default: false },
+    blocked: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -1,11 +1,11 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { updateDbSize } from "./db.actions";
 import { CreateQuoteParams } from "@/types";
-import { handleError } from "../utils";
-import { revalidatePath } from "next/cache";
 import { formatDate } from "@/lib/utils";
 import { GetALLQuotesParams } from "@/types";
+import { handleError } from "../utils";
 import Quote, { IQuote } from "../database/models/quote.model";
 
 type GetAllResult = {
@@ -35,7 +35,7 @@ export async function getAllQuotes({
     await connectToDb();
 
     const skipAmount = (Number(page) - 1) * limit;
-    const conditions = { block: false };
+    const conditions = { blocked: false };
 
     const quotes = await Quote.find(conditions)
       .sort({ createdAt: "desc" })
@@ -143,6 +143,12 @@ export async function createQuote(
 
     if (!newQuote) throw new Error("Failed to create the quote.");
 
+    const { success: dbSuccess, error: dbError } = await updateDbSize({
+      resend: "1",
+    });
+
+    if (!dbSuccess && dbError) throw new Error(dbError);
+
     const data = JSON.parse(JSON.stringify(newQuote));
 
     return { success: true, data, error: null };
@@ -151,10 +157,7 @@ export async function createQuote(
   }
 }
 
-export async function deleteQuote(
-  quoteId: string,
-  path: string
-): Promise<DeleteResult> {
+export async function deleteQuote(quoteId: string): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -163,7 +166,6 @@ export async function deleteQuote(
     if (!deletedQuote)
       throw new Error("Failed to find the quote or the quote already deleted.");
 
-    revalidatePath(path);
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
@@ -171,8 +173,7 @@ export async function deleteQuote(
 }
 
 export const deleteSelectedQuotes = async (
-  selectedQuotes: string[],
-  path: string
+  selectedQuotes: string[]
 ): Promise<DeleteResult> => {
   try {
     await connectToDb();
@@ -186,7 +187,6 @@ export const deleteSelectedQuotes = async (
         "Failed to find the quotes or the quotes already deleted."
       );
 
-    revalidatePath(path);
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

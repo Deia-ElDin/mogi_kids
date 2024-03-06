@@ -8,9 +8,9 @@ import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
-import { getDayQuotes } from "@/lib/actions/quote.actions";
 import { getAllContacts } from "@/lib/actions/contact.actions";
 import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
+import { getDbsSize } from "@/lib/actions/db.actions";
 
 import { findPage, formatBytes } from "@/lib/utils";
 
@@ -34,9 +34,9 @@ export default async function Home() {
   const questionsResult = await getAllQuestions();
   const recordsResult = await getAllRecords();
   const reviewsResult = await getAllReviews();
-  const todayQuotesResult = await getDayQuotes();
   const contactsResult = await getAllContacts();
   const aboutUsResult = await getAllAboutUs();
+  const dbsSizeResult = await getDbsSize();
 
   const user = userResult.success ? userResult.data || null : null;
   const logo = logoResult.success ? logoResult.data || null : null;
@@ -46,11 +46,13 @@ export default async function Home() {
   const questions = questionsResult.success ? questionsResult.data || [] : [];
   const records = recordsResult.success ? recordsResult.data || [] : [];
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
-  const todayQuotes = todayQuotesResult.success
-    ? todayQuotesResult.data || []
-    : [];
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
   const aboutUs = aboutUsResult.success ? aboutUsResult.data || [] : [];
+
+  console.log("reviews", reviews);
+
+  const dbsSize = dbsSizeResult.success ? dbsSizeResult.data || null : null;
+  console.log("dbsSize", dbsSize);
 
   const isAdmin = user?.role === "Admin";
 
@@ -70,7 +72,7 @@ export default async function Home() {
         logo={logo}
         gallery={gallery}
         uploadthingDb={uploadthingDb}
-        quotes={todayQuotes}
+        resend={0}
       />
       <Welcome
         isAdmin={isAdmin}

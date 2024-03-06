@@ -201,6 +201,13 @@ export const sortQuotes = (
       const bValue = parseInt(b.numberOfKids);
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
+  } else if (key === SortKey.AGES) {
+    sortedArray.sort((a, b) => {
+      const aValue = parseInt(a.ageOfKidsFrom);
+      const bValue = parseInt(b.ageOfKidsFrom);
+      console.log("aValue", aValue);
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
   } else if (key === SortKey.TOTAL_HOURS) {
     sortedArray.sort((a, b) => {
       const aValue =
@@ -216,7 +223,7 @@ export const sortQuotes = (
       const aValue = new Date(a.createdAt);
       const bValue = new Date(b.createdAt);
       console.log("aValue", aValue);
-      
+
       return direction === "ascending"
         ? Number(aValue) - Number(bValue)
         : Number(bValue) - Number(aValue);

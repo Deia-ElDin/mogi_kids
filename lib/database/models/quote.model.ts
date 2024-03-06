@@ -19,6 +19,7 @@ export interface IQuote extends Document {
   };
   createdAt: string;
   updatedAt: string;
+  seen: boolean;
   createdBy: Types.ObjectId | string;
 }
 
@@ -35,12 +36,13 @@ const QuoteSchema = new Schema(
     ageOfKidsFrom: { type: String, trim: true },
     ageOfKidsTo: { type: String, trim: true },
     extraInfo: { type: String, trim: true },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
-    block: { type: Boolean, default: false },
+    blocked: { type: Boolean, default: false },
+    seen: { type: Boolean, default: false },
     emailService: {
       id: { type: String, default: null },
       error: { type: String, default: null },
     },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

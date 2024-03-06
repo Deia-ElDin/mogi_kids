@@ -199,3 +199,12 @@ export type CreateReportParams = {
   targetId: string;
   createdBy: string | null;
 };
+
+
+// DB Params 
+export type DbParams = {
+  resend?: string;
+  uploadthing?: string;
+  mongo?: string;
+  clerk?: string;
+}

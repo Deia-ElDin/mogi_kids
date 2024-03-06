@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -30,8 +29,6 @@ import DatePicker from "react-datepicker";
 import UserDeleteBtn from "../btns/UserDeleteBtn";
 import "react-datepicker/dist/react-datepicker.css";
 
-// const selectedId = selectedQuotes.map((quote) => quote._id);
-
 const QuotePages = () => {
   const limit = 10;
   const [fetchByCstName, setFetchByCstName] = useState<string>("");
@@ -40,10 +37,11 @@ const QuotePages = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [quotes, setQuotes] = useState<IQuote[] | []>([]);
-  const [selectAll, setSelectAll] = useState<boolean>(false);
-  const [selectedQuotes, setSelectedQuotes] = useState<
+  const [quotesActions, setQuotesActions] = useState<
     { _id: string; checked: boolean; deleteBtn: boolean }[]
   >([]);
+  const [selectAll, setSelectAll] = useState<boolean>(false);
+  const [selectedQuotes, setSelectedQuotes] = useState<string[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey;
     direction: string;
@@ -51,7 +49,9 @@ const QuotePages = () => {
 
   const { toast } = useToast();
 
-  const pathname = usePathname();
+  console.log("quotes.length", quotes.length);
+  console.log("quotesActions.length", quotesActions.length);
+  console.log("selectedQuotes.length", selectedQuotes.length);
 
   const handleCstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFetchByCstName(e.target.value);
@@ -73,9 +73,18 @@ const QuotePages = () => {
 
   const handleDeleteQuote = async (quoteId: string) => {
     try {
-      const { success, error } = await deleteQuote(quoteId, pathname);
+      const { success, error } = await deleteQuote(quoteId);
       if (!success && error) throw new Error(error);
       toast({ description: "Quotation Deleted Successfully." });
+      if (fetchByCstName) setFetchByCstName("");
+      if (fetchByDay) setFetchByDay(null);
+      if (fetchByMonth) setFetchByMonth(null);
+      setQuotes((prevQuotes) =>
+        prevQuotes.filter((quote) => quote._id !== quoteId)
+      );
+      setQuotesActions((prevQuotesActions) =>
+        prevQuotesActions.filter((quote) => quote._id !== quoteId)
+      );
     } catch (error) {
       toast({
         variant: "destructive",
@@ -87,14 +96,23 @@ const QuotePages = () => {
 
   const handleDeleteSelectedQuotes = async () => {
     try {
-      const selectedIds = selectedQuotes.map((quote) => quote._id);
-
-      const { success, error } = await deleteSelectedQuotes(
-        selectedIds,
-        pathname
-      );
+      const { success, error } = await deleteSelectedQuotes(selectedQuotes);
       if (!success && error) throw new Error(error);
       toast({ description: "Quotation Selection Deleted Successfully." });
+
+      if (quotes.length === selectedQuotes.length) {
+        setStates([]);
+      } else {
+        const newQuotes = quotes.filter(
+          (quote) => !selectedQuotes.includes(quote._id)
+        );
+        setStates(newQuotes);
+      }
+      setSelectedQuotes([]);
+      setSelectAll(false);
+      if (fetchByCstName) setFetchByCstName("");
+      if (fetchByDay) setFetchByDay(null);
+      if (fetchByMonth) setFetchByMonth(null);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -106,10 +124,10 @@ const QuotePages = () => {
     }
   };
 
-  const setStates = (data: IQuote[]) => {
+  const setStates = (data: IQuote[], allPages: number = 1) => {
     setQuotes(data || []);
-    setTotalPages(totalPages || 1);
-    setSelectedQuotes(
+    setTotalPages(allPages);
+    setQuotesActions(
       data?.map((quote: IQuote) => ({
         _id: quote._id,
         checked: false,
@@ -120,10 +138,13 @@ const QuotePages = () => {
 
   const fetchAllQuotes = async (page: number) => {
     try {
-      const { success, data, error } = await getAllQuotes({ limit, page });
+      const { success, data, totalPages, error } = await getAllQuotes({
+        limit,
+        page,
+      });
 
       if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
+      if (success && data) setStates(data, totalPages);
       else {
         setStates([]);
         toast({
@@ -242,6 +263,13 @@ const QuotePages = () => {
         sortConfig.direction
       );
       setQuotes(sortedQuotes);
+      setQuotesActions(
+        sortedQuotes?.map((quote: IQuote) => ({
+          _id: quote._id,
+          checked: false,
+          deleteBtn: false,
+        })) || []
+      );
     }
   }, [sortConfig]);
 
@@ -252,17 +280,21 @@ const QuotePages = () => {
   }, [fetchByCstName, fetchByDay, fetchByMonth]);
 
   const handleSelectQuote = (quoteId: string) => {
-    setSelectedQuotes((prev) =>
+    setQuotesActions((prev) =>
       prev.map((quote) =>
         quote._id === quoteId
           ? { ...quote, checked: !quote.checked, deleteBtn: !quote.checked }
           : quote
       )
     );
+    const isExist = selectedQuotes.find((id) => id === quoteId);
+    setSelectedQuotes((prev) =>
+      isExist ? prev.filter((id) => id !== quoteId) : [...prev, quoteId]
+    );
   };
 
   const handleSelectAll = () => {
-    setSelectedQuotes((prev) =>
+    setQuotesActions((prev) =>
       prev.map((quote) => ({
         ...quote,
         checked: !selectAll,
@@ -275,7 +307,7 @@ const QuotePages = () => {
   const pageNumbers = [];
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
 
-  const isSelected = selectedQuotes.some(
+  const isSelected = quotesActions.some(
     (selectedQuote) => selectedQuote.checked
   );
 
@@ -340,7 +372,12 @@ const QuotePages = () => {
             >
               Kids
             </TableHead>
-            <TableHead className="table-head">Age</TableHead>
+            <TableHead
+              className="table-head"
+              onClick={() => requestSort(SortKey.AGES)}
+            >
+              Age
+            </TableHead>
             <TableHead
               className="table-head"
               onClick={() => requestSort(SortKey.TOTAL_HOURS)}
@@ -378,12 +415,18 @@ const QuotePages = () => {
                   <input
                     type="checkbox"
                     className="h-[18px] w-[18px]"
-                    checked={selectedQuotes[index].checked}
+                    checked={quotesActions[index].checked}
                     onChange={() => handleSelectQuote(quote._id)}
                   />
                 </TableCell>
                 <TableCell className="table-cell">{cstName}</TableCell>
-                <TableCell className="table-cell">{location}</TableCell>
+                <TableCell
+                  className={`table-cell ${
+                    location === "Abu Dhabi" ? "" : "text-red-500"
+                  }`}
+                >
+                  {location}
+                </TableCell>
                 <TableCell className="table-cell">{totalDays}</TableCell>
                 <TableCell className="table-cell">{numberOfHours}</TableCell>
                 <TableCell className="table-cell">{numberOfKids}</TableCell>
@@ -397,7 +440,7 @@ const QuotePages = () => {
                   {formatMongoDbDate(createdAt)}
                 </TableCell>
                 <TableCell className="px-0 py-3 flex justify-center items-center">
-                  {selectedQuotes[index].checked && (
+                  {quotesActions[index].checked && (
                     <IconDeleteBtn
                       deletionTarget="Quotation"
                       handleClick={() => handleDeleteQuote(quote._id)}

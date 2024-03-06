@@ -10,18 +10,18 @@ type AdminProps = {
   isAdmin: boolean;
   logo: ILogo | null;
   gallery: IGallery[] | [];
-  quotes: IQuote[] | [];
+  resend: number;
   uploadthingDb: string;
 };
 
 const Admin: React.FC<AdminProps> = async (props) => {
-  const { isAdmin, logo, gallery, quotes, uploadthingDb } = props;
+  const { isAdmin, logo, gallery, resend, uploadthingDb } = props;
 
   if (!isAdmin) return;
 
   return (
     <section className="section-style relative gap-1">
-      <DataBases uploadthingDb={uploadthingDb} resend={quotes.length} />
+      <DataBases uploadthingDb={uploadthingDb} resend={resend} />
       <LogoForm logo={logo} />
       <GalleryForm gallery={gallery} />
     </section>
