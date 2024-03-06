@@ -86,6 +86,12 @@ export type UpdateRecordParams = {
   newImg?: boolean;
 };
 
+// Quotes
+export type GetALLQuotesParams = {
+  page?: number;
+  limit?: number;
+}
+
 // Review Params
 export type CreateReviewParams = {
   review?: string;

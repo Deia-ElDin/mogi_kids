@@ -1,6 +1,6 @@
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getLogo } from "@/lib/actions/logo.actions";
-import AdminRoute from "@/components/shared/routes/AdminRoute";
+import AdminPage from "@/components/shared/pages/AdminPage";
 import UserRoute from "@/components/shared/routes/UserRoute";
 
 type ServicePageProps = {
@@ -16,11 +16,9 @@ const UserPage = async ({ params: { id } }: ServicePageProps) => {
 
   const isAdmin = user?.role === "Admin";
 
-  return isAdmin ? (
-    <AdminRoute user={user} />
-  ) : (
-    user && <UserRoute user={user} logo={logo} />
-  );
+  if (isAdmin) return <AdminPage />;
+  else if (user) return <UserRoute user={user} logo={logo} />;
+  else return;
 };
 
 export default UserPage;

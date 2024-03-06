@@ -157,16 +157,16 @@ export const getUsername = (
   else return "Customer";
 };
 
-export const totalEmailsSentToday = (quotes: IQuote[] | []) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+// export const totalEmailsSentToday = (quotes: IQuote[] | []) => {
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0);
 
-  const total = quotes.filter(
-    (quote) => new Date(quote.createdAt) >= today
-  ).length;
+//   const total = quotes.filter(
+//     (quote) => new Date(quote.createdAt) >= today
+//   ).length;
 
-  return total;
-};
+//   return total;
+// };
 
 export const onlyPositiveValues = (evt: React.FormEvent<HTMLInputElement>) => {
   let value = parseFloat((evt.target as HTMLInputElement).value);

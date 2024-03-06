@@ -55,7 +55,7 @@ const Customers: React.FC<CustomersProps> = (props) => {
   return (
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
-      <ReviewsSwiper user={user} reviews={reviews} />
+      {customersPage._id && <ReviewsSwiper user={user} reviews={reviews} />}
       {isAdmin && <PageForm page={customersPage} pageName="Customers Page" />}
       <DeleteBtn
         pageId={customersPage?._id}

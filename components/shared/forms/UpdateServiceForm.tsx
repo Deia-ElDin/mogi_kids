@@ -125,10 +125,10 @@ const UpdateServiceForm: React.FC<UpdateServiceFormProps> = ({ service }) => {
             <CloseBtn handleClick={handleClose} />
             <Tabs defaultValue="image">
               <TabsList className="mobile-edit-tab">
-                <TabsTrigger value="image" className="tab-trigger">
+                <TabsTrigger value="image" className="label-style flex-1 text-center text-white cursor-pointer">
                   Image
                 </TabsTrigger>
-                <TabsTrigger value="text" className="tab-trigger">
+                <TabsTrigger value="text" className="label-style flex-1 text-center text-white cursor-pointer">
                   Text
                 </TabsTrigger>
               </TabsList>

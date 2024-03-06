@@ -3,20 +3,21 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getLogo } from "@/lib/actions/logo.actions";
-import { getAllQuotes } from "@/lib/actions/quote.actions";
+import { getDayQuotes } from "@/lib/actions/quote.actions";
 import { createQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
 import { EmailTemplate } from "@/components/email-template";
-import { totalEmailsSentToday } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(NextRequest: any) {
   try {
-    const quotesResult = await getAllQuotes();
-    const quotes = quotesResult.success ? quotesResult.data || [] : [];
+    const todayQuotesResult = await getDayQuotes();
+    const todayQuotes = todayQuotesResult.success
+      ? todayQuotesResult.data || []
+      : [];
 
-    if (totalEmailsSentToday(quotes) >= 100)
+    if (todayQuotes.length >= 100)
       throw new Error(
         "unable to send the email today, kindly try again tomorrow. Thank you."
       );

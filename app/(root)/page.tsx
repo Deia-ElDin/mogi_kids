@@ -8,7 +8,7 @@ import { getAllServices } from "@/lib/actions/service.actions";
 import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
-import { getAllQuotes } from "@/lib/actions/quote.actions";
+import { getDayQuotes } from "@/lib/actions/quote.actions";
 import { getAllContacts } from "@/lib/actions/contact.actions";
 import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 
@@ -34,7 +34,7 @@ export default async function Home() {
   const questionsResult = await getAllQuestions();
   const recordsResult = await getAllRecords();
   const reviewsResult = await getAllReviews();
-  const quotesResult = await getAllQuotes();
+  const todayQuotesResult = await getDayQuotes();
   const contactsResult = await getAllContacts();
   const aboutUsResult = await getAllAboutUs();
 
@@ -46,7 +46,9 @@ export default async function Home() {
   const questions = questionsResult.success ? questionsResult.data || [] : [];
   const records = recordsResult.success ? recordsResult.data || [] : [];
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
-  const quotes = quotesResult.success ? quotesResult.data || [] : [];
+  const todayQuotes = todayQuotesResult.success
+    ? todayQuotesResult.data || []
+    : [];
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
   const aboutUs = aboutUsResult.success ? aboutUsResult.data || [] : [];
 
@@ -68,7 +70,7 @@ export default async function Home() {
         logo={logo}
         gallery={gallery}
         uploadthingDb={uploadthingDb}
-        quotes={quotes}
+        quotes={todayQuotes}
       />
       <Welcome
         isAdmin={isAdmin}
