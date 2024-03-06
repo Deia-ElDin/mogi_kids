@@ -90,7 +90,7 @@ export type UpdateRecordParams = {
 export type GetALLQuotesParams = {
   page?: number;
   limit?: number;
-}
+};
 
 // Review Params
 export type CreateReviewParams = {
@@ -167,6 +167,7 @@ export type CreateQuoteParams = {
   ageOfKidsFrom: string;
   ageOfKidsTo: string;
   extraInfo?: string;
+  createdBy?: string | null;
   emailService: {
     id: string | null;
     error: string | null;

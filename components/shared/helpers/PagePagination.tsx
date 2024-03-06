@@ -19,7 +19,7 @@ const PagePagination: React.FC<PagePaginationType> = (props) => {
   const { currentPage, totalPages, pageNumbers, setCurrentPage } = props;
 
   return (
-    <Pagination className="mt-9">
+    <Pagination>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious

@@ -7,6 +7,7 @@ import { getDayQuotes } from "@/lib/actions/quote.actions";
 import { createQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
 import { EmailTemplate } from "@/components/email-template";
+import { quoteData } from "@/constants";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -31,6 +32,8 @@ export async function POST(NextRequest: any) {
     const logo = logoResult.success ? logoResult.data || null : null;
     const body = await NextRequest.json();
 
+    console.log("body", body);
+
     const { data, error: resendError } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
       to: ["it.alqabda@gmail.com"],
@@ -38,29 +41,42 @@ export async function POST(NextRequest: any) {
       react: EmailTemplate({ ...body, user, logo }) as React.ReactElement,
     });
 
-    console.log("data", data);
-
     if (resendError)
       throw new Error(resendError.message ?? "Couldn't send the email.");
 
     const { quoteValues } = body;
 
-    if (
-      quoteValues &&
-      typeof quoteValues === "object" &&
-      Object.keys(quoteValues).length > 0
-    ) {
-      const { success, error: mongoDbError } = await createQuote({
-        ...quoteValues,
-        emailService: {
-          id: data?.id ?? null,
-          error: resendError ?? null,
-        },
-        createdBy: user ? user._id : null,
-      });
+    const { success, error: mongoDbError } = await createQuote({
+      ...quoteValues,
+      emailService: {
+        id: data?.id ?? null,
+        error: resendError ?? null,
+      },
+      createdBy: user ? user._id : null,
+    });
 
-      if (!success && mongoDbError) throw new Error(mongoDbError);
-    }
+    if (!success && mongoDbError) throw new Error(mongoDbError);
+
+    // if (
+    //   quoteValues &&
+    //   typeof quoteValues === "object" &&
+    //   Object.keys(quoteValues).length > 0
+    // ) {
+    //   {
+    //     quoteData.map(async (quote) => {
+    //       const { success, error: mongoDbError } = await createQuote({
+    //         ...quote,
+    //         emailService: {
+    //           id: data?.id ?? null,
+    //           error: resendError ?? null,
+    //         },
+    //         createdBy: user ? user._id : null,
+    //       });
+
+    //       if (!success && mongoDbError) throw new Error(mongoDbError);
+    //     });
+    //   }
+    // }
 
     return NextResponse.json({ success: true, data, error: null });
   } catch (error) {

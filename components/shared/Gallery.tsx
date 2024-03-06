@@ -10,7 +10,6 @@ const Gallery = async () => {
     return <GallerySwiper gallery={gallery} />;
   }
 
-  // Return null if gallery is empty or not an array
   return null;
 };
 

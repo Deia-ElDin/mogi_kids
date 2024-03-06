@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { format } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Table,
   TableBody,
@@ -9,17 +12,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getAllQuotes } from "@/lib/actions/quote.actions";
+import {
+  getAllQuotes,
+  getDayQuotes,
+  getMonthQuotes,
+  getCstNameQuotes,
+  deleteQuote,
+  deleteSelectedQuotes,
+} from "@/lib/actions/quote.actions";
 import { IQuote } from "@/lib/database/models/quote.model";
 import { differenceInDays } from "date-fns";
-import { formatMongoDbDate } from "@/lib/utils";
+import { formatMongoDbDate, sortQuotes, handleError } from "@/lib/utils";
+import { SortKey } from "@/constants";
 import PagePagination from "../helpers/PagePagination";
 import IconDeleteBtn from "../btns/IconDeleteBtn";
 import DatePicker from "react-datepicker";
-import Text from "../helpers/Text";
+import UserDeleteBtn from "../btns/UserDeleteBtn";
 import "react-datepicker/dist/react-datepicker.css";
 
+// const selectedId = selectedQuotes.map((quote) => quote._id);
+
 const QuotePages = () => {
+  const limit = 10;
+  const [fetchByCstName, setFetchByCstName] = useState<string>("");
   const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
   const [fetchByMonth, setFetchByMonth] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,42 +44,218 @@ const QuotePages = () => {
   const [selectedQuotes, setSelectedQuotes] = useState<
     { _id: string; checked: boolean; deleteBtn: boolean }[]
   >([]);
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey;
+    direction: string;
+  } | null>(null);
 
-  const limit = 2;
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchQuotes = async (page: number) => {
-      const quotesResult = await getAllQuotes({ limit, page });
+  const pathname = usePathname();
 
-      if (quotesResult.success) {
-        setQuotes(quotesResult.data || []);
-        setTotalPages(quotesResult.totalPages || 1);
-        setSelectedQuotes(
-          quotesResult.data?.map((quote) => ({
-            _id: quote._id,
-            checked: false,
-            deleteBtn: false,
-          })) || []
-        );
-      }
-    };
-
-    fetchQuotes(currentPage);
-  }, [currentPage]);
+  const handleCstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFetchByCstName(e.target.value);
+    if (fetchByDay) setFetchByDay(null);
+    if (fetchByMonth) setFetchByMonth(null);
+  };
 
   const handleDayChange = (date: Date | null) => {
     setFetchByDay(date);
+    if (fetchByCstName) setFetchByCstName("");
+    if (fetchByMonth) setFetchByMonth(null);
   };
 
   const handleMonthChange = (date: Date | null) => {
     setFetchByMonth(date);
+    if (fetchByCstName) setFetchByCstName("");
+    if (fetchByDay) setFetchByDay(null);
   };
+
+  const handleDeleteQuote = async (quoteId: string) => {
+    try {
+      const { success, error } = await deleteQuote(quoteId, pathname);
+      if (!success && error) throw new Error(error);
+      toast({ description: "Quotation Deleted Successfully." });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Quotation, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const handleDeleteSelectedQuotes = async () => {
+    try {
+      const selectedIds = selectedQuotes.map((quote) => quote._id);
+
+      const { success, error } = await deleteSelectedQuotes(
+        selectedIds,
+        pathname
+      );
+      if (!success && error) throw new Error(error);
+      toast({ description: "Quotation Selection Deleted Successfully." });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Quotation Selection, ${handleError(
+          error
+        )}`,
+      });
+    }
+  };
+
+  const setStates = (data: IQuote[]) => {
+    setQuotes(data || []);
+    setTotalPages(totalPages || 1);
+    setSelectedQuotes(
+      data?.map((quote: IQuote) => ({
+        _id: quote._id,
+        checked: false,
+        deleteBtn: false,
+      })) || []
+    );
+  };
+
+  const fetchAllQuotes = async (page: number) => {
+    try {
+      const { success, data, error } = await getAllQuotes({ limit, page });
+
+      if (!success && error) throw new Error(error);
+      if (success && data) setStates(data);
+      else {
+        setStates([]);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! We couldn't find any Quotations yet in the Database.",
+        });
+      }
+    } catch (error) {
+      setStates([]);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to fetch The Quotations, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const fetchCstNameQuests = async (cstName: string) => {
+    try {
+      const { success, data, error } = await getCstNameQuotes(cstName);
+
+      if (!success && error) throw new Error(error);
+      if (success && data) setStates(data);
+      else {
+        setStates([]);
+        toast({
+          variant: "destructive",
+          title: `Uh oh! We couldn't find any Quotations created by ${cstName}.`,
+        });
+      }
+    } catch (error) {
+      setStates([]);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to fetch The Quotations, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const fetchDayQuotes = async (day: Date) => {
+    console.log("fetchDayQuotes -> day", format(day, "dd"));
+
+    try {
+      const { success, data, error } = await getDayQuotes(day);
+
+      if (!success && error) throw new Error(error);
+      if (success && data) setStates(data);
+      else {
+        setStates([]);
+        toast({
+          variant: "destructive",
+          title: `Uh oh! We couldn't find any Quotations create at ${format(
+            day,
+            "EEE, dd/MM/yyyy"
+          )}.`,
+        });
+      }
+    } catch (error) {
+      setStates([]);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to fetch The Quotations, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const fetchMonthQuotes = async (month: Date) => {
+    try {
+      const { success, data, error } = await getMonthQuotes(month);
+
+      if (!success && error) throw new Error(error);
+      if (success && data) setStates(data);
+      else {
+        setStates([]);
+        toast({
+          variant: "destructive",
+          title: `Uh oh! We couldn't find any Quotations create during this ${format(
+            month,
+            "MMMM MM/yyyy"
+          )}.`,
+        });
+      }
+    } catch (error) {
+      setStates([]);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to fetch The Quotations, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const requestSort = (key: SortKey) => {
+    let direction = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  useEffect(() => {
+    fetchAllQuotes(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (sortConfig) {
+      const sortedQuotes = sortQuotes(
+        quotes,
+        sortConfig.key,
+        sortConfig.direction
+      );
+      setQuotes(sortedQuotes);
+    }
+  }, [sortConfig]);
+
+  useEffect(() => {
+    if (fetchByCstName) fetchCstNameQuests(fetchByCstName);
+    else if (fetchByDay) fetchDayQuotes(fetchByDay);
+    else if (fetchByMonth) fetchMonthQuotes(fetchByMonth);
+  }, [fetchByCstName, fetchByDay, fetchByMonth]);
 
   const handleSelectQuote = (quoteId: string) => {
     setSelectedQuotes((prev) =>
       prev.map((quote) =>
         quote._id === quoteId
-          ? { ...quote, checked: !quote.checked, deleteBtn: !quote.deleteBtn }
+          ? { ...quote, checked: !quote.checked, deleteBtn: !quote.checked }
           : quote
       )
     );
@@ -81,8 +272,6 @@ const QuotePages = () => {
     setSelectAll((prev) => !prev);
   };
 
-  console.log("selectedQuotes", selectedQuotes);
-
   const pageNumbers = [];
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
 
@@ -90,16 +279,17 @@ const QuotePages = () => {
     (selectedQuote) => selectedQuote.checked
   );
 
-  console.log("isSelected", isSelected);
-
   return (
-    <>
+    <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
+        <h1 className="text-lg font-bold">Fetch Quotation</h1>
         <div className="flex flex-col md:flex-row justify-between gap-2">
           <input
             type="text"
             className="fetch-input-style text-style"
             placeholder="Fetch By Client Name"
+            value={fetchByCstName}
+            onChange={handleCstNameChange}
           />
           <DatePicker
             selected={fetchByMonth}
@@ -118,6 +308,7 @@ const QuotePages = () => {
           />
         </div>
       </div>
+
       <Table className="w-full">
         <TableHeader>
           <TableRow>
@@ -131,12 +322,37 @@ const QuotePages = () => {
             </TableHead>
             <TableHead className="table-head">Client</TableHead>
             <TableHead className="table-head">Location</TableHead>
-            <TableHead className="table-head">Days</TableHead>
-            <TableHead className="table-head">Hours</TableHead>
-            <TableHead className="table-head">Kids</TableHead>
+            <TableHead
+              className="table-head"
+              onClick={() => requestSort(SortKey.DAYS)}
+            >
+              Days
+            </TableHead>
+            <TableHead
+              className="table-head"
+              onClick={() => requestSort(SortKey.HOURS)}
+            >
+              Hours
+            </TableHead>
+            <TableHead
+              className="table-head"
+              onClick={() => requestSort(SortKey.KIDS)}
+            >
+              Kids
+            </TableHead>
             <TableHead className="table-head">Age</TableHead>
-            <TableHead className="table-head">Total Hours</TableHead>
-            <TableHead className="table-head">Date</TableHead>
+            <TableHead
+              className="table-head"
+              onClick={() => requestSort(SortKey.TOTAL_HOURS)}
+            >
+              Total Hours
+            </TableHead>
+            <TableHead
+              className="table-head"
+              onClick={() => requestSort(SortKey.DATE)}
+            >
+              Date
+            </TableHead>
             {isSelected && <TableHead className="table-head">Delete</TableHead>}
           </TableRow>
         </TableHeader>
@@ -184,7 +400,7 @@ const QuotePages = () => {
                   {selectedQuotes[index].checked && (
                     <IconDeleteBtn
                       deletionTarget="Quotation"
-                      handleClick={() => console.log("Delete")}
+                      handleClick={() => handleDeleteQuote(quote._id)}
                     />
                   )}
                 </TableCell>
@@ -200,7 +416,14 @@ const QuotePages = () => {
         pageNumbers={pageNumbers}
         setCurrentPage={setCurrentPage}
       />
-    </>
+
+      {isSelected && (
+        <UserDeleteBtn
+          deletionTarget="Delete Selected Quotations"
+          handleClick={handleDeleteSelectedQuotes}
+        />
+      )}
+    </div>
   );
 };
 

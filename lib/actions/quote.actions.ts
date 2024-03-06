@@ -28,7 +28,7 @@ type DeleteResult = {
 };
 
 export async function getAllQuotes({
-  limit = 3,
+  limit = 10,
   page = 1,
 }: GetALLQuotesParams): Promise<GetAllResult> {
   try {
@@ -56,7 +56,32 @@ export async function getAllQuotes({
   }
 }
 
-export const getDayQuotes = async (day: Date = new Date()) => {
+export const getCstNameQuotes = async (
+  cstName: string
+): Promise<GetAllResult> => {
+  try {
+    await connectToDb();
+
+    const regex = new RegExp(`^${cstName}`, "i");
+    const cstQuotes = await Quote.find({ cstName: regex }).sort({
+      createdAt: "desc",
+    });
+
+    if (!cstQuotes)
+      throw new Error(`Failed to get quotes for customer: ${cstName}.`);
+
+    const data =
+      cstQuotes.length === 0 ? null : JSON.parse(JSON.stringify(cstQuotes));
+
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+};
+
+export const getDayQuotes = async (
+  day: Date = new Date()
+): Promise<GetAllResult> => {
   try {
     await connectToDb();
 
@@ -66,12 +91,39 @@ export const getDayQuotes = async (day: Date = new Date()) => {
 
     const todayQuotes = await Quote.find({
       createdAt: { $gte: day, $lt: endOfTheDay },
-    });
+    }).sort({ createdAt: "desc" });
 
     if (!todayQuotes)
       throw new Error(`Failed to get the ${formatDate(String(day))} quotes.`);
 
-    const data = JSON.parse(JSON.stringify(todayQuotes));
+    const data =
+      todayQuotes.length === 0 ? null : JSON.parse(JSON.stringify(todayQuotes));
+
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+};
+
+export const getMonthQuotes = async (date: Date): Promise<GetAllResult> => {
+  try {
+    await connectToDb();
+
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    const monthQuotes = await Quote.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+    }).sort({ createdAt: "desc" });
+
+    if (!monthQuotes)
+      throw new Error(`Failed to get quotes for ${month}-${year}.`);
+
+    const data =
+      monthQuotes.length === 0 ? null : JSON.parse(JSON.stringify(monthQuotes));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -118,50 +170,42 @@ export async function deleteQuote(
   }
 }
 
-export async function deleteAllQuotes(): Promise<DeleteResult> {
+export const deleteSelectedQuotes = async (
+  selectedQuotes: string[],
+  path: string
+): Promise<DeleteResult> => {
   try {
     await connectToDb();
 
-    const deletedQuotes = await Quote.deleteMany();
+    const deletedQuotes = await Quote.deleteMany({
+      _id: { $in: selectedQuotes },
+    });
 
     if (!deletedQuotes)
       throw new Error(
         "Failed to find the quotes or the quotes already deleted."
       );
 
+    revalidatePath(path);
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
-}
+};
 
-// export async function getRelatedEventsByCategory({
-//   categoryId,
-//   eventId,
-//   limit = 3,
-//   page = 1,
-// }: GetRelatedEventsByCategoryParams) {
+// export async function deleteAllQuotes(): Promise<DeleteResult> {
 //   try {
 //     await connectToDb();
 
-//     const skipAmount = (Number(page) - 1) * limit;
-//     const conditions = {
-//       $and: [{ category: categoryId }, { _id: { $ne: eventId } }],
-//     };
+//     const deletedQuotes = await Quote.deleteMany();
 
-//     const eventsQuery = Event.find(conditions)
-//       .sort({ createdAt: "desc" })
-//       .skip(skipAmount)
-//       .limit(limit);
+//     if (!deletedQuotes)
+//       throw new Error(
+//         "Failed to find the quotes or the quotes already deleted."
+//       );
 
-//     const events = await populateEvent(eventsQuery);
-//     const eventsCount = await Event.countDocuments(conditions);
-
-//     return {
-//       data: JSON.parse(JSON.stringify(events)),
-//       totalPages: Math.ceil(eventsCount / limit),
-//     };
+//     return { success: true, data: null, error: null };
 //   } catch (error) {
-//     handleError(error);
+//     return { success: false, data: null, error: handleError(error) };
 //   }
 // }

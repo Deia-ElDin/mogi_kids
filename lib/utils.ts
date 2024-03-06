@@ -8,6 +8,8 @@ import { IGallery } from "./database/models/gallery.model";
 import { IQuote } from "./database/models/quote.model";
 import { IContact } from "./database/models/contact.model";
 import { IAboutUs } from "./database/models/about-us.model";
+import { differenceInDays } from "date-fns";
+import { SortKey } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -172,4 +174,53 @@ export const onlyPositiveValues = (evt: React.FormEvent<HTMLInputElement>) => {
   let value = parseFloat((evt.target as HTMLInputElement).value);
   if (value < 0) value = 0;
   return value.toString();
+};
+
+export const sortQuotes = (
+  array: IQuote[],
+  key: SortKey,
+  direction: string
+) => {
+  const sortedArray = [...array];
+
+  if (key === SortKey.DAYS) {
+    sortedArray.sort((a, b) => {
+      const aValue = differenceInDays(new Date(a.to), new Date(a.from));
+      const bValue = differenceInDays(new Date(b.to), new Date(b.from));
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
+  } else if (key === SortKey.HOURS) {
+    sortedArray.sort((a, b) => {
+      const aValue = parseInt(a.numberOfHours);
+      const bValue = parseInt(b.numberOfHours);
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
+  } else if (key === SortKey.KIDS) {
+    sortedArray.sort((a, b) => {
+      const aValue = parseInt(a.numberOfKids);
+      const bValue = parseInt(b.numberOfKids);
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
+  } else if (key === SortKey.TOTAL_HOURS) {
+    sortedArray.sort((a, b) => {
+      const aValue =
+        differenceInDays(new Date(a.to), new Date(a.from)) *
+        parseInt(a.numberOfHours);
+      const bValue =
+        differenceInDays(new Date(b.to), new Date(b.from)) *
+        parseInt(b.numberOfHours);
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
+  } else if (key === SortKey.DATE) {
+    sortedArray.sort((a, b) => {
+      const aValue = new Date(a.createdAt);
+      const bValue = new Date(b.createdAt);
+      console.log("aValue", aValue);
+      
+      return direction === "ascending"
+        ? Number(aValue) - Number(bValue)
+        : Number(bValue) - Number(aValue);
+    });
+  }
+  return sortedArray;
 };
