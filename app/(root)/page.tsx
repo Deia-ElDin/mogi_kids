@@ -49,10 +49,7 @@ export default async function Home() {
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
   const aboutUs = aboutUsResult.success ? aboutUsResult.data || [] : [];
 
-  console.log("reviews", reviews);
-
   const dbsSize = dbsSizeResult.success ? dbsSizeResult.data || null : null;
-  console.log("dbsSize", dbsSize);
 
   const isAdmin = user?.role === "Admin";
 
