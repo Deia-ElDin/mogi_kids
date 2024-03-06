@@ -18,21 +18,21 @@ const QuoteCard: React.FC<QuoteCardParams> = ({ quote }) => {
 
   const { toast } = useToast();
 
-  const handleDelete = async () => {
-    try {
-      const { success, error } = await deleteQuote(quote._id, path);
+  // const handleDelete = async () => {
+  //   try {
+  //     const { success, error } = await deleteQuote(quote._id);
 
-      if (!success && error) throw new Error(error);
+  //     if (!success && error) throw new Error(error);
 
-      toast({ description: "Quotation Deleted Successfully." });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Contact, ${handleError(error)}`,
-      });
-    }
-  };
+  //     toast({ description: "Quotation Deleted Successfully." });
+  //   } catch (error) {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Uh oh! Something went wrong.",
+  //       description: `Failed to Delete The Contact, ${handleError(error)}`,
+  //     });
+  //   }
+  // };
 
   return (
     <Card className="flex flex-col bg-transparent border-none shadow-none w-full">
