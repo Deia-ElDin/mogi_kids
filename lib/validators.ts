@@ -17,7 +17,6 @@ import { addYears, isAfter, subDays, isEqual } from "date-fns";
 
 const today = new Date();
 let fromDate: Date = today;
-let toDate: Date = today;
 let fromAge: number;
 
 export const logoSchema = z.object({
@@ -65,7 +64,6 @@ export const quoteSchema = z.object({
     .date()
     .refine((value) => {
       if (value !== null && value !== undefined) {
-        toDate = value;
         return isEqual(value, fromDate) || isAfter(value, fromDate);
       }
     }, "The service can't end in the past or before to the service start date.")
@@ -241,16 +239,3 @@ export const aboutUsSchema = z.object({
   content: z.string().min(1, "Kindly provide us the article content."),
   imgUrl: z.string().min(1, "Kindly provide us the article image."),
 });
-
-// from: z.date().refine((value) => {
-//   if (value !== null && value !== undefined) {
-//     fromDate = setDate(value);
-//     return value >= today;
-//   }
-// }, "The service can't start in the past."),
-// to: z.date().refine((value) => {
-//   if (value !== null && value !== undefined) {
-//     toDate = setDate(value);
-//     return value >= fromDate && value >= today;
-//   }
-// }, "The service can't end in the past."),

@@ -26,15 +26,6 @@ export const headerLinks = [
 ];
 
 // w: 1024, h: 768, aspect ratio: 4.3
-export const careImgs = [
-  "/assets/images/care0.jpg",
-  "/assets/images/care1.jpg",
-  "/assets/images/care2.jpg",
-  "/assets/images/care3.jpg",
-  "/assets/images/care4.jpg",
-  "/assets/images/care5.jpg",
-  "/assets/images/care6.jpg",
-];
 
 export const socialMediaSvgs = [
   {
@@ -59,44 +50,6 @@ export const userWelcomePageText = [
   "We greatly value your opinion and would love to hear about your experience with Mogi Kids. Your feedback helps us understand what we're doing well and where we can improve to better serve you and your family.",
   "Would you take a moment to share your thoughts by writing a review? Whether it's a story about your child's progress, a positive experience with our staff, or suggestions for how we can enhance our services, your input is invaluable to us.",
   "To leave a review, simply click on the button below:",
-];
-
-export const serviceImgs = [
-  {
-    title: "Emergency Child Care",
-    url: "/assets/images/s1.jpeg",
-    paragraph: "",
-  },
-  {
-    title: "Overnight Care",
-    url: "/assets/images/s2.jpeg",
-    paragraph: "",
-  },
-  {
-    title: "Event Child Care",
-    url: "/assets/images/s3.jpeg",
-    paragraph: "",
-  },
-  {
-    title: "Nursery & School Pickup & Drop Off",
-    url: "/assets/images/s4.jpeg",
-    paragraph: "",
-  },
-  {
-    title: "After-School Home Care",
-    url: "/assets/images/s5.jpeg",
-    paragraph: "",
-  },
-  {
-    title: "Mall Babysitting Care",
-    url: "/assets/images/s6.jpeg",
-    paragraph: "",
-  },
-  {
-    title: "Holiday Child Care",
-    url: "/assets/images/s7.jpeg",
-    paragraph: "",
-  },
 ];
 
 export const questionsList = [
@@ -137,107 +90,6 @@ export const questionsList = [
     question: "How can I lodge a complaint or give feedback?",
     answer:
       "We value your feedback, because it helps us to improve our services. Please get in touch with us at 02 000 0000 or 050 000 0000 to provide your feedback or email us at info@mogikids.ae.",
-  },
-];
-
-export const records = [
-  {
-    icon: "/assets/icons/client.svg",
-    rating: "50",
-    title: "Clients",
-    color: "#ffeae6",
-  },
-  {
-    icon: "/assets/icons/members.svg",
-    rating: "80",
-    title: "Active Members",
-    color: "#fff7db",
-  },
-  {
-    icon: "/assets/icons/rating.svg",
-    rating: "4.8",
-    title: "Google Rating",
-    color: "#c9f9cd",
-  },
-];
-
-export const contacts = [
-  {
-    icon: "/assets/icons/location.svg",
-    title: "Location",
-    details: "57 Al Mutawakileen St - Zayed Port - Al Mina - Abu Dhabi",
-  },
-  {
-    icon: "/assets/icons/landline.svg",
-    title: "Landline",
-    details: "02 000 0000",
-  },
-  {
-    icon: "/assets/icons/phone.svg",
-    title: "Phone",
-    details: "050 000 0000",
-  },
-  {
-    icon: "/assets/icons/email.svg",
-    title: "Email",
-    details: "info@mogikids.com",
-  },
-];
-
-export const cstOpinion = [
-  {
-    cstName: "Olivia Smith",
-    cstOpinion:
-      "Your dedication to providing exceptional care and attention to every child at MOGi KiDS is truly commendable. Your unwavering commitment ensures that each child feels valued and cherished.",
-    cstImg: "/assets/images/cst1.jpeg",
-  },
-  {
-    cstName: "Emma Johnson",
-    cstOpinion:
-      "Thank you for creating a safe and nurturing environment where children can thrive and flourish. Your emphasis on safety and well-being instills confidence in parents, knowing that their little ones are in capable hands.",
-    cstImg: "/assets/images/cst2.jpeg",
-  },
-  {
-    cstName: "Ava Williams",
-    cstOpinion:
-      "Your passion for providing enriching learning experiences shines through in every aspect of MOGi KiDS. From educational activities to creative playtime, you inspire children to discover, learn, and grow each day.",
-    cstImg: "/assets/images/cst3.jpeg",
-  },
-  {
-    cstName: "Mia Brown",
-    cstOpinion:
-      "Your team's compassion and dedication are evident in the loving care they provide to every child. Their genuine enthusiasm and warmth create a welcoming atmosphere that feels like a home away from home.",
-    cstImg: "/assets/images/cst4.jpeg",
-  },
-  {
-    cstName: "Isabella Jones",
-    cstOpinion:
-      "Thank you for the positive impact you've had on countless families through your MOGi KiDS service. Your support, guidance, and encouragement have made a difference in the lives of both children and parents alike.",
-    cstImg: "/assets/images/cst5.jpeg",
-  },
-  {
-    cstName: "Sophia Davis",
-    cstOpinion:
-      "Your commitment to building a supportive community at MOGi KiDS is truly commendable. By fostering connections and friendships among families, you've created a tight-knit community where everyone feels like they belong. Thank you for your outstanding service!",
-    cstImg: "/assets/images/cst6.jpeg",
-  },
-  {
-    cstName: "Fatima Ahmed",
-    cstOpinion:
-      "Your dedication to fostering a nurturing environment at MOGi KiDS is truly admirable. With your thoughtful approach to learning and play, children are not just participants but active explorers, eager to uncover the wonders of the world around them.",
-    cstImg: "/assets/images/cst7.jpeg",
-  },
-  {
-    cstName: "Khadija Mohamed",
-    cstOpinion:
-      "The impact of your work at MOGi KiDS is immeasurable. Through your innovative teaching methods and unwavering enthusiasm, you cultivate a space where children feel valued, supported, and excited to engage with the world. Your dedication to nurturing young minds is truly inspiring.",
-    cstImg: "/assets/images/cst8.jpeg",
-  },
-  {
-    cstName: "Alyaa Ibrahim",
-    cstOpinion:
-      "At MOGi KiDS, your commitment to igniting curiosity and fostering a love for learning is evident in every interaction. Your passion for creating meaningful educational experiences resonates deeply, empowering young minds to thrive and embrace the joy of discovery.",
-    cstImg: "/assets/images/cst9.jpeg",
   },
 ];
 
@@ -313,7 +165,7 @@ export const careerDefaultValues = {
 export const pageDefaultValues: Partial<IPage> = {
   pageName: "",
   pageTitle: "",
-  pageContent: undefined,
+  pageContent: "",
 };
 
 export const serviceDefaultValues = {
@@ -353,155 +205,155 @@ export const aboutUsDefaultValues = {
   imgUrl: "",
 };
 
-const quoteText =
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt obcaecati facere animi vel, accusamus porro totam necessitatibus corporis tempora voluptatibus voluptate consequatur sint ex minus minima similique esse, dolorum optio, voluptas at! Dignissimos soluta doloribus aperiam officiis delectus fugit veniam commodi possimus autem quod nemo cupiditate quasi nulla facilis nisi totam ullam alias, velit ipsa ducimus. Assumenda sapiente adipisci enim fugiat tenetur corporis eius asperiores officiis reprehenderit. Quasi, provident nobis. Fugiat architecto quos deleniti. Nulla neque quod eius labore ratione officiis nam ipsum quas enim maxime voluptates repudiandae dolor, modi magnam quibusdam quasi! Commodi ut officiis hic perspiciatis, fugiat, illum aperiam voluptatem non quasi cupiditate quaerat aliquid enim nisi distinctio eligendi tempora doloribus facere adipisci assumenda? Recusandae vitae sit iure perspiciatis nemo vero labore natus doloremque laudantium nisi! Iusto.";
+// const quoteText =
+//   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt obcaecati facere animi vel, accusamus porro totam necessitatibus corporis tempora voluptatibus voluptate consequatur sint ex minus minima similique esse, dolorum optio, voluptas at! Dignissimos soluta doloribus aperiam officiis delectus fugit veniam commodi possimus autem quod nemo cupiditate quasi nulla facilis nisi totam ullam alias, velit ipsa ducimus. Assumenda sapiente adipisci enim fugiat tenetur corporis eius asperiores officiis reprehenderit. Quasi, provident nobis. Fugiat architecto quos deleniti. Nulla neque quod eius labore ratione officiis nam ipsum quas enim maxime voluptates repudiandae dolor, modi magnam quibusdam quasi! Commodi ut officiis hic perspiciatis, fugiat, illum aperiam voluptatem non quasi cupiditate quaerat aliquid enim nisi distinctio eligendi tempora doloribus facere adipisci assumenda? Recusandae vitae sit iure perspiciatis nemo vero labore natus doloremque laudantium nisi! Iusto.";
 
-const today = new Date();
+// const today = new Date();
 
-import { addDays, addMonths } from "date-fns";
+// import { addDays, addMonths } from "date-fns";
 
-export const quoteData = [
-  {
-    cstName: "Moahmed",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 1),
-    to: addDays(addMonths(today, 3), 20),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "mona",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 1),
-    to: addDays(addMonths(today, 4), 2),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "ahmed",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 3),
-    to: addDays(addMonths(today, 4), 2),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "ibrahim",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 4),
-    to: addDays(addMonths(today, 4), 2),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "kamal",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 2),
-    to: addDays(addMonths(today, 4), 2),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "ali",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 6),
-    to: addDays(addMonths(today, 4), 2),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "deia",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 2),
-    to: addDays(addMonths(today, 4), 2),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "Moahmed",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 3),
-    to: addDays(addMonths(today, 4), 4),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "Mary",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 2),
-    to: addDays(addMonths(today, 4), 7),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-  {
-    cstName: "Mary",
-    mobile: "0507890072",
-    location: "Abu Dhabi",
-    email: "deia.tech2021@gmail.com",
-    from: addMonths(today, 1),
-    to: addDays(addMonths(today, 4), 15),
-    numberOfHours: String(Math.floor(Math.random() * 24) + 1),
-    numberOfKids: "8",
-    ageOfKidsFrom: "4",
-    ageOfKidsTo: "7",
-    extraInfo: quoteText,
-    emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
-  },
-];
+// export const quoteData = [
+//   {
+//     cstName: "Moahmed",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 1),
+//     to: addDays(addMonths(today, 3), 20),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "mona",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 1),
+//     to: addDays(addMonths(today, 4), 2),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "ahmed",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 3),
+//     to: addDays(addMonths(today, 4), 2),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "ibrahim",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 4),
+//     to: addDays(addMonths(today, 4), 2),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "kamal",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 2),
+//     to: addDays(addMonths(today, 4), 2),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "ali",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 6),
+//     to: addDays(addMonths(today, 4), 2),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "deia",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 2),
+//     to: addDays(addMonths(today, 4), 2),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "Moahmed",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 3),
+//     to: addDays(addMonths(today, 4), 4),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "Mary",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 2),
+//     to: addDays(addMonths(today, 4), 7),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+//   {
+//     cstName: "Mary",
+//     mobile: "0507890072",
+//     location: "Abu Dhabi",
+//     email: "deia.tech2021@gmail.com",
+//     from: addMonths(today, 1),
+//     to: addDays(addMonths(today, 4), 15),
+//     numberOfHours: String(Math.floor(Math.random() * 24) + 1),
+//     numberOfKids: "8",
+//     ageOfKidsFrom: "4",
+//     ageOfKidsTo: "7",
+//     extraInfo: quoteText,
+//     emailService: { id: "f601b774-1887-4f8f-91b5-40a43200792a", error: null },
+//   },
+// ];
 
 export enum SortKey {
   DAYS = "days",

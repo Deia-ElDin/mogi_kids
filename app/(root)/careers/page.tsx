@@ -8,6 +8,7 @@ import CareerForm from "@/components/shared/forms/CareerForm";
 
 const Careers = async () => {
   const { sessionClaims } = auth();
+
   const userId = sessionClaims?.userId as string;
 
   const userResult = await getUserByUserId(userId);
