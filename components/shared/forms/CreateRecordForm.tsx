@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FileUploader } from "../helpers/FileUploader";
+import { ImgUploader } from "../helpers/ImgUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { createRecord } from "@/lib/actions/record.actions";
@@ -97,7 +97,7 @@ const CreateRecordForm: React.FC = () => {
                 <FormItem>
                   <FormLabel className="label-style">SVG</FormLabel>
                   <FormControl>
-                    <FileUploader
+                    <ImgUploader
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}

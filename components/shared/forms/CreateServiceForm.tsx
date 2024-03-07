@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FileUploader } from "../helpers/FileUploader";
+import { ImgUploader } from "../helpers/ImgUploader";
 import { useUploadThing } from "@/lib/uploadthing";
-import {  handleError } from "@/lib/utils";
+import { handleError } from "@/lib/utils";
 import { serviceSchema } from "@/lib/validators";
 import { serviceDefaultValues } from "@/constants";
 import { createService } from "@/lib/actions/service.actions";
@@ -101,7 +101,7 @@ const CreateServiceForm: React.FC = () => {
                 <FormItem>
                   <FormLabel className="label-style">Image</FormLabel>
                   <FormControl>
-                    <FileUploader
+                    <ImgUploader
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}

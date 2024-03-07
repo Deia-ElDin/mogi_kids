@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
-import { FileUploader } from "../helpers/FileUploader";
+import { ImgUploader } from "../helpers/ImgUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { aboutUsSchema } from "@/lib/validators";
@@ -161,7 +161,7 @@ const UpdateAboutUsForm: React.FC<UpdateAboutUsFormProps> = ({
                 <FormItem>
                   <FormLabel className="label-style">Image</FormLabel>
                   <FormControl>
-                    <FileUploader
+                    <ImgUploader
                       imageUrl={field.value}
                       onFieldChange={field.onChange}
                       setFiles={setFiles}

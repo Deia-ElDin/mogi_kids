@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
-import { FileUploader } from "../helpers/FileUploader";
+import { ImgUploader } from "../helpers/ImgUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { gallerySchema } from "@/lib/validators";
@@ -152,7 +152,7 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
                       Gallery Image/s
                     </FormLabel>
                     <FormControl>
-                      <FileUploader
+                      <ImgUploader
                         imageUrl={field.value}
                         onFieldChange={field.onChange}
                         setFiles={setFiles}

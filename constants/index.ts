@@ -143,23 +143,23 @@ export const quoteDefaultValues = {
 };
 
 export const careerDefaultValues = {
-  fullName: "",
-  email: "",
-  mobile: "",
-  applyingFor: "",
-  workingAt: "",
-  salary: "",
+  fullName: "deia",
+  email: "deia.tech2021@gmail.com",
+  mobile: "0507890072",
+  applyingFor: "job 1",
+  workingAt: "company 1",
+  previousSalary: "2000",
+  expectedSalary: "3000",
   joinDate: new Date(),
-  skills: "",
-  gender: "",
-  education: "",
-  dha: "",
+  gender: "female",
+  education: "Diploma",
+  dhaCertificate: "Yes",
   careGiverCertificate: "",
-  previousExperienceInUAE: "",
-  residencyVisa: "",
-  residencyVisaExpireDate: "",
+  experienceInUAE: "",
+  visa: "",
+  visaExpireDate: new Date(),
   coverLetter: "",
-  resume: "",
+  imgUrl: "",
 };
 
 export const pageDefaultValues: Partial<IPage> = {

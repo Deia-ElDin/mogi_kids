@@ -14,10 +14,7 @@ export interface IQuote extends Document {
   ageOfKidsFrom: string;
   ageOfKidsTo: string;
   extraInfo?: string;
-  emailService: {
-    id: string | null;
-    error: string | null;
-  };
+  emailService: { id: string | null; error: string | null };
   createdAt: string;
   updatedAt: string;
   blocked: boolean;

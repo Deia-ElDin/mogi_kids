@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { addYears, isAfter, subDays, isEqual } from "date-fns";
+import { addYears, addMonths, isAfter, subDays, isEqual } from "date-fns";
 
 // const [formErrors, setFormErrors] = useState({});
 
@@ -150,41 +150,56 @@ export const careerSchema = z.object({
     ),
   applyingFor: z
     .string()
-    .min(3, "Career must be at least 3 characters.")
-    .max(150, "Career must not exceed 150 characters."),
+    .min(1, "Kindly tell us know which job you are applying for.")
+    .max(150, "Field must not exceed 150 characters."),
   workingAt: z
     .string()
-    .min(3, "Current job must be at least 3 characters.")
-    .max(150, "Current job must not exceed 150 characters."),
-  salary: z
+    .min(1, "Kindly tell us where are you working at.")
+    .max(150, "Field must not exceed 150 characters."),
+  previousSalary: z
     .string()
-    .min(3, "Salary must be at least 3 characters.")
-    .max(25, "Salary must not exceed 25 characters."),
+    .max(25, "Field must not exceed 25 characters.")
+    .optional(),
+  expectedSalary: z
+    .string()
+    .max(25, "Field must not exceed 25 characters.")
+    .optional(),
   joinDate: z.date().refine((value) => {
     if (value !== null && value !== undefined) {
-      fromDate = value;
-      const maxDate = addYears(today, 1);
-      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
+      const today = new Date();
+      const maxDate = addMonths(today, 2);
+      return isAfter(value, new Date()) && isAfter(maxDate, value);
     }
-  }, "Joining date can't start in the past or exceed a year from now."),
+  }, "Joining date can't start in the past or exceed 2 months from now."),
   gender: z.string({
     required_error: "Please select your gender.",
   }),
   education: z.string({
-    required_error: "Please select education level.",
+    required_error: "Please select your education level.",
   }),
-  dha: z.string({
+  dhaCertificate: z.string({
     required_error: "Kindly select one.",
   }),
+  careGiverCertificate: z.string({
+    required_error: "Kindly select one.",
+  }),
+  experienceInUAE: z
+    .string()
+    .max(1000, "Field must not exceed 1000 characters."),
+  visa: z.string({
+    required_error: "Kindly select one.",
+  }),
+  visaExpireDate: z
+    .date()
+    .refine((value) => value !== null && value !== undefined, {
+      message: "Visa expiration date is required.",
+      path: ["visaExpireDate"],
+    }),
   coverLetter: z
     .string()
-    .min(3, "Skills must be at least 3 characters.")
-    .max(1000, "Skills must not exceed 1000 characters."),
-  // resume: z.object({
-  //   fileName: z.string(),
-  //   fileType: z.string(),
-  //   fileSize: z.number(),
-  // }),
+    .max(1000, "Field must not exceed 1000 characters.")
+    .optional(),
+  imgUrl: z.string().min(1, "Kindly provide us a service image."),
 });
 
 export const pageSchema = z.object({

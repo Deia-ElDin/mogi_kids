@@ -5,19 +5,19 @@ import { useDropzone } from "@uploadthing/react/hooks";
 import { generateClientDropzoneAccept } from "uploadthing/client";
 import { convertFileToUrl } from "@/lib/utils";
 
-type FileUploaderProps = {
+type ImgUploaderProps = {
   imageUrl: string;
   onFieldChange: (value: string) => void;
   setFiles: Dispatch<SetStateAction<File[]>>;
   imgClass?: string;
 };
 
-export function FileUploader({
+export function ImgUploader({
   imageUrl,
   onFieldChange,
   setFiles,
   imgClass,
-}: FileUploaderProps) {
+}: ImgUploaderProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     onFieldChange(convertFileToUrl(acceptedFiles[0]));

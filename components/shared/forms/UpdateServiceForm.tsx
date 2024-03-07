@@ -16,7 +16,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FileUploader } from "../helpers/FileUploader";
+import { ImgUploader } from "../helpers/ImgUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { serviceSchema } from "@/lib/validators";
 import { serviceDefaultValues } from "@/constants";
@@ -125,10 +125,16 @@ const UpdateServiceForm: React.FC<UpdateServiceFormProps> = ({ service }) => {
             <CloseBtn handleClick={handleClose} />
             <Tabs defaultValue="image">
               <TabsList className="mobile-edit-tab">
-                <TabsTrigger value="image" className="label-style flex-1 text-center text-white cursor-pointer">
+                <TabsTrigger
+                  value="image"
+                  className="label-style flex-1 text-center text-white cursor-pointer"
+                >
                   Image
                 </TabsTrigger>
-                <TabsTrigger value="text" className="label-style flex-1 text-center text-white cursor-pointer">
+                <TabsTrigger
+                  value="text"
+                  className="label-style flex-1 text-center text-white cursor-pointer"
+                >
                   Text
                 </TabsTrigger>
               </TabsList>
@@ -140,7 +146,7 @@ const UpdateServiceForm: React.FC<UpdateServiceFormProps> = ({ service }) => {
                     <FormItem>
                       <FormLabel className="label-style">Image</FormLabel>
                       <FormControl>
-                        <FileUploader
+                        <ImgUploader
                           imageUrl={field.value}
                           onFieldChange={field.onChange}
                           setFiles={setFiles}

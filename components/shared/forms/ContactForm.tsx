@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { FileUploader } from "../helpers/FileUploader";
+import { ImgUploader } from "../helpers/ImgUploader";
 import { useUploadThing } from "@/lib/uploadthing";
 import { handleError } from "@/lib/utils";
 import { contactSchema } from "@/lib/validators";
@@ -102,7 +102,7 @@ const ContactForm: React.FC = () => {
                   <FormItem>
                     <FormLabel className="label-style">Contact Icon</FormLabel>
                     <FormControl>
-                      <FileUploader
+                      <ImgUploader
                         imageUrl={field.value}
                         onFieldChange={field.onChange}
                         setFiles={setFiles}

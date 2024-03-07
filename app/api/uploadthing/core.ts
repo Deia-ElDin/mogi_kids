@@ -3,6 +3,11 @@ import { UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 
+const allowedFileTypes = {
+  pdf: { maxFileSize: "1MB" },
+  docx: { maxFileSize: "1MB" },
+  doc: { maxFileSize: "1MB" },
+};
 const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
 // FileRouter for your app, can contain multiple FileRoutes
@@ -29,6 +34,9 @@ export const ourFileRouter = {
       // !!! Whatever is returned here is sent to the client side `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };
     }),
+  pdfUploader: f({
+    pdf: { maxFileSize: "1MB" },
+  }).onUploadComplete((data) => console.log("file", data)),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
