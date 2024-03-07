@@ -65,6 +65,8 @@ export async function POST(req: Request) {
       phone_numbers,
     } = evt.data;
 
+    console.log("User created", evt.data);
+
     const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
@@ -77,6 +79,10 @@ export async function POST(req: Request) {
     };
 
     const { success, data, error } = await createUser(user);
+
+    console.log("success", success);
+    console.log("error", error);
+    console.log("data", data);
 
     if (!success && error) throw new Error(error);
 

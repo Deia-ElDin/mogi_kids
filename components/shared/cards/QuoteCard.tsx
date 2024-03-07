@@ -1,55 +1,126 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { deleteQuote } from "@/lib/actions/quote.actions";
-import { handleError } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
+import { format } from "date-fns";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { getUsername } from "@/lib/utils";
+import { IUser } from "@/lib/database/models/user.model";
 import { IQuote } from "@/lib/database/models/quote.model";
-import Image from "next/image";
-import DeleteBtn from "../btns/DeleteBtn";
+import IconDeleteBtn from "../btns/IconDeleteBtn";
+import BlockBtn from "../btns/BlockBtn";
 
 type QuoteCardParams = {
   quote: IQuote;
+  handleDeleteQuote: (id: string) => void;
+  handleBlockUser: (id: string) => void;
 };
 
-const QuoteCard: React.FC<QuoteCardParams> = ({ quote }) => {
-  const path = usePathname();
+const QuoteCard: React.FC<QuoteCardParams> = ({
+  quote,
+  handleDeleteQuote,
+  handleBlockUser,
+}) => {
+  const {
+    cstName,
+    mobile,
+    email,
+    from,
+    to,
+    numberOfHours,
+    numberOfKids,
+    ageOfKidsFrom,
+    ageOfKidsTo,
+    extraInfo,
+    createdBy,
+  } = quote;
 
-  const { toast } = useToast();
-
-  // const handleDelete = async () => {
-  //   try {
-  //     const { success, error } = await deleteQuote(quote._id);
-
-  //     if (!success && error) throw new Error(error);
-
-  //     toast({ description: "Quotation Deleted Successfully." });
-  //   } catch (error) {
-  //     toast({
-  //       variant: "destructive",
-  //       title: "Uh oh! Something went wrong.",
-  //       description: `Failed to Delete The Contact, ${handleError(error)}`,
-  //     });
-  //   }
-  // };
+  const {
+    _id: creatorId,
+    firstName,
+    lastName,
+    photo,
+  } = createdBy as Partial<IUser>;
 
   return (
-    <Card className="flex flex-col bg-transparent border-none shadow-none w-full">
-      <CardContent className="flex gap-5 items-center ">
-        <p className="label-style">{quote.cstName}</p>
-      </CardContent>
-      {/* {isAdmin && (
-        <CardFooter className="flex items-center gap-3 w-full">
-          <DeleteBtn
-            pageId={contact._id}
-            isAdmin={isAdmin}
-            deletionTarget="Delete Contact"
-            handleClick={handleDelete}
-          />
-        </CardFooter>
-      )} */}
-    </Card>
+    <TableRow>
+      <TableCell colSpan={9} className="my-2 rounded-lg bg-white shadow-inner">
+        <div className="p-4 relative">
+          <div className="flex justify-center">
+            <h1 className="text-center font-bold text-lg">{cstName}</h1>
+            <div className="absolute top-0 right-0">
+              <IconDeleteBtn
+                deletionTarget="Quotation"
+                handleClick={() => handleDeleteQuote(quote._id)}
+              />
+            </div>
+          </div>
+          <div className="border-t border-gray-200 mt-4 pt-4 grid grid-cols-2 gap-4">
+            <div className="flex items-center">
+              <p className="text-sm flex-shrink-0">
+                <strong className="mr-2">From Date:</strong>
+              </p>
+              <p className="text-sm">{format(from, "EEE, dd/MM/yyyy")}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-sm flex-shrink-0">
+                <strong className="mr-2">To Date:</strong>
+              </p>
+              <p className="text-sm">{format(to, "EEE, dd/MM/yyyy")}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-sm flex-shrink-0">
+                <strong className="mr-2">Kids:</strong>
+              </p>
+              <p className="text-sm">{numberOfKids}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-sm flex-shrink-0">
+                <strong className="mr-2">Age of Kids:</strong>
+              </p>
+              <p className="text-sm">
+                {ageOfKidsFrom} to {ageOfKidsTo}
+              </p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-sm flex-shrink-0">
+                <strong className="mr-2">Number of Hours:</strong>
+              </p>
+              <p className="text-sm">{numberOfHours}</p>
+            </div>
+            <div className="flex items-center">
+              <p className="text-sm flex-shrink-0">
+                <strong className="mr-2">Extra Info:</strong>
+              </p>
+              <p className="text-sm">{extraInfo}</p>
+            </div>
+          </div>
+
+          {createdBy && (
+            <>
+              <div className="flex items-center mt-8 border-none rounded-lg p-2 shadow-lg">
+                {photo && (
+                  <img
+                    src={photo}
+                    alt="Customer Image"
+                    className="w-10 h-10 rounded-full mr-4"
+                  />
+                )}
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm">{getUsername(firstName, lastName)}</p>
+                  <p className="text-sm">{email}</p>
+                  <p className="text-sm">{mobile}</p>
+                </div>
+              </div>
+              <div className="mt-2">
+                <BlockBtn
+                  blockText="Block This User"
+                  handleClick={() => handleBlockUser(creatorId!)}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </TableCell>
+    </TableRow>
   );
 };
 

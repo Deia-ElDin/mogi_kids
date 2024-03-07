@@ -69,7 +69,7 @@ export default async function Home() {
         logo={logo}
         gallery={gallery}
         uploadthingDb={uploadthingDb}
-        resend={0}
+        resend={parseInt(dbsSize?.resend || "0")}
       />
       <Welcome
         isAdmin={isAdmin}

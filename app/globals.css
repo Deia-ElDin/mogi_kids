@@ -279,7 +279,7 @@ body {
   }
 
   .tab-trigger {
-    @apply label-style flex-1 text-center cursor-pointer;
+    @apply flex-1 text-center cursor-pointer font-bold text-[14px] leading-[28px] md:text-[18px] md:leading-[34px] lg:text-[20px] lg:leading-[40px] xl:text-[22px] xl:leading-[42px];
   }
 
   .tab-content {

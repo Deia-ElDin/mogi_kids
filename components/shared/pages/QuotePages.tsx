@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -18,18 +18,25 @@ import {
   getCstNameQuotes,
   deleteQuote,
   deleteSelectedQuotes,
+  markQuoteAsSeen,
+  countUnseenQuotes,
 } from "@/lib/actions/quote.actions";
 import { IQuote } from "@/lib/database/models/quote.model";
 import { differenceInDays } from "date-fns";
 import { formatMongoDbDate, sortQuotes, handleError } from "@/lib/utils";
 import { SortKey } from "@/constants";
+import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
-import IconDeleteBtn from "../btns/IconDeleteBtn";
 import DatePicker from "react-datepicker";
 import UserDeleteBtn from "../btns/UserDeleteBtn";
+import QuoteCard from "../cards/QuoteCard";
 import "react-datepicker/dist/react-datepicker.css";
 
-const QuotePages = () => {
+type QuotePagesProps = {
+  setUnseenQuotes: React.Dispatch<React.SetStateAction<number | null>>;
+};
+
+const QuotePages: React.FC<QuotePagesProps> = ({ setUnseenQuotes }) => {
   const limit = 10;
   const [fetchByCstName, setFetchByCstName] = useState<string>("");
   const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
@@ -38,7 +45,7 @@ const QuotePages = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [quotes, setQuotes] = useState<IQuote[] | []>([]);
   const [quotesActions, setQuotesActions] = useState<
-    { _id: string; checked: boolean; deleteBtn: boolean }[]
+    { _id: string; checked: boolean }[]
   >([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedQuotes, setSelectedQuotes] = useState<string[]>([]);
@@ -48,10 +55,6 @@ const QuotePages = () => {
   } | null>(null);
 
   const { toast } = useToast();
-
-  console.log("quotes.length", quotes.length);
-  console.log("quotesActions.length", quotesActions.length);
-  console.log("selectedQuotes.length", selectedQuotes.length);
 
   const handleCstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFetchByCstName(e.target.value);
@@ -94,6 +97,56 @@ const QuotePages = () => {
     }
   };
 
+  const handleBlockUser = (userId: string) => {
+    console.log("Block User", userId);
+  };
+
+  const handleSelectQuote = async (quoteId: string) => {
+    setQuotesActions((prev) =>
+      prev.map((quote) =>
+        quote._id === quoteId ? { ...quote, checked: !quote.checked } : quote
+      )
+    );
+    const isExist = selectedQuotes.find((id) => id === quoteId);
+    setSelectedQuotes((prev) =>
+      isExist ? prev.filter((id) => id !== quoteId) : [...prev, quoteId]
+    );
+
+    const selected = quotes.find((quote) => quote._id === quoteId);
+
+    if (selected && !selected.seen) {
+      const { success, data, error } = await markQuoteAsSeen(quoteId);
+      console.log("data", data);
+
+      if (!success && error) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: `Failed to Update The Quotation, ${handleError(error)}`,
+        });
+      }
+
+      if (data) {
+        setQuotes(
+          quotes.map((quote) => (quote._id === quoteId ? data : quote))
+        );
+      }
+
+      fetchUnseenQuotesNumber();
+    }
+  };
+
+  const handleSelectAll = () => {
+    setSelectedQuotes(quotes.map((quote) => quote._id));
+    setQuotesActions((prev) =>
+      prev.map((quote) => ({
+        ...quote,
+        checked: !selectAll,
+      }))
+    );
+    setSelectAll((prev) => !prev);
+  };
+
   const handleDeleteSelectedQuotes = async () => {
     try {
       const { success, error } = await deleteSelectedQuotes(selectedQuotes);
@@ -131,16 +184,33 @@ const QuotePages = () => {
       data?.map((quote: IQuote) => ({
         _id: quote._id,
         checked: false,
-        deleteBtn: false,
       })) || []
     );
   };
 
-  const fetchAllQuotes = async (page: number) => {
+  const fetchUnseenQuotesNumber = async () => {
+    try {
+      const { success, data, error } = await countUnseenQuotes();
+      if (!success && error) throw new Error(error);
+      if (data) setUnseenQuotes(data);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `${handleError(error)}`,
+      });
+    }
+  };
+
+  const fetchAllQuotes = async () => {
+    if (fetchByCstName) setFetchByCstName("");
+    if (fetchByDay) setFetchByDay(null);
+    if (fetchByMonth) setFetchByMonth(null);
+
     try {
       const { success, data, totalPages, error } = await getAllQuotes({
         limit,
-        page,
+        page: currentPage,
       });
 
       if (!success && error) throw new Error(error);
@@ -186,8 +256,6 @@ const QuotePages = () => {
   };
 
   const fetchDayQuotes = async (day: Date) => {
-    console.log("fetchDayQuotes -> day", format(day, "dd"));
-
     try {
       const { success, data, error } = await getDayQuotes(day);
 
@@ -252,7 +320,8 @@ const QuotePages = () => {
   };
 
   useEffect(() => {
-    fetchAllQuotes(currentPage);
+    fetchAllQuotes();
+    fetchUnseenQuotesNumber();
   }, [currentPage]);
 
   useEffect(() => {
@@ -267,7 +336,6 @@ const QuotePages = () => {
         sortedQuotes?.map((quote: IQuote) => ({
           _id: quote._id,
           checked: false,
-          deleteBtn: false,
         })) || []
       );
     }
@@ -279,31 +347,6 @@ const QuotePages = () => {
     else if (fetchByMonth) fetchMonthQuotes(fetchByMonth);
   }, [fetchByCstName, fetchByDay, fetchByMonth]);
 
-  const handleSelectQuote = (quoteId: string) => {
-    setQuotesActions((prev) =>
-      prev.map((quote) =>
-        quote._id === quoteId
-          ? { ...quote, checked: !quote.checked, deleteBtn: !quote.checked }
-          : quote
-      )
-    );
-    const isExist = selectedQuotes.find((id) => id === quoteId);
-    setSelectedQuotes((prev) =>
-      isExist ? prev.filter((id) => id !== quoteId) : [...prev, quoteId]
-    );
-  };
-
-  const handleSelectAll = () => {
-    setQuotesActions((prev) =>
-      prev.map((quote) => ({
-        ...quote,
-        checked: !selectAll,
-        deleteBtn: !selectAll,
-      }))
-    );
-    setSelectAll((prev) => !prev);
-  };
-
   const pageNumbers = [];
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
 
@@ -314,7 +357,10 @@ const QuotePages = () => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
-        <h1 className="text-lg font-bold">Fetch Quotation</h1>
+        <UpdateBtn
+          updateTarget="Fetch All Quotation"
+          handleClick={fetchAllQuotes}
+        />
         <div className="flex flex-col md:flex-row justify-between gap-2">
           <input
             type="text"
@@ -390,7 +436,6 @@ const QuotePages = () => {
             >
               Date
             </TableHead>
-            {isSelected && <TableHead className="table-head">Delete</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -410,44 +455,45 @@ const QuotePages = () => {
               differenceInDays(new Date(to), new Date(from)) + 1;
             const totalHours = totalDays * parseInt(numberOfHours);
             return (
-              <TableRow key={quote._id} className="cursor-pointer">
-                <TableCell className="table-cell text-center">
-                  <input
-                    type="checkbox"
-                    className="h-[18px] w-[18px]"
-                    checked={quotesActions[index].checked}
-                    onChange={() => handleSelectQuote(quote._id)}
-                  />
-                </TableCell>
-                <TableCell className="table-cell">{cstName}</TableCell>
-                <TableCell
-                  className={`table-cell ${
-                    location === "Abu Dhabi" ? "" : "text-red-500"
-                  }`}
-                >
-                  {location}
-                </TableCell>
-                <TableCell className="table-cell">{totalDays}</TableCell>
-                <TableCell className="table-cell">{numberOfHours}</TableCell>
-                <TableCell className="table-cell">{numberOfKids}</TableCell>
-                <TableCell className="table-cell">
-                  {ageOfKidsFrom === ageOfKidsTo
-                    ? ageOfKidsFrom
-                    : `${ageOfKidsFrom} - ${ageOfKidsTo}`}
-                </TableCell>
-                <TableCell className="table-cell">{totalHours}</TableCell>
-                <TableCell className="table-cell">
-                  {formatMongoDbDate(createdAt)}
-                </TableCell>
-                <TableCell className="px-0 py-3 flex justify-center items-center">
-                  {quotesActions[index].checked && (
-                    <IconDeleteBtn
-                      deletionTarget="Quotation"
-                      handleClick={() => handleDeleteQuote(quote._id)}
+              <React.Fragment key={quote._id}>
+                <TableRow className={`${quote.seen ? "" : "text-blue-500"}`}>
+                  <TableCell className="table-cell text-center ">
+                    <input
+                      type="checkbox"
+                      className="h-[18px] w-[18px] cursor-pointer"
+                      checked={quotesActions[index].checked}
+                      onChange={() => handleSelectQuote(quote._id)}
                     />
-                  )}
-                </TableCell>
-              </TableRow>
+                  </TableCell>
+                  <TableCell className="table-cell">{cstName}</TableCell>
+                  <TableCell
+                    className={`table-cell ${
+                      location === "Abu Dhabi" ? "" : "text-red-500"
+                    }`}
+                  >
+                    {location}
+                  </TableCell>
+                  <TableCell className="table-cell">{totalDays}</TableCell>
+                  <TableCell className="table-cell">{numberOfHours}</TableCell>
+                  <TableCell className="table-cell">{numberOfKids}</TableCell>
+                  <TableCell className="table-cell">
+                    {ageOfKidsFrom === ageOfKidsTo
+                      ? ageOfKidsFrom
+                      : `${ageOfKidsFrom} - ${ageOfKidsTo}`}
+                  </TableCell>
+                  <TableCell className="table-cell">{totalHours}</TableCell>
+                  <TableCell className="table-cell">
+                    {formatMongoDbDate(createdAt)}
+                  </TableCell>
+                </TableRow>
+                {quotesActions[index].checked && (
+                  <QuoteCard
+                    quote={quote}
+                    handleDeleteQuote={handleDeleteQuote}
+                    handleBlockUser={handleBlockUser}
+                  />
+                )}
+              </React.Fragment>
             );
           })}
         </TableBody>

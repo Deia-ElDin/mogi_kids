@@ -4,9 +4,16 @@ import { connectToDb } from "../database";
 import { updateDbSize } from "./db.actions";
 import { CreateQuoteParams } from "@/types";
 import { formatDate } from "@/lib/utils";
-import { GetALLQuotesParams } from "@/types";
+import { getAllUnseenQuotesParams } from "@/types";
 import { handleError } from "../utils";
+import { revalidatePath } from "next/cache";
 import Quote, { IQuote } from "../database/models/quote.model";
+
+type CountResult = {
+  success: boolean;
+  data: number | null;
+  error: string | null;
+};
 
 type GetAllResult = {
   success: boolean;
@@ -27,10 +34,27 @@ type DeleteResult = {
   error: string | null;
 };
 
+export async function countUnseenQuotes(): Promise<CountResult> {
+  try {
+    await connectToDb();
+
+    const count = await Quote.countDocuments({ seen: false });
+
+    revalidatePath("/");
+    return { success: true, data: count, error: null };
+  } catch (error) {
+    return {
+      success: false,
+      data: null,
+      error: handleError("Failed to count unseen quotes"),
+    };
+  }
+}
+
 export async function getAllQuotes({
   limit = 10,
   page = 1,
-}: GetALLQuotesParams): Promise<GetAllResult> {
+}: getAllUnseenQuotesParams): Promise<GetAllResult> {
   try {
     await connectToDb();
 
@@ -40,9 +64,16 @@ export async function getAllQuotes({
     const quotes = await Quote.find(conditions)
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
-      .limit(limit);
+      .limit(limit)
+      .populate({
+        path: "createdBy",
+        model: "User",
+        select: "_id firstName lastName photo",
+      });
 
-    if (!quotes) throw new Error("Failed to get the quotes.");
+    if (!quotes) throw new Error("Failed to fetch the quotations.");
+
+    if (quotes.length === 0) return { success: true, data: [], error: null };
 
     const totalPages = Math.ceil(
       (await Quote.countDocuments(conditions)) / limit
@@ -63,9 +94,15 @@ export const getCstNameQuotes = async (
     await connectToDb();
 
     const regex = new RegExp(`^${cstName}`, "i");
-    const cstQuotes = await Quote.find({ cstName: regex }).sort({
-      createdAt: "desc",
-    });
+    const cstQuotes = await Quote.find({ cstName: regex })
+      .sort({
+        createdAt: "desc",
+      })
+      .populate({
+        path: "createdBy",
+        model: "User",
+        select: "_id firstName lastName photo",
+      });
 
     if (!cstQuotes)
       throw new Error(`Failed to get quotes for customer: ${cstName}.`);
@@ -91,7 +128,13 @@ export const getDayQuotes = async (
 
     const todayQuotes = await Quote.find({
       createdAt: { $gte: day, $lt: endOfTheDay },
-    }).sort({ createdAt: "desc" });
+    })
+      .sort({ createdAt: "desc" })
+      .populate({
+        path: "createdBy",
+        model: "User",
+        select: "_id firstName lastName photo",
+      });
 
     if (!todayQuotes)
       throw new Error(`Failed to get the ${formatDate(String(day))} quotes.`);
@@ -117,7 +160,13 @@ export const getMonthQuotes = async (date: Date): Promise<GetAllResult> => {
 
     const monthQuotes = await Quote.find({
       createdAt: { $gte: startDate, $lte: endDate },
-    }).sort({ createdAt: "desc" });
+    })
+      .sort({ createdAt: "desc" })
+      .populate({
+        path: "createdBy",
+        model: "User",
+        select: "_id firstName lastName photo",
+      });
 
     if (!monthQuotes)
       throw new Error(`Failed to get quotes for ${month}-${year}.`);
@@ -134,8 +183,6 @@ export const getMonthQuotes = async (date: Date): Promise<GetAllResult> => {
 export async function createQuote(
   params: CreateQuoteParams
 ): Promise<DefaultResult> {
-  console.log("params", params);
-
   try {
     await connectToDb();
 
@@ -150,6 +197,25 @@ export async function createQuote(
     if (!dbSuccess && dbError) throw new Error(dbError);
 
     const data = JSON.parse(JSON.stringify(newQuote));
+
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
+  try {
+    const seenQuote = await Quote.findByIdAndUpdate(
+      quoteId,
+      { seen: true },
+      { new: true }
+    );
+
+    if (!seenQuote)
+      throw new Error("Failed to change the seen status of this quotation.");
+
+    const data = JSON.parse(JSON.stringify(seenQuote));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -192,20 +258,3 @@ export const deleteSelectedQuotes = async (
     return { success: false, data: null, error: handleError(error) };
   }
 };
-
-// export async function deleteAllQuotes(): Promise<DeleteResult> {
-//   try {
-//     await connectToDb();
-
-//     const deletedQuotes = await Quote.deleteMany();
-
-//     if (!deletedQuotes)
-//       throw new Error(
-//         "Failed to find the quotes or the quotes already deleted."
-//       );
-
-//     return { success: true, data: null, error: null };
-//   } catch (error) {
-//     return { success: false, data: null, error: handleError(error) };
-//   }
-// }

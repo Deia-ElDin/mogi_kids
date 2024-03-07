@@ -177,7 +177,7 @@ export async function deleteComment(
 
     if (!parentReview) throw new Error("Couldn't update the parent review.");
 
-    revalidatePath(path);
+    if (path) revalidatePath(path);
 
     return { success: true, data: null, error: null };
   } catch (error) {

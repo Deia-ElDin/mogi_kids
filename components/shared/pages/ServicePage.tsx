@@ -12,12 +12,12 @@ import Text from "@/components/shared/helpers/Text";
 import DeleteBtn from "@/components/shared/btns/DeleteBtn";
 import UpdateServiceForm from "../forms/UpdateServiceForm";
 
-type ServiceRouteProps = {
+type ServicePageProps = {
   isAdmin: boolean;
   service: IService;
 };
 
-const ServiceRoute: React.FC<ServiceRouteProps> = ({ isAdmin, service }) => {
+const ServicePage: React.FC<ServicePageProps> = ({ isAdmin, service }) => {
   const { toast } = useToast();
   const pathname = usePathname();
   const router = useRouter();
@@ -70,4 +70,4 @@ const ServiceRoute: React.FC<ServiceRouteProps> = ({ isAdmin, service }) => {
   );
 };
 
-export default ServiceRoute;
+export default ServicePage;

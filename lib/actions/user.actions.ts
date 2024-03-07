@@ -5,7 +5,9 @@ import { CreateUserParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User, { IUser } from "../database/models/user.model";
+import Quote from "../database/models/quote.model";
 import Review from "../database/models/review.model";
+import Comment from "../database/models/comment.model";
 
 type GetALLResult = {
   success: boolean;
@@ -19,7 +21,7 @@ type DefaultResult = {
   error: string | null;
 };
 
-type DeleteResult = {
+type BlockResult = {
   success: boolean;
   data: null;
   error: string | null;
@@ -120,6 +122,37 @@ export async function getUserByClerkId(
 
     revalidatePath("/");
     return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function blockUserById(userId: string): Promise<BlockResult> {
+  try {
+    await connectToDb();
+
+    const blockedUser = await User.findByIdAndUpdate(
+      userId,
+      { blocked: true },
+      { new: true }
+    );
+
+    if (!blockedUser) throw new Error("Failed to block the user.");
+
+    await Quote.deleteMany({ createdBy: userId });
+
+    await Review.deleteMany({ createdBy: userId });
+
+    const comments = await Comment.find({ createdBy: userId });
+
+    for (const comment of comments) {
+      await Review.updateOne(
+        { _id: comment.review },
+        { $pull: { comments: comment._id } }
+      );
+      await Comment.findByIdAndDelete(comment._id);
+    }
+    return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

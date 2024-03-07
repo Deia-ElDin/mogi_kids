@@ -19,7 +19,7 @@ const Header = () => {
   const { user: clerkUser } = useUser();
   const [user, setUser] = useState<IUser | null>(null);
   const [logo, setLogo] = useState<ILogo | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isActiveMenu, setIsActiveMenu] = useState(false);
   const pathname = usePathname();
   const { toast } = useToast();
 
@@ -32,14 +32,14 @@ const Header = () => {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
-          description: handleError(error),
+          description: `Failed to fetch The Logo, ${handleError(error)}`,
         });
       }
     };
 
     fetchLogo();
 
-    const handleResize = () => setIsOpen(false);
+    const handleResize = () => setIsActiveMenu(false);
 
     window.addEventListener("resize", handleResize);
 
@@ -69,7 +69,7 @@ const Header = () => {
             <img
               src={logo?.imgUrl || logoImg}
               alt="Logo"
-              className="cursor-pointer w-[160px] h-100%"
+              className="cursor-pointer w-[140px] h-100%"
             />
           </Link>
         </div>
@@ -124,12 +124,12 @@ const Header = () => {
           </Link>
           <div className="flex justify-center gap-3 items-center">
             <Image
-              src={`/assets/icons/${isOpen ? "menu-on" : "menu"}.svg`}
+              src={`/assets/icons/${isActiveMenu ? "menu-on" : "menu"}.svg`}
               alt="Menu"
               width={30}
               height={30}
               className="cursor-pointer"
-              onClick={() => setIsOpen((prev) => !prev)}
+              onClick={() => setIsActiveMenu((prev) => !prev)}
             />
             <SignedIn>
               <UserButton afterSignOutUrl="/" />
@@ -147,7 +147,7 @@ const Header = () => {
             </SignedOut>
           </div>
         </div>
-        {isOpen && (
+        {isActiveMenu && (
           <nav className="flex flex-col md:flex-row md:justify-center md:my-5 items-center gap-6 transition duration-600 ease-out">
             {headerLinks.map((link) => (
               <Button
@@ -156,7 +156,7 @@ const Header = () => {
                 className={`btn ${
                   pathname === link.route && "active-btn w-fit"
                 }`}
-                onClick={() => setIsOpen(false)}
+                onClick={() => setIsActiveMenu(false)}
               >
                 <Link href={link.route}>{link.label}</Link>
               </Button>
@@ -167,7 +167,7 @@ const Header = () => {
                 className={`btn ${
                   pathname === `/users/${user._id}` ? "active-btn" : ""
                 }`}
-                onClick={() => setIsOpen(false)}
+                onClick={() => setIsActiveMenu(false)}
               >
                 <Link href={`/users/${user._id}`}>
                   {user.firstName.length < 15 ? user.firstName : "Hi"}

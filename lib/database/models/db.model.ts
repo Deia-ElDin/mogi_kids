@@ -2,10 +2,10 @@ import { Document, Schema, models, model } from "mongoose";
 
 export interface IDb extends Document {
   _id: string;
-  resend?: string;
-  uploadthing?: string;
-  mongo?: string;
-  clerk?: string;
+  resend: string;
+  uploadthing: string;
+  mongo: string;
+  clerk: string;
   today: Date;
 }
 

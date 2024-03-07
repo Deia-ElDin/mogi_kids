@@ -87,7 +87,7 @@ export type UpdateRecordParams = {
 };
 
 // Quotes
-export type GetALLQuotesParams = {
+export type getAllUnseenQuotesParams = {
   page?: number;
   limit?: number;
 };
@@ -130,7 +130,7 @@ export type UpdateCommentParams = {
 export type DeleteCommentParams = {
   commentId: string;
   reviewId: string;
-  path: string;
+  path?: string;
 };
 
 export type CommentLikesParams = {
@@ -200,11 +200,10 @@ export type CreateReportParams = {
   createdBy: string | null;
 };
 
-
-// DB Params 
+// DB Params
 export type DbParams = {
   resend?: string;
   uploadthing?: string;
   mongo?: string;
   clerk?: string;
-}
+};

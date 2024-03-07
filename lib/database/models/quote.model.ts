@@ -1,4 +1,5 @@
 import { Document, Schema, models, model, Types } from "mongoose";
+import { IUser } from "./user.model";
 
 export interface IQuote extends Document {
   _id: string;
@@ -19,8 +20,9 @@ export interface IQuote extends Document {
   };
   createdAt: string;
   updatedAt: string;
+  blocked: boolean;
   seen: boolean;
-  createdBy: Types.ObjectId | string;
+  createdBy: Types.ObjectId | string | Partial<IUser>;
 }
 
 const QuoteSchema = new Schema(

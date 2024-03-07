@@ -1,13 +1,13 @@
 import { auth } from "@clerk/nextjs";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getServiceById } from "@/lib/actions/service.actions";
-import ServiceRoute from "@/components/shared/routes/ServiceRoute";
+import ServicePage from "@/components/shared/pages/ServicePage";
 
 type ServicePageProps = {
   params: { id: string };
 };
 
-const ServicePage: React.FC<ServicePageProps> = async ({ params: { id } }) => {
+const ServiceRoute: React.FC<ServicePageProps> = async ({ params: { id } }) => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId as string;
   const userResult = await getUserByUserId(userId);
@@ -19,7 +19,7 @@ const ServicePage: React.FC<ServicePageProps> = async ({ params: { id } }) => {
 
   // 404
   if (!service) return;
-  return <ServiceRoute isAdmin={isAdmin} service={service} />;
+  return <ServicePage isAdmin={isAdmin} service={service} />;
 };
 
-export default ServicePage;
+export default ServiceRoute;

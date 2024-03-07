@@ -5,12 +5,12 @@ import Text from "../helpers/Text";
 import ReviewForm from "../forms/ReviewForm";
 import ReviewsSwiper from "../swiper/ReviewsSwiper";
 
-type UserRouteType = {
+type UserPageType = {
   user: IUser;
   logo: ILogo | null;
 };
 
-const UserRoute: React.FC<UserRouteType> = ({ user, logo }) => {
+const UserPage: React.FC<UserPageType> = ({ user, logo }) => {
   const WelcomeText = () =>
     userWelcomePageText.map((text) => <Text key={text} text={text} />);
 
@@ -33,4 +33,4 @@ const UserRoute: React.FC<UserRouteType> = ({ user, logo }) => {
   );
 };
 
-export default UserRoute;
+export default UserPage;

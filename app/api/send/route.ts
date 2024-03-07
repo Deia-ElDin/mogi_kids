@@ -7,6 +7,7 @@ import { getDayQuotes } from "@/lib/actions/quote.actions";
 import { createQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
 import { EmailTemplate } from "@/components/email-template";
+import { quoteData } from "@/constants";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -30,8 +31,6 @@ export async function POST(NextRequest: any) {
     const user = userResult.success ? userResult.data || null : null;
     const logo = logoResult.success ? logoResult.data || null : null;
     const body = await NextRequest.json();
-
-    console.log("body", body);
 
     const { data, error: resendError } = await resend.emails.send({
       from: "Resend Email Service <onboarding@resend.dev>",
