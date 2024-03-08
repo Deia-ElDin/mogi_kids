@@ -3,8 +3,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getLogo } from "@/lib/actions/logo.actions";
-import { getDayQuotes } from "@/lib/actions/quote.actions";
-import { createQuote } from "@/lib/actions/quote.actions";
+import { getDayQuotes, updateQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
 import { EmailTemplate } from "@/components/email-template";
 
@@ -41,15 +40,16 @@ export async function POST(NextRequest: any) {
     if (resendError)
       throw new Error(resendError.message ?? "Couldn't send the email.");
 
-    const { quoteValues } = body;
+    const { quoteId } = body;
 
-    const { success, error: mongoDbError } = await createQuote({
-      ...quoteValues,
+    if (!quoteId) throw new Error("Failed to attach the Quotation ID.");
+
+    const { success, error: mongoDbError } = await updateQuote({
+      quoteId,
       emailService: {
         id: data?.id ?? null,
         error: resendError ?? null,
       },
-      createdBy: user ? user._id : null,
     });
 
     if (!success && mongoDbError) throw new Error(mongoDbError);

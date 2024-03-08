@@ -5,7 +5,7 @@ export interface IQuote extends Document {
   _id: string;
   cstName: string;
   mobile: string;
-  location?: string;
+  location: string;
   email: string;
   from: Date;
   to: Date;

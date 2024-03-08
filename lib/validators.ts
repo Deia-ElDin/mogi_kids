@@ -48,7 +48,10 @@ export const quoteSchema = z.object({
         ),
       "Invalid mobile number."
     ),
-  location: z.string().max(150, "Location must not exceed 60 characters."),
+  location: z
+    .string()
+    .min(1, "Kindly select your location.")
+    .max(150, "Location must not exceed 60 characters."),
   email: z
     .string()
     .min(1, "Kindly provide us your email address.")
@@ -150,7 +153,7 @@ export const careerSchema = z.object({
     ),
   applyingFor: z
     .string()
-    .min(1, "Kindly tell us know which job you are applying for.")
+    .min(1, "Kindly tell us which job you are applying for.")
     .max(150, "Field must not exceed 150 characters."),
   workingAt: z
     .string()
@@ -168,44 +171,36 @@ export const careerSchema = z.object({
     if (value !== null && value !== undefined) {
       const today = new Date();
       const maxDate = addMonths(today, 2);
-      return isAfter(value, new Date()) && isAfter(maxDate, value);
+      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
     }
   }, "Joining date can't start in the past or exceed 2 months from now."),
-  gender: z.string({
-    required_error: "Please select your gender.",
-  }),
-  education: z.string({
-    required_error: "Please select your education level.",
-  }),
-  dhaCertificate: z.string({
-    required_error: "Kindly select one.",
-  }),
-  careGiverCertificate: z.string({
-    required_error: "Kindly select one.",
-  }),
-  experienceInUAE: z
+  gender: z.string().min(1, "Kindly select your gender."),
+  education: z.string().min(1, "Kindly select your education level."),
+  dhaCertificate: z.string().min(1, "Kindly select one of the options below."),
+  careGiverCertificate: z
     .string()
-    .max(1000, "Field must not exceed 1000 characters."),
-  visa: z.string({
-    required_error: "Kindly select one.",
-  }),
+    .min(1, "Kindly select one of the options below."),
+  experienceInUAE: z.array(z.string()).length(5),
+  visa: z.string().min(1, "Kindly select one of the options below."),
   visaExpireDate: z
     .date()
     .refine((value) => value !== null && value !== undefined, {
       message: "Visa expiration date is required.",
-      path: ["visaExpireDate"],
+    })
+    .refine((value) => !isNaN(value.getTime()), {
+      message: "Visa expiration date must be a valid date.",
     }),
   coverLetter: z
     .string()
     .max(1000, "Field must not exceed 1000 characters.")
     .optional(),
-  imgUrl: z.string().min(1, "Kindly provide us a service image."),
+  imgUrl: z.string().min(1, "Kindly attach your CV."),
 });
 
 export const pageSchema = z.object({
   pageName: z.string(),
   pageTitle: z.string().min(1, "Kindly provide us a page title."),
-  pageContent: z.string(),
+  pageContent: z.string().optional(),
 });
 
 export const serviceSchema = z.object({

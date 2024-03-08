@@ -1,3 +1,5 @@
+import { type } from "os";
+
 // User Params
 export type CreateUserParams = {
   clerkId: string;
@@ -87,7 +89,39 @@ export type UpdateRecordParams = {
 };
 
 // Quotes
-export type getAllUnseenQuotesParams = {
+export type CreateQuoteParams = {
+  cstName: string;
+  mobile: string;
+  location: string;
+  email: string;
+  from: Date;
+  to: Date;
+  numberOfHours: string;
+  numberOfKids: string;
+  ageOfKidsFrom: string;
+  ageOfKidsTo: string;
+  extraInfo?: string;
+  createdBy?: string | null;
+  emailService?: {
+    id: string | null;
+    error: string | null;
+  };
+};
+
+export type UpdateQuoteParams = {
+  quoteId: string;
+  emailService: { id: string | null; error: string | null };
+};
+
+export type UnseenQuotesParams = {
+  page?: number;
+  limit?: number;
+};
+
+// Application Params
+export type CreateApplicationParams = {};
+
+export type UnseenApplicationsParams = {
   page?: number;
   limit?: number;
 };
@@ -152,26 +186,6 @@ export type UpdateContactsParams = {
   imgSize?: number;
   content: string;
   newImg?: boolean;
-};
-
-// Quote Params
-export type CreateQuoteParams = {
-  cstName: string;
-  mobile: string;
-  location?: string;
-  email: string;
-  from: Date;
-  to: Date;
-  numberOfHours: string;
-  numberOfKids: string;
-  ageOfKidsFrom: string;
-  ageOfKidsTo: string;
-  extraInfo?: string;
-  createdBy?: string | null;
-  emailService: {
-    id: string | null;
-    error: string | null;
-  };
 };
 
 // About Us Params

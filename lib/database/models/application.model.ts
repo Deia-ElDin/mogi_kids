@@ -1,6 +1,6 @@
 import { Document, Schema, models, model, Types } from "mongoose";
 
-export interface ICareer extends Document {
+export interface IApplication extends Document {
   _id: string;
   fullName: string;
   email: string;
@@ -12,10 +12,10 @@ export interface ICareer extends Document {
   joinDate: Date;
   gender: string;
   education: string;
-  dhaCertificate: boolean;
-  careGiverCertificate: boolean;
-  experienceInUAE: string;
-  visa: boolean;
+  dhaCertificate: string;
+  careGiverCertificate: string;
+  experienceInUAE: string[];
+  visa: string;
   visaExpireDate: Date;
   coverLetter: string;
   imgUrl: string;
@@ -26,7 +26,7 @@ export interface ICareer extends Document {
   updatedAt: string;
   createdBy: Types.ObjectId | string;
 }
-const CareerSchema = new Schema<ICareer>(
+const ApplicationSchema = new Schema<IApplication>(
   {
     fullName: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
@@ -38,10 +38,10 @@ const CareerSchema = new Schema<ICareer>(
     joinDate: { type: Date, required: true },
     gender: { type: String, required: true },
     education: { type: String, required: true },
-    dhaCertificate: { type: Boolean, required: true },
-    careGiverCertificate: { type: Boolean, required: true },
-    experienceInUAE: { type: String, required: true, trim: true },
-    visa: { type: Boolean, required: true },
+    dhaCertificate: { type: String, required: true },
+    careGiverCertificate: { type: String, required: true },
+    experienceInUAE: { type: [String], required: true, trim: true },
+    visa: { type: String, required: true },
     visaExpireDate: { type: Date, required: true },
     coverLetter: { type: String, trim: true },
     imgUrl: { type: String, required: true },
@@ -51,3 +51,8 @@ const CareerSchema = new Schema<ICareer>(
   },
   { timestamps: true }
 );
+
+const Application =
+  models.Application || model<IApplication>("Application", ApplicationSchema);
+
+export default Application;

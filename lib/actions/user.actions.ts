@@ -5,6 +5,7 @@ import { CreateUserParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User, { IUser } from "../database/models/user.model";
+import Career from "../database/models/application.model";
 import Quote from "../database/models/quote.model";
 import Review from "../database/models/review.model";
 import Comment from "../database/models/comment.model";
@@ -127,7 +128,7 @@ export async function getUserByClerkId(
   }
 }
 
-export async function blockUserById(userId: string): Promise<BlockResult> {
+export async function blockUser(userId: string): Promise<BlockResult> {
   try {
     await connectToDb();
 
@@ -139,12 +140,11 @@ export async function blockUserById(userId: string): Promise<BlockResult> {
 
     if (!blockedUser) throw new Error("Failed to block the user.");
 
+    await Career.deleteMany({ createdBy: userId });
     await Quote.deleteMany({ createdBy: userId });
-
     await Review.deleteMany({ createdBy: userId });
 
     const comments = await Comment.find({ createdBy: userId });
-
     for (const comment of comments) {
       await Review.updateOne(
         { _id: comment.review },
@@ -152,6 +152,7 @@ export async function blockUserById(userId: string): Promise<BlockResult> {
       );
       await Comment.findByIdAndDelete(comment._id);
     }
+
     return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

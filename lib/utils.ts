@@ -194,7 +194,6 @@ export const sortQuotes = (
     sortedArray.sort((a, b) => {
       const aValue = parseInt(a.ageOfKidsFrom);
       const bValue = parseInt(b.ageOfKidsFrom);
-      console.log("aValue", aValue);
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
   } else if (key === SortKey.TOTAL_HOURS) {
@@ -211,7 +210,6 @@ export const sortQuotes = (
     sortedArray.sort((a, b) => {
       const aValue = new Date(a.createdAt);
       const bValue = new Date(b.createdAt);
-      console.log("aValue", aValue);
 
       return direction === "ascending"
         ? Number(aValue) - Number(bValue)

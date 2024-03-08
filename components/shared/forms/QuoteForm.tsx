@@ -26,15 +26,18 @@ import { handleError, onlyPositiveValues } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { SendQuoteToast } from "../toasts";
 import { ILogo } from "@/lib/database/models/logo.model";
+import { IUser } from "@/lib/database/models/user.model";
+import { createQuote } from "@/lib/actions/quote.actions";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
 
 type QuoteForm = {
   logo: ILogo | null;
+  user: IUser | null;
 };
 
-const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
+const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof quoteSchema>>({
@@ -44,21 +47,31 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
 
   async function onSubmit(values: z.infer<typeof quoteSchema>) {
     try {
-      const response = await fetch("/api/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quoteValues: values }),
+      const { success, data, error } = await createQuote({
+        ...values,
+        createdBy: user ? user._id : null,
       });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        if (responseData.success) {
-          // form.reset();
-          toast({ description: <SendQuoteToast logo={logo} /> });
-        } else throw new Error(responseData.error);
-      } else throw new Error(`Response Status: ${response.status}`);
+      if (!success && error) throw new Error(error);
+
+      if (success && data) {
+        form.reset();
+
+        const response = await fetch("/api/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ quoteValues: values, quoteId: data._id }),
+        });
+
+        if (response.ok) {
+          const responseData = await response.json();
+          if (responseData.success)
+            toast({ description: <SendQuoteToast logo={logo} /> });
+          else throw new Error(responseData.error);
+        } else throw new Error(`Response Status: ${response.status}`);
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -319,4 +332,3 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
 };
 
 export default QuoteForm;
-

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUploadThing } from "@/lib/uploadthing";
+import { useToast } from "@/components/ui/use-toast";
 import { useForm, useFormContext } from "react-hook-form";
 import { careerSchema } from "@/lib/validators";
 import {
@@ -20,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { careerDefaultValues } from "@/constants";
 import { toCap, handleError } from "@/lib/utils";
 import { PdfUploader } from "../helpers/PdfUploader";
+import { createApplication } from "@/lib/actions/application.actions";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
@@ -33,11 +35,17 @@ type InputFieldProps = {
 const CareerForm = () => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("pdfUploader");
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof careerSchema>>({
     resolver: zodResolver(careerSchema),
     defaultValues: careerDefaultValues,
   });
+
+  const handleClose = () => {
+    form.reset();
+    setFiles([]);
+  };
 
   async function onSubmit(values: z.infer<typeof careerSchema>) {
     let uploadedImgUrl = values.imgUrl;
@@ -47,38 +55,39 @@ const CareerForm = () => {
         const uploadedImgs = await startUpload(files);
 
         if (!uploadedImgs)
-          throw new Error("Failed to add the image to uploadthing database.");
+          throw new Error("Failed to add your resume to uploadthing database.");
 
         uploadedImgUrl = uploadedImgs[0].url;
-
-        // const { success, error } = img?._id
-        //   ? await updateGalleryImg({
-        //       _id: img?._id,
-        //       imgUrl: uploadedImgUrl,
-        //       imgSize: uploadedImgs[0].size,
-        //     })
-        //   : await createGalleryImg({
-        //       imgUrl: uploadedImgUrl,
-        //       imgSize: uploadedImgs[0].size,
-        //     });
-
-        // toast({
-        //   description: `Gallery ${
-        //     gallery.length > 0 ? "Updated" : "Created"
-        //   } Successfully`,
+        console.log("values", values);
+        // const response = await fetch("/api/send", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({ quoteValues: values }),
         // });
 
-        // if (success) handleClose();
-        // else if (error) throw new Error(error);
+        // if (response.ok) {
+        //   const responseData = await response.json();
+        //   if (responseData.success) {
+        //     // form.reset();
+        //     toast({ description: <SendQuoteToast logo={logo} /> });
+        //   } else throw new Error(responseData.error);
+        // } else throw new Error(`Response Status: ${response.status}`);
+
+        const { success, error } = await createApplication({ ...values });
+
+        toast({ description: "Application Created Successfully." });
+
+        if (success) handleClose();
+        else if (error) throw new Error(error);
       }
     } catch (error) {
-      // toast({
-      //   variant: "destructive",
-      //   title: "Uh oh! Something went wrong.",
-      //   description: `Failed to Create The Gallery Image, ${handleError(
-      //     error
-      //   )}`,
-      // });
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Create The Application, ${handleError(error)}`,
+      });
     }
   }
 
@@ -121,7 +130,7 @@ const CareerForm = () => {
                 selected={field.value}
                 onChange={(date: Date) => field.onChange(date)}
                 dateFormat="dd-MM-yyyy"
-                className="input-style text-style w-full"
+                className="input-style text-style w-full p-0"
               />
             </FormControl>
             <FormMessage />
@@ -180,6 +189,54 @@ const CareerForm = () => {
     );
   };
 
+  const ExperienceInputField: React.FC<InputFieldProps> = ({ name, label }) => {
+    const { control } = useFormContext();
+    const [inputs, setInputs] = useState<string[]>(
+      form.getValues().experienceInUAE
+    );
+
+    const handleExperienceInputChange = (index: number, value: string) => {
+      const updatedInputs = [...inputs];
+      updatedInputs[index] = value;
+      setInputs(updatedInputs);
+    };
+
+    useEffect(() => {
+      form.setValue("experienceInUAE", inputs);
+    }, [inputs]);
+
+    return (
+      <FormField
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <FormItem className="col-span-2">
+            <FormLabel className="label-style">
+              {label
+                ? label.includes("UAE")
+                  ? label
+                  : label.toUpperCase()
+                : name.toUpperCase()}
+            </FormLabel>
+            {inputs.map((value, index) => (
+              <FormControl key={index}>
+                <Input
+                  value={value}
+                  onChange={(e) =>
+                    handleExperienceInputChange(index, e.target.value)
+                  }
+                  placeholder={`${index + 1}.`}
+                  className="input-style text-style2 text-left"
+                />
+              </FormControl>
+            ))}
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    );
+  };
+
   const TextAreaField: React.FC<InputFieldProps> = ({ name, label }) => {
     const { control } = useFormContext();
 
@@ -220,8 +277,8 @@ const CareerForm = () => {
               <PdfUploader
                 imageUrl={field.value}
                 onFieldChange={field.onChange}
+                files={files}
                 setFiles={setFiles}
-                imgClass="max-w-[300px] max-h-[300px]"
               />
             </FormControl>
             <FormMessage />
@@ -269,12 +326,12 @@ const CareerForm = () => {
         />
         <RadioInputField
           name="dhaCertificate"
-          label="Have A Valid DHA Certificate Or Eligibility?"
+          label="Have A Valid DHA Certificate?"
           options={["Yes", "No"]}
         />
         <RadioInputField
           name="careGiverCertificate"
-          label="Have a valid Care Giver certificate or eligibility?"
+          label="Have a valid Care Giver certificate?"
           options={["Yes", "No"]}
         />
         <RadioInputField
@@ -283,350 +340,13 @@ const CareerForm = () => {
           options={["Yes", "No"]}
         />
         <DateInputField name="visaExpireDate" label="Visa Expiry Date" />
-        <TextAreaField name="experienceInUAE" label="Experience In UAE" />
+        <ExperienceInputField
+          name="experienceInUAE"
+          label="Experience In UAE"
+        />
         <TextAreaField name="coverLetter" />
         <CvField />
-        {/* <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">Email address</FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="mobile"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">Mobile number</FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="applyingFor"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">Applying for</FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="workingAt"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">
-                Currently working at
-              </FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="previousSalary"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">
-                Current / Previous Salary
-              </FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="expectedSalary"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">Expected Salary</FormLabel>
-              <FormControl>
-                <Input {...field} className="input-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="joinDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">
-                Expected joining date
-              </FormLabel>
-              <FormControl>
-                <DatePicker
-                  selected={field.value}
-                  onChange={(date: Date) => field.onChange(date)}
-                  dateFormat="dd-MM-yyyy"
-                  className="input-style text-style w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="gender"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">
-                Have a valid Care Giver certificate or eligibility?
-              </FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Male" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Male</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Female" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Female</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="education"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">Your Education</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Bachelor" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Bachelor</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Diploma" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Diploma</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Post Graduate" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Post Graduate</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Other" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Other</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="dhaCertificate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">
-                Have a valid DHA certificate or eligibility?
-              </FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Yes" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Yes</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="No" />
-                    </FormControl>
-                    <FormLabel className="font-normal">No</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="careGiverCertificate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">
-                Have a valid Care Giver certificate or eligibility?
-              </FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Yes" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Yes</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="No" />
-                    </FormControl>
-                    <FormLabel className="font-normal">No</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="visa"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">Have a valid Visa?</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Yes" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Yes</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="No" />
-                    </FormControl>
-                    <FormLabel className="font-normal">No</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="visaExpireDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">Visa Expiry Date</FormLabel>
-              <FormControl>
-                <DatePicker
-                  selected={field.value}
-                  onChange={(date: Date) => field.onChange(date)}
-                  dateFormat="dd-MM-yyyy"
-                  className="input-style text-style w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        {/* <FormField
-          control={form.control}
-          name="experienceInUAE"
-          render={({ field }) => (
-            <FormItem className="col-span-2">
-              <FormLabel className="label-style">Experience in UAE</FormLabel>
-              <FormControl>
-                <Textarea {...field} className="textarea-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="coverLetter"
-          render={({ field }) => (
-            <FormItem className="col-span-2">
-              <FormLabel className="label-style">Cover letter</FormLabel>
-              <FormControl>
-                <Textarea {...field} className="textarea-style text-style" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="imgUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="label-style">Image</FormLabel>
-              <FormControl>
-                <PdfUploader
-                  imageUrl={field.value}
-                  onFieldChange={field.onChange}
-                  setFiles={setFiles}
-                  imgClass="max-w-[300px] max-h-[300px]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        <div className="w-full flex justify-center md:col-span-2">
-          <Button
-            type="submit"
-            className="form-btn label-style"
-            disabled={form.formState.isSubmitting}
-          >
-            SUBMIT APPLICATION
-          </Button>
-        </div>
+        <FormBtn />
       </form>
     </Form>
   );

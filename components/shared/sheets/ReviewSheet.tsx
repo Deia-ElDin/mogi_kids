@@ -236,7 +236,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
       <Avatar className="rounded-full h-[100px] w-[100px]">
         <AvatarImage src={photo ?? "/assets/icons/user.svg"} />
       </Avatar>
-      <p className="font-bold text-center text-[14px] leading-[24px] md:text-[16px] md:leading-[28px] lg:text-[18px] lg:leading-[32px] xl:text-[20px] xl:leading-[36px]">
+      <p className="font-bold text-center text-[14px] leading-[22px] md:text-[15px] md:leading-[24px] lg:text-[16px] lg:leading-[24px] xl:text-[18px] xl:leading-[34px]">
         {getUsername(firstName, lastName)}
       </p>
     </>

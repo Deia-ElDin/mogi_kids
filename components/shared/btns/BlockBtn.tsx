@@ -41,7 +41,7 @@ const BlockBtn: React.FC<BlockBtnProps> = (props) => {
               This action will block this user and will delete all his
               <span className="text-red-500">
                 {" "}
-                Quotations, Applications, Reviews and Comments
+                Applications, Quotations, Applications, Reviews and Comments
               </span>
               .
             </AlertDialogDescription>

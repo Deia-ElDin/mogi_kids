@@ -97,6 +97,7 @@ export default async function Home() {
         reviews={reviews}
       />
       <Quote
+        user={user}
         isAdmin={isAdmin}
         quotePage={findPage(pages, "Quote Page")}
         logo={logo}

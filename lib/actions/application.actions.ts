@@ -2,15 +2,13 @@
 
 import { connectToDb } from "../database";
 import { updateDbSize } from "./db.actions";
-import {
-  CreateQuoteParams,
-  UpdateQuoteParams,
-  UnseenQuotesParams,
-} from "@/types";
+import { CreateApplicationParams, UnseenApplicationsParams } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
-import Quote, { IQuote } from "../database/models/quote.model";
+import Application, {
+  IApplication,
+} from "../database/models/application.model";
 
 type CountResult = {
   success: boolean;
@@ -20,14 +18,14 @@ type CountResult = {
 
 type GetAllResult = {
   success: boolean;
-  data: IQuote[] | [] | null;
+  data: IApplication[] | [] | null;
   totalPages?: number;
   error: string | null;
 };
 
 type DefaultResult = {
   success: boolean;
-  data: IQuote | null;
+  data: IApplication | null;
   error: string | null;
 };
 
@@ -37,11 +35,11 @@ type DeleteResult = {
   error: string | null;
 };
 
-export async function countUnseenQuotes(): Promise<CountResult> {
+export async function countUnseenApplications(): Promise<CountResult> {
   try {
     await connectToDb();
 
-    const count = await Quote.countDocuments({ seen: false });
+    const count = await Application.countDocuments({ seen: false });
 
     revalidatePath("/");
     return { success: true, data: count, error: null };
@@ -49,22 +47,22 @@ export async function countUnseenQuotes(): Promise<CountResult> {
     return {
       success: false,
       data: null,
-      error: handleError("Failed to count unseen quotes"),
+      error: handleError("Failed to count unseen applications"),
     };
   }
 }
 
-export async function getAllQuotes({
+export async function getAllApplications({
   limit = 10,
   page = 1,
-}: UnseenQuotesParams): Promise<GetAllResult> {
+}: UnseenApplicationsParams): Promise<GetAllResult> {
   try {
     await connectToDb();
 
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = { blocked: false };
 
-    const quotes = await Quote.find(conditions)
+    const applications = await Application.find(conditions)
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit)
@@ -74,15 +72,16 @@ export async function getAllQuotes({
         select: "_id firstName lastName photo",
       });
 
-    if (!quotes) throw new Error("Failed to fetch the quotations.");
+    if (!applications) throw new Error("Failed to fetch the quotations.");
 
-    if (quotes.length === 0) return { success: true, data: [], error: null };
+    if (applications.length === 0)
+      return { success: true, data: [], error: null };
 
     const totalPages = Math.ceil(
-      (await Quote.countDocuments(conditions)) / limit
+      (await Application.countDocuments(conditions)) / limit
     );
 
-    const data = JSON.parse(JSON.stringify(quotes));
+    const data = JSON.parse(JSON.stringify(applications));
 
     return { success: true, data, totalPages, error: null };
   } catch (error) {
@@ -90,12 +89,14 @@ export async function getAllQuotes({
   }
 }
 
-export async function getCstNameQuotes(cstName: string): Promise<GetAllResult> {
+export async function getApplicationByName(
+  fullName: string
+): Promise<GetAllResult> {
   try {
     await connectToDb();
 
-    const regex = new RegExp(`^${cstName}`, "i");
-    const cstQuotes = await Quote.find({ cstName: regex })
+    const regex = new RegExp(`^${fullName}`, "i");
+    const cstApplications = await Application.find({ fullName: regex })
       .sort({
         createdAt: "desc",
       })
@@ -105,11 +106,13 @@ export async function getCstNameQuotes(cstName: string): Promise<GetAllResult> {
         select: "_id firstName lastName photo",
       });
 
-    if (!cstQuotes)
-      throw new Error(`Failed to get quotes for customer: ${cstName}.`);
+    if (!cstApplications)
+      throw new Error(`Failed to get applications for customer: ${fullName}.`);
 
     const data =
-      cstQuotes.length === 0 ? null : JSON.parse(JSON.stringify(cstQuotes));
+      cstApplications.length === 0
+        ? null
+        : JSON.parse(JSON.stringify(cstApplications));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -117,7 +120,7 @@ export async function getCstNameQuotes(cstName: string): Promise<GetAllResult> {
   }
 }
 
-export async function getDayQuotes(
+export async function getDayApplications(
   day: Date = new Date()
 ): Promise<GetAllResult> {
   try {
@@ -127,7 +130,7 @@ export async function getDayQuotes(
     const endOfTheDay = new Date(day);
     endOfTheDay.setDate(day.getDate() + 1);
 
-    const todayQuotes = await Quote.find({
+    const todayApplications = await Application.find({
       createdAt: { $gte: day, $lt: endOfTheDay },
     })
       .sort({ createdAt: "desc" })
@@ -137,11 +140,15 @@ export async function getDayQuotes(
         select: "_id firstName lastName photo",
       });
 
-    if (!todayQuotes)
-      throw new Error(`Failed to get the ${formatDate(String(day))} quotes.`);
+    if (!todayApplications)
+      throw new Error(
+        `Failed to get the ${formatDate(String(day))} applications.`
+      );
 
     const data =
-      todayQuotes.length === 0 ? null : JSON.parse(JSON.stringify(todayQuotes));
+      todayApplications.length === 0
+        ? null
+        : JSON.parse(JSON.stringify(todayApplications));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -149,7 +156,7 @@ export async function getDayQuotes(
   }
 }
 
-export async function getMonthQuotes(date: Date): Promise<GetAllResult> {
+export async function getMonthApplications(date: Date): Promise<GetAllResult> {
   try {
     await connectToDb();
 
@@ -159,7 +166,7 @@ export async function getMonthQuotes(date: Date): Promise<GetAllResult> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
-    const monthQuotes = await Quote.find({
+    const monthApplications = await Application.find({
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: "desc" })
@@ -169,11 +176,13 @@ export async function getMonthQuotes(date: Date): Promise<GetAllResult> {
         select: "_id firstName lastName photo",
       });
 
-    if (!monthQuotes)
-      throw new Error(`Failed to get quotes for ${month}-${year}.`);
+    if (!monthApplications)
+      throw new Error(`Failed to get applications for ${month}-${year}.`);
 
     const data =
-      monthQuotes.length === 0 ? null : JSON.parse(JSON.stringify(monthQuotes));
+      monthApplications.length === 0
+        ? null
+        : JSON.parse(JSON.stringify(monthApplications));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -181,15 +190,19 @@ export async function getMonthQuotes(date: Date): Promise<GetAllResult> {
   }
 }
 
-export async function createQuote(
-  params: CreateQuoteParams
+export async function createApplication(
+  params: CreateApplicationParams
 ): Promise<DefaultResult> {
   try {
     await connectToDb();
 
-    const newQuote = await Quote.create(params);
+    console.log("params", params);
+    
+    const newApplication = await Application.create(params);
 
-    if (!newQuote) throw new Error("Failed to create the quote.");
+    console.log("newApplication", newApplication);
+
+    if (!newApplication) throw new Error("Failed to create the application.");
 
     const { success: dbSuccess, error: dbError } = await updateDbSize({
       resend: "1",
@@ -197,7 +210,7 @@ export async function createQuote(
 
     if (!dbSuccess && dbError) throw new Error(dbError);
 
-    const data = JSON.parse(JSON.stringify(newQuote));
+    const data = JSON.parse(JSON.stringify(newApplication));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -205,40 +218,20 @@ export async function createQuote(
   }
 }
 
-export async function updateQuote(
-  params: UpdateQuoteParams
+export async function markApplicationAsSeen(
+  applicationId: string
 ): Promise<DefaultResult> {
-  const { quoteId, emailService } = params;
   try {
-    await connectToDb();
-
-    const updatedQuote = await Quote.findByIdAndUpdate(
-      quoteId,
-      { emailService },
-      { new: true }
-    );
-
-    if (!updatedQuote)
-      throw new Error("Failed to update the email service of this quotation.");
-
-    return { success: true, data: null, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
-
-export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
-  try {
-    const seenQuote = await Quote.findByIdAndUpdate(
-      quoteId,
+    const seenApplication = await Application.findByIdAndUpdate(
+      applicationId,
       { seen: true },
       { new: true }
     );
 
-    if (!seenQuote)
+    if (!seenApplication)
       throw new Error("Failed to change the seen status of this quotation.");
 
-    const data = JSON.parse(JSON.stringify(seenQuote));
+    const data = JSON.parse(JSON.stringify(seenApplication));
 
     return { success: true, data, error: null };
   } catch (error) {
@@ -246,14 +239,20 @@ export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
   }
 }
 
-export async function deleteQuote(quoteId: string): Promise<DeleteResult> {
+export async function deleteApplication(
+  applicationId: string
+): Promise<DeleteResult> {
   try {
     await connectToDb();
 
-    const deletedQuote = await Quote.findByIdAndDelete(quoteId);
+    const deletedApplication = await Application.findByIdAndDelete(
+      applicationId
+    );
 
-    if (!deletedQuote)
-      throw new Error("Failed to find the quote or the quote already deleted.");
+    if (!deletedApplication)
+      throw new Error(
+        "Failed to find the application or the application already deleted."
+      );
 
     return { success: true, data: null, error: null };
   } catch (error) {
@@ -261,19 +260,19 @@ export async function deleteQuote(quoteId: string): Promise<DeleteResult> {
   }
 }
 
-export async function deleteSelectedQuotes(
-  selectedQuotes: string[]
+export async function deleteSelectedApplications(
+  selectedApplications: string[]
 ): Promise<DeleteResult> {
   try {
     await connectToDb();
 
-    const deletedQuotes = await Quote.deleteMany({
-      _id: { $in: selectedQuotes },
+    const deletedApplications = await Application.deleteMany({
+      _id: { $in: selectedApplications },
     });
 
-    if (!deletedQuotes)
+    if (!deletedApplications)
       throw new Error(
-        "Failed to find the quotes or the quotes already deleted."
+        "Failed to find the applications or the applications already deleted."
       );
 
     return { success: true, data: null, error: null };
