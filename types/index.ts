@@ -119,7 +119,27 @@ export type UnseenQuotesParams = {
 };
 
 // Application Params
-export type CreateApplicationParams = {};
+export type CreateApplicationParams = {
+  fullName: string;
+  email: string;
+  mobile: string;
+  applyingFor: string;
+  workingAt: string;
+  previousSalary?: string;
+  expectedSalary?: string;
+  joinDate: Date;
+  gender: string;
+  education: string;
+  dhaCertificate: string;
+  careGiverCertificate: string;
+  experienceInUAE: string[];
+  visa: string;
+  visaExpireDate: Date;
+  coverLetter?: string;
+  imgUrl: string;
+  imgSize: number;
+  createdBy: string | null;
+};
 
 export type UnseenApplicationsParams = {
   page?: number;

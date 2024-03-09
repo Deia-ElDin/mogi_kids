@@ -72,8 +72,6 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
   async function onSubmit(values: z.infer<typeof pageSchema>) {
     values.pageName = pageName;
 
-    console.log("values", values);
-
     try {
       const { success, error } = page?._id
         ? await updatePage({

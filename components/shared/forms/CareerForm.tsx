@@ -22,10 +22,10 @@ import { careerDefaultValues } from "@/constants";
 import { toCap, handleError } from "@/lib/utils";
 import { PdfUploader } from "../helpers/PdfUploader";
 import { createApplication } from "@/lib/actions/application.actions";
+import { IUser } from "@/lib/database/models/user.model";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
-import { type } from "os";
 
 type InputFieldProps = {
   name: string;
@@ -33,7 +33,11 @@ type InputFieldProps = {
   options?: string[];
 };
 
-const CareerForm = () => {
+type CareerFormProps = {
+  user: IUser | null;
+};
+
+const CareerForm: React.FC<CareerFormProps> = ({ user }) => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("pdfUploader");
   const { toast } = useToast();
@@ -49,25 +53,28 @@ const CareerForm = () => {
   };
 
   async function onSubmit(values: z.infer<typeof careerSchema>) {
-    let uploadedImgUrl = values.imgUrl;
-
     try {
-      if (files.length > 0) {
-        const uploadedImgs = await startUpload(files);
+      let uploadedImgUrl = values.imgUrl;
 
-        if (!uploadedImgs)
-          throw new Error("Failed to add your resume to uploadthing database.");
+      if (files.length === 0) return;
 
-        uploadedImgUrl = uploadedImgs[0].url;
-        console.log("values", values);
+      const uploadedImgs = await startUpload(files);
 
-        const { success, error } = await createApplication({ ...values });
+      if (!uploadedImgs)
+        throw new Error("Failed to add your resume to uploadthing database.");
 
-        toast({ description: "Application Created Successfully." });
+      uploadedImgUrl = uploadedImgs[0].url;
 
-        if (success) handleClose();
-        else if (error) throw new Error(error);
-      }
+      const { success, error } = await createApplication({
+        ...values,
+        imgSize: uploadedImgs[0].size,
+        createdBy: user ? user._id : null,
+      });
+
+      toast({ description: "Application Created Successfully." });
+
+      if (success) handleClose();
+      else if (error) throw new Error(error);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -76,28 +83,6 @@ const CareerForm = () => {
       });
     }
   }
-
-  const TextInputField: React.FC<InputFieldProps> = ({ name, label }) => {
-    const { control } = useFormContext();
-
-    return (
-      <FormField
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="label-style">
-              {label ? toCap(label) : toCap(name)}
-            </FormLabel>
-            <FormControl>
-              <Input {...field} className="input-style text-style" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
-  };
 
   const DateInputField: React.FC<InputFieldProps> = ({ name, label }) => {
     const { control } = useFormContext();
@@ -223,32 +208,6 @@ const CareerForm = () => {
     );
   };
 
-  const TextAreaField: React.FC<InputFieldProps> = ({ name, label }) => {
-    const { control } = useFormContext();
-
-    return (
-      <FormField
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <FormItem className="col-span-2">
-            <FormLabel className="label-style">
-              {label
-                ? label.includes("UAE")
-                  ? label
-                  : toCap(label)
-                : toCap(name)}
-            </FormLabel>
-            <FormControl>
-              <Textarea {...field} className="textarea-style text-style" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    );
-  };
-
   const CvField: React.FC = () => {
     const { control } = useFormContext();
 
@@ -271,20 +230,6 @@ const CareerForm = () => {
           </FormItem>
         )}
       />
-    );
-  };
-
-  const FormBtn: React.FC = () => {
-    return (
-      <div className="w-full flex justify-center md:col-span-2">
-        <Button
-          type="submit"
-          className="form-btn label-style"
-          disabled={form.formState.isSubmitting}
-        >
-          SUBMIT APPLICATION
-        </Button>
-      </div>
     );
   };
 
@@ -372,27 +317,7 @@ const CareerForm = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="joinDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">
-                {" "}
-                {toCap("Expected Joining Date")}
-              </FormLabel>
-              <FormControl>
-                <DatePicker
-                  selected={field.value}
-                  onChange={(date: Date) => field.onChange(date)}
-                  dateFormat="dd-MM-yyyy"
-                  className="input-style text-style w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <DateInputField name="joinDate" label="Expected Joining Date" />
 
         <FormField
           control={form.control}
@@ -469,7 +394,16 @@ const CareerForm = () => {
         />
 
         <CvField />
-        <FormBtn />
+
+        <div className="w-full flex justify-center md:col-span-2">
+          <Button
+            type="submit"
+            className="form-btn label-style"
+            disabled={form.formState.isSubmitting}
+          >
+            SUBMIT APPLICATION
+          </Button>
+        </div>
       </form>
     </Form>
   );

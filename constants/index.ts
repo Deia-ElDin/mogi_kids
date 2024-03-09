@@ -154,11 +154,11 @@ export const careerDefaultValues = {
   gender: "female",
   education: "Diploma",
   dhaCertificate: "Yes",
-  careGiverCertificate: "",
-  experienceInUAE: ["", "", "", "", ""],
-  visa: "",
+  careGiverCertificate: "Yes",
+  experienceInUAE: ["1", "2", "3", "4", "5"],
+  visa: "Yes",
   visaExpireDate: new Date(),
-  coverLetter: "",
+  coverLetter: "asd",
   imgUrl: "",
 };
 

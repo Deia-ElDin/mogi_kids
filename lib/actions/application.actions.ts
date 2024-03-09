@@ -59,6 +59,14 @@ export async function getAllApplications({
   try {
     await connectToDb();
 
+    Application.updateMany({}, { $set: { createdBy: null } })
+      .then((result: any) => {
+        console.log("Documents updated successfully:", result);
+      })
+      .catch((err: any) => {
+        console.error("Error updating documents:", err);
+      });
+
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = { blocked: false };
 
@@ -72,7 +80,7 @@ export async function getAllApplications({
         select: "_id firstName lastName photo",
       });
 
-    if (!applications) throw new Error("Failed to fetch the quotations.");
+    if (!applications) throw new Error("Failed to fetch the applications.");
 
     if (applications.length === 0)
       return { success: true, data: [], error: null };
@@ -198,7 +206,11 @@ export async function createApplication(
 
     console.log("params", params);
 
-    const newApplication = await Application.create(params);
+
+    const newApplication = await Application.create({
+      ...params,
+      createdBy: params.createdBy,
+    });
 
     console.log("newApplication", newApplication);
 

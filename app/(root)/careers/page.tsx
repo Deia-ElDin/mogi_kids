@@ -26,7 +26,7 @@ const Careers = async () => {
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       {isAdmin && <PageForm page={page} pageName="Careers Page" />}
-      {page?._id && <CareerForm />}
+      {page?._id && <CareerForm user={user} />}
     </section>
   );
 };
