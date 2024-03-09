@@ -52,10 +52,9 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
         createdBy: user ? user._id : null,
       });
 
-
-    console.log("success", success);
-    console.log("data", data);
-    console.log("error", error);
+      console.log("success", success);
+      console.log("data", data);
+      console.log("error", error);
 
       if (!success && error) throw new Error(error);
 
@@ -214,7 +213,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt))
+                      onlyPositiveValues(evt, 24))
                   }
                 />
               </FormControl>
@@ -272,7 +271,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt))
+                      onlyPositiveValues(evt, 17))
                   }
                 />
               </FormControl>
@@ -301,7 +300,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt))
+                      onlyPositiveValues(evt, 17))
                   }
                 />
               </FormControl>

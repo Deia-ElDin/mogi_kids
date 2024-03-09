@@ -156,9 +156,13 @@ export const getUsername = (
   else return "Customer";
 };
 
-export const onlyPositiveValues = (evt: React.FormEvent<HTMLInputElement>) => {
+export const onlyPositiveValues = (
+  evt: React.FormEvent<HTMLInputElement>,
+  maxValue?: number
+) => {
   let value = parseFloat((evt.target as HTMLInputElement).value);
   if (value < 0) value = 0;
+  else if (maxValue && value >= maxValue) value = maxValue;
   return value.toString();
 };
 
