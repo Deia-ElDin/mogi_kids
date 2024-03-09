@@ -25,6 +25,7 @@ import { createApplication } from "@/lib/actions/application.actions";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
 import "react-datepicker/dist/react-datepicker.css";
+import { type } from "os";
 
 type InputFieldProps = {
   name: string;
@@ -59,21 +60,6 @@ const CareerForm = () => {
 
         uploadedImgUrl = uploadedImgs[0].url;
         console.log("values", values);
-        // const response = await fetch("/api/send", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({ quoteValues: values }),
-        // });
-
-        // if (response.ok) {
-        //   const responseData = await response.json();
-        //   if (responseData.success) {
-        //     // form.reset();
-        //     toast({ description: <SendQuoteToast logo={logo} /> });
-        //   } else throw new Error(responseData.error);
-        // } else throw new Error(`Response Status: ${response.status}`);
 
         const { success, error } = await createApplication({ ...values });
 
@@ -209,7 +195,7 @@ const CareerForm = () => {
       <FormField
         control={control}
         name={name}
-        render={({ field }) => (
+        render={() => (
           <FormItem className="col-span-2">
             <FormLabel className="label-style">
               {label
@@ -308,17 +294,138 @@ const CareerForm = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col md:grid md:grid-cols-2 gap-5 pt-10 relative"
       >
-        <TextInputField name="fullName" />
-        <TextInputField name="email" label="email address" />
-        <TextInputField name="mobile" label="mobile number" />
-        <TextInputField name="workingAt" />
-        <TextInputField name="applyingFor" />
-        <DateInputField name="joinDate" label="Expected Joining Date" />
-        <TextInputField
-          name="previousSalary"
-          label="Current / Previous Salary"
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">{toCap("fullName")}</FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        <TextInputField name="expectedSalary" />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                {toCap("email address")}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="mobile"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                {toCap("mobile number")}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="workingAt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                {toCap("workingAt")}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="applyingFor"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                {toCap("applyingFor")}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="joinDate"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="label-style">
+                {" "}
+                {toCap("Expected Joining Date")}
+              </FormLabel>
+              <FormControl>
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date: Date) => field.onChange(date)}
+                  dateFormat="dd-MM-yyyy"
+                  className="input-style text-style w-full"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="previousSalary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                {toCap("Current / Previous Salary")}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="expectedSalary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="label-style">
+                {toCap("expectedSalary")}
+              </FormLabel>
+              <FormControl>
+                <Input {...field} className="input-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <RadioInputField name="gender" options={["Male", "Female"]} />
         <RadioInputField
           name="education"
@@ -326,17 +433,17 @@ const CareerForm = () => {
         />
         <RadioInputField
           name="dhaCertificate"
-          label="Have A Valid DHA Certificate?"
+          label="Do You Have A Valid DHA Certificate?"
           options={["Yes", "No"]}
         />
         <RadioInputField
           name="careGiverCertificate"
-          label="Have a valid Care Giver certificate?"
+          label="Do You Have a valid Care Giver certificate?"
           options={["Yes", "No"]}
         />
         <RadioInputField
           name="visa"
-          label="Have a valid visa?"
+          label="Do You Have a valid visa?"
           options={["Yes", "No"]}
         />
         <DateInputField name="visaExpireDate" label="Visa Expiry Date" />
@@ -344,7 +451,23 @@ const CareerForm = () => {
           name="experienceInUAE"
           label="Experience In UAE"
         />
-        <TextAreaField name="coverLetter" />
+
+        <FormField
+          control={form.control}
+          name="coverLetter"
+          render={({ field }) => (
+            <FormItem className="col-span-2">
+              <FormLabel className="label-style">
+                {toCap("coverLetter")}
+              </FormLabel>
+              <FormControl>
+                <Textarea {...field} className="textarea-style text-style" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <CvField />
         <FormBtn />
       </form>

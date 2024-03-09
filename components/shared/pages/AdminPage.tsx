@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toCap } from "@/lib/utils";
 import QuotePage from "./QuotePage";
-import ApplicationPage from "./ApplicationPage";
+// import ApplicationPage from "./ApplicationPage";
 
 const AdminPage: React.FC = () => {
   const [displayPage, setDisplayPage] = useState<string>("quotes");
@@ -13,10 +13,7 @@ const AdminPage: React.FC = () => {
 
   const tabsArray = [
     { value: "quotes", count: unseenQuotes },
-    {
-      value: "applicants",
-      count: unseenApplicants,
-    },
+    { value: "applicants", count: unseenApplicants },
   ];
 
   return (
@@ -40,11 +37,11 @@ const AdminPage: React.FC = () => {
             <QuotePage setUnseenQuotes={setUnseenQuotes} />
           )}
         </TabsContent>
-        <TabsContent value="applicants">
+        {/* <TabsContent value="applicants">
           {displayPage === "applicants" && (
             <ApplicationPage setUnseenApplicants={setUnseenApplicants} />
           )}
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </section>
   );

@@ -243,7 +243,7 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
     }
   };
 
-  const fetchCstNameQuests = async (cstName: string) => {
+  const fetchQuotesByCstName = async (cstName: string) => {
     try {
       const { success, data, error } = await getCstNameQuotes(cstName);
 
@@ -266,7 +266,7 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
     }
   };
 
-  const fetchDayQuotes = async (day: Date) => {
+  const fetchQuotesByDay = async (day: Date) => {
     try {
       const { success, data, error } = await getDayQuotes(day);
 
@@ -292,7 +292,7 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
     }
   };
 
-  const fetchMonthQuotes = async (month: Date) => {
+  const fetchQuotesByMonth = async (month: Date) => {
     try {
       const { success, data, error } = await getMonthQuotes(month);
 
@@ -353,9 +353,9 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
   }, [sortConfig]);
 
   useEffect(() => {
-    if (fetchByCstName) fetchCstNameQuests(fetchByCstName);
-    else if (fetchByDay) fetchDayQuotes(fetchByDay);
-    else if (fetchByMonth) fetchMonthQuotes(fetchByMonth);
+    if (fetchByCstName) fetchQuotesByCstName(fetchByCstName);
+    else if (fetchByDay) fetchQuotesByDay(fetchByDay);
+    else if (fetchByMonth) fetchQuotesByMonth(fetchByMonth);
   }, [fetchByCstName, fetchByDay, fetchByMonth]);
 
   const pageNumbers = [];
@@ -370,33 +370,6 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
       updateTarget="Fetch All Quotation"
       handleClick={fetchAllQuotes}
     />
-  );
-
-  const FetchingComp = () => (
-    <div className="flex flex-col md:flex-row justify-between gap-2 w-full">
-      <input
-        type="text"
-        className="fetch-input-style text-style"
-        placeholder="Fetch By Client Name"
-        value={fetchByCstName}
-        onChange={handleCstNameChange}
-      />
-      <DatePicker
-        selected={fetchByMonth}
-        onChange={handleMonthChange}
-        dateFormat="MM-yyyy"
-        showMonthYearPicker
-        placeholderText="Fetch By Month"
-        className="fetch-input-style text-style w-full"
-      />
-      <DatePicker
-        selected={fetchByDay}
-        onChange={handleDayChange}
-        dateFormat="dd-MM-yyyy"
-        placeholderText="Fetch By Day"
-        className="fetch-input-style text-style w-full"
-      />
-    </div>
   );
 
   const TableHeaderComp = () => (
@@ -512,7 +485,30 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
         <FetchAllQuotesComp />
-        <FetchingComp />
+        <div className="flex flex-col md:flex-row justify-between gap-2 w-full">
+          <input
+            type="text"
+            className="fetch-input-style text-style"
+            placeholder="Fetch By Client Name"
+            value={fetchByCstName}
+            onChange={(e) => handleCstNameChange(e)}
+          />
+          <DatePicker
+            selected={fetchByMonth}
+            onChange={handleMonthChange}
+            dateFormat="MM-yyyy"
+            showMonthYearPicker
+            placeholderText="Fetch By Month"
+            className="fetch-input-style text-style w-full"
+          />
+          <DatePicker
+            selected={fetchByDay}
+            onChange={handleDayChange}
+            dateFormat="dd-MM-yyyy"
+            placeholderText="Fetch By Day"
+            className="fetch-input-style text-style w-full"
+          />
+        </div>
       </div>
 
       <Table className="w-full">

@@ -34,7 +34,7 @@ export type UpdateGalleryParams = {
 export type CreatePageParams = {
   pageName: string;
   pageTitle: string;
-  pageContent: string;
+  pageContent?: string;
   path: string;
 };
 

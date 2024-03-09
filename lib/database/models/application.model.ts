@@ -48,6 +48,7 @@ const ApplicationSchema = new Schema<IApplication>(
     imgSize: { type: Number },
     blocked: { type: Boolean, default: false },
     seen: { type: Boolean, default: false },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   { timestamps: true }
 );

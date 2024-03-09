@@ -197,7 +197,7 @@ export async function createApplication(
     await connectToDb();
 
     console.log("params", params);
-    
+
     const newApplication = await Application.create(params);
 
     console.log("newApplication", newApplication);
