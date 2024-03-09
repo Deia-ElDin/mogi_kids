@@ -11,6 +11,8 @@ import { IAboutUs } from "./database/models/about-us.model";
 import { differenceInDays } from "date-fns";
 import { SortKey } from "@/constants";
 
+const adminRoles = new Set(["Manager", "Admin"]);
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -54,6 +56,10 @@ export const getPageContent = (
   if (page?.pageContent) return page.pageContent;
   else if (isAdmin) return "Content";
   else return null;
+};
+
+export const isAdminUser = (user: { role: string } | null): boolean => {
+  return user !== null && adminRoles.has(user.role);
 };
 
 export const convertFileToUrl = (file: File): string =>

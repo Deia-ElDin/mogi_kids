@@ -12,7 +12,7 @@ import { getAllContacts } from "@/lib/actions/contact.actions";
 import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 import { getDbsSize } from "@/lib/actions/db.actions";
 
-import { findPage, formatBytes } from "@/lib/utils";
+import { findPage, formatBytes, isAdminUser } from "@/lib/utils";
 
 import Admin from "@/components/shared/Admin";
 import Welcome from "@/components/shared/Welcome";
@@ -51,7 +51,7 @@ export default async function Home() {
 
   const dbsSize = dbsSizeResult.success ? dbsSizeResult.data || null : null;
 
-  const isAdmin = user?.role === "Admin";
+  const isAdmin = isAdminUser(user);
 
   const uploadthingDb = formatBytes(
     logo,

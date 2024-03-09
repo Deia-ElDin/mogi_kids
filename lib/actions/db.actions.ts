@@ -52,16 +52,9 @@ export const updateDbSize = async (
   try {
     await connectToDb();
 
-    const { isAdmin, error } = await validateAdmin();
-
-    if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
-
     let dbRecord = await Db.findOne({});
 
-    if (!dbRecord) {
-      dbRecord = await Db.create(params);
-    }
+    if (!dbRecord) dbRecord = await Db.create(params);
 
     if (!dbRecord) {
       throw new Error("Failed to create or update the db size.");
@@ -70,9 +63,7 @@ export const updateDbSize = async (
     const todayDate = new Date().toDateString();
     const todayDb = dbRecord.today.toDateString();
 
-    if (todayDate !== todayDb) {
-      dbRecord.resend = "0";
-    }
+    if (todayDate !== todayDb) dbRecord.resend = "0";
 
     if (params.resend) {
       dbRecord.resend = String(

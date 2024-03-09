@@ -44,13 +44,19 @@ export async function createQuote(
   try {
     await connectToDb();
 
+    console.log("params", params);
+
     const newQuote = await Quote.create(params);
 
     if (!newQuote) throw new Error("Failed to create the quote.");
 
+    console.log("newQuote", newQuote);
+
     const { success: dbSuccess, error: dbError } = await updateDbSize({
       resend: "1",
     });
+
+    console.log("dbError", dbError);
 
     if (!dbSuccess && dbError) throw new Error(dbError);
 
@@ -237,11 +243,6 @@ export async function updateQuote(
   const { quoteId, emailService } = params;
   try {
     await connectToDb();
-
-    const { isAdmin, error } = await validateAdmin();
-
-    if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
 
     const updatedQuote = await Quote.findByIdAndUpdate(
       quoteId,
