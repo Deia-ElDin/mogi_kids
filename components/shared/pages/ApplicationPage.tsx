@@ -20,11 +20,12 @@ import {
   deleteSelectedApplications,
   markApplicationAsSeen,
   countUnseenApplications,
-} from "@/lib/actions/application.actions";
+} from "@/lib/actions/career.actions";
 import { blockUser } from "@/lib/actions/user.actions";
-import { IApplication } from "@/lib/database/models/application.model";
+import { ICareer } from "@/lib/database/models/career.model";
 import { differenceInDays } from "date-fns";
-import { formatMongoDbDate, handleError } from "@/lib/utils";
+import { formatDate, handleError, toCap } from "@/lib/utils";
+import { isBefore } from "date-fns";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
 import DatePicker from "react-datepicker";
@@ -43,7 +44,7 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
   const [fetchByMonth, setFetchByMonth] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [applications, setApplications] = useState<IApplication[] | []>([]);
+  const [applications, setApplications] = useState<ICareer[] | []>([]);
   const [applicationsActions, setApplicationsActions] = useState<
     { _id: string; checked: boolean }[]
   >([]);
@@ -52,9 +53,9 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
     []
   );
 
-  console.log("applications", applications);
-
   const { toast } = useToast();
+
+  const today = new Date();
 
   const handleApplicantNameChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -140,7 +141,6 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
       const { success, data, error } = await markApplicationAsSeen(
         applicationId
       );
-      console.log("data", data);
 
       if (!success && error) {
         toast({
@@ -162,6 +162,7 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
 
       fetchUnseenApplicationsNumber();
     }
+    if (selectAll) setSelectAll(false);
   };
 
   const handleSelectAll = () => {
@@ -207,11 +208,11 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
     }
   };
 
-  const setStates = (data: IApplication[], allPages: number = 1) => {
+  const setStates = (data: ICareer[], allPages: number = 1) => {
     setApplications(data || []);
     setTotalPages(allPages);
     setApplicationsActions(
-      data?.map((application: IApplication) => ({
+      data?.map((application: ICareer) => ({
         _id: application._id,
         checked: false,
       })) || []
@@ -242,8 +243,6 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
         limit,
         page: currentPage,
       });
-
-      console.log("data", data, "totalPages", totalPages);
 
       if (!success && error) throw new Error(error);
       if (success && data) setStates(data, totalPages);
@@ -358,6 +357,139 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
     (selectedApplication) => selectedApplication.checked
   );
 
+  const TrueImage = ({ condition }: { condition: boolean }) => (
+    <img
+      src={`/assets/icons/${condition ? "true" : "false"}.svg`}
+      alt="True/false icon"
+      height={20}
+      width={20}
+      className="m-auto"
+    />
+  );
+
+  const TableHeaderComp = () => (
+    <TableHeader>
+      <TableRow>
+        <TableHead className="table-head">
+          <input
+            type="checkbox"
+            className="h-[18px] w-[18px]"
+            checked={selectAll}
+            onChange={handleSelectAll}
+          />
+        </TableHead>
+        <TableHead className="table-head">Applicant</TableHead>
+        <TableHead className="table-head">Gender</TableHead>
+        <TableHead className="table-head">DHA</TableHead>
+        <TableHead className="table-head">CGC</TableHead>
+        <TableHead className="table-head">Salary</TableHead>
+        <TableHead className="table-head">Visa Expiry Date</TableHead>
+        <TableHead className="table-head">Joining Date</TableHead>
+        <TableHead className="table-head">Days</TableHead>
+        <TableHead className="table-head">Resume</TableHead>
+        <TableHead className="table-head">Date</TableHead>
+      </TableRow>
+    </TableHeader>
+  );
+
+  const TableBodyComp = () => (
+    <TableBody>
+      {applications.map((application, index) => {
+        const {
+          fullName,
+          expectedSalary,
+          joinDate,
+          gender,
+          dhaCertificate,
+          careGiverCertificate,
+          visaExpireDate,
+          imgUrl,
+          seen,
+          createdAt,
+        } = application;
+        const diffInDays = differenceInDays(new Date(joinDate), today);
+        const isVisaExpired = isBefore(new Date(visaExpireDate), today);
+        const isJoiningExpired = isBefore(new Date(joinDate), today);
+
+        return (
+          <React.Fragment key={application._id}>
+            <TableRow
+              className={`cursor-pointer ${seen ? "" : "text-blue-500"}`}
+              onClick={() => handleSelectApplication(application._id)}
+            >
+              <TableCell className="table-cell text-center">
+                <input
+                  type="checkbox"
+                  className="h-[18px] w-[18px] cursor-pointer"
+                  checked={applicationsActions[index].checked}
+                  onChange={(e) => e.stopPropagation()}
+                />
+              </TableCell>
+              <TableCell className="table-cell">
+                {toCap(fullName.split(" ")[0])}
+              </TableCell>
+              <TableCell
+                className={`table-cell ${
+                  gender.toLowerCase() === "female" ? "" : "text-red-500"
+                }`}
+              >
+                {toCap(gender)}
+              </TableCell>
+              <TableCell className="table-cell">
+                <TrueImage condition={dhaCertificate.toLowerCase() === "yes"} />
+              </TableCell>
+              <TableCell className="table-cell">
+                <TrueImage
+                  condition={careGiverCertificate.toLowerCase() === "yes"}
+                />
+              </TableCell>
+              <TableCell className="table-cell">{expectedSalary}</TableCell>
+              <TableCell
+                className={`table-cell ${isVisaExpired ? "text-red-500" : ""}`}
+              >
+                {formatDate(String(visaExpireDate))}
+              </TableCell>
+              <TableCell
+                className={`table-cell ${
+                  isJoiningExpired ? "text-red-500" : ""
+                }`}
+              >
+                {formatDate(String(joinDate))}
+              </TableCell>
+              <TableCell
+                className={`table-cell ${diffInDays > 0 ? "" : "text-red-500"}`}
+              >
+                {diffInDays > 0 ? diffInDays : diffInDays}
+              </TableCell>
+
+              <TableCell className="table-cell text-center">
+                <a href={imgUrl} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src="/assets/icons/pdf.svg"
+                    alt="True/false icon"
+                    height={25}
+                    width={25}
+                    className="m-auto"
+                  />
+                </a>
+              </TableCell>
+              <TableCell className="table-cell">
+                {formatDate(String(createdAt))}
+              </TableCell>
+            </TableRow>
+            {applicationsActions[index].checked && (
+              <ApplicationCard
+                application={application}
+                handleDeleteApplication={handleDeleteApplication}
+                handleBlockUser={handleBlockUser}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </TableBody>
+  );
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
@@ -392,87 +524,8 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
       </div>
 
       <Table className="w-full">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="table-head">
-              <input
-                type="checkbox"
-                className="h-[18px] w-[18px]"
-                checked={selectAll}
-                onChange={handleSelectAll}
-              />
-            </TableHead>
-            <TableHead className="table-head">Client</TableHead>
-            <TableHead className="table-head">Location</TableHead>
-            <TableHead className="table-head">Days</TableHead>
-            <TableHead className="table-head">Hours</TableHead>
-            <TableHead className="table-head">Kids</TableHead>
-            <TableHead className="table-head">Age</TableHead>
-            <TableHead className="table-head">Total Hours</TableHead>
-            <TableHead className="table-head">Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        {/* <TableBody>
-          {applications.map((application, index) => {
-            const {
-              cstName,
-              location,
-              to,
-              from,
-              numberOfHours,
-              numberOfKids,
-              ageOfKidsFrom,
-              ageOfKidsTo,
-              createdAt,
-            } = application;
-            const totalDays =
-              differenceInDays(new Date(to), new Date(from)) + 1;
-            const totalHours = totalDays * parseInt(numberOfHours);
-            return (
-              <React.Fragment key={application._id}>
-                <TableRow
-                  className={`${application.seen ? "" : "text-blue-500"}`}
-                >
-                  <TableCell className="table-cell text-center ">
-                    <input
-                      type="checkbox"
-                      className="h-[18px] w-[18px] cursor-pointer"
-                      checked={applicationsActions[index].checked}
-                      onChange={() => handleSelectApplication(application._id)}
-                    />
-                  </TableCell>
-                  <TableCell className="table-cell">{cstName}</TableCell>
-                  <TableCell
-                    className={`table-cell ${
-                      location === "Abu Dhabi" ? "" : "text-red-500"
-                    }`}
-                  >
-                    {location}
-                  </TableCell>
-                  <TableCell className="table-cell">{totalDays}</TableCell>
-                  <TableCell className="table-cell">{numberOfHours}</TableCell>
-                  <TableCell className="table-cell">{numberOfKids}</TableCell>
-                  <TableCell className="table-cell">
-                    {ageOfKidsFrom === ageOfKidsTo
-                      ? ageOfKidsFrom
-                      : `${ageOfKidsFrom} - ${ageOfKidsTo}`}
-                  </TableCell>
-                  <TableCell className="table-cell">{totalHours}</TableCell>
-                  <TableCell className="table-cell">
-                    {formatMongoDbDate(createdAt)}
-                  </TableCell>
-                </TableRow>
-                {applicationsActions[index].checked && (
-                  <ApplicationCard
-                    application={application}
-                    handleDeleteApplication={handleDeleteApplication}
-                    handleBlockUser={handleBlockUser}
-                  />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </TableBody> */}
+        <TableHeaderComp />
+        <TableBodyComp />
       </Table>
 
       <PagePagination

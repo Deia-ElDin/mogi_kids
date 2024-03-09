@@ -1,5 +1,13 @@
 import * as z from "zod";
-import { addYears, addMonths, isAfter, subDays, isEqual } from "date-fns";
+import {
+  addYears,
+  addMonths,
+  isAfter,
+  isBefore,
+  subDays,
+  isEqual,
+  subMonths,
+} from "date-fns";
 
 // const [formErrors, setFormErrors] = useState({});
 
@@ -31,7 +39,7 @@ export const quoteSchema = z.object({
   cstName: z
     .string()
     .min(1, "Kindly provide your name.")
-    .max(20, "Name must not exceed 100 characters.")
+    .max(100, "Name must not exceed 100 characters.")
     .refine(
       (value) => /^[a-zA-Z\s]+$/.test(value),
       "Name must not contain any numbers or special characters."
@@ -51,7 +59,7 @@ export const quoteSchema = z.object({
   location: z
     .string()
     .min(1, "Kindly select your location.")
-    .max(150, "Location must not exceed 60 characters."),
+    .max(60, "Location must not exceed 60 characters."),
   email: z
     .string()
     .min(1, "Kindly provide us your email address.")
@@ -130,7 +138,7 @@ export const careerSchema = z.object({
   fullName: z
     .string()
     .min(1, "Kindly provide your name.")
-    .max(20, "Name must not exceed 100 characters.")
+    .max(100, "Name must not exceed 100 characters.")
     .refine(
       (value) => /^[a-zA-Z\s]+$/.test(value),
       "Name must not contain any numbers or special characters."
@@ -189,7 +197,16 @@ export const careerSchema = z.object({
     })
     .refine((value) => !isNaN(value.getTime()), {
       message: "Visa expiration date must be a valid date.",
-    }),
+    })
+    .refine((value) => {
+      const threeMonthsAgo = subMonths(new Date(), 3);
+      return isAfter(value, threeMonthsAgo);
+    }, "Visa expired since 3 months or more!.")
+    .refine((value) => {
+      const today = new Date();
+      const tenYearsLater = addYears(today, 10);
+      return isBefore(value, tenYearsLater);
+    }, "Visa expiration date must be within 10 years from today."),
   coverLetter: z
     .string()
     .max(1000, "Field must not exceed 1000 characters.")

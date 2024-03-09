@@ -118,7 +118,12 @@ export type UnseenQuotesParams = {
   limit?: number;
 };
 
-// Application Params
+// Career Params
+export type GetAllApplicationsParams = {
+  page?: number;
+  limit?: number;
+};
+
 export type CreateApplicationParams = {
   fullName: string;
   email: string;

@@ -142,23 +142,26 @@ export const quoteDefaultValues = {
   extraInfo: "what is the extra info?",
 };
 
+const lorem =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nibh. Etiam non elit dui. Nulla nec purus feugiat, molestie ipsum et, consequat nibh. Etiam non elit dui.";
+
 export const careerDefaultValues = {
-  fullName: "deia",
+  fullName: "sara",
   email: "deia.tech2021@gmail.com",
   mobile: "0507890072",
   applyingFor: "job 1",
   workingAt: "company 1",
   previousSalary: "2000",
-  expectedSalary: "3000",
+  expectedSalary: "5000",
   joinDate: new Date(),
-  gender: "female",
-  education: "Diploma",
+  gender: "Female",
+  education: "Other",
   dhaCertificate: "Yes",
   careGiverCertificate: "Yes",
-  experienceInUAE: ["1", "2", "3", "4", "5"],
-  visa: "Yes",
+  experienceInUAE: [lorem, lorem, lorem, lorem, lorem],
+  visa: "No",
   visaExpireDate: new Date(),
-  coverLetter: "asd",
+  coverLetter: lorem,
   imgUrl: "",
 };
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { updateDbSize } from "./db.actions";
 import {
   CreateQuoteParams,
@@ -37,9 +38,38 @@ type DeleteResult = {
   error: string | null;
 };
 
+export async function createQuote(
+  params: CreateQuoteParams
+): Promise<DefaultResult> {
+  try {
+    await connectToDb();
+
+    const newQuote = await Quote.create(params);
+
+    if (!newQuote) throw new Error("Failed to create the quote.");
+
+    const { success: dbSuccess, error: dbError } = await updateDbSize({
+      resend: "1",
+    });
+
+    if (!dbSuccess && dbError) throw new Error(dbError);
+
+    const data = JSON.parse(JSON.stringify(newQuote));
+
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
 export async function countUnseenQuotes(): Promise<CountResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const count = await Quote.countDocuments({ seen: false });
 
@@ -60,6 +90,11 @@ export async function getAllQuotes({
 }: UnseenQuotesParams): Promise<GetAllResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = { blocked: false };
@@ -94,6 +129,11 @@ export async function getCstNameQuotes(cstName: string): Promise<GetAllResult> {
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const regex = new RegExp(`^${cstName}`, "i");
     const cstQuotes = await Quote.find({ cstName: regex })
       .sort({
@@ -122,6 +162,11 @@ export async function getDayQuotes(
 ): Promise<GetAllResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     day.setHours(0, 0, 0, 0);
     const endOfTheDay = new Date(day);
@@ -153,6 +198,11 @@ export async function getMonthQuotes(date: Date): Promise<GetAllResult> {
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
 
@@ -181,36 +231,17 @@ export async function getMonthQuotes(date: Date): Promise<GetAllResult> {
   }
 }
 
-export async function createQuote(
-  params: CreateQuoteParams
-): Promise<DefaultResult> {
-  try {
-    await connectToDb();
-
-    const newQuote = await Quote.create(params);
-
-    if (!newQuote) throw new Error("Failed to create the quote.");
-
-    const { success: dbSuccess, error: dbError } = await updateDbSize({
-      resend: "1",
-    });
-
-    if (!dbSuccess && dbError) throw new Error(dbError);
-
-    const data = JSON.parse(JSON.stringify(newQuote));
-
-    return { success: true, data, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
-
 export async function updateQuote(
   params: UpdateQuoteParams
 ): Promise<DefaultResult> {
   const { quoteId, emailService } = params;
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const updatedQuote = await Quote.findByIdAndUpdate(
       quoteId,
@@ -229,6 +260,13 @@ export async function updateQuote(
 
 export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
   try {
+    await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const seenQuote = await Quote.findByIdAndUpdate(
       quoteId,
       { seen: true },
@@ -250,6 +288,11 @@ export async function deleteQuote(quoteId: string): Promise<DeleteResult> {
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const deletedQuote = await Quote.findByIdAndDelete(quoteId);
 
     if (!deletedQuote)
@@ -266,6 +309,11 @@ export async function deleteSelectedQuotes(
 ): Promise<DeleteResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const deletedQuotes = await Quote.deleteMany({
       _id: { $in: selectedQuotes },

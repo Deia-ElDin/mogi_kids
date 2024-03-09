@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { careerDefaultValues } from "@/constants";
 import { toCap, handleError } from "@/lib/utils";
 import { PdfUploader } from "../helpers/PdfUploader";
-import { createApplication } from "@/lib/actions/application.actions";
+import { createApplication } from "@/lib/actions/career.actions";
 import { IUser } from "@/lib/database/models/user.model";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
@@ -67,6 +67,7 @@ const CareerForm: React.FC<CareerFormProps> = ({ user }) => {
 
       const { success, error } = await createApplication({
         ...values,
+        imgUrl: uploadedImgUrl,
         imgSize: uploadedImgs[0].size,
         createdBy: user ? user._id : null,
       });

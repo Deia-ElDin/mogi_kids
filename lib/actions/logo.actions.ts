@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateLogoParams, UpdateLogoParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { UTApi } from "uploadthing/server";
@@ -35,6 +36,11 @@ export async function createLogo(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const logo = await Logo.create(params);
 
     if (!logo) throw new Error("Failed to create the logo.");
@@ -55,6 +61,11 @@ export async function updateLogo(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const logo = await Logo.findById(_id);
 

@@ -88,7 +88,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                         Service Starts At:
                       </Text>
                       <Text style={informationTableValue}>
-                        {formatDate(from) ?? "Not Mentioned."}
+                        {formatDate(String(from)) ?? "Not Mentioned."}
                       </Text>
                     </Column>
                   </Row>
@@ -98,7 +98,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = (
                         Service Ends At:
                       </Text>
                       <Text style={informationTableValue}>
-                        {formatDate(to) ?? "Not Mentioned."}
+                        {formatDate(String(to)) ?? "Not Mentioned."}
                       </Text>
                     </Column>
                   </Row>

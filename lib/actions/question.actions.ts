@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateQuestionParams, UpdateQuestionParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -44,6 +45,11 @@ export async function createQuestion(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const newQuestion = await Question.create(params);
 
     if (!newQuestion)
@@ -68,6 +74,11 @@ export async function updateQuestion(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const updatedQuestion = await Question.findByIdAndUpdate(_id, {
       question,
       answer,
@@ -88,6 +99,11 @@ export async function deleteQuestion(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const deletedQuestion = await Question.findByIdAndDelete(questionId);
     if (!deletedQuestion)
       throw new Error("Question not found or already deleted.");
@@ -104,6 +120,11 @@ export async function deleteAllQuestions(): Promise<DeleteResult> {
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+      
     const deletedQuestions = await Question.deleteMany();
 
     if (!deletedQuestions)

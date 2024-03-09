@@ -1,14 +1,17 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { updateDbSize } from "./db.actions";
-import { CreateApplicationParams, UnseenApplicationsParams } from "@/types";
+import {
+  GetAllApplicationsParams,
+  CreateApplicationParams,
+  UnseenApplicationsParams,
+} from "@/types";
 import { formatDate } from "@/lib/utils";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
-import Application, {
-  IApplication,
-} from "../database/models/application.model";
+import Career, { ICareer } from "../database/models/career.model";
 
 type CountResult = {
   success: boolean;
@@ -18,14 +21,14 @@ type CountResult = {
 
 type GetAllResult = {
   success: boolean;
-  data: IApplication[] | [] | null;
+  data: ICareer[] | [] | null;
   totalPages?: number;
   error: string | null;
 };
 
 type DefaultResult = {
   success: boolean;
-  data: IApplication | null;
+  data: ICareer | null;
   error: string | null;
 };
 
@@ -39,7 +42,12 @@ export async function countUnseenApplications(): Promise<CountResult> {
   try {
     await connectToDb();
 
-    const count = await Application.countDocuments({ seen: false });
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const count = await Career.countDocuments({ seen: false });
 
     revalidatePath("/");
     return { success: true, data: count, error: null };
@@ -55,22 +63,19 @@ export async function countUnseenApplications(): Promise<CountResult> {
 export async function getAllApplications({
   limit = 10,
   page = 1,
-}: UnseenApplicationsParams): Promise<GetAllResult> {
+}: GetAllApplicationsParams): Promise<GetAllResult> {
   try {
     await connectToDb();
 
-    Application.updateMany({}, { $set: { createdBy: null } })
-      .then((result: any) => {
-        console.log("Documents updated successfully:", result);
-      })
-      .catch((err: any) => {
-        console.error("Error updating documents:", err);
-      });
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const skipAmount = (Number(page) - 1) * limit;
     const conditions = { blocked: false };
 
-    const applications = await Application.find(conditions)
+    const applications = await Career.find(conditions)
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit)
@@ -86,7 +91,7 @@ export async function getAllApplications({
       return { success: true, data: [], error: null };
 
     const totalPages = Math.ceil(
-      (await Application.countDocuments(conditions)) / limit
+      (await Career.countDocuments(conditions)) / limit
     );
 
     const data = JSON.parse(JSON.stringify(applications));
@@ -103,8 +108,13 @@ export async function getApplicationByName(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const regex = new RegExp(`^${fullName}`, "i");
-    const cstApplications = await Application.find({ fullName: regex })
+    const cstApplications = await Career.find({ fullName: regex })
       .sort({
         createdAt: "desc",
       })
@@ -134,11 +144,16 @@ export async function getDayApplications(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     day.setHours(0, 0, 0, 0);
     const endOfTheDay = new Date(day);
     endOfTheDay.setDate(day.getDate() + 1);
 
-    const todayApplications = await Application.find({
+    const todayApplications = await Career.find({
       createdAt: { $gte: day, $lt: endOfTheDay },
     })
       .sort({ createdAt: "desc" })
@@ -168,13 +183,18 @@ export async function getMonthApplications(date: Date): Promise<GetAllResult> {
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
 
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
-    const monthApplications = await Application.find({
+    const monthApplications = await Career.find({
       createdAt: { $gte: startDate, $lte: endDate },
     })
       .sort({ createdAt: "desc" })
@@ -204,17 +224,9 @@ export async function createApplication(
   try {
     await connectToDb();
 
-    console.log("params", params);
+    const newApplication = await Career.create(params);
 
-
-    const newApplication = await Application.create({
-      ...params,
-      createdBy: params.createdBy,
-    });
-
-    console.log("newApplication", newApplication);
-
-    if (!newApplication) throw new Error("Failed to create the application.");
+    if (!newApplication) throw new Error("Failed to create the career.");
 
     const { success: dbSuccess, error: dbError } = await updateDbSize({
       resend: "1",
@@ -234,7 +246,14 @@ export async function markApplicationAsSeen(
   applicationId: string
 ): Promise<DefaultResult> {
   try {
-    const seenApplication = await Application.findByIdAndUpdate(
+    await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const seenApplication = await Career.findByIdAndUpdate(
       applicationId,
       { seen: true },
       { new: true }
@@ -257,9 +276,12 @@ export async function deleteApplication(
   try {
     await connectToDb();
 
-    const deletedApplication = await Application.findByIdAndDelete(
-      applicationId
-    );
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const deletedApplication = await Career.findByIdAndDelete(applicationId);
 
     if (!deletedApplication)
       throw new Error(
@@ -278,7 +300,12 @@ export async function deleteSelectedApplications(
   try {
     await connectToDb();
 
-    const deletedApplications = await Application.deleteMany({
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const deletedApplications = await Career.deleteMany({
       _id: { $in: selectedApplications },
     });
 

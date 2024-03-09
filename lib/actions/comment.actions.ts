@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import {
   CreateCommentParams,
   UpdateCommentParams,

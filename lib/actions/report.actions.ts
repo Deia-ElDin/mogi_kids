@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateReportParams } from "@/types";
 import { handleError } from "../utils";
 import Report, { IReport } from "../database/models/report.model";
@@ -57,7 +58,14 @@ export async function createReport(
 
 export async function deleteReport(reportId: string): Promise<DeleteResult> {
   try {
+    await connectToDb();
+
     const deleteReport = await Report.findByIdAndDelete(reportId);
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     if (!deleteReport)
       throw new Error(
@@ -73,6 +81,11 @@ export async function deleteReport(reportId: string): Promise<DeleteResult> {
 export async function deleteAllReports(): Promise<DeleteResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const deletedReports = await Report.deleteMany();
 

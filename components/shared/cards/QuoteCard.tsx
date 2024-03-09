@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { getUsername } from "@/lib/utils";
+import { getUsername, toCap } from "@/lib/utils";
 import { IUser } from "@/lib/database/models/user.model";
 import { IQuote } from "@/lib/database/models/quote.model";
 import IconDeleteBtn from "../btns/IconDeleteBtn";
@@ -36,7 +36,7 @@ const QuoteCard: React.FC<QuoteCardParams> = ({
 
   const QuoteHeader: React.FC = () => (
     <div className="flex justify-center">
-      <h1 className="text-center font-bold text-lg">{cstName}</h1>
+      <h1 className="text-center font-bold text-lg">{toCap(cstName)}</h1>
       <div className="absolute top-0 right-0">
         <IconDeleteBtn
           deletionTarget="Quotation"
@@ -48,7 +48,7 @@ const QuoteCard: React.FC<QuoteCardParams> = ({
 
   const QuoteBody: React.FC = () => {
     return (
-      <div className="border-t border-gray-200 mt-4 pt-4 grid grid-cols-2 gap-4">
+      <div className="border-t border-gray-200 mt-4 pt-4 grid grid-cols-2 gap-x-9 gap-y-4">
         {[
           { label: "From Date:", value: format(from, "EEE, dd/MM/yyyy") },
           { label: "To Date:", value: format(to, "EEE, dd/MM/yyyy") },
@@ -60,7 +60,10 @@ const QuoteCard: React.FC<QuoteCardParams> = ({
           { label: "Number of Hours:", value: numberOfHours },
           { label: "Extra Info:", value: extraInfo },
         ].map((item) => (
-          <div key={`${_id} - ${item.label}`} className="flex items-center">
+          <div
+            key={`${_id} - ${item.label}`}
+            className="flex items-center justify-between"
+          >
             <p className="text-sm flex-shrink-0">
               <strong className="mr-2">{item.label}</strong>
             </p>
@@ -108,7 +111,7 @@ const QuoteCard: React.FC<QuoteCardParams> = ({
             />
           )}
           <div className="flex flex-col gap-1">
-            <p className="text-sm">{username}</p>
+            <p className="text-sm">{toCap(username)}</p>
             <p className="text-sm">{email}</p>
             <p className="text-sm">{mobile}</p>
           </div>

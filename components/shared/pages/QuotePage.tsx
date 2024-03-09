@@ -24,7 +24,7 @@ import {
 import { blockUser } from "@/lib/actions/user.actions";
 import { IQuote } from "@/lib/database/models/quote.model";
 import { differenceInDays } from "date-fns";
-import { formatMongoDbDate, sortQuotes, handleError } from "@/lib/utils";
+import { formatDate, sortQuotes, handleError } from "@/lib/utils";
 import { SortKey } from "@/constants";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
@@ -145,6 +145,7 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
 
       fetchUnseenQuotesNumber();
     }
+    if (selectAll) setSelectAll(false);
   };
 
   const handleSelectAll = () => {
@@ -365,13 +366,6 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
     (selectedQuote) => selectedQuote.checked
   );
 
-  const FetchAllQuotesComp = () => (
-    <UpdateBtn
-      updateTarget="Fetch All Quotation"
-      handleClick={fetchAllQuotes}
-    />
-  );
-
   const TableHeaderComp = () => (
     <TableHeader>
       <TableRow>
@@ -457,7 +451,7 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
                       : `${ageOfKidsFrom} - ${ageOfKidsTo}`,
                 },
                 { style: "table-cell", label: totalHours },
-                { style: "table-cell", label: formatMongoDbDate(createdAt) },
+                { style: "table-cell", label: formatDate(createdAt) },
               ].map((item, index) => (
                 <TableCell
                   key={`${_id} - ${item.label} - ${index}`}
@@ -484,7 +478,10 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
-        <FetchAllQuotesComp />
+        <UpdateBtn
+          updateTarget="Fetch All Quotation"
+          handleClick={fetchAllQuotes}
+        />
         <div className="flex flex-col md:flex-row justify-between gap-2 w-full">
           <input
             type="text"

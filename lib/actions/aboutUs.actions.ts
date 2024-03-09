@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateAboutUsParams, UpdateAboutUsParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -49,6 +50,11 @@ export async function createAboutUs(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const newAboutUs = await AboutUs.create({
       title,
       content,
@@ -78,6 +84,11 @@ export async function updateAboutUs(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const originalAboutUs = await AboutUs.findById(_id);
 
@@ -118,7 +129,13 @@ export async function deleteAboutUs(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const deletedAboutUs = await AboutUs.findByIdAndDelete(aboutUsArticleId);
+
     if (!deletedAboutUs)
       throw new Error("AboutUs not found or already deleted.");
 

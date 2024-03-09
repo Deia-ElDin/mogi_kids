@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateContactsParams, UpdateContactsParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -47,6 +48,11 @@ export async function createContact(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const newContact = await Contact.create(params);
 
     if (!newContact) throw new Error("Failed to create the contact.");
@@ -67,6 +73,11 @@ export async function updateContact(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const originalContact = await Contact.findById(_id);
 
@@ -107,6 +118,11 @@ export async function deleteContact(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const deletedContact = await Contact.findByIdAndDelete(contactId);
 
     if (!deletedContact) throw new Error("Failed to delete the contacts.");
@@ -124,6 +140,13 @@ export async function deleteContact(
 
 export async function deleteAllContacts(): Promise<DeleteResult> {
   try {
+    await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const contacts = await Contact.find();
 
     contacts.map(async (contact) => await deleteContact(contact._id, false));

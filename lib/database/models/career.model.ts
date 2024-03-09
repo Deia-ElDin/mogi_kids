@@ -1,6 +1,6 @@
 import { Document, Schema, models, model, Types } from "mongoose";
 
-export interface IApplication extends Document {
+export interface ICareer extends Document {
   _id: string;
   fullName: string;
   email: string;
@@ -26,7 +26,7 @@ export interface IApplication extends Document {
   updatedAt: string;
   createdBy: Types.ObjectId | string;
 }
-const ApplicationSchema = new Schema<IApplication>(
+const CareerSchema = new Schema<ICareer>(
   {
     fullName: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
@@ -53,7 +53,6 @@ const ApplicationSchema = new Schema<IApplication>(
   { timestamps: true }
 );
 
-const Application =
-  models.Application || model<IApplication>("Application", ApplicationSchema);
+const Career = models.Career || model<ICareer>("Career", CareerSchema);
 
-export default Application;
+export default Career;

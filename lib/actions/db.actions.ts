@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { DbParams } from "@/types";
 import { handleError } from "../utils";
 import Db, { IDb } from "../database/models/db.model";
@@ -20,6 +21,11 @@ type DefaultResult = {
 export const getDbsSize = async (): Promise<GetALLResult> => {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const dbs = await Db.findOne({});
 
@@ -45,6 +51,11 @@ export const updateDbSize = async (
 ): Promise<DefaultResult> => {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     let dbRecord = await Db.findOne({});
 

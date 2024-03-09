@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreatePageParams, UpdatePageParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -64,6 +65,11 @@ export async function createPage(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const newPage = await Page.create({ pageName, pageTitle, pageContent });
 
     if (!newPage) throw new Error("Failed to create the page.");
@@ -84,6 +90,11 @@ export async function updatePage(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const updatedPage = await Page.findByIdAndUpdate(_id, {
       pageName,
@@ -108,6 +119,11 @@ export async function deletePage(
 ): Promise<DeleteResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const deletedPage = await Page.findByIdAndDelete(pageId);
 

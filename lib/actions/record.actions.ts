@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateRecordParams, UpdateRecordParams } from "@/types";
 import { handleError, getImgName } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -47,6 +48,11 @@ export async function createRecord(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const newRecord = await Record.create(params);
 
     if (!newRecord) throw new Error("Failed to create a record.");
@@ -67,6 +73,11 @@ export async function updateRecord(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const originalRecord = await Record.findById(_id);
 
@@ -108,6 +119,11 @@ export async function deleteRecord(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const deletedRecord = await Record.findByIdAndDelete(recordId);
 
     if (!deletedRecord) throw new Error("Record not found or already deleted.");
@@ -126,6 +142,11 @@ export async function deleteRecord(
 export async function deleteAllRecords(): Promise<DeleteResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const allRecords = await Record.find();
 

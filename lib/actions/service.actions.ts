@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateServiceParams, UpdateServiceParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -67,6 +68,11 @@ export async function createService(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const newService = await Service.create({
       serviceName,
       imgUrl,
@@ -98,6 +104,11 @@ export async function updateService(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const originalService = await Service.findById(_id);
 
@@ -147,6 +158,11 @@ export async function deleteService(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const deletedService = await Service.findByIdAndDelete(serviceId);
 
     if (!deletedService)
@@ -166,6 +182,11 @@ export async function deleteService(
 export async function deleteAllServices(): Promise<DeleteResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const allServices = await Service.find();
 

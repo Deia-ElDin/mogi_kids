@@ -1,11 +1,12 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateUserParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User, { IUser } from "../database/models/user.model";
-import Career from "../database/models/application.model";
+import Career from "../database/models/career.model";
 import Quote from "../database/models/quote.model";
 import Review from "../database/models/review.model";
 import Comment from "../database/models/comment.model";
@@ -131,6 +132,11 @@ export async function getUserByClerkId(
 export async function blockUser(userId: string): Promise<BlockResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const blockedUser = await User.findByIdAndUpdate(
       userId,

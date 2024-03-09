@@ -1,6 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
+import { validateAdmin } from "./validation.actions";
 import { CreateGalleryParams, UpdateGalleryParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { UTApi } from "uploadthing/server";
@@ -47,6 +48,11 @@ export async function createGalleryImg(
   try {
     await connectToDb();
 
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
     const gallery = await Gallery.create(params);
 
     if (!gallery) throw new Error("Failed to create the gallery.");
@@ -67,6 +73,11 @@ export async function updateGalleryImg(
 
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const gallery = await Gallery.findById(_id);
 
@@ -92,6 +103,11 @@ export async function updateGalleryImg(
 export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
   try {
     await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
 
     const deletedImg = await Gallery.findByIdAndDelete(imgId);
 
