@@ -59,6 +59,11 @@ const UpdateRecordForm: React.FC<UpdateRecordFormProps> = ({ record }) => {
 
   async function onSubmit(values: z.infer<typeof recordSchema>) {
     try {
+      const validationResult = recordSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length > 0) {

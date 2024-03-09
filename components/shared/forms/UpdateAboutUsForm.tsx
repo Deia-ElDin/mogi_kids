@@ -65,6 +65,11 @@ const UpdateAboutUsForm: React.FC<UpdateAboutUsFormProps> = ({
 
   async function onSubmit(values: z.infer<typeof aboutUsSchema>) {
     try {
+      const validationResult = aboutUsSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length > 0) {

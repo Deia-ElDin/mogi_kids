@@ -39,6 +39,11 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
     try {
+      const validationResult = commentSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, error } = await createComment({
         ...values,
         reviewId,

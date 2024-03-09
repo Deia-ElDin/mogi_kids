@@ -47,14 +47,15 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
 
   async function onSubmit(values: z.infer<typeof quoteSchema>) {
     try {
+      const validationResult = quoteSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, data, error } = await createQuote({
         ...values,
         createdBy: user ? user._id : null,
       });
-
-      console.log("success", success);
-      console.log("data", data);
-      console.log("error", error);
 
       if (!success && error) throw new Error(error);
 
@@ -242,7 +243,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt))
+                      onlyPositiveValues(evt, 20))
                   }
                 />
               </FormControl>

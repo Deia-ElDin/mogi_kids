@@ -64,6 +64,11 @@ const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
 
   async function onSubmit(values: z.infer<typeof contactSchema>) {
     try {
+      const validationResult = contactSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length > 0) {

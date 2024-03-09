@@ -72,6 +72,11 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
     let uploadedImgUrl = values.imgUrl;
 
     try {
+      const validationResult = gallerySchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       if (files.length > 0) {
         const uploadedImgs = await startUpload(files);
 

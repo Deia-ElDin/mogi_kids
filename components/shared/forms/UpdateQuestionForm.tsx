@@ -63,6 +63,11 @@ const UpdateQuestionForm: React.FC<UpdateQuestionFormProps> = ({
 
   async function onSubmit(values: z.infer<typeof questionSchema>) {
     try {
+      const validationResult = questionSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, error } = await updateQuestion({
         ...values,
         _id: question._id!,

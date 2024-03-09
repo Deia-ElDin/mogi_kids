@@ -66,6 +66,11 @@ const ReviewForm = ({ user, logo }: ReviewFormProps) => {
     values.rating = String(rating);
 
     try {
+      const validationResult = reviewSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, error } = await createReview({
         ...values,
         createdBy: user._id,

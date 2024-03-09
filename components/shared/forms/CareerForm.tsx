@@ -54,6 +54,11 @@ const CareerForm: React.FC<CareerFormProps> = ({ user }) => {
 
   async function onSubmit(values: z.infer<typeof careerSchema>) {
     try {
+      const validationResult = careerSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       let uploadedImgUrl = values.imgUrl;
 
       if (files.length === 0) return;

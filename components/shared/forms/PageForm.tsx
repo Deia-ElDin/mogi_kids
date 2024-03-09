@@ -73,6 +73,11 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
     values.pageName = pageName;
 
     try {
+      const validationResult = pageSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, error } = page?._id
         ? await updatePage({
             ...values,

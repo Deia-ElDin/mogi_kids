@@ -87,6 +87,11 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
 
   async function onSubmit(values: z.infer<typeof commentSchema>) {
     try {
+      const validationResult = commentSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, error } = await updateComment({
         ...values,
         _id: commentObj._id,

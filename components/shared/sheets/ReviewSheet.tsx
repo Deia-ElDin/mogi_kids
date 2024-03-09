@@ -101,6 +101,11 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
     values.rating = stateRating.toString();
 
     try {
+      const validationResult = reviewSchema.safeParse(values);
+
+      if (!validationResult.success)
+        throw new Error(validationResult.error.message);
+
       const { success, error } = await updateReview({
         ...values,
         _id: reviewObj._id,

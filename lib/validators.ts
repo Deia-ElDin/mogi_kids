@@ -103,7 +103,7 @@ export const quoteSchema = z.object({
     .refine((value) => {
       const kids = parseFloat(value);
       return kids > 0;
-    }, "The number of kids must not equal 0."),
+    }, "The number of kids must be bigger than 0."),
   ageOfKidsFrom: z
     .string()
     .min(1, "Kindly let us know the age of your youngest kid.")
@@ -131,7 +131,7 @@ export const quoteSchema = z.object({
       const ageTo = parseFloat(value);
       return ageTo >= fromAge;
     }, "Please ensure the age range begins with the youngest child or remains equal."),
-  extraInfo: z.string().max(5000, "maximum 5000 characters."),
+  extraInfo: z.string().max(1000, "maximum 1000 characters."),
 });
 
 export const careerSchema = z.object({
