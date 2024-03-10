@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toCap } from "@/lib/utils";
-import QuotePage from "./QuotePage";
-import ApplicationPage from "./ApplicationPage";
+import QuotesPage from "./QuotesPage";
+import ApplicationsPage from "./ApplicationsPage";
+import UsersPage from "./UsersPage";
 
 const AdminPage: React.FC = () => {
   const [displayPage, setDisplayPage] = useState<string>("quotes");
@@ -14,6 +15,7 @@ const AdminPage: React.FC = () => {
   const tabsArray = [
     { value: "quotes", count: unseenQuotes },
     { value: "applicants", count: unseenApplicants },
+    { value: "users", count: null },
   ];
 
   return (
@@ -34,13 +36,16 @@ const AdminPage: React.FC = () => {
         </TabsList>
         <TabsContent value="quotes">
           {displayPage === "quotes" && (
-            <QuotePage setUnseenQuotes={setUnseenQuotes} />
+            <QuotesPage setUnseenQuotes={setUnseenQuotes} />
           )}
         </TabsContent>
         <TabsContent value="applicants">
           {displayPage === "applicants" && (
-            <ApplicationPage setUnseenApplicants={setUnseenApplicants} />
+            <ApplicationsPage setUnseenApplicants={setUnseenApplicants} />
           )}
+        </TabsContent>
+        <TabsContent value="users">
+          {displayPage === "users" && <UsersPage />}
         </TabsContent>
       </Tabs>
     </section>

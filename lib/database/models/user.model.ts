@@ -11,7 +11,7 @@ export interface IUser extends Document {
   gender: "Male" | "Female" | "";
   phoneNumbers: string[] | [];
   reviews: IReview[] | [];
-  role: "Admin" | "User";
+  role: "Manager" | "Admin" | "User";
   blocked: boolean;
   createdAt: string;
   updatedAt: string;

@@ -33,11 +33,11 @@ import UserDeleteBtn from "../btns/UserDeleteBtn";
 import QuoteCard from "../cards/QuoteCard";
 import "react-datepicker/dist/react-datepicker.css";
 
-type QuotePageProps = {
+type QuotesPageProps = {
   setUnseenQuotes: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
+const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
   const limit = 10;
   const [fetchByCstName, setFetchByCstName] = useState<string>("");
   const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
@@ -385,7 +385,7 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
           { label: "Kids", key: SortKey.KIDS },
           { label: "Age", key: SortKey.AGES },
           { label: "Total Hours", key: SortKey.TOTAL_HOURS },
-          { label: "Date", key: SortKey.DATE },
+          { label: "Created At", key: SortKey.DATE },
         ].map((item) => (
           <TableHead
             key={item.label}
@@ -530,4 +530,4 @@ const QuotePage: React.FC<QuotePageProps> = ({ setUnseenQuotes }) => {
   );
 };
 
-export default QuotePage;
+export default QuotesPage;

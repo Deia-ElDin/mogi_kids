@@ -3,11 +3,7 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { updateDbSize } from "./db.actions";
-import {
-  GetAllApplicationsParams,
-  CreateApplicationParams,
-  UnseenApplicationsParams,
-} from "@/types";
+import { GetAllApplicationsParams, CreateApplicationParams } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -88,7 +84,7 @@ export async function getAllApplications({
     if (!applications) throw new Error("Failed to fetch the applications.");
 
     if (applications.length === 0)
-      return { success: true, data: [], error: null };
+      return { success: true, data: [], totalPages: 0, error: null };
 
     const totalPages = Math.ceil(
       (await Career.countDocuments(conditions)) / limit

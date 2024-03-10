@@ -2,9 +2,10 @@
 
 import { currentUser } from "@clerk/nextjs";
 import { handleError } from "../utils";
-import User from "../database/models/user.model";
+import User, { IUser } from "../database/models/user.model";
 
 type Result = {
+  user: IUser | null;
   isAdmin: boolean;
   error: string | null;
 };
@@ -22,8 +23,8 @@ export async function validateAdmin(): Promise<Result> {
     const isAdmin =
       mongoDbUser.role === "Manager" || mongoDbUser.role === "Admin";
 
-    return { isAdmin, error: null };
+    return { user: mongoDbUser, isAdmin, error: null };
   } catch (error) {
-    return { isAdmin: false, error: handleError(error) };
+    return { user: null, isAdmin: false, error: handleError(error) };
   }
 }

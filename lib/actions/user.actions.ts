@@ -2,7 +2,7 @@
 
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
-import { CreateUserParams } from "@/types";
+import { CreateUserParams, GetAllUsersParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User, { IUser } from "../database/models/user.model";
@@ -13,7 +13,8 @@ import Comment from "../database/models/comment.model";
 
 type GetALLResult = {
   success: boolean;
-  data: IUser[] | null;
+  data: IUser[] | [] | null;
+  totalPages?: number;
   error: string | null;
 };
 
@@ -53,16 +54,43 @@ export const populateUser = (query: any) => {
   });
 };
 
-export async function getAllUsers(): Promise<GetALLResult> {
+export async function getAllUsers({
+  limit = 10,
+  page = 1,
+}: GetAllUsersParams): Promise<GetALLResult> {
   try {
     await connectToDb();
 
-    const users = await populateUser(User.find());
+    const { user, isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin || !user || !user.role)
+      throw new Error("Not Authorized to access this resource.");
+
+    const { role } = user;
+
+    let conditions = null;
+
+    if (role === "Admin") conditions = { role: { $nin: ["Admin", "Manager"] } };
+    else if (role === "Manager") conditions = { _id: { $ne: user._id } };
+
+    if (!conditions) throw new Error("Not Authorized to access this resource.");
+
+    const usersQuery = User.find(conditions);
+
+    if (!usersQuery) throw new Error("Not Authorized to access this resource.");
+
+    const users = await populateUser(usersQuery.sort({ createdAt: -1 }));
+
+    if (users.length === 0)
+      return { success: true, data: [], totalPages: 0, error: null };
+
+    const totalPages = Math.ceil(
+      (await Career.countDocuments(conditions)) / limit
+    );
 
     const data = JSON.parse(JSON.stringify(users));
 
-    revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data, totalPages, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

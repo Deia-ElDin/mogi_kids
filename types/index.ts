@@ -10,6 +10,11 @@ export type CreateUserParams = {
   role: string;
 };
 
+export type GetAllUsersParams = {
+  page?: number;
+  limit?: number;
+};
+
 // Logo
 export type CreateLogoParams = {
   imgUrl: string;
@@ -144,11 +149,6 @@ export type CreateApplicationParams = {
   imgUrl: string;
   imgSize: number;
   createdBy: string | null;
-};
-
-export type UnseenApplicationsParams = {
-  page?: number;
-  limit?: number;
 };
 
 // Review Params

@@ -33,11 +33,13 @@ import UserDeleteBtn from "../btns/UserDeleteBtn";
 import ApplicationCard from "../cards/ApplicationCard";
 import "react-datepicker/dist/react-datepicker.css";
 
-type ApplicationProps = {
+type ApplicationsPageProps = {
   setUnseenApplicants: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
+const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
+  setUnseenApplicants,
+}) => {
   const limit = 10;
   const [fetchByApplicantName, setFetchByApplicantName] = useState<string>("");
   const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
@@ -387,7 +389,7 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
         <TableHead className="table-head">Joining Date</TableHead>
         <TableHead className="table-head">Days</TableHead>
         <TableHead className="table-head">Resume</TableHead>
-        <TableHead className="table-head">Date</TableHead>
+        <TableHead className="table-head">Created At</TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -545,4 +547,4 @@ const Application: React.FC<ApplicationProps> = ({ setUnseenApplicants }) => {
   );
 };
 
-export default Application;
+export default ApplicationsPage;
