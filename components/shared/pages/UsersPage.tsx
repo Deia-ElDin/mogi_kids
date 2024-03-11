@@ -11,24 +11,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getAllUsers, blockUser } from "@/lib/actions/user.actions";
+import { Switch } from "@/components/ui/switch";
+import { getAllUsers, updateUser, blockUser } from "@/lib/actions/user.actions";
 import { IUser } from "@/lib/database/models/user.model";
-import { differenceInDays } from "date-fns";
-import { formatDate, sortUsers, handleError, toCap } from "@/lib/utils";
-import { UsersSortKey } from "@/constants";
+import { formatDate, handleError, toCap } from "@/lib/utils";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
 import DatePicker from "react-datepicker";
 import UserDeleteBtn from "../btns/UserDeleteBtn";
 import UserCard from "../cards/UserCard";
+import Image from "next/image";
 import "react-datepicker/dist/react-datepicker.css";
 
-type UsersPageProps = {
-  setUnseenApplicants: React.Dispatch<React.SetStateAction<number | null>>;
-};
-
 type FetchState = {
-  applicantName?: string;
+  firstName?: string;
   email?: string;
   day?: Date | null;
   month?: Date | null;
@@ -39,10 +35,10 @@ type usersActionsState = {
   checked: boolean;
 };
 
-const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
+const UsersPage: React.FC = () => {
   const limit = 10;
   const [fetchBy, setFetchBy] = useState<FetchState>({
-    applicantName: "",
+    firstName: "",
     email: "",
     day: null,
     month: null,
@@ -53,10 +49,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
   const [usersActions, setUsersActions] = useState<usersActionsState[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [sortConfig, setSortConfig] = useState<{
-    key: UsersSortKey;
-    direction: string;
-  } | null>(null);
+  const [isActive, setIsActive] = useState(false);
 
   const { toast } = useToast();
 
@@ -71,6 +64,26 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
         checked: false,
       })) || []
     );
+  };
+
+  const handleUpdateUser = async (userId: string, role: string) => {
+    try {
+      const { success, data, error } = await updateUser({ userId, role });
+      if (!success && error) throw new Error(error);
+      if (data) {
+        setUsers((prev) =>
+          prev.map((user) => (user._id === userId ? data : user))
+        );
+      }
+
+      toast({ description: "User Updated Successfully." });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Update The User, ${handleError(error)}`,
+      });
+    }
   };
 
   const handleBlockUser = async (userId: string) => {
@@ -117,12 +130,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
   };
 
   const fetchAllUsers = async (fetchBy: FetchState) => {
-    const {
-      applicantName = "",
-      email = "",
-      day = null,
-      month = null,
-    } = fetchBy;
+    const { firstName = "", email = "", day = null, month = null } = fetchBy;
 
     try {
       const { success, data, totalPages, error } = await getAllUsers({
@@ -132,23 +140,22 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
       });
 
       if (!success && error) throw new Error(error);
-      if (unseen) setUnseenApplicants(unseen);
       if (success && data && data?.length > 0) setStates(data, totalPages);
       else {
-        setUnseenApplicants(null);
-        let extraMsg = "yet in the Database.";
-        if (applicantName) extraMsg = `by ${applicantName}.`;
-        else if (email) extraMsg = `by ${email}.`;
-        else if (day) extraMsg = `at ${format(day, "EEE, dd/MM/yyyy")}.`;
-        else if (month) extraMsg = `during ${format(month, "MMMM MM/yyyy")}.`;
+        let extraMsg = "created yet in the Database.";
+        if (firstName) extraMsg = `his first name matches ${firstName}.`;
+        else if (email) extraMsg = `his email name  ${email}.`;
+        else if (day)
+          extraMsg = `created at ${format(day, "EEE, dd/MM/yyyy")}.`;
+        else if (month)
+          extraMsg = `created during ${format(month, "MMMM MM/yyyy")}.`;
         setStates([]);
         toast({
           variant: "destructive",
-          title: `Uh oh! We couldn't find any Users created ${extraMsg}.`,
+          title: `Uh oh! We couldn't find any Users ${extraMsg}.`,
         });
       }
     } catch (error) {
-      setUnseenApplicants(null);
       setStates([]);
       toast({
         variant: "destructive",
@@ -158,44 +165,15 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
     }
   };
 
-  const requestSort = (key: UsersSortKey) => {
-    let direction = "ascending";
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === "ascending"
-    ) {
-      direction = "descending";
-    }
-    setSortConfig({ key, direction });
-  };
-
   useEffect(() => {
     fetchAllUsers(fetchBy);
   }, [currentPage]);
 
   useEffect(() => {
-    if (sortConfig) {
-      const sortedUsers = sortUsers(
-        users,
-        sortConfig.key,
-        sortConfig.direction
-      );
-      setUsers(sortedUsers);
-      setUsersActions(
-        sortedUsers?.map((user: IUser) => ({
-          _id: user._id,
-          checked: false,
-        })) || []
-      );
-    }
-  }, [sortConfig]);
-
-  useEffect(() => {
     setCurrentPage(1);
-    const { applicantName, email, day, month } = fetchBy;
+    const { firstName, email, day, month } = fetchBy;
 
-    if (applicantName) fetchAllUsers({ applicantName });
+    if (firstName) fetchAllUsers({ firstName });
     else if (email) fetchAllUsers({ email });
     else if (day) fetchAllUsers({ day });
     else if (month) fetchAllUsers({ month });
@@ -205,16 +183,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
 
   const isSelected = usersActions.some((selectedUser) => selectedUser.checked);
-
-  const TrueImage = ({ condition }: { condition: boolean }) => (
-    <img
-      src={`/assets/icons/${condition ? "true" : "false"}.svg`}
-      alt="True/false icon"
-      height={20}
-      width={20}
-      className="m-auto"
-    />
-  );
 
   const TableHeaderComp = () => (
     <TableHeader>
@@ -227,26 +195,16 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
             onChange={handleSelectAll}
           />
         </TableHead>
-        <TableHead className="table-head">Applicant</TableHead>
         {[
-          { label: "Gender", key: UsersSortKey.GENDER },
-          { label: "DHA", key: UsersSortKey.DHA },
-          { label: "CGC", key: UsersSortKey.CGC },
-          { label: "Salary", key: UsersSortKey.SALARY },
-          {
-            label: "Visa Expiry Date",
-            key: UsersSortKey.VISA_EXPIRY_DATE,
-          },
-          { label: "Joining Date", key: UsersSortKey.JOIN_DATE },
-          { label: "Joining Days", key: UsersSortKey.DAYS },
-          { label: "Created At", key: UsersSortKey.DATE },
+          "Photo",
+          "First Name",
+          "Last Name",
+          "Email",
+          "Admin",
+          "Created At",
         ].map((item) => (
-          <TableHead
-            key={item.label}
-            className="table-head"
-            onClick={() => requestSort(item.key)}
-          >
-            {item.label}
+          <TableHead key={item} className="table-head">
+            {item}
           </TableHead>
         ))}
       </TableRow>
@@ -256,26 +214,19 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
   const TableBodyComp = () => (
     <TableBody>
       {users.map((user, index) => {
-        const {
-          fullName,
-          expectedSalary,
-          joinDate,
-          gender,
-          dhaCertificate,
-          careGiverCertificate,
-          visaExpireDate,
-          imgUrl,
-          seen,
-          createdAt,
-        } = user;
-        const diffInDays = differenceInDays(new Date(joinDate), today);
-        const isVisaExpired = isBefore(new Date(visaExpireDate), today);
-        const isJoiningExpired = isBefore(new Date(joinDate), today);
-
+        const { photo, firstName, lastName, email, role, blocked, createdAt } =
+          user;
+        const isAdmin = role === "Admin" || role === "Manager";
         return (
           <React.Fragment key={user._id}>
             <TableRow
-              className={`cursor-pointer ${seen ? "" : "text-blue-500"}`}
+              className={`cursor-pointer ${
+                isAdmin
+                  ? "text-green-500 font-bold"
+                  : blocked
+                  ? "text-red-500"
+                  : ""
+              }`}
               onClick={() => handleSelectUser(user._id)}
             >
               <TableCell className="table-cell text-center">
@@ -286,53 +237,41 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
                   onChange={(e) => e.stopPropagation()}
                 />
               </TableCell>
-              <TableCell className="table-cell">
-                {toCap(fullName.split(" ")[0])}
-              </TableCell>
-              <TableCell
-                className={`table-cell ${
-                  gender.toLowerCase() === "female" ? "" : "text-red-500"
-                }`}
-              >
-                {toCap(gender)}
-              </TableCell>
-              <TableCell className="table-cell">
-                <TrueImage condition={dhaCertificate.toLowerCase() === "yes"} />
-              </TableCell>
-              <TableCell className="table-cell">
-                <TrueImage
-                  condition={careGiverCertificate.toLowerCase() === "yes"}
+              <TableCell>
+                <Image
+                  src={photo || "/assets/icons/default-user.svg"}
+                  alt="User photo"
+                  height={40}
+                  width={40}
+                  className="rounded-full m-auto"
                 />
               </TableCell>
-              <TableCell className="table-cell">{expectedSalary}</TableCell>
-              <TableCell
-                className={`table-cell ${isVisaExpired ? "text-red-500" : ""}`}
-              >
-                {formatDate(String(visaExpireDate))}
+              <TableCell className="table-cell">
+                {firstName ? toCap(firstName) : ""}
               </TableCell>
-              <TableCell
-                className={`table-cell ${
-                  isJoiningExpired ? "text-red-500" : ""
-                }`}
-              >
-                {formatDate(String(joinDate))}
+              <TableCell className="table-cell">
+                {lastName ? toCap(lastName) : ""}
               </TableCell>
-              <TableCell
-                className={`table-cell ${diffInDays > 0 ? "" : "text-red-500"}`}
-              >
-                {diffInDays > 0 ? diffInDays : diffInDays}
+              <TableCell className="table-cell">{email}</TableCell>
+              <TableCell className="table-cell">
+                <Switch
+                  className="data-[state=checked]:bg-green-500"
+                  checked={role === "Admin"}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUpdateUser(
+                      user._id,
+                      role === "Admin" ? "User" : "Admin"
+                    );
+                  }}
+                />
               </TableCell>
-
               <TableCell className="table-cell">
                 {formatDate(String(createdAt))}
               </TableCell>
             </TableRow>
             {usersActions[index].checked && (
-              <UserCard
-                user={user}
-                handleDeleteUser={handleDeleteUser}
-                handleBlockUser={handleBlockUser}
-              />
+              <UserCard user={user} handleBlockUser={handleBlockUser} />
             )}
           </React.Fragment>
         );
@@ -344,7 +283,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
         <UpdateBtn
-          updateTarget="Fetch All Quotation"
+          updateTarget="Fetch All Users"
           handleClick={() => fetchAllUsers({})}
         />
         <div className="flex flex-col gap-2 w-full">
@@ -352,11 +291,11 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
             <input
               type="text"
               className="fetch-input-style text-style"
-              placeholder="Fetch By Client Name"
-              value={fetchBy.applicantName}
+              placeholder="Fetch By User First Name"
+              value={fetchBy.firstName}
               onChange={(e) =>
                 setFetchBy({
-                  applicantName: e.target.value,
+                  firstName: e.target.value,
                   email: "",
                   day: null,
                   month: null,
@@ -366,11 +305,11 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
             <input
               type="text"
               className="fetch-input-style text-style"
-              placeholder="Fetch By Client Email"
+              placeholder="Fetch By User Email"
               value={fetchBy.email}
               onChange={(e) =>
                 setFetchBy({
-                  applicantName: "",
+                  firstName: "",
                   email: e.target.value,
                   day: null,
                   month: null,
@@ -383,7 +322,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
               selected={fetchBy.day}
               onChange={(date: Date) =>
                 setFetchBy({
-                  applicantName: "",
+                  firstName: "",
                   email: "",
                   day: date,
                   month: null,
@@ -397,7 +336,7 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
               selected={fetchBy.month}
               onChange={(date: Date) =>
                 setFetchBy({
-                  applicantName: "",
+                  firstName: "",
                   email: "",
                   day: null,
                   month: date,
@@ -423,13 +362,6 @@ const UsersPage: React.FC<UsersPageProps> = ({ setUnseenApplicants }) => {
         pageNumbers={pageNumbers}
         setCurrentPage={setCurrentPage}
       />
-
-      {isSelected && (
-        <UserDeleteBtn
-          deletionTarget="Delete Selected Users"
-          handleClick={handleDeleteSelectedUsers}
-        />
-      )}
     </div>
   );
 };

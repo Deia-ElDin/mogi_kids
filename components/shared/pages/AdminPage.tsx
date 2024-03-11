@@ -19,7 +19,7 @@ const AdminPage: React.FC = () => {
   ];
 
   return (
-    <section className="section-style mb-auto">
+    <section className="flex flex-col w-[90%] py-4 relative mb-auto">
       <Tabs defaultValue="quotes" className="w-full bg-transparent">
         <TabsList className="w-full h-fit flex gap-4 bg-transparent border-t-0 border-r-0 border-l-0 border-b-2 border-custom-red ">
           {tabsArray.map((item) => (

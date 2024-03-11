@@ -29,7 +29,7 @@ export async function validateAdmin(): Promise<Result> {
   }
 }
 
-export function validatePageAndLimit(page: number, limit: number) {
+export async function validatePageAndLimit(page: number, limit: number) {
   if (
     isNaN(page) ||
     isNaN(limit) ||

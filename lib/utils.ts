@@ -11,6 +11,7 @@ import { IAboutUs } from "./database/models/about-us.model";
 import { differenceInDays } from "date-fns";
 import { QuoteSortKey, ApplicationsSortKey } from "@/constants";
 import { ICareer } from "./database/models/career.model";
+import { IUser } from "./database/models/user.model";
 
 const adminRoles = new Set(["Manager", "Admin"]);
 

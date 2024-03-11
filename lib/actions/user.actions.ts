@@ -3,7 +3,7 @@
 import { connectToDb } from "../database";
 import { validateAdmin, validatePageAndLimit } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
-import { CreateUserParams, GetAllUsersParams } from "@/types";
+import { CreateUserParams, UpdateUserParams, GetAllUsersParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import User, { IUser } from "../database/models/user.model";
@@ -113,7 +113,7 @@ export async function getAllUsers({
     const skipAmount = (Number(page) - 1) * limit;
 
     const users = await populateUser(
-      usersQuery.sort({ createdAt: -1 }).skip(skipAmount).limit(limit)
+      usersQuery.sort({ role: 1, createdAt: -1 }).skip(skipAmount).limit(limit)
     );
 
     if (users.length === 0) return { success: true, data: [], error: null };
@@ -150,6 +150,34 @@ export async function createUser(
     const data = JSON.parse(JSON.stringify(newUser));
 
     revalidatePath("/");
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function updateUser(
+  params: UpdateUserParams
+): Promise<DefaultResult> {
+  const { userId, role } = params;
+
+  console.log("params", params);
+
+  try {
+    await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const updatedUser = await populateUser(
+      User.findByIdAndUpdate(userId, { role }, { new: true })
+    );
+
+    if (!updatedUser) throw new Error("User not found.");
+
+    const data = JSON.parse(JSON.stringify(updatedUser));
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

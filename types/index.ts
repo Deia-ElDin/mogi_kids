@@ -11,6 +11,11 @@ export type CreateUserParams = {
   role: string;
 };
 
+export type UpdateUserParams = {
+  userId: string;
+  role?: string;
+};
+
 export type GetAllUsersParams = {
   fetch?: {
     firstName?: string;
