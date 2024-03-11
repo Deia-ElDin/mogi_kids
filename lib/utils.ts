@@ -214,8 +214,8 @@ export const sortQuotes = (
       const bValue = new Date(b.createdAt);
 
       return direction === "ascending"
-        ? Number(aValue) - Number(bValue)
-        : Number(bValue) - Number(aValue);
+        ? aValue.getTime() - bValue.getTime()
+        : bValue.getTime() - aValue.getTime();
     });
   }
   return sortedArray;
@@ -228,16 +228,92 @@ export const sortApplications = (
 ) => {
   const sortedArray = [...array];
 
-  if (key === ApplicationsSortKey.DATE) {
+  if (key === ApplicationsSortKey.GENDER) {
+    sortedArray.sort((a, b) => {
+      const aValue = a.gender.toLowerCase();
+      const bValue = b.gender.toLowerCase();
+
+      if (direction === "ascending") {
+        if (aValue < bValue) return -1;
+        if (aValue > bValue) return 1;
+        return 0;
+      } else {
+        if (aValue < bValue) return 1;
+        if (aValue > bValue) return -1;
+        return 0;
+      }
+    });
+  } else if (key === ApplicationsSortKey.DHA) {
+    sortedArray.sort((a, b) => {
+      const aValue = a.dhaCertificate.toLowerCase();
+      const bValue = b.dhaCertificate.toLowerCase();
+
+      if (direction === "ascending") {
+        if (aValue < bValue) return -1;
+        if (aValue > bValue) return 1;
+        return 0;
+      } else {
+        if (aValue < bValue) return 1;
+        if (aValue > bValue) return -1;
+        return 0;
+      }
+    });
+  } else if (key === ApplicationsSortKey.CGC) {
+    sortedArray.sort((a, b) => {
+      const aValue = a.careGiverCertificate.toLowerCase();
+      const bValue = b.careGiverCertificate.toLowerCase();
+
+      if (direction === "ascending") {
+        if (aValue < bValue) return -1;
+        if (aValue > bValue) return 1;
+        return 0;
+      } else {
+        if (aValue < bValue) return 1;
+        if (aValue > bValue) return -1;
+        return 0;
+      }
+    });
+  } else if (key === ApplicationsSortKey.SALARY) {
+    sortedArray.sort((a, b) => {
+      const aValue = parseInt(a.expectedSalary);
+      const bValue = parseInt(b.expectedSalary);
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
+  } else if (key === ApplicationsSortKey.VISA_EXPIRY_DATE) {
+    sortedArray.sort((a, b) => {
+      const aValue = new Date(a.joinDate);
+      const bValue = new Date(b.joinDate);
+
+      return direction === "ascending"
+        ? aValue.getTime() - bValue.getTime()
+        : bValue.getTime() - aValue.getTime();
+    });
+  } else if (key === ApplicationsSortKey.JOIN_DATE) {
+    sortedArray.sort((a, b) => {
+      const aValue = new Date(a.joinDate);
+      const bValue = new Date(b.joinDate);
+
+      return direction === "ascending"
+        ? aValue.getTime() - bValue.getTime()
+        : bValue.getTime() - aValue.getTime();
+    });
+  } else if (key === ApplicationsSortKey.DAYS) {
+    sortedArray.sort((a, b) => {
+      const aValue = parseInt(a.expectedSalary);
+      const bValue = parseInt(b.expectedSalary);
+      return direction === "ascending" ? aValue - bValue : bValue - aValue;
+    });
+  } else if (key === ApplicationsSortKey.DATE) {
     sortedArray.sort((a, b) => {
       const aValue = new Date(a.createdAt);
       const bValue = new Date(b.createdAt);
 
       return direction === "ascending"
-        ? Number(aValue) - Number(bValue)
-        : Number(bValue) - Number(aValue);
+        ? aValue.getTime() - bValue.getTime()
+        : bValue.getTime() - aValue.getTime();
     });
   }
+
   return sortedArray;
 };
 
@@ -259,6 +335,16 @@ export const isValidString = (value: string, maxLength: number) => {
   );
 };
 
+export const isValidUrl = (url: string): boolean => {
+  // Regular expression to match URL format
+  const urlRegex = /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
+  return urlRegex.test(url);
+};
+
 export const isInRange = (value: number, min: number, max: number) => {
   return value >= min && value <= max;
+};
+
+export const isInArray = (value: string, array: string[]) => {
+  return array.indexOf(value) === -1;
 };

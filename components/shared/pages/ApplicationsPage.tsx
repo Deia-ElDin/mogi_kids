@@ -317,6 +317,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
   useEffect(() => {
     setCurrentPage(1);
     const { applicantName, email, day, month } = fetchBy;
+
     if (applicantName) fetchAllApplications({ applicantName });
     else if (email) fetchAllApplications({ email });
     else if (day) fetchAllApplications({ day });
@@ -359,10 +360,11 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           { label: "Salary", key: ApplicationsSortKey.SALARY },
           {
             label: "Visa Expiry Date",
-            key: ApplicationsSortKey.VISAEXPIRYDATE,
+            key: ApplicationsSortKey.VISA_EXPIRY_DATE,
           },
-          { label: "Joining Date", key: ApplicationsSortKey.JOININGDATE },
-          { label: "Days", key: ApplicationsSortKey.DAYS },
+          { label: "Joining Date", key: ApplicationsSortKey.JOIN_DATE },
+          { label: "Joining Days", key: ApplicationsSortKey.DAYS },
+          { label: "Created At", key: ApplicationsSortKey.DATE },
         ].map((item) => (
           <TableHead
             key={item.label}
@@ -372,13 +374,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
             {item.label}
           </TableHead>
         ))}
-        <TableHead className="table-head">Resume</TableHead>
-        <TableHead
-          className="table-head"
-          onClick={() => requestSort(ApplicationsSortKey.DATE)}
-        >
-          Created At
-        </TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -453,17 +448,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
                 {diffInDays > 0 ? diffInDays : diffInDays}
               </TableCell>
 
-              <TableCell className="table-cell text-center">
-                <a href={imgUrl} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src="/assets/icons/pdf.svg"
-                    alt="True/false icon"
-                    height={25}
-                    width={25}
-                    className="m-auto"
-                  />
-                </a>
-              </TableCell>
               <TableCell className="table-cell">
                 {formatDate(String(createdAt))}
               </TableCell>

@@ -3,7 +3,6 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
-import { updateDbSize } from "./db.actions";
 import {
   CreateApplicationParams,
   GetAllApplicationsParams,
@@ -51,12 +50,6 @@ export async function createApplication(
 
     if (!newApplication) throw new Error("Failed to create the application.");
 
-    const { success: dbSuccess, error: dbError } = await updateDbSize({
-      resend: "1",
-    });
-
-    if (!dbSuccess && dbError) throw new Error(dbError);
-
     const data = JSON.parse(JSON.stringify(newApplication));
 
     return { success: true, data, error: null };
@@ -102,8 +95,8 @@ export async function getAllApplications({
 
     let condition = {};
 
-    if (fetch?.cstName)
-      condition = { cstName: new RegExp(`^${fetch?.cstName}`, "i") };
+    if (fetch?.applicantName)
+      condition = { fullName: new RegExp(`^${fetch?.applicantName}`, "i") };
     else if (fetch?.email)
       condition = { email: new RegExp(`^${fetch?.email}`, "i") };
     else if (fetch?.day) {

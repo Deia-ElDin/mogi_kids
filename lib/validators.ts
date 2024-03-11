@@ -181,7 +181,7 @@ export const careerSchema = z.object({
     if (value !== null && value !== undefined) {
       const today = new Date();
       const maxDate = addMonths(today, 2);
-      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
+      return isAfter(value, subDays(today, 1)) && isBefore(value, maxDate);
     }
   }, "Joining date can't start in the past or exceed 2 months from now."),
   gender: z.string().min(1, "Kindly select your gender."),
@@ -211,7 +211,7 @@ export const careerSchema = z.object({
     }, "Visa expiration date must be within 10 years from today."),
   coverLetter: z
     .string()
-    .max(1000, "Field must not exceed 1000 characters.")
+    .max(5000, "Field must not exceed 5000 characters.")
     .optional(),
   imgUrl: z.string().min(1, "Kindly attach your CV."),
 });

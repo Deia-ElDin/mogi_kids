@@ -150,7 +150,7 @@ export type DeleteSelectedQuotesParams = {
 // Career Params
 export type GetAllApplicationsParams = {
   fetch?: {
-    cstName?: string;
+    applicantName?: string;
     email?: string;
     day?: Date | null;
     month?: Date | null;

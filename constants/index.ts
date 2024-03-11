@@ -242,8 +242,8 @@ export enum ApplicationsSortKey {
   DHA = "dha",
   CGC = "cgc",
   SALARY = "salary",
-  VISAEXPIRYDATE = "visa expiry date",
-  JOININGDATE = "joining date",
+  VISA_EXPIRY_DATE = "visa expiry date",
+  JOIN_DATE = "joining date",
   DAYS = "days",
   DATE = "createdAt",
 }
