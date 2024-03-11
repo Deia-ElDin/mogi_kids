@@ -8,8 +8,14 @@ import {
   subMonths,
   addMonths,
 } from "date-fns";
-import { isValidString, isValidUrl } from "@/lib/utils";
+import {
+  isValidString,
+  isValidMobile,
+  isValidUrl,
+  isInRange,
+} from "@/lib/utils";
 import { isEmail } from "validator";
+import User from "./user.model";
 
 export interface ICareer extends Document {
   _id: string;
@@ -35,7 +41,7 @@ export interface ICareer extends Document {
   seen: boolean;
   createdAt: string;
   updatedAt: string;
-  createdBy: Types.ObjectId | string;
+  createdBy: Types.ObjectId | string | null;
 }
 
 const CareerSchema = new Schema<ICareer>(
@@ -72,29 +78,27 @@ CareerSchema.pre<ICareer>("save", function (next) {
     { key: "fullName", value: this.fullName },
     { key: "email", value: this.email },
     { key: "mobile", value: this.mobile },
-    { key: "applyingFor", value: this.applyingFor },
     { key: "workingAt", value: this.workingAt },
+    { key: "applyingFor", value: this.applyingFor },
+    { key: "joinDate", value: this.joinDate },
     { key: "previousSalary", value: this.previousSalary },
     { key: "expectedSalary", value: this.expectedSalary },
-    { key: "joinDate", value: this.joinDate },
     { key: "gender", value: this.gender },
     { key: "education", value: this.education },
     { key: "dhaCertificate", value: this.dhaCertificate },
     { key: "careGiverCertificate", value: this.careGiverCertificate },
-    { key: "experienceInUAE", value: this.experienceInUAE },
     { key: "visa", value: this.visa },
     { key: "visaExpireDate", value: this.visaExpireDate },
+    { key: "experienceInUAE", value: this.experienceInUAE },
     { key: "coverLetter", value: this.coverLetter },
     { key: "imgUrl", value: this.imgUrl },
     { key: "imgSize", value: this.imgSize },
-    { key: "blocked", value: this.blocked },
-    { key: "seen", value: this.seen },
     { key: "createdBy", value: this.createdBy },
   ];
 
   let isError = false;
 
-  fieldsToValidate.forEach(({ key, value }) => {
+  fieldsToValidate.forEach(async ({ key, value }) => {
     if (isError) return;
     switch (key) {
       case "fullName":
@@ -107,13 +111,11 @@ CareerSchema.pre<ICareer>("save", function (next) {
         break;
 
       case "mobile":
-        if (
-          !isValidString(value, 14) ||
-          !/^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/.test(
-            value
-          )
-        )
-          isError = true;
+        if (!isValidString(value, 14) || !isValidMobile(value)) isError = true;
+        break;
+
+      case "workingAt":
+        if (!isValidString(value, 150)) isError = true;
         break;
 
       case "applyingFor":
@@ -170,6 +172,11 @@ CareerSchema.pre<ICareer>("save", function (next) {
         }
         break;
 
+      case "visa":
+        if (!isValidString(value, 3) || ["Yes", "No"].indexOf(value) === -1)
+          isError = true;
+        break;
+
       case "visaExpireDate":
         if (
           !value ||
@@ -185,8 +192,27 @@ CareerSchema.pre<ICareer>("save", function (next) {
         break;
 
       case "imgUrl":
-        if (!value || typeof value === "string" || !isValidUrl(value))
+        if (!value || typeof value !== "string" || !isValidUrl(value))
           isError = true;
+        break;
+
+      case "imgSize":
+        if (
+          !value ||
+          typeof value !== "number" ||
+          !isInRange(value, 1, 1024000)
+        )
+          isError = true;
+        break;
+
+      case "createdBy":
+        try {
+          const user = await User.findById(value);
+          if (!user) this.createdBy = null;
+        } catch (error) {
+          console.error("Error finding user:", error);
+          isError = true;
+        }
         break;
     }
   });

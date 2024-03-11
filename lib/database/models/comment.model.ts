@@ -1,4 +1,7 @@
 import { Document, Schema, models, model, Types } from "mongoose";
+import { isValidString } from "@/lib/utils";
+import User from "./user.model";
+import Review from "./review.model";
 
 export interface IComment extends Document {
   _id: string;
@@ -25,6 +28,75 @@ const CommentSchema = new Schema<IComment>(
   },
   { timestamps: true }
 );
+
+CommentSchema.pre<IComment>("save", async function (next) {
+  const fieldsToValidate: { key: string; value: any }[] = [
+    { key: "comment", value: this.comment },
+    { key: "review", value: this.review },
+    { key: "likes", value: this.likes },
+    { key: "dislikes", value: this.dislikes },
+  ];
+
+  let isError = false;
+
+  for (const { key, value } of fieldsToValidate) {
+    if (isError) break;
+    switch (key) {
+      case "comment":
+        if (!isValidString(value, 1000)) {
+          isError = true;
+        }
+        break;
+      case "review":
+        try {
+          const review = await Review.findById(value);
+          if (!review) {
+            isError = true;
+          }
+        } catch (error) {
+          isError = true;
+        }
+        break;
+      case "likes":
+      case "dislikes":
+        if (Array.isArray(value) && value.length > 0) {
+          if (!(await validateUsers(value))) isError = true;
+        } else if (!Array.isArray(value)) isError = true;
+        break;
+
+      case "createdBy":
+        try {
+          const user = await User.findById(value);
+          if (!user) isError = true;
+        } catch (error) {
+          console.error("Error finding user:", error);
+          isError = true;
+        }
+        break;
+    }
+  }
+
+  if (isError) {
+    next(new Error("Invalid Form."));
+  } else {
+    next();
+  }
+});
+
+async function validateUsers(userIds: string[]): Promise<boolean> {
+  try {
+    for (const userId of userIds) {
+      const user = await User.findById(userId);
+      if (!user) {
+        return false;
+      }
+    }
+    return true;
+  } catch (error) {
+    console.error("Error finding user:", error);
+    return false;
+  }
+}
 
 const Comment = models.Comment || model<IComment>("Comment", CommentSchema);
 

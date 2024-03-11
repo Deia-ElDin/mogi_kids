@@ -9,20 +9,6 @@ import {
   subMonths,
 } from "date-fns";
 
-// const [formErrors, setFormErrors] = useState({});
-
-// const handleSubmit = (event) => {
-//   event.preventDefault();
-//   const validationResult = quoteSchema.safeParse(formData);
-//   if (validationResult.success) {
-//     // Form data is valid, you can proceed with submission
-//     console.log("Form data is valid:", formData);
-//   } else {
-//     // Form data is invalid, update the errors state
-//     setFormErrors(validationResult.error.flatten().fieldErrors);
-//   }
-// };
-
 const today = new Date();
 let fromDate: Date = today;
 let fromAge: number;
@@ -64,6 +50,7 @@ export const quoteSchema = z.object({
   email: z
     .string()
     .min(1, "Kindly provide us your email address.")
+    .max(100, "Email must not exceed 100 characters.")
     .email("Invalid email address."),
 
   numberOfHours: z
@@ -149,6 +136,7 @@ export const careerSchema = z.object({
   email: z
     .string()
     .min(1, "Kindly provide us your email address.")
+    .max(100, "Email must not exceed 100 characters.")
     .email("Invalid email address."),
   mobile: z
     .string()

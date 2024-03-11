@@ -2,7 +2,7 @@ import { Document, Schema, models, model, Types } from "mongoose";
 import { isValid, addYears, isAfter, isBefore, subDays } from "date-fns";
 import { isValidString, isInRange } from "@/lib/utils";
 import { isEmail, isDecimal } from "validator";
-import { IUser } from "./user.model";
+import User, { IUser } from "./user.model";
 
 export interface IQuote extends Document {
   _id: string;
@@ -22,7 +22,7 @@ export interface IQuote extends Document {
   blocked: boolean;
   seen: boolean;
   emailService: { id: string | null; error: string | null };
-  createdBy: Types.ObjectId | string | Partial<IUser>;
+  createdBy: Types.ObjectId | string | Partial<IUser> | null;
 }
 
 const QuoteSchema = new Schema(
@@ -64,11 +64,12 @@ QuoteSchema.pre<IQuote>("save", function (next) {
     { key: "from", value: this.from },
     { key: "to", value: this.to },
     { key: "extraInfo", value: this.extraInfo },
+    { key: "extraInfo", value: this.extraInfo },
   ];
 
   let isError = false;
 
-  fieldsToValidate.forEach(({ key, value }) => {
+  fieldsToValidate.forEach(async ({ key, value }) => {
     if (isError) return;
     switch (key) {
       case "cstName":
@@ -166,6 +167,16 @@ QuoteSchema.pre<IQuote>("save", function (next) {
       case "extraInfo":
         if (value && !isValidString(value, 5000)) isError = true;
         break;
+
+      case "createdBy":
+        try {
+          const user = await User.findById(value);
+          if (!user) this.createdBy = null;
+        } catch (error) {
+          console.error("Error finding user:", error);
+          isError = true;
+        }
+        break;
     }
   });
 
@@ -182,5 +193,3 @@ export default Quote;
 
 // delete require.cache[require.resolve("../database/models/quote.model")];
 // const Quote = require("../database/models/quote.model");
-
-// 15 max kids age

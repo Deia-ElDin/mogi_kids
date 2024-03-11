@@ -335,8 +335,13 @@ export const isValidString = (value: string, maxLength: number) => {
   );
 };
 
+export const isValidMobile = (mobile: string): boolean => {
+  const urlRegex =
+    /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/;
+  return urlRegex.test(mobile);
+};
+
 export const isValidUrl = (url: string): boolean => {
-  // Regular expression to match URL format
   const urlRegex = /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
   return urlRegex.test(url);
 };
