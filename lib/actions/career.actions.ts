@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateAdmin } from "./validation.actions";
+import { validateAdmin, validatePageAndLimit } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import {
   CreateApplicationParams,
@@ -72,11 +72,7 @@ export async function countUnseenApplications(): Promise<CountResult> {
     revalidatePath("/");
     return { success: true, data: count, error: null };
   } catch (error) {
-    return {
-      success: false,
-      data: null,
-      error: handleError("Failed to count unseen applications"),
-    };
+    return { success: false, data: null, error: handleError(error) };
   }
 }
 
@@ -86,6 +82,8 @@ export async function getAllApplications({
   page = 1,
 }: GetAllApplicationsParams): Promise<GetAllResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
@@ -115,7 +113,7 @@ export async function getAllApplications({
     const skipAmount = (Number(page) - 1) * limit;
 
     const applications = await Career.find(condition)
-      .sort({ createdAt: "desc" })
+      .sort({ createdAt: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate({
@@ -186,6 +184,8 @@ export async function deleteApplication({
   limit = 10,
 }: DeleteSelectedApplicationParams): Promise<DeleteResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
@@ -202,7 +202,7 @@ export async function deleteApplication({
 
     const skipAmount = (Number(page) - 1) * limit;
     const applications = await Career.find()
-      .sort({ createdAt: "desc" })
+      .sort({ createdAt: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate({
@@ -232,6 +232,8 @@ export async function deleteSelectedApplications({
   limit = 10,
 }: DeleteSelectedApplicationsParams): Promise<DeleteResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
@@ -250,7 +252,7 @@ export async function deleteSelectedApplications({
 
     const skipAmount = (Number(page) - 1) * limit;
     const applications = await Career.find()
-      .sort({ createdAt: "desc" })
+      .sort({ createdAt: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate({

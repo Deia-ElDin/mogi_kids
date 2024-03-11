@@ -1,7 +1,8 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateAdmin } from "./validation.actions";
+import { validateAdmin, validatePageAndLimit } from "./validation.actions";
+import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { CreateUserParams, GetAllUsersParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
@@ -55,10 +56,13 @@ export const populateUser = (query: any) => {
 };
 
 export async function getAllUsers({
+  fetch,
   limit = 10,
   page = 1,
 }: GetAllUsersParams): Promise<GetALLResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { user, isAdmin, error } = await validateAdmin();
@@ -75,14 +79,44 @@ export async function getAllUsers({
 
     if (!conditions) throw new Error("Not Authorized to access this resource.");
 
+    if (fetch?.firstName)
+      conditions = {
+        ...conditions,
+        firstName: new RegExp(`^${fetch?.firstName}`, "i"),
+      };
+    else if (fetch?.email)
+      conditions = {
+        ...conditions,
+        email: new RegExp(`^${fetch?.email}`, "i"),
+      };
+    else if (fetch?.day) {
+      const day = new Date(fetch?.day);
+      const startOfTheDay = startOfDay(day);
+      const endOfTheDay = endOfDay(day);
+      conditions = {
+        ...conditions,
+        createdAt: { $gte: startOfTheDay, $lt: endOfTheDay },
+      };
+    } else if (fetch?.month) {
+      const month = fetch?.month.getMonth();
+      const year = fetch?.month.getFullYear();
+      const startDate = startOfMonth(new Date(year, month, 1));
+      const endDate = endOfMonth(new Date(year, month, 1));
+      conditions = {
+        ...conditions,
+        createdAt: { $gte: startDate, $lte: endDate },
+      };
+    }
+
     const usersQuery = User.find(conditions);
 
-    if (!usersQuery) throw new Error("Not Authorized to access this resource.");
+    const skipAmount = (Number(page) - 1) * limit;
 
-    const users = await populateUser(usersQuery.sort({ createdAt: -1 }));
+    const users = await populateUser(
+      usersQuery.sort({ createdAt: -1 }).skip(skipAmount).limit(limit)
+    );
 
-    if (users.length === 0)
-      return { success: true, data: [], totalPages: 0, error: null };
+    if (users.length === 0) return { success: true, data: [], error: null };
 
     const totalPages = Math.ceil(
       (await Career.countDocuments(conditions)) / limit

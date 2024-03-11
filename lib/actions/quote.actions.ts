@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateAdmin } from "./validation.actions";
+import { validateAdmin, validatePageAndLimit } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { updateDbSize } from "./db.actions";
 import {
@@ -94,6 +94,8 @@ export async function getAllQuotes({
   page = 1,
 }: GetAllQuotesParams): Promise<GetAllResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
@@ -123,7 +125,7 @@ export async function getAllQuotes({
     const skipAmount = (Number(page) - 1) * limit;
 
     const quotes = await Quote.find(condition)
-      .sort({ createdAt: "desc" })
+      .sort({ createdAt: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate({
@@ -210,6 +212,8 @@ export async function deleteQuote({
   limit = 10,
 }: DeleteSelectedQuoteParams): Promise<DeleteResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
@@ -224,7 +228,7 @@ export async function deleteQuote({
 
     const skipAmount = (Number(page) - 1) * limit;
     const quotes = await Quote.find()
-      .sort({ createdAt: "desc" })
+      .sort({ createdAt: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate({
@@ -253,6 +257,8 @@ export async function deleteSelectedQuotes({
   limit = 10,
 }: DeleteSelectedQuotesParams): Promise<DeleteResult> {
   try {
+    validatePageAndLimit(page, limit);
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
@@ -271,7 +277,7 @@ export async function deleteSelectedQuotes({
 
     const skipAmount = (Number(page) - 1) * limit;
     const quotes = await Quote.find()
-      .sort({ createdAt: "desc" })
+      .sort({ createdAt: -1 })
       .skip(skipAmount)
       .limit(limit)
       .populate({

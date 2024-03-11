@@ -12,6 +12,12 @@ export type CreateUserParams = {
 };
 
 export type GetAllUsersParams = {
+  fetch?: {
+    firstName?: string;
+    email?: string;
+    day?: Date | null;
+    month?: Date | null;
+  };
   page?: number;
   limit?: number;
 };

@@ -28,3 +28,16 @@ export async function validateAdmin(): Promise<Result> {
     return { user: null, isAdmin: false, error: handleError(error) };
   }
 }
+
+export function validatePageAndLimit(page: number, limit: number) {
+  if (
+    isNaN(page) ||
+    isNaN(limit) ||
+    !Number.isInteger(page) ||
+    !Number.isInteger(limit) ||
+    page < 1 ||
+    limit < 1
+  ) {
+    throw new Error("Invalid page or limit parameters.");
+  }
+}
