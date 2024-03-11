@@ -113,7 +113,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
               <FormLabel className="label-style">Your Location</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger className="input-style text-style text-center">
+                  <SelectTrigger className="input-style text-style">
                     <SelectValue placeholder="Kindly select your location" />
                   </SelectTrigger>
                 </FormControl>
@@ -157,42 +157,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="from"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">Service Start Date</FormLabel>
-              <FormControl>
-                <DatePicker
-                  selected={field.value}
-                  onChange={(date: Date) => field.onChange(date)}
-                  dateFormat="dd-MM-yyyy"
-                  className="input-style text-style w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="to"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="label-style">Service End Date</FormLabel>
-              <FormControl>
-                <DatePicker
-                  selected={field.value}
-                  onChange={(date: Date) => field.onChange(date)}
-                  dateFormat="dd-MM-yyyy"
-                  className="input-style text-style w-full"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           control={form.control}
           name="numberOfHours"
@@ -272,7 +237,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt, 17))
+                      onlyPositiveValues(evt, 15))
                   }
                 />
               </FormControl>
@@ -301,8 +266,44 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt, 17))
+                      onlyPositiveValues(evt, 15))
                   }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="from"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="label-style">Service Start Date</FormLabel>
+              <FormControl>
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date: Date) => field.onChange(date)}
+                  dateFormat="dd-MM-yyyy"
+                  className="input-style text-style w-full"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="to"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel className="label-style">Service End Date</FormLabel>
+              <FormControl>
+                <DatePicker
+                  selected={field.value}
+                  onChange={(date: Date) => field.onChange(date)}
+                  dateFormat="dd-MM-yyyy"
+                  className="input-style text-style w-full"
                 />
               </FormControl>
               <FormMessage />

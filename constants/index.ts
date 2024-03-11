@@ -131,14 +131,14 @@ export const galleryDefaultValues = {
 export const quoteDefaultValues = {
   cstName: "Mohamed",
   mobile: "0507890072",
-  location: "Dubai",
+  location: "Abu Dhabi",
   email: "deia.tech2021@gmail.com",
-  from: new Date(),
-  to: new Date(),
   numberOfHours: "5",
   numberOfKids: "3",
-  ageOfKidsFrom: "2",
-  ageOfKidsTo: "8",
+  ageOfKidsFrom: "",
+  ageOfKidsTo: "",
+  from: new Date(),
+  to: new Date(),
   extraInfo: "what is the extra info?",
 };
 
@@ -228,11 +228,22 @@ export const aboutUsDefaultValues = {
   imgUrl: "",
 };
 
-export enum SortKey {
+export enum QuoteSortKey {
   DAYS = "days",
   HOURS = "hours",
   KIDS = "kids",
   AGES = "ages",
   TOTAL_HOURS = "totalHours",
+  DATE = "createdAt",
+}
+
+export enum ApplicationsSortKey {
+  GENDER = "gender",
+  DHA = "dha",
+  CGC = "cgc",
+  SALARY = "salary",
+  VISAEXPIRYDATE = "visa expiry date",
+  JOININGDATE = "joining date",
+  DAYS = "days",
   DATE = "createdAt",
 }

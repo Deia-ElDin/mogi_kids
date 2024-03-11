@@ -9,7 +9,8 @@ import { IQuote } from "./database/models/quote.model";
 import { IContact } from "./database/models/contact.model";
 import { IAboutUs } from "./database/models/about-us.model";
 import { differenceInDays } from "date-fns";
-import { SortKey } from "@/constants";
+import { QuoteSortKey, ApplicationsSortKey } from "@/constants";
+import { ICareer } from "./database/models/career.model";
 
 const adminRoles = new Set(["Manager", "Admin"]);
 
@@ -168,36 +169,36 @@ export const onlyPositiveValues = (
 
 export const sortQuotes = (
   array: IQuote[],
-  key: SortKey,
+  key: QuoteSortKey,
   direction: string
 ) => {
   const sortedArray = [...array];
 
-  if (key === SortKey.DAYS) {
+  if (key === QuoteSortKey.DAYS) {
     sortedArray.sort((a, b) => {
       const aValue = differenceInDays(new Date(a.to), new Date(a.from));
       const bValue = differenceInDays(new Date(b.to), new Date(b.from));
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
-  } else if (key === SortKey.HOURS) {
+  } else if (key === QuoteSortKey.HOURS) {
     sortedArray.sort((a, b) => {
       const aValue = parseInt(a.numberOfHours);
       const bValue = parseInt(b.numberOfHours);
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
-  } else if (key === SortKey.KIDS) {
+  } else if (key === QuoteSortKey.KIDS) {
     sortedArray.sort((a, b) => {
       const aValue = parseInt(a.numberOfKids);
       const bValue = parseInt(b.numberOfKids);
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
-  } else if (key === SortKey.AGES) {
+  } else if (key === QuoteSortKey.AGES) {
     sortedArray.sort((a, b) => {
       const aValue = parseInt(a.ageOfKidsFrom);
       const bValue = parseInt(b.ageOfKidsFrom);
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
-  } else if (key === SortKey.TOTAL_HOURS) {
+  } else if (key === QuoteSortKey.TOTAL_HOURS) {
     sortedArray.sort((a, b) => {
       const aValue =
         differenceInDays(new Date(a.to), new Date(a.from)) *
@@ -207,7 +208,27 @@ export const sortQuotes = (
         parseInt(b.numberOfHours);
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
-  } else if (key === SortKey.DATE) {
+  } else if (key === QuoteSortKey.DATE) {
+    sortedArray.sort((a, b) => {
+      const aValue = new Date(a.createdAt);
+      const bValue = new Date(b.createdAt);
+
+      return direction === "ascending"
+        ? Number(aValue) - Number(bValue)
+        : Number(bValue) - Number(aValue);
+    });
+  }
+  return sortedArray;
+};
+
+export const sortApplications = (
+  array: ICareer[],
+  key: ApplicationsSortKey,
+  direction: string
+) => {
+  const sortedArray = [...array];
+
+  if (key === ApplicationsSortKey.DATE) {
     sortedArray.sort((a, b) => {
       const aValue = new Date(a.createdAt);
       const bValue = new Date(b.createdAt);
@@ -226,4 +247,18 @@ export const toCap = (str: string) => {
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+};
+
+// Database Validations Function
+export const isValidString = (value: string, maxLength: number) => {
+  return (
+    value &&
+    typeof value === "string" &&
+    value.trim().length > 0 &&
+    value.trim().length <= maxLength
+  );
+};
+
+export const isInRange = (value: number, min: number, max: number) => {
+  return value >= min && value <= max;
 };

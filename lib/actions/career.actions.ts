@@ -2,9 +2,14 @@
 
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
+import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { updateDbSize } from "./db.actions";
-import { GetAllApplicationsParams, CreateApplicationParams } from "@/types";
-import { formatDate } from "@/lib/utils";
+import {
+  CreateApplicationParams,
+  GetAllApplicationsParams,
+  DeleteSelectedApplicationParams,
+  DeleteSelectedApplicationsParams,
+} from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import Career, { ICareer } from "../database/models/career.model";
@@ -19,6 +24,7 @@ type GetAllResult = {
   success: boolean;
   data: ICareer[] | [] | null;
   totalPages?: number;
+  unseen?: number | null;
   error: string | null;
 };
 
@@ -30,9 +36,34 @@ type DefaultResult = {
 
 type DeleteResult = {
   success: boolean;
-  data: null;
+  data: ICareer[] | [] | null;
+  totalPages?: number;
   error: string | null;
 };
+
+export async function createApplication(
+  params: CreateApplicationParams
+): Promise<DefaultResult> {
+  try {
+    await connectToDb();
+
+    const newApplication = await Career.create(params);
+
+    if (!newApplication) throw new Error("Failed to create the application.");
+
+    const { success: dbSuccess, error: dbError } = await updateDbSize({
+      resend: "1",
+    });
+
+    if (!dbSuccess && dbError) throw new Error(dbError);
+
+    const data = JSON.parse(JSON.stringify(newApplication));
+
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
 
 export async function countUnseenApplications(): Promise<CountResult> {
   try {
@@ -57,6 +88,7 @@ export async function countUnseenApplications(): Promise<CountResult> {
 }
 
 export async function getAllApplications({
+  fetch,
   limit = 10,
   page = 1,
 }: GetAllApplicationsParams): Promise<GetAllResult> {
@@ -68,10 +100,28 @@ export async function getAllApplications({
     if (error || !isAdmin)
       throw new Error("Not Authorized to access this resource.");
 
-    const skipAmount = (Number(page) - 1) * limit;
-    const conditions = { blocked: false };
+    let condition = {};
 
-    const applications = await Career.find(conditions)
+    if (fetch?.cstName)
+      condition = { cstName: new RegExp(`^${fetch?.cstName}`, "i") };
+    else if (fetch?.email)
+      condition = { email: new RegExp(`^${fetch?.email}`, "i") };
+    else if (fetch?.day) {
+      const day = new Date(fetch?.day);
+      const startOfTheDay = startOfDay(day);
+      const endOfTheDay = endOfDay(day);
+      condition = { createdAt: { $gte: startOfTheDay, $lt: endOfTheDay } };
+    } else if (fetch?.month) {
+      const month = fetch?.month.getMonth();
+      const year = fetch?.month.getFullYear();
+      const startDate = startOfMonth(new Date(year, month, 1));
+      const endDate = endOfMonth(new Date(year, month, 1));
+      condition = { createdAt: { $gte: startDate, $lte: endDate } };
+    }
+
+    const skipAmount = (Number(page) - 1) * limit;
+
+    const applications = await Career.find(condition)
       .sort({ createdAt: "desc" })
       .skip(skipAmount)
       .limit(limit)
@@ -79,162 +129,33 @@ export async function getAllApplications({
         path: "createdBy",
         model: "User",
         select: "_id firstName lastName photo",
+        options: { allowNull: true },
       });
 
-    if (!applications) throw new Error("Failed to fetch the applications.");
+    if (!applications) throw new Error("Failed to fetch the quotations.");
 
     if (applications.length === 0)
-      return { success: true, data: [], totalPages: 0, error: null };
+      return { success: true, data: [], error: null };
 
     const totalPages = Math.ceil(
-      (await Career.countDocuments(conditions)) / limit
+      (await Career.countDocuments(condition)) / limit
     );
 
     const data = JSON.parse(JSON.stringify(applications));
 
-    return { success: true, data, totalPages, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
-
-export async function getApplicationByName(
-  fullName: string
-): Promise<GetAllResult> {
-  try {
-    await connectToDb();
-
-    const { isAdmin, error } = await validateAdmin();
-
-    if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
-
-    const regex = new RegExp(`^${fullName}`, "i");
-    const cstApplications = await Career.find({ fullName: regex })
-      .sort({
-        createdAt: "desc",
-      })
-      .populate({
-        path: "createdBy",
-        model: "User",
-        select: "_id firstName lastName photo",
-      });
-
-    if (!cstApplications)
-      throw new Error(`Failed to get applications for customer: ${fullName}.`);
-
-    const data =
-      cstApplications.length === 0
-        ? null
-        : JSON.parse(JSON.stringify(cstApplications));
-
-    return { success: true, data, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
-
-export async function getDayApplications(
-  day: Date = new Date()
-): Promise<GetAllResult> {
-  try {
-    await connectToDb();
-
-    const { isAdmin, error } = await validateAdmin();
-
-    if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
-
-    day.setHours(0, 0, 0, 0);
-    const endOfTheDay = new Date(day);
-    endOfTheDay.setDate(day.getDate() + 1);
-
-    const todayApplications = await Career.find({
-      createdAt: { $gte: day, $lt: endOfTheDay },
-    })
-      .sort({ createdAt: "desc" })
-      .populate({
-        path: "createdBy",
-        model: "User",
-        select: "_id firstName lastName photo",
-      });
-
-    if (!todayApplications)
-      throw new Error(
-        `Failed to get the ${formatDate(String(day))} applications.`
-      );
-
-    const data =
-      todayApplications.length === 0
-        ? null
-        : JSON.parse(JSON.stringify(todayApplications));
-
-    return { success: true, data, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
-
-export async function getMonthApplications(date: Date): Promise<GetAllResult> {
-  try {
-    await connectToDb();
-
-    const { isAdmin, error } = await validateAdmin();
-
-    if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
-
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0);
-
-    const monthApplications = await Career.find({
-      createdAt: { $gte: startDate, $lte: endDate },
-    })
-      .sort({ createdAt: "desc" })
-      .populate({
-        path: "createdBy",
-        model: "User",
-        select: "_id firstName lastName photo",
-      });
-
-    if (!monthApplications)
-      throw new Error(`Failed to get applications for ${month}-${year}.`);
-
-    const data =
-      monthApplications.length === 0
-        ? null
-        : JSON.parse(JSON.stringify(monthApplications));
-
-    return { success: true, data, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
-
-export async function createApplication(
-  params: CreateApplicationParams
-): Promise<DefaultResult> {
-  try {
-    await connectToDb();
-
-    const newApplication = await Career.create(params);
-
-    if (!newApplication) throw new Error("Failed to create the career.");
-
-    const { success: dbSuccess, error: dbError } = await updateDbSize({
-      resend: "1",
+    const unseen = await Career.countDocuments({
+      ...condition,
+      seen: false,
     });
 
-    if (!dbSuccess && dbError) throw new Error(dbError);
-
-    const data = JSON.parse(JSON.stringify(newApplication));
-
-    return { success: true, data, error: null };
+    return { success: true, data, totalPages, unseen, error: null };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    return {
+      success: false,
+      data: null,
+      unseen: null,
+      error: handleError(error),
+    };
   }
 }
 
@@ -266,9 +187,11 @@ export async function markApplicationAsSeen(
   }
 }
 
-export async function deleteApplication(
-  applicationId: string
-): Promise<DeleteResult> {
+export async function deleteApplication({
+  applicationId,
+  page = 1,
+  limit = 10,
+}: DeleteSelectedApplicationParams): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -284,15 +207,37 @@ export async function deleteApplication(
         "Failed to find the application or the application already deleted."
       );
 
-    return { success: true, data: null, error: null };
+    const skipAmount = (Number(page) - 1) * limit;
+    const applications = await Career.find()
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(limit)
+      .populate({
+        path: "createdBy",
+        model: "User",
+        select: "_id firstName lastName photo",
+      });
+
+    if (!applications) throw new Error("Failed to fetch the quotations.");
+
+    if (applications.length === 0)
+      return { success: true, data: [], error: null };
+
+    const totalPages = Math.ceil((await Career.countDocuments()) / limit);
+
+    const data = JSON.parse(JSON.stringify(applications));
+
+    return { success: true, data, totalPages, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
 }
 
-export async function deleteSelectedApplications(
-  selectedApplications: string[]
-): Promise<DeleteResult> {
+export async function deleteSelectedApplications({
+  selectedApplications,
+  page = 1,
+  limit = 10,
+}: DeleteSelectedApplicationsParams): Promise<DeleteResult> {
   try {
     await connectToDb();
 
@@ -310,7 +255,27 @@ export async function deleteSelectedApplications(
         "Failed to find the applications or the applications already deleted."
       );
 
-    return { success: true, data: null, error: null };
+    const skipAmount = (Number(page) - 1) * limit;
+    const applications = await Career.find()
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(limit)
+      .populate({
+        path: "createdBy",
+        model: "User",
+        select: "_id firstName lastName photo",
+      });
+
+    if (!applications) throw new Error("Failed to fetch the quotations.");
+
+    if (applications.length === 0)
+      return { success: true, data: [], error: null };
+
+    const totalPages = Math.ceil((await Career.countDocuments()) / limit);
+
+    const data = JSON.parse(JSON.stringify(applications));
+
+    return { success: true, data, totalPages, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

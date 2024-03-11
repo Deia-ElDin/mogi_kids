@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getUserByUserId } from "@/lib/actions/user.actions";
 import { getLogo } from "@/lib/actions/logo.actions";
-import { getDayQuotes, updateQuote } from "@/lib/actions/quote.actions";
+import { getQuotesByDay, updateQuote } from "@/lib/actions/quote.actions";
 import { handleError } from "@/lib/utils";
 import { EmailTemplate } from "@/components/email-template";
 
@@ -11,7 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(NextRequest: any) {
   try {
-    const todayQuotesResult = await getDayQuotes();
+    const todayQuotesResult = await getQuotesByDay();
     const todayQuotes = todayQuotesResult.success
       ? todayQuotesResult.data || []
       : [];

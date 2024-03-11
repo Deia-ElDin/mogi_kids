@@ -26,6 +26,7 @@ import {
 const today = new Date();
 let fromDate: Date = today;
 let fromAge: number;
+let toAge: number;
 
 export const logoSchema = z.object({
   imgUrl: z.string().min(1, "Kindly provide us the the logo image."),
@@ -64,24 +65,7 @@ export const quoteSchema = z.object({
     .string()
     .min(1, "Kindly provide us your email address.")
     .email("Invalid email address."),
-  from: z.date().refine((value) => {
-    if (value !== null && value !== undefined) {
-      fromDate = value;
-      const maxDate = addYears(today, 1);
-      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
-    }
-  }, "The service can't start in the past or exceed a year from now."),
-  to: z
-    .date()
-    .refine((value) => {
-      if (value !== null && value !== undefined) {
-        return isEqual(value, fromDate) || isAfter(value, fromDate);
-      }
-    }, "The service can't end in the past or before to the service start date.")
-    .refine((value) => {
-      const maxToDate = addYears(fromDate, 17);
-      return isAfter(maxToDate, value);
-    }, "The service duration can't exceed 17 years."),
+
   numberOfHours: z
     .string()
     .min(1, "Kindly let us know how many hours you need.")
@@ -114,8 +98,8 @@ export const quoteSchema = z.object({
     .refine((value) => {
       const ageFrom = parseFloat(value);
       fromAge = ageFrom;
-      return ageFrom <= 17 && ageFrom > 0;
-    }, "Kids age must be a positive number and less than 18."),
+      return ageFrom > 0 && ageFrom <= 15;
+    }, "Kids age must be a positive number and less than or equal to 15."),
   ageOfKidsTo: z
     .string()
     .min(1, "Kindly let us know the age of your oldest kid.")
@@ -125,13 +109,31 @@ export const quoteSchema = z.object({
     )
     .refine((value) => {
       const ageTo = parseFloat(value);
-      return ageTo <= 17 && ageTo > 0;
-    }, "Kids age must be a positive number and less than 18.")
+      return ageTo > 0 && ageTo <= 15;
+    }, "Kids age must be a positive number and less than or equal to 15.")
     .refine((value) => {
       const ageTo = parseFloat(value);
-      return ageTo >= fromAge;
+      return ageTo >= fromAge && ageTo <= 15;
     }, "Please ensure the age range begins with the youngest child or remains equal."),
-  extraInfo: z.string().max(1000, "maximum 1000 characters."),
+  from: z.date().refine((value) => {
+    if (value !== null && value !== undefined) {
+      fromDate = value;
+      const maxDate = addYears(today, 1);
+      return isAfter(value, subDays(today, 1)) && isAfter(maxDate, value);
+    }
+  }, "The service can't start in the past or exceed a year from now."),
+  to: z
+    .date()
+    .refine((value) => {
+      if (value !== null && value !== undefined) {
+        return isEqual(value, fromDate) || isAfter(value, fromDate);
+      }
+    }, "The service can't end in the past or before the service start date.")
+    .refine((value) => {
+      const maxToDate = addYears(fromDate, 15);
+      return isAfter(maxToDate, value);
+    }, "The service duration can't exceed 15 years."),
+  extraInfo: z.string().max(5000, "maximum 5000 characters."),
 });
 
 export const careerSchema = z.object({

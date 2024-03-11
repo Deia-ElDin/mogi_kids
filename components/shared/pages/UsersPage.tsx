@@ -25,7 +25,7 @@ import { blockUser } from "@/lib/actions/user.actions";
 import { IUser } from "@/lib/database/models/user.model";
 import { differenceInDays } from "date-fns";
 import { formatDate, sortUsers, handleError } from "@/lib/utils";
-import { SortKey } from "@/constants";
+import { QuoteSortKey } from "@/constants";
 import Image from "next/image";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
@@ -49,7 +49,7 @@ const UsersPage: React.FC = () => {
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sortConfig, setSortConfig] = useState<{
-    key: SortKey;
+    key: QuoteSortKey;
     direction: string;
   } | null>(null);
 
@@ -314,7 +314,7 @@ const UsersPage: React.FC = () => {
     }
   };
 
-  const requestSort = (key: SortKey) => {
+  const requestSort = (key: QuoteSortKey) => {
     let direction = "ascending";
     if (
       sortConfig &&
@@ -371,13 +371,13 @@ const UsersPage: React.FC = () => {
           />
         </TableHead>
         {[
-          { label: "Image", key: SortKey.DAYS },
-          { label: "First Name", key: SortKey.HOURS },
-          { label: "Last Name", key: SortKey.KIDS },
-          { label: "Email", key: SortKey.AGES },
-          { label: "Reviews", key: SortKey.TOTAL_HOURS },
-          { label: "Role", key: SortKey.DATE },
-          { label: "Created At", key: SortKey.DATE },
+          { label: "Image", key: QuoteSortKey.DAYS },
+          { label: "First Name", key: QuoteSortKey.HOURS },
+          { label: "Last Name", key: QuoteSortKey.KIDS },
+          { label: "Email", key: QuoteSortKey.AGES },
+          { label: "Reviews", key: QuoteSortKey.TOTAL_HOURS },
+          { label: "Role", key: QuoteSortKey.DATE },
+          { label: "Created At", key: QuoteSortKey.DATE },
         ].map((item) => (
           <TableHead
             key={item.label}

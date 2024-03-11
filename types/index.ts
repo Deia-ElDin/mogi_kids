@@ -1,4 +1,5 @@
 import { type } from "os";
+import { boolean } from "zod";
 
 // User Params
 export type CreateUserParams = {
@@ -113,6 +114,17 @@ export type CreateQuoteParams = {
   };
 };
 
+export type GetAllQuotesParams = {
+  fetch?: {
+    cstName?: string;
+    email?: string;
+    day?: Date | null;
+    month?: Date | null;
+  };
+  page?: number;
+  limit?: number;
+};
+
 export type UpdateQuoteParams = {
   quoteId: string;
   emailService: { id: string | null; error: string | null };
@@ -123,8 +135,26 @@ export type UnseenQuotesParams = {
   limit?: number;
 };
 
+export type DeleteSelectedQuoteParams = {
+  quoteId: string;
+  page?: number;
+  limit?: number;
+};
+
+export type DeleteSelectedQuotesParams = {
+  selectedQuotes: string[];
+  page?: number;
+  limit?: number;
+};
+
 // Career Params
 export type GetAllApplicationsParams = {
+  fetch?: {
+    cstName?: string;
+    email?: string;
+    day?: Date | null;
+    month?: Date | null;
+  };
   page?: number;
   limit?: number;
 };
@@ -149,6 +179,18 @@ export type CreateApplicationParams = {
   imgUrl: string;
   imgSize: number;
   createdBy: string | null;
+};
+
+export type DeleteSelectedApplicationParams = {
+  applicationId: string;
+  page?: number;
+  limit?: number;
+};
+
+export type DeleteSelectedApplicationsParams = {
+  selectedApplications: string[];
+  page?: number;
+  limit?: number;
 };
 
 // Review Params

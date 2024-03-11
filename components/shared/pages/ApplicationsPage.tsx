@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, isBefore } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Table,
@@ -13,19 +13,15 @@ import {
 } from "@/components/ui/table";
 import {
   getAllApplications,
-  getDayApplications,
-  getMonthApplications,
-  getApplicationByName,
   deleteApplication,
   deleteSelectedApplications,
   markApplicationAsSeen,
-  countUnseenApplications,
 } from "@/lib/actions/career.actions";
 import { blockUser } from "@/lib/actions/user.actions";
 import { ICareer } from "@/lib/database/models/career.model";
 import { differenceInDays } from "date-fns";
-import { formatDate, handleError, toCap } from "@/lib/utils";
-import { isBefore } from "date-fns";
+import { formatDate, sortApplications, handleError, toCap } from "@/lib/utils";
+import { ApplicationsSortKey } from "@/constants";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
 import DatePicker from "react-datepicker";
@@ -37,73 +33,56 @@ type ApplicationsPageProps = {
   setUnseenApplicants: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
+type FetchState = {
+  applicantName?: string;
+  email?: string;
+  day?: Date | null;
+  month?: Date | null;
+};
+
+type applicationsActionsState = {
+  _id: string;
+  checked: boolean;
+};
+
 const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
   setUnseenApplicants,
 }) => {
   const limit = 10;
-  const [fetchByApplicantName, setFetchByApplicantName] = useState<string>("");
-  const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
-  const [fetchByMonth, setFetchByMonth] = useState<Date | null>(null);
+  const [fetchBy, setFetchBy] = useState<FetchState>({
+    applicantName: "",
+    email: "",
+    day: null,
+    month: null,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [applications, setApplications] = useState<ICareer[] | []>([]);
   const [applicationsActions, setApplicationsActions] = useState<
-    { _id: string; checked: boolean }[]
+    applicationsActionsState[]
   >([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedApplications, setSelectedApplications] = useState<string[]>(
     []
   );
+  const [sortConfig, setSortConfig] = useState<{
+    key: ApplicationsSortKey;
+    direction: string;
+  } | null>(null);
 
   const { toast } = useToast();
 
   const today = new Date();
 
-  const handleApplicantNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setFetchByApplicantName(e.target.value);
-    if (fetchByDay) setFetchByDay(null);
-    if (fetchByMonth) setFetchByMonth(null);
-  };
-
-  const handleDayChange = (date: Date | null) => {
-    setFetchByDay(date);
-    if (fetchByApplicantName) setFetchByApplicantName("");
-    if (fetchByMonth) setFetchByMonth(null);
-  };
-
-  const handleMonthChange = (date: Date | null) => {
-    setFetchByMonth(date);
-    if (fetchByApplicantName) setFetchByApplicantName("");
-    if (fetchByDay) setFetchByDay(null);
-  };
-
-  const handleDeleteApplication = async (applicationId: string) => {
-    try {
-      const { success, error } = await deleteApplication(applicationId);
-      if (!success && error) throw new Error(error);
-      toast({ description: "Application Deleted Successfully." });
-      if (fetchByApplicantName) setFetchByApplicantName("");
-      if (fetchByDay) setFetchByDay(null);
-      if (fetchByMonth) setFetchByMonth(null);
-      setApplications((prevApplications) =>
-        prevApplications.filter(
-          (application) => application._id !== applicationId
-        )
-      );
-      setApplicationsActions((prevApplicationsActions) =>
-        prevApplicationsActions.filter(
-          (application) => application._id !== applicationId
-        )
-      );
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Application, ${handleError(error)}`,
-      });
-    }
+  const setStates = (data: ICareer[], allPages: number = 1) => {
+    setApplications(data || []);
+    setTotalPages(allPages);
+    setApplicationsActions(
+      data?.map((application: ICareer) => ({
+        _id: application._id,
+        checked: false,
+      })) || []
+    );
   };
 
   const handleBlockUser = async (userId: string) => {
@@ -121,6 +100,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
   };
 
   const handleSelectApplication = async (applicationId: string) => {
+    // we set the applications actions to opposite of the prev state
     setApplicationsActions((prev) =>
       prev.map((application) =>
         application._id === applicationId
@@ -128,29 +108,34 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           : application
       )
     );
+
+    // we check if the application is already in the selected applications array
     const isExist = selectedApplications.find((id) => id === applicationId);
+
+    // if it's exist we remove it from the selected applications array else we add it
     setSelectedApplications((prev) =>
       isExist
         ? prev.filter((id) => id !== applicationId)
         : [...prev, applicationId]
     );
 
+    // we find the selected application from the applications array
     const selected = applications.find(
       (application) => application._id === applicationId
     );
 
+    // if the selected application is not seen we mark it as seen
     if (selected && !selected.seen) {
       const { success, data, error } = await markApplicationAsSeen(
         applicationId
       );
+      console.log("data", data);
 
       if (!success && error) {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
-          description: `Failed to Update The Application, ${handleError(
-            error
-          )}`,
+          description: `Failed to Update The Quotation, ${handleError(error)}`,
         });
       }
 
@@ -161,8 +146,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           )
         );
       }
-
-      fetchUnseenApplicationsNumber();
     }
     if (selectAll) setSelectAll(false);
   };
@@ -178,85 +161,117 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
     setSelectAll((prev) => !prev);
   };
 
-  const handleDeleteSelectedApplications = async () => {
+  const handleDeleteApplication = async (applicationId: string) => {
     try {
-      const { success, error } = await deleteSelectedApplications(
-        selectedApplications
-      );
+      const { success, data, totalPages, error } = await deleteApplication({
+        applicationId,
+        page: currentPage,
+        limit,
+      });
+
       if (!success && error) throw new Error(error);
-      toast({ description: "Application Selection Deleted Successfully." });
 
       if (applications.length === selectedApplications.length) {
         setStates([]);
       } else {
-        const newApplications = applications.filter(
-          (application) => !selectedApplications.includes(application._id)
-        );
-        setStates(newApplications);
+        const { applicantName, email, day, month } = fetchBy;
+        if (applicantName || email || day || month) {
+          const newApplications = applications.filter(
+            (application) => application._id !== applicationId
+          );
+          setStates(newApplications);
+        } else if (data) setStates(data, totalPages);
       }
-      setSelectedApplications([]);
-      setSelectAll(false);
-      if (fetchByApplicantName) setFetchByApplicantName("");
-      if (fetchByDay) setFetchByDay(null);
-      if (fetchByMonth) setFetchByMonth(null);
+
+      setApplications((prevApplications) =>
+        prevApplications.filter(
+          (application) => application._id !== applicationId
+        )
+      );
+      setApplicationsActions((prevApplicationsActions) =>
+        prevApplicationsActions.filter(
+          (application) => application._id !== applicationId
+        )
+      );
+      toast({ description: "Quotation Deleted Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Application Selection, ${handleError(
+        description: `Failed to Delete The Quotation, ${handleError(error)}`,
+      });
+    }
+  };
+
+  const handleDeleteSelectedApplications = async () => {
+    try {
+      const { success, data, totalPages, error } =
+        await deleteSelectedApplications({
+          selectedApplications,
+          page: currentPage,
+        });
+
+      if (!success && error) throw new Error(error);
+      toast({ description: "Quotation Selection Deleted Successfully." });
+
+      if (applications.length === selectedApplications.length) {
+        setStates([]);
+      } else {
+        const { applicantName, email, day, month } = fetchBy;
+        if (applicantName || email || day || month) {
+          const newApplications = applications.filter(
+            (application) => !selectedApplications.includes(application._id)
+          );
+          setStates(newApplications);
+        } else if (data) setStates(data, totalPages);
+      }
+      setSelectedApplications([]);
+      setSelectAll(false);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Quotation Selection, ${handleError(
           error
         )}`,
       });
     }
   };
 
-  const setStates = (data: ICareer[], allPages: number = 1) => {
-    setApplications(data || []);
-    setTotalPages(allPages);
-    setApplicationsActions(
-      data?.map((application: ICareer) => ({
-        _id: application._id,
-        checked: false,
-      })) || []
-    );
-  };
-
-  const fetchUnseenApplicationsNumber = async () => {
-    try {
-      const { success, data, error } = await countUnseenApplications();
-      if (!success && error) throw new Error(error);
-      if (data) setUnseenApplicants(data);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `${handleError(error)}`,
-      });
-    }
-  };
-
-  const fetchAllApplications = async () => {
-    if (fetchByApplicantName) setFetchByApplicantName("");
-    if (fetchByDay) setFetchByDay(null);
-    if (fetchByMonth) setFetchByMonth(null);
+  const fetchAllApplications = async (fetchBy: FetchState) => {
+    const {
+      applicantName = "",
+      email = "",
+      day = null,
+      month = null,
+    } = fetchBy;
 
     try {
-      const { success, data, totalPages, error } = await getAllApplications({
-        limit,
-        page: currentPage,
-      });
+      const { success, data, totalPages, unseen, error } =
+        await getAllApplications({
+          fetch: fetchBy,
+          limit,
+          page: currentPage,
+        });
 
       if (!success && error) throw new Error(error);
-      if (success && data) setStates(data, totalPages);
+      if (unseen) setUnseenApplicants(unseen);
+      if (success && data && data?.length > 0) setStates(data, totalPages);
       else {
+        setUnseenApplicants(null);
+        let extraMsg = "yet in the Database.";
+        if (applicantName) extraMsg = `by ${applicantName}.`;
+        else if (email) extraMsg = `by ${email}.`;
+        else if (day) extraMsg = `at ${format(day, "EEE, dd/MM/yyyy")}.`;
+        else if (month) extraMsg = `during ${format(month, "MMMM MM/yyyy")}.`;
         setStates([]);
         toast({
           variant: "destructive",
-          title:
-            "Uh oh! We couldn't find any Applications yet in the Database.",
+          title: `Uh oh! We couldn't find any Applications created ${extraMsg}.`,
         });
       }
     } catch (error) {
+      setUnseenApplicants(null);
       setStates([]);
       toast({
         variant: "destructive",
@@ -266,91 +281,47 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
     }
   };
 
-  const fetchCstNameQuests = async (cstName: string) => {
-    try {
-      const { success, data, error } = await getApplicationByName(cstName);
-
-      if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
-      else {
-        setStates([]);
-        toast({
-          variant: "destructive",
-          title: `Uh oh! We couldn't find any Applications created by ${cstName}.`,
-        });
-      }
-    } catch (error) {
-      setStates([]);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to fetch The Applications, ${handleError(error)}`,
-      });
+  const requestSort = (key: ApplicationsSortKey) => {
+    let direction = "ascending";
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === "ascending"
+    ) {
+      direction = "descending";
     }
-  };
-
-  const fetchDayApplications = async (day: Date) => {
-    try {
-      const { success, data, error } = await getDayApplications(day);
-
-      if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
-      else {
-        setStates([]);
-        toast({
-          variant: "destructive",
-          title: `Uh oh! We couldn't find any Applications create at ${format(
-            day,
-            "EEE, dd/MM/yyyy"
-          )}.`,
-        });
-      }
-    } catch (error) {
-      setStates([]);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to fetch The Applications, ${handleError(error)}`,
-      });
-    }
-  };
-
-  const fetchMonthApplications = async (month: Date) => {
-    try {
-      const { success, data, error } = await getMonthApplications(month);
-
-      if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
-      else {
-        setStates([]);
-        toast({
-          variant: "destructive",
-          title: `Uh oh! We couldn't find any Applications create during this ${format(
-            month,
-            "MMMM MM/yyyy"
-          )}.`,
-        });
-      }
-    } catch (error) {
-      setStates([]);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to fetch The Applications, ${handleError(error)}`,
-      });
-    }
+    setSortConfig({ key, direction });
   };
 
   useEffect(() => {
-    fetchAllApplications();
-    fetchUnseenApplicationsNumber();
+    fetchAllApplications(fetchBy);
   }, [currentPage]);
 
   useEffect(() => {
-    if (fetchByApplicantName) fetchCstNameQuests(fetchByApplicantName);
-    else if (fetchByDay) fetchDayApplications(fetchByDay);
-    else if (fetchByMonth) fetchMonthApplications(fetchByMonth);
-  }, [fetchByApplicantName, fetchByDay, fetchByMonth]);
+    if (sortConfig) {
+      const sortedApplications = sortApplications(
+        applications,
+        sortConfig.key,
+        sortConfig.direction
+      );
+      setApplications(sortedApplications);
+      setApplicationsActions(
+        sortedApplications?.map((application: ICareer) => ({
+          _id: application._id,
+          checked: false,
+        })) || []
+      );
+    }
+  }, [sortConfig]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    const { applicantName, email, day, month } = fetchBy;
+    if (applicantName) fetchAllApplications({ applicantName });
+    else if (email) fetchAllApplications({ email });
+    else if (day) fetchAllApplications({ day });
+    else if (month) fetchAllApplications({ month });
+  }, [fetchBy]);
 
   const pageNumbers = [];
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
@@ -381,15 +352,33 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           />
         </TableHead>
         <TableHead className="table-head">Applicant</TableHead>
-        <TableHead className="table-head">Gender</TableHead>
-        <TableHead className="table-head">DHA</TableHead>
-        <TableHead className="table-head">CGC</TableHead>
-        <TableHead className="table-head">Salary</TableHead>
-        <TableHead className="table-head">Visa Expiry Date</TableHead>
-        <TableHead className="table-head">Joining Date</TableHead>
-        <TableHead className="table-head">Days</TableHead>
+        {[
+          { label: "Gender", key: ApplicationsSortKey.GENDER },
+          { label: "DHA", key: ApplicationsSortKey.DHA },
+          { label: "CGC", key: ApplicationsSortKey.CGC },
+          { label: "Salary", key: ApplicationsSortKey.SALARY },
+          {
+            label: "Visa Expiry Date",
+            key: ApplicationsSortKey.VISAEXPIRYDATE,
+          },
+          { label: "Joining Date", key: ApplicationsSortKey.JOININGDATE },
+          { label: "Days", key: ApplicationsSortKey.DAYS },
+        ].map((item) => (
+          <TableHead
+            key={item.label}
+            className="table-head"
+            onClick={() => requestSort(item.key)}
+          >
+            {item.label}
+          </TableHead>
+        ))}
         <TableHead className="table-head">Resume</TableHead>
-        <TableHead className="table-head">Created At</TableHead>
+        <TableHead
+          className="table-head"
+          onClick={() => requestSort(ApplicationsSortKey.DATE)}
+        >
+          Created At
+        </TableHead>
       </TableRow>
     </TableHeader>
   );
@@ -496,32 +485,71 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-5 items-center text-bold">
         <UpdateBtn
-          updateTarget="Fetch All Applications"
-          handleClick={fetchAllApplications}
+          updateTarget="Fetch All Quotation"
+          handleClick={() => fetchAllApplications({})}
         />
-        <div className="flex flex-col md:flex-row justify-between gap-2 w-full">
-          <input
-            type="text"
-            className="fetch-input-style text-style"
-            placeholder="Fetch By Applicant Name"
-            value={fetchByApplicantName}
-            onChange={handleApplicantNameChange}
-          />
-          <DatePicker
-            selected={fetchByMonth}
-            onChange={handleMonthChange}
-            dateFormat="MM-yyyy"
-            showMonthYearPicker
-            placeholderText="Fetch By Month"
-            className="fetch-input-style text-style whitespace-nowrap"
-          />
-          <DatePicker
-            selected={fetchByDay}
-            onChange={handleDayChange}
-            dateFormat="dd-MM-yyyy"
-            placeholderText="Fetch By Day"
-            className="fetch-input-style text-style whitespace-nowrap"
-          />
+        <div className="flex flex-col gap-2 w-full">
+          <div className="flex gap-10 w-full">
+            <input
+              type="text"
+              className="fetch-input-style text-style"
+              placeholder="Fetch By Client Name"
+              value={fetchBy.applicantName}
+              onChange={(e) =>
+                setFetchBy({
+                  applicantName: e.target.value,
+                  email: "",
+                  day: null,
+                  month: null,
+                })
+              }
+            />
+            <input
+              type="text"
+              className="fetch-input-style text-style"
+              placeholder="Fetch By Client Email"
+              value={fetchBy.email}
+              onChange={(e) =>
+                setFetchBy({
+                  applicantName: "",
+                  email: e.target.value,
+                  day: null,
+                  month: null,
+                })
+              }
+            />
+          </div>
+          <div className="flex gap-10 justify-center">
+            <DatePicker
+              selected={fetchBy.day}
+              onChange={(date: Date) =>
+                setFetchBy({
+                  applicantName: "",
+                  email: "",
+                  day: date,
+                  month: null,
+                })
+              }
+              dateFormat="dd-MM-yyyy"
+              placeholderText="Fetch By Day"
+              className="fetch-input-style text-style"
+            />
+            <DatePicker
+              selected={fetchBy.month}
+              onChange={(date: Date) =>
+                setFetchBy({
+                  applicantName: "",
+                  email: "",
+                  day: null,
+                  month: date,
+                })
+              }
+              dateFormat="MM-yyyy"
+              showMonthYearPicker
+              placeholderText="Fetch By Month"
+              className="fetch-input-style text-style"
+            />
+          </div>
         </div>
       </div>
 

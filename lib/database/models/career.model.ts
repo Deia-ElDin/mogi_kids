@@ -26,6 +26,7 @@ export interface ICareer extends Document {
   updatedAt: string;
   createdBy: Types.ObjectId | string;
 }
+
 const CareerSchema = new Schema<ICareer>(
   {
     fullName: { type: String, required: true, trim: true },

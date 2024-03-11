@@ -13,19 +13,15 @@ import {
 } from "@/components/ui/table";
 import {
   getAllQuotes,
-  getDayQuotes,
-  getMonthQuotes,
-  getCstNameQuotes,
   deleteQuote,
   deleteSelectedQuotes,
   markQuoteAsSeen,
-  countUnseenQuotes,
 } from "@/lib/actions/quote.actions";
 import { blockUser } from "@/lib/actions/user.actions";
 import { IQuote } from "@/lib/database/models/quote.model";
 import { differenceInDays } from "date-fns";
 import { formatDate, sortQuotes, handleError } from "@/lib/utils";
-import { SortKey } from "@/constants";
+import { QuoteSortKey } from "@/constants";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
 import DatePicker from "react-datepicker";
@@ -37,65 +33,48 @@ type QuotesPageProps = {
   setUnseenQuotes: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
+type FetchState = {
+  cstName?: string;
+  email?: string;
+  day?: Date | null;
+  month?: Date | null;
+};
+
+type quotesActionsState = {
+  _id: string;
+  checked: boolean;
+};
+
 const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
   const limit = 10;
-  const [fetchByCstName, setFetchByCstName] = useState<string>("");
-  const [fetchByDay, setFetchByDay] = useState<Date | null>(null);
-  const [fetchByMonth, setFetchByMonth] = useState<Date | null>(null);
+  const [fetchBy, setFetchBy] = useState<FetchState>({
+    cstName: "",
+    email: "",
+    day: null,
+    month: null,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [quotes, setQuotes] = useState<IQuote[] | []>([]);
-  const [quotesActions, setQuotesActions] = useState<
-    { _id: string; checked: boolean }[]
-  >([]);
+  const [quotesActions, setQuotesActions] = useState<quotesActionsState[]>([]);
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedQuotes, setSelectedQuotes] = useState<string[]>([]);
   const [sortConfig, setSortConfig] = useState<{
-    key: SortKey;
+    key: QuoteSortKey;
     direction: string;
   } | null>(null);
 
   const { toast } = useToast();
 
-  const handleCstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFetchByCstName(e.target.value);
-    if (fetchByDay) setFetchByDay(null);
-    if (fetchByMonth) setFetchByMonth(null);
-  };
-
-  const handleDayChange = (date: Date | null) => {
-    setFetchByDay(date);
-    if (fetchByCstName) setFetchByCstName("");
-    if (fetchByMonth) setFetchByMonth(null);
-  };
-
-  const handleMonthChange = (date: Date | null) => {
-    setFetchByMonth(date);
-    if (fetchByCstName) setFetchByCstName("");
-    if (fetchByDay) setFetchByDay(null);
-  };
-
-  const handleDeleteQuote = async (quoteId: string) => {
-    try {
-      const { success, error } = await deleteQuote(quoteId);
-      if (!success && error) throw new Error(error);
-      if (fetchByCstName) setFetchByCstName("");
-      if (fetchByDay) setFetchByDay(null);
-      if (fetchByMonth) setFetchByMonth(null);
-      setQuotes((prevQuotes) =>
-        prevQuotes.filter((quote) => quote._id !== quoteId)
-      );
-      setQuotesActions((prevQuotesActions) =>
-        prevQuotesActions.filter((quote) => quote._id !== quoteId)
-      );
-      toast({ description: "Quotation Deleted Successfully." });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Quotation, ${handleError(error)}`,
-      });
-    }
+  const setStates = (data: IQuote[], allPages: number = 1) => {
+    setQuotes(data || []);
+    setTotalPages(allPages);
+    setQuotesActions(
+      data?.map((quote: IQuote) => ({
+        _id: quote._id,
+        checked: false,
+      })) || []
+    );
   };
 
   const handleBlockUser = async (userId: string) => {
@@ -113,18 +92,25 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
   };
 
   const handleSelectQuote = async (quoteId: string) => {
+    // we set the quotes actions to opposite of the prev state
     setQuotesActions((prev) =>
       prev.map((quote) =>
         quote._id === quoteId ? { ...quote, checked: !quote.checked } : quote
       )
     );
+
+    // we check if the quote is already in the selected quotes array
     const isExist = selectedQuotes.find((id) => id === quoteId);
+
+    // if it's exist we remove it from the selected quotes array else we add it
     setSelectedQuotes((prev) =>
       isExist ? prev.filter((id) => id !== quoteId) : [...prev, quoteId]
     );
 
+    // we find the selected quote from the quotes array
     const selected = quotes.find((quote) => quote._id === quoteId);
 
+    // if the selected quote is not seen we mark it as seen
     if (selected && !selected.seen) {
       const { success, data, error } = await markQuoteAsSeen(quoteId);
       console.log("data", data);
@@ -142,8 +128,6 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
           quotes.map((quote) => (quote._id === quoteId ? data : quote))
         );
       }
-
-      fetchUnseenQuotesNumber();
     }
     if (selectAll) setSelectAll(false);
   };
@@ -159,25 +143,65 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
     setSelectAll((prev) => !prev);
   };
 
+  const handleDeleteQuote = async (quoteId: string) => {
+    try {
+      const { success, data, totalPages, error } = await deleteQuote({
+        quoteId,
+        page: currentPage,
+        limit,
+      });
+
+      if (!success && error) throw new Error(error);
+
+      if (quotes.length === selectedQuotes.length) {
+        setStates([]);
+      } else {
+        const { cstName, email, day, month } = fetchBy;
+        if (cstName || email || day || month) {
+          const newQuotes = quotes.filter((quote) => quote._id !== quoteId);
+          setStates(newQuotes);
+        } else if (data) setStates(data, totalPages);
+      }
+
+      setQuotes((prevQuotes) =>
+        prevQuotes.filter((quote) => quote._id !== quoteId)
+      );
+      setQuotesActions((prevQuotesActions) =>
+        prevQuotesActions.filter((quote) => quote._id !== quoteId)
+      );
+      toast({ description: "Quotation Deleted Successfully." });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: `Failed to Delete The Quotation, ${handleError(error)}`,
+      });
+    }
+  };
+
   const handleDeleteSelectedQuotes = async () => {
     try {
-      const { success, error } = await deleteSelectedQuotes(selectedQuotes);
+      const { success, data, totalPages, error } = await deleteSelectedQuotes({
+        selectedQuotes,
+        page: currentPage,
+      });
+
       if (!success && error) throw new Error(error);
       toast({ description: "Quotation Selection Deleted Successfully." });
 
       if (quotes.length === selectedQuotes.length) {
         setStates([]);
       } else {
-        const newQuotes = quotes.filter(
-          (quote) => !selectedQuotes.includes(quote._id)
-        );
-        setStates(newQuotes);
+        const { cstName, email, day, month } = fetchBy;
+        if (cstName || email || day || month) {
+          const newQuotes = quotes.filter(
+            (quote) => !selectedQuotes.includes(quote._id)
+          );
+          setStates(newQuotes);
+        } else if (data) setStates(data, totalPages);
       }
       setSelectedQuotes([]);
       setSelectAll(false);
-      if (fetchByCstName) setFetchByCstName("");
-      if (fetchByDay) setFetchByDay(null);
-      if (fetchByMonth) setFetchByMonth(null);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -189,52 +213,34 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
     }
   };
 
-  const setStates = (data: IQuote[], allPages: number = 1) => {
-    setQuotes(data || []);
-    setTotalPages(allPages);
-    setQuotesActions(
-      data?.map((quote: IQuote) => ({
-        _id: quote._id,
-        checked: false,
-      })) || []
-    );
-  };
-
-  const fetchUnseenQuotesNumber = async () => {
-    try {
-      const { success, data, error } = await countUnseenQuotes();
-      if (!success && error) throw new Error(error);
-      if (data) setUnseenQuotes(data);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `${handleError(error)}`,
-      });
-    }
-  };
-
-  const fetchAllQuotes = async () => {
-    if (fetchByCstName) setFetchByCstName("");
-    if (fetchByDay) setFetchByDay(null);
-    if (fetchByMonth) setFetchByMonth(null);
+  const fetchAllQuotes = async (fetchBy: FetchState) => {
+    const { cstName = "", email = "", day = null, month = null } = fetchBy;
 
     try {
-      const { success, data, totalPages, error } = await getAllQuotes({
+      const { success, data, totalPages, unseen, error } = await getAllQuotes({
+        fetch: fetchBy,
         limit,
         page: currentPage,
       });
 
       if (!success && error) throw new Error(error);
-      if (success && data) setStates(data, totalPages);
+      if (unseen) setUnseenQuotes(unseen);
+      if (success && data && data?.length > 0) setStates(data, totalPages);
       else {
+        setUnseenQuotes(null);
+        let extraMsg = "yet in the Database.";
+        if (cstName) extraMsg = `by ${cstName}.`;
+        else if (email) extraMsg = `by ${email}.`;
+        else if (day) extraMsg = `at ${format(day, "EEE, dd/MM/yyyy")}.`;
+        else if (month) extraMsg = `during ${format(month, "MMMM MM/yyyy")}.`;
         setStates([]);
         toast({
           variant: "destructive",
-          title: "Uh oh! We couldn't find any Quotations yet in the Database.",
+          title: `Uh oh! We couldn't find any Quotations created ${extraMsg}.`,
         });
       }
     } catch (error) {
+      setUnseenQuotes(null);
       setStates([]);
       toast({
         variant: "destructive",
@@ -244,82 +250,7 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
     }
   };
 
-  const fetchQuotesByCstName = async (cstName: string) => {
-    try {
-      const { success, data, error } = await getCstNameQuotes(cstName);
-
-      if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
-      else {
-        setStates([]);
-        toast({
-          variant: "destructive",
-          title: `Uh oh! We couldn't find any Quotations created by ${cstName}.`,
-        });
-      }
-    } catch (error) {
-      setStates([]);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to fetch The Quotations, ${handleError(error)}`,
-      });
-    }
-  };
-
-  const fetchQuotesByDay = async (day: Date) => {
-    try {
-      const { success, data, error } = await getDayQuotes(day);
-
-      if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
-      else {
-        setStates([]);
-        toast({
-          variant: "destructive",
-          title: `Uh oh! We couldn't find any Quotations create at ${format(
-            day,
-            "EEE, dd/MM/yyyy"
-          )}.`,
-        });
-      }
-    } catch (error) {
-      setStates([]);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to fetch The Quotations, ${handleError(error)}`,
-      });
-    }
-  };
-
-  const fetchQuotesByMonth = async (month: Date) => {
-    try {
-      const { success, data, error } = await getMonthQuotes(month);
-
-      if (!success && error) throw new Error(error);
-      if (success && data) setStates(data);
-      else {
-        setStates([]);
-        toast({
-          variant: "destructive",
-          title: `Uh oh! We couldn't find any Quotations create during this ${format(
-            month,
-            "MMMM MM/yyyy"
-          )}.`,
-        });
-      }
-    } catch (error) {
-      setStates([]);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to fetch The Quotations, ${handleError(error)}`,
-      });
-    }
-  };
-
-  const requestSort = (key: SortKey) => {
+  const requestSort = (key: QuoteSortKey) => {
     let direction = "ascending";
     if (
       sortConfig &&
@@ -332,8 +263,7 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
   };
 
   useEffect(() => {
-    fetchAllQuotes();
-    fetchUnseenQuotesNumber();
+    fetchAllQuotes(fetchBy);
   }, [currentPage]);
 
   useEffect(() => {
@@ -354,10 +284,13 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
   }, [sortConfig]);
 
   useEffect(() => {
-    if (fetchByCstName) fetchQuotesByCstName(fetchByCstName);
-    else if (fetchByDay) fetchQuotesByDay(fetchByDay);
-    else if (fetchByMonth) fetchQuotesByMonth(fetchByMonth);
-  }, [fetchByCstName, fetchByDay, fetchByMonth]);
+    setCurrentPage(1);
+    const { cstName, email, day, month } = fetchBy;
+    if (cstName) fetchAllQuotes({ cstName });
+    else if (email) fetchAllQuotes({ email });
+    else if (day) fetchAllQuotes({ day });
+    else if (month) fetchAllQuotes({ month });
+  }, [fetchBy]);
 
   const pageNumbers = [];
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
@@ -380,12 +313,12 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
         <TableHead className="table-head">Client</TableHead>
         <TableHead className="table-head">Location</TableHead>
         {[
-          { label: "Days", key: SortKey.DAYS },
-          { label: "Hours", key: SortKey.HOURS },
-          { label: "Kids", key: SortKey.KIDS },
-          { label: "Age", key: SortKey.AGES },
-          { label: "Total Hours", key: SortKey.TOTAL_HOURS },
-          { label: "Created At", key: SortKey.DATE },
+          { label: "Days", key: QuoteSortKey.DAYS },
+          { label: "Hours", key: QuoteSortKey.HOURS },
+          { label: "Kids", key: QuoteSortKey.KIDS },
+          { label: "Age", key: QuoteSortKey.AGES },
+          { label: "Total Hours", key: QuoteSortKey.TOTAL_HOURS },
+          { label: "Created At", key: QuoteSortKey.DATE },
         ].map((item) => (
           <TableHead
             key={item.label}
@@ -480,31 +413,70 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
       <div className="flex flex-col gap-5 items-center text-bold">
         <UpdateBtn
           updateTarget="Fetch All Quotation"
-          handleClick={fetchAllQuotes}
+          handleClick={() => fetchAllQuotes({})}
         />
-        <div className="flex flex-col md:flex-row justify-between gap-2 w-full">
-          <input
-            type="text"
-            className="fetch-input-style text-style"
-            placeholder="Fetch By Client Name"
-            value={fetchByCstName}
-            onChange={(e) => handleCstNameChange(e)}
-          />
-          <DatePicker
-            selected={fetchByMonth}
-            onChange={handleMonthChange}
-            dateFormat="MM-yyyy"
-            showMonthYearPicker
-            placeholderText="Fetch By Month"
-            className="fetch-input-style text-style w-full"
-          />
-          <DatePicker
-            selected={fetchByDay}
-            onChange={handleDayChange}
-            dateFormat="dd-MM-yyyy"
-            placeholderText="Fetch By Day"
-            className="fetch-input-style text-style w-full"
-          />
+        <div className="flex flex-col gap-2 w-full">
+          <div className="flex gap-10 w-full">
+            <input
+              type="text"
+              className="fetch-input-style text-style"
+              placeholder="Fetch By Client Name"
+              value={fetchBy.cstName}
+              onChange={(e) =>
+                setFetchBy({
+                  cstName: e.target.value,
+                  email: "",
+                  day: null,
+                  month: null,
+                })
+              }
+            />
+            <input
+              type="text"
+              className="fetch-input-style text-style"
+              placeholder="Fetch By Client Email"
+              value={fetchBy.email}
+              onChange={(e) =>
+                setFetchBy({
+                  cstName: "",
+                  email: e.target.value,
+                  day: null,
+                  month: null,
+                })
+              }
+            />
+          </div>
+          <div className="flex gap-10 justify-center">
+            <DatePicker
+              selected={fetchBy.day}
+              onChange={(date: Date) =>
+                setFetchBy({
+                  cstName: "",
+                  email: "",
+                  day: date,
+                  month: null,
+                })
+              }
+              dateFormat="dd-MM-yyyy"
+              placeholderText="Fetch By Day"
+              className="fetch-input-style text-style"
+            />
+            <DatePicker
+              selected={fetchBy.month}
+              onChange={(date: Date) =>
+                setFetchBy({
+                  cstName: "",
+                  email: "",
+                  day: null,
+                  month: date,
+                })
+              }
+              dateFormat="MM-yyyy"
+              showMonthYearPicker
+              placeholderText="Fetch By Month"
+              className="fetch-input-style text-style"
+            />
+          </div>
         </div>
       </div>
 
