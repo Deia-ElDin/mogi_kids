@@ -47,7 +47,7 @@ export async function validateIsTheSameUser(
 
     if (!mongoDbUser) throw new Error("Authentication Error.");
 
-    const isTheSameUser = mongoDbUser._id === userId;
+    const isTheSameUser = String(mongoDbUser._id) === userId;
 
     return { user: mongoDbUser, isTheSameUser, error: null };
   } catch (error) {
