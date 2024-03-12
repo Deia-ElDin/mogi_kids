@@ -1,7 +1,11 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateAdmin, validatePageAndLimit } from "./validation.actions";
+import {
+  validateAdmin,
+  validatePageAndLimit,
+  validateIsTheSameUser,
+} from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import {
   CreateApplicationParams,
@@ -45,6 +49,15 @@ export async function createApplication(
 ): Promise<DefaultResult> {
   try {
     await connectToDb();
+
+    if (params.createdBy) {
+      const { isTheSameUser, error } = await validateIsTheSameUser(
+        params.createdBy
+      );
+
+      if (error || !isTheSameUser)
+        throw new Error("Not Authorized to access this resource.");
+    }
 
     const newApplication = await Career.create(params);
 
