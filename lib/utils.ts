@@ -153,9 +153,9 @@ export const getUsername = (
   firstName: string | undefined,
   lastName: string | undefined
 ) => {
-  if (firstName && lastName) return `${firstName} ${lastName}`;
-  else if (firstName) return firstName;
-  else return "Customer";
+  if (firstName && lastName) return `${toCap(firstName)} ${toCap(lastName)}`;
+  else if (firstName) return toCap(firstName);
+  else return "Client";
 };
 
 export const onlyPositiveValues = (

@@ -247,4 +247,3 @@ export enum ApplicationsSortKey {
   DAYS = "days",
   DATE = "createdAt",
 }
-

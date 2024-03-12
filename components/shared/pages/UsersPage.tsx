@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { format, isBefore } from "date-fns";
+import { usePathname } from "next/navigation";
+import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Table,
@@ -12,13 +13,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { getAllUsers, updateUser, blockUser } from "@/lib/actions/user.actions";
+import { getAllUsers, updateUser } from "@/lib/actions/user.actions";
 import { IUser } from "@/lib/database/models/user.model";
 import { formatDate, handleError, toCap } from "@/lib/utils";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
 import DatePicker from "react-datepicker";
-import UserDeleteBtn from "../btns/UserDeleteBtn";
 import UserCard from "../cards/UserCard";
 import Image from "next/image";
 import "react-datepicker/dist/react-datepicker.css";
@@ -47,13 +47,10 @@ const UsersPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [users, setUsers] = useState<IUser[] | []>([]);
   const [usersActions, setUsersActions] = useState<usersActionsState[]>([]);
-  const [selectAll, setSelectAll] = useState<boolean>(false);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [isActive, setIsActive] = useState(false);
 
   const { toast } = useToast();
 
-  const today = new Date();
+  const pathname = usePathname();
 
   const setStates = (data: IUser[], allPages: number = 1) => {
     setUsers(data || []);
@@ -84,49 +81,6 @@ const UsersPage: React.FC = () => {
         description: `Failed to Update The User, ${handleError(error)}`,
       });
     }
-  };
-
-  const handleBlockUser = async (userId: string) => {
-    try {
-      const { success, error } = await blockUser(userId);
-      if (!success && error) throw new Error(error);
-      toast({ description: "User Blocked Successfully." });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to Block The User, ${handleError(error)}`,
-      });
-    }
-  };
-
-  const handleSelectUser = async (userId: string) => {
-    // we set the users actions to opposite of the prev state
-    setUsersActions((prev) =>
-      prev.map((user) =>
-        user._id === userId ? { ...user, checked: !user.checked } : user
-      )
-    );
-
-    // we check if the user is already in the selected users array
-    const isExist = selectedUsers.find((id) => id === userId);
-
-    // if it's exist we remove it from the selected users array else we add it
-    setSelectedUsers((prev) =>
-      isExist ? prev.filter((id) => id !== userId) : [...prev, userId]
-    );
-    if (selectAll) setSelectAll(false);
-  };
-
-  const handleSelectAll = () => {
-    setSelectedUsers(users.map((user) => user._id));
-    setUsersActions((prev) =>
-      prev.map((user) => ({
-        ...user,
-        checked: !selectAll,
-      }))
-    );
-    setSelectAll((prev) => !prev);
   };
 
   const fetchAllUsers = async (fetchBy: FetchState) => {
@@ -182,19 +136,9 @@ const UsersPage: React.FC = () => {
   const pageNumbers = [];
   for (let i = 0; i < totalPages; i++) pageNumbers.push(i + 1);
 
-  const isSelected = usersActions.some((selectedUser) => selectedUser.checked);
-
   const TableHeaderComp = () => (
     <TableHeader>
       <TableRow>
-        <TableHead className="table-head">
-          <input
-            type="checkbox"
-            className="h-[18px] w-[18px]"
-            checked={selectAll}
-            onChange={handleSelectAll}
-          />
-        </TableHead>
         {[
           "Photo",
           "First Name",
@@ -214,8 +158,16 @@ const UsersPage: React.FC = () => {
   const TableBodyComp = () => (
     <TableBody>
       {users.map((user, index) => {
-        const { photo, firstName, lastName, email, role, blocked, createdAt } =
-          user;
+        const {
+          _id,
+          photo,
+          firstName,
+          lastName,
+          email,
+          role,
+          blocked,
+          createdAt,
+        } = user;
         const isAdmin = role === "Admin" || role === "Manager";
         return (
           <React.Fragment key={user._id}>
@@ -227,16 +179,16 @@ const UsersPage: React.FC = () => {
                   ? "text-red-500"
                   : ""
               }`}
-              onClick={() => handleSelectUser(user._id)}
+              onClick={() =>
+                setUsersActions((prev) =>
+                  prev.map((user) =>
+                    user._id === _id
+                      ? { ...user, checked: !user.checked }
+                      : user
+                  )
+                )
+              }
             >
-              <TableCell className="table-cell text-center">
-                <input
-                  type="checkbox"
-                  className="h-[18px] w-[18px] cursor-pointer"
-                  checked={usersActions[index].checked}
-                  onChange={(e) => e.stopPropagation()}
-                />
-              </TableCell>
               <TableCell>
                 <Image
                   src={photo || "/assets/icons/default-user.svg"}
@@ -271,7 +223,7 @@ const UsersPage: React.FC = () => {
               </TableCell>
             </TableRow>
             {usersActions[index].checked && (
-              <UserCard user={user} handleBlockUser={handleBlockUser} />
+              <UserCard user={user} setUsers={setUsers} />
             )}
           </React.Fragment>
         );

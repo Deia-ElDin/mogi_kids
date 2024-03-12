@@ -43,8 +43,9 @@ const DeleteBtn: React.FC<DeleteBtnProps> = (props) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete this{" "}
-              {deletionTarget.split(" ").pop()} and remove it from your
-              database.
+              <span className="text-red-500">
+                {deletionTarget.split(" ").pop()}
+              </span> and remove it from your database.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

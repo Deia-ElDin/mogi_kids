@@ -38,10 +38,9 @@ const BlockBtn: React.FC<BlockBtnProps> = (props) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will block this user and will delete all his
+              This action will block this user and will delete all his/her{" "}
               <span className="text-red-500">
-                {" "}
-                Applications, Quotations, Applications, Reviews and Comments
+                Quotations, Applications, Reviews and Comments
               </span>
               .
             </AlertDialogDescription>

@@ -230,7 +230,7 @@ export async function blockUser(userId: string): Promise<BlockResult> {
 
     const blockedUser = await User.findByIdAndUpdate(
       userId,
-      { blocked: true },
+      { blocked: true, reviews: [], role: "User" },
       { new: true }
     );
 
@@ -249,7 +249,30 @@ export async function blockUser(userId: string): Promise<BlockResult> {
       await Comment.findByIdAndDelete(comment._id);
     }
 
-    return { success: true, data: null, error: null };
+    return { success: true, data: blockedUser, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function unBlockUser(userId: string): Promise<BlockResult> {
+  try {
+    await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const blockedUser = await User.findByIdAndUpdate(
+      userId,
+      { blocked: false },
+      { new: true }
+    );
+
+    if (!blockedUser) throw new Error("Failed to unblock the user.");
+
+    return { success: true, data: blockedUser, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
