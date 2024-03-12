@@ -77,10 +77,11 @@ const CareerForm: React.FC<CareerFormProps> = ({ user }) => {
         createdBy: user ? user._id : null,
       });
 
-      toast({ description: "Application Created Successfully." });
+      if (!success && error) throw new Error(error);
 
       if (success) handleClose();
-      else if (error) throw new Error(error);
+
+      toast({ description: "Application Created Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",

@@ -81,12 +81,13 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
               imgSize: uploadedImgs[0].size,
             });
 
+        if (!success && error) throw new Error(error);
+
+        if (success) handleClose();
+
         toast({
           description: `Logo ${logo?._id ? "Updated" : "Created"} Successfully`,
         });
-
-        if (success) handleClose();
-        else if (error) throw new Error(error);
       }
     } catch (error) {
       toast({

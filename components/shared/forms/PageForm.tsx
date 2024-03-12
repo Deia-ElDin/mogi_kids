@@ -86,14 +86,14 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
           })
         : await createPage({ ...values, path: pathname });
 
+      if (!success && error) throw new Error(error);
+
+      if (success) handleClose();
       toast({
         description: `${pageName} ${
           page?._id ? "Updated" : "Created"
         } Successfully`,
       });
-
-      if (success) handleClose();
-      else if (error) throw new Error(error);
     } catch (error) {
       toast({
         variant: "destructive",

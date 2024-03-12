@@ -96,14 +96,15 @@ const GalleryForm: React.FC<GalleryFormProps> = ({ gallery }) => {
               imgSize: uploadedImgs[0].size,
             });
 
+        if (!success && error) throw new Error(error);
+
+        if (success) handleClose();
+
         toast({
           description: `Gallery ${
             gallery.length > 0 ? "Updated" : "Created"
           } Successfully`,
         });
-
-        if (success) handleClose();
-        else if (error) throw new Error(error);
       }
     } catch (error) {
       toast({

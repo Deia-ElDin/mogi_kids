@@ -31,6 +31,8 @@ export async function createComment(
 ): Promise<DefaultResult> {
   const { comment, reviewId, createdBy, path } = params;
 
+  console.log("params", params);
+
   try {
     await connectToDb();
 
