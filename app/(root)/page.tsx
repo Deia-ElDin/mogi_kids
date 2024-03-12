@@ -9,10 +9,9 @@ import { getAllQuestions } from "@/lib/actions/question.actions";
 import { getAllRecords } from "@/lib/actions/record.actions";
 import { getAllReviews } from "@/lib/actions/review.actions";
 import { getAllContacts } from "@/lib/actions/contact.actions";
-import { getAllAboutUs } from "@/lib/actions/aboutUs.actions";
 import { getDbsSize } from "@/lib/actions/db.actions";
 
-import { findPage, formatBytes, isAdminUser } from "@/lib/utils";
+import { findPage, isAdminUser } from "@/lib/utils";
 
 import Admin from "@/components/shared/Admin";
 import Welcome from "@/components/shared/Welcome";
@@ -35,7 +34,6 @@ export default async function Home() {
   const recordsResult = await getAllRecords();
   const reviewsResult = await getAllReviews();
   const contactsResult = await getAllContacts();
-  const aboutUsResult = await getAllAboutUs();
   const dbsSizeResult = await getDbsSize();
 
   const user = userResult.success ? userResult.data || null : null;
@@ -47,20 +45,11 @@ export default async function Home() {
   const records = recordsResult.success ? recordsResult.data || [] : [];
   const reviews = reviewsResult.success ? reviewsResult.data || [] : [];
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
-  const aboutUs = aboutUsResult.success ? aboutUsResult.data || [] : [];
-
   const dbsSize = dbsSizeResult.success ? dbsSizeResult.data || null : null;
 
-  const isAdmin = isAdminUser(user);
+  console.log("dbsSize", dbsSize);
 
-  const uploadthingDb = formatBytes(
-    logo,
-    gallery,
-    services,
-    records,
-    contacts,
-    aboutUs
-  );
+  const isAdmin = isAdminUser(user);
 
   return (
     <>
@@ -68,7 +57,7 @@ export default async function Home() {
         isAdmin={isAdmin}
         logo={logo}
         gallery={gallery}
-        uploadthingDb={uploadthingDb}
+        uploadthingDb={dbsSize?.uploadthing || "0 B"}
         resend={parseInt(dbsSize?.resend || "0")}
       />
       <Welcome

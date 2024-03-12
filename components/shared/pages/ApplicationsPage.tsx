@@ -129,7 +129,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
       const { success, data, error } = await markApplicationAsSeen(
         applicationId
       );
-      console.log("data", data);
 
       if (!success && error) {
         toast({

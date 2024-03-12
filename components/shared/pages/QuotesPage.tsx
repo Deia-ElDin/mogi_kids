@@ -113,7 +113,6 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
     // if the selected quote is not seen we mark it as seen
     if (selected && !selected.seen) {
       const { success, data, error } = await markQuoteAsSeen(quoteId);
-      console.log("data", data);
 
       if (!success && error) {
         toast({

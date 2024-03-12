@@ -294,8 +294,8 @@ export type CreateReportParams = {
 
 // DB Params
 export type DbParams = {
-  resend?: string;
-  uploadthing?: string;
-  mongo?: string;
-  clerk?: string;
+  resend?: boolean;
+  uploadthing?: boolean;
+  mongo?: boolean;
+  clerk?: boolean;
 };

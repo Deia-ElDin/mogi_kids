@@ -52,7 +52,7 @@ ReviewSchema.pre<IReview>("save", async function (next) {
         break;
 
       case "rating":
-        if (!isValidString(value, 1) && !isInRange(parseInt(value), 0, 5))
+        if (!isValidString(value, 1) || !isInRange(parseInt(value), 0, 5))
           isError = true;
         break;
 

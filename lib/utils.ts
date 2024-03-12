@@ -84,7 +84,8 @@ export const formatBytes = (
   services: IService[] | [],
   records: IRecord[] | [],
   contacts: IContact[] | [],
-  aboutUs: IAboutUs[] | []
+  aboutUs: IAboutUs[] | [],
+  applications: ICareer[] | []
 ): string => {
   const units = ["B", "KB", "MB", "GB"];
   let totalBytes = 0;
@@ -95,6 +96,7 @@ export const formatBytes = (
   records.forEach((record) => (totalBytes += record.imgSize));
   contacts.forEach((contact) => (totalBytes += contact.imgSize));
   aboutUs.forEach((article) => (totalBytes += article.imgSize));
+  applications.forEach((application) => (totalBytes += application.imgSize));
 
   let i = 0;
   while (totalBytes >= 1000 && i < units.length - 1) {
@@ -347,7 +349,7 @@ export const isValidUrl = (url: string): boolean => {
   return urlRegex.test(url);
 };
 
-export const isInRange = (value: number, min: number, max: number) => {
+export const isInRange = (value: number, min: number, max: number): boolean => {
   return value >= min && value <= max;
 };
 

@@ -161,8 +161,6 @@ export async function updateUser(
 ): Promise<DefaultResult> {
   const { userId, role } = params;
 
-  console.log("params", params);
-
   try {
     await connectToDb();
 
@@ -236,6 +234,16 @@ export async function blockUser(userId: string): Promise<BlockResult> {
 
     if (!blockedUser) throw new Error("Failed to block the user.");
 
+    const url = `https://api.clerk.com/v1/users/${blockedUser.clerkId}/ban`;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+      },
+    };
+    await fetch(url, options);
+
     await Career.deleteMany({ createdBy: userId });
     await Quote.deleteMany({ createdBy: userId });
     await Review.deleteMany({ createdBy: userId });
@@ -249,7 +257,9 @@ export async function blockUser(userId: string): Promise<BlockResult> {
       await Comment.findByIdAndDelete(comment._id);
     }
 
-    return { success: true, data: blockedUser, error: null };
+    const data = JSON.parse(JSON.stringify(blockedUser));
+
+    return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
@@ -264,15 +274,28 @@ export async function unBlockUser(userId: string): Promise<BlockResult> {
     if (error || !isAdmin)
       throw new Error("Not Authorized to access this resource.");
 
-    const blockedUser = await User.findByIdAndUpdate(
+    const unBlockedUser = await User.findByIdAndUpdate(
       userId,
       { blocked: false },
       { new: true }
     );
 
-    if (!blockedUser) throw new Error("Failed to unblock the user.");
+    if (!unBlockedUser) throw new Error("Failed to unblock the user.");
 
-    return { success: true, data: blockedUser, error: null };
+    const url = `https://api.clerk.com/v1/users/${unBlockedUser.clerkId}/unban`;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+      },
+    };
+
+    await fetch(url, options);
+
+    const data = JSON.parse(JSON.stringify(unBlockedUser));
+
+    return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

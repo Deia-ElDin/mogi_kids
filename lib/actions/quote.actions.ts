@@ -53,7 +53,7 @@ export async function createQuote(
     if (!newQuote) throw new Error("Failed to create the quote.");
 
     const { success: dbSuccess, error: dbError } = await updateDbSize({
-      resend: "1",
+      resend: true,
     });
 
     if (!dbSuccess && dbError) throw new Error(dbError);
@@ -61,6 +61,28 @@ export async function createQuote(
     const data = JSON.parse(JSON.stringify(newQuote));
 
     return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function updateQuote(
+  params: UpdateQuoteParams
+): Promise<DefaultResult> {
+  const { quoteId, emailService } = params;
+  try {
+    await connectToDb();
+
+    const updatedQuote = await Quote.findByIdAndUpdate(
+      quoteId,
+      { emailService },
+      { new: true }
+    );
+
+    if (!updatedQuote)
+      throw new Error("Failed to update the email service of this quotation.");
+
+    return { success: true, data: null, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
@@ -155,28 +177,6 @@ export async function getAllQuotes({
       unseen: null,
       error: handleError(error),
     };
-  }
-}
-
-export async function updateQuote(
-  params: UpdateQuoteParams
-): Promise<DefaultResult> {
-  const { quoteId, emailService } = params;
-  try {
-    await connectToDb();
-
-    const updatedQuote = await Quote.findByIdAndUpdate(
-      quoteId,
-      { emailService },
-      { new: true }
-    );
-
-    if (!updatedQuote)
-      throw new Error("Failed to update the email service of this quotation.");
-
-    return { success: true, data: null, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
   }
 }
 

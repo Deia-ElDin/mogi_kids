@@ -34,8 +34,6 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
   const { _id, photo, firstName, lastName, email, reviews, role, blocked } =
     user;
 
-  console.log("UserCard -> user", user);
-
   const { toast } = useToast();
 
   const handleDeleteReview = async (reviewId: string) => {
@@ -75,7 +73,7 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
         setUsers((prev) =>
           prev.map((user) => (user._id === _id ? data : user))
         );
-      } else throw new Error("Failed to Update User's Reviews");
+      } else throw new Error("Failed to Delete The User Data");
       toast({ description: "User Blocked Successfully." });
     } catch (error) {
       toast({
@@ -95,8 +93,8 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
         setUsers((prev) =>
           prev.map((user) => (user._id === _id ? data : user))
         );
-      } else throw new Error("Failed to Update User's Reviews");
-      toast({ description: "User Blocked Successfully." });
+      } else throw new Error("Failed to unblock the user");
+      toast({ description: "User UnBlocked Successfully." });
     } catch (error) {
       toast({
         variant: "destructive",
