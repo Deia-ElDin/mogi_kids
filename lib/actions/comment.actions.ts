@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateAdmin } from "./validation.actions";
+import { validateIsTheSameUser } from "./validation.actions";
 import {
   CreateCommentParams,
   UpdateCommentParams,
@@ -34,6 +34,11 @@ export async function createComment(
   try {
     await connectToDb();
 
+    const { isTheSameUser, error } = await validateIsTheSameUser(createdBy);
+
+    if (error || !isTheSameUser)
+      throw new Error("Not Authorized to access this resource.");
+
     const newComment = await Comment.create({
       comment,
       createdBy,
@@ -63,6 +68,11 @@ export async function updateCommentLikes(
 
   try {
     await connectToDb();
+
+    const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
+
+    if (error || !isTheSameUser)
+      throw new Error("Not Authorized to access this resource.");
 
     const comment = await Comment.findById(commentId);
 
@@ -103,6 +113,11 @@ export async function updateCommentDislikes(
 
   try {
     await connectToDb();
+
+    const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
+
+    if (error || !isTheSameUser)
+      throw new Error("Not Authorized to access this resource.");
 
     const comment = await Comment.findById(commentId);
 

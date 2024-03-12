@@ -117,6 +117,11 @@ export async function updateReviewLikes(
   try {
     await connectToDb();
 
+    const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
+
+    if (error || !isTheSameUser)
+      throw new Error("Not Authorized to access this resource.");
+
     const review = await Review.findById(reviewId);
 
     if (!review) throw new Error("Review not found.");
@@ -156,6 +161,11 @@ export async function updateReviewDislikes(
 
   try {
     await connectToDb();
+
+    const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
+
+    if (error || !isTheSameUser)
+      throw new Error("Not Authorized to access this resource.");
 
     const review = await Review.findById(reviewId);
 
