@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateAdmin } from "./validation.actions";
+import { validateIsTheSameUser } from "./validation.actions";
 import {
   CreateReviewParams,
   UpdateReviewParams,
@@ -76,6 +76,11 @@ export async function createReview(
 
   try {
     await connectToDb();
+
+    const { isTheSameUser, error } = await validateIsTheSameUser(createdBy);
+
+    if (error || !isTheSameUser)
+      throw new Error("Not Authorized to access this resource.");
 
     const createdReview = await Review.create({
       review,

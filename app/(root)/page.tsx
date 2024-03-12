@@ -47,7 +47,6 @@ export default async function Home() {
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
   const dbsSize = dbsSizeResult.success ? dbsSizeResult.data || null : null;
 
-  console.log("dbsSize", dbsSize);
 
   const isAdmin = isAdminUser(user);
 
