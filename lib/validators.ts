@@ -21,6 +21,7 @@ import {
   logoErrs,
   galleryErrs,
   webPageErrs,
+  serviceErrs,
   quoteErrs,
 } from "@/constants/errors";
 
@@ -31,6 +32,8 @@ export const logoSchema = z.object({
 export const gallerySchema = z.object({
   imgUrl: z.string().min(galleryErrs.length.min, galleryErrs.err),
 });
+
+const { serviceName, imgUrl, serviceContent } = serviceErrs;
 
 const {
   cstName,
@@ -51,9 +54,11 @@ export const pageSchema = z.object({
 });
 
 export const serviceSchema = z.object({
-  serviceName: z.string().min(1, "Kindly provide us a service name."),
-  imgUrl: z.string().min(1, "Kindly provide us a service image."),
-  serviceContent: z.string().min(1, "Kindly provide us a service content."),
+  serviceName: z.string().min(serviceName.length.min, serviceName.errs.min),
+  imgUrl: z.string().min(imgUrl.length.min, imgUrl.errs.min),
+  serviceContent: z
+    .string()
+    .min(serviceContent.length.min, serviceContent.errs.min),
 });
 
 export const questionSchema = z.object({

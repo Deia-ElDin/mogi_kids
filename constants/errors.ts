@@ -25,10 +25,14 @@ const setDecimalErr = (required: string): string =>
 const setTellUsErr = (required: string): string =>
   `Kindly tell us ${toCap(required)}.`;
 
+export const setITError = (err: string): string =>
+  `Connect with the IT department, Page Naming Error. ${toCap(err)}`;
+
 const {
   logoImg,
   galleryImg,
   webPage,
+  service,
   name,
   mobile,
   location,
@@ -40,19 +44,36 @@ const {
   extraInfo,
 } = minMaxValues;
 
+export const iTErr = {};
+
 export const logoErrs = {
   length: { min: logoImg.minLength },
-  err: "Kindly provide us a logo image.",
+  err: setProvideErr("logo image"),
 };
 
 export const galleryErrs = {
   length: { min: galleryImg.minLength },
-  err: "Kindly provide us a gallery image.",
+  err: setProvideErr("gallery image"),
 };
 
 export const webPageErrs = {
   length: { min: webPage.title.minLength },
-  err: "Kindly provide a title for the web page.",
+  err: setProvideErr("web page title"),
+};
+
+export const serviceErrs = {
+  serviceName: {
+    length: { min: service.name.minLength },
+    errs: { min: setProvideErr("service name") },
+  },
+  imgUrl: {
+    length: { min: service.img.minLength },
+    errs: { min: setProvideErr("service image") },
+  },
+  serviceContent: {
+    length: { min: service.content.minLength },
+    errs: { min: setProvideErr("service content") },
+  },
 };
 
 export const quoteErrs = {

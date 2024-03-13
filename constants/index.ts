@@ -4,7 +4,12 @@ export const minMaxValues = {
   logoImg: { minLength: 1 },
   galleryImg: { minLength: 1 },
   webPage: {
-    title: { minLength: 1, maxLength: 100 },
+    title: { minLength: 1 },
+  },
+  service: {
+    name: { minLength: 1 },
+    img: { minLength: 1 },
+    content: { minLength: 1 },
   },
   name: { minLength: 1, maxLength: 100 },
   mobile: { minLength: 1, maxLength: 14 },
