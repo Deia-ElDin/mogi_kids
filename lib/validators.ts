@@ -27,6 +27,7 @@ import {
   reviewErrs,
   commentsErrs,
   quoteErrs,
+  contactErrs,
 } from "@/constants/errors";
 
 export const logoSchema = z.object({
@@ -43,7 +44,7 @@ const { question, answer } = questionErrs;
 
 const { imgUrl: recordImg, value, label } = recordErrs;
 
-const { review, rating } = reviewErrs;
+const { review } = reviewErrs;
 
 const { comment } = commentsErrs;
 
@@ -58,6 +59,8 @@ const {
   serviceDates,
   extraInfo,
 } = quoteErrs;
+
+const { imgUrl: contactImg, content } = contactErrs;
 
 export const pageSchema = z.object({
   pageName: z.string(),
@@ -99,17 +102,6 @@ export const commentSchema = z.object({
     .min(comment.length.min, comment.errs.min)
     .max(comment.length.max, `${comment.errs.max}. Thank you.`)
     .refine((value) => isEmpty(value), `${comment.errs.empty} Thank you.`),
-});
-
-export const contactSchema = z.object({
-  imgUrl: z.string().min(1, "Kindly provide us the contact svg icon."),
-  content: z.string().min(1, "Kindly provide us the contact content."),
-});
-
-export const aboutUsSchema = z.object({
-  title: z.string().min(1, "Kindly provide us the article title."),
-  content: z.string().min(1, "Kindly provide us the article content."),
-  imgUrl: z.string().min(1, "Kindly provide us the article image."),
 });
 
 export const quoteSchema = z.object({
@@ -193,6 +185,98 @@ export const quoteSchema = z.object({
       serviceDates.errs.to.duration
     ),
   extraInfo: z.string().max(extraInfo.length.max, extraInfo.errs.max),
+});
+
+export const contactSchema = z.object({
+  imgUrl: z.string().min(contactImg.length.min, contactImg.errs.min),
+  content: z.string().min(content.length.min, content.errs.min),
+});
+
+export const aboutUsSchema = z.object({
+  title: z.string().min(1, "Kindly provide us the article title."),
+  content: z.string().min(1, "Kindly provide us the article content."),
+  imgUrl: z.string().min(1, "Kindly provide us the article image."),
+});
+
+export const careerSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, "Kindly provide your name.")
+    .max(100, "Name must not exceed 100 characters.")
+    .refine(
+      (value) => /^[a-zA-Z\s]+$/.test(value),
+      "Name must not contain any numbers or special characters."
+    )
+    .refine((value) => value.trim().length > 0, "Kindly tell us your name."),
+  email: z
+    .string()
+    .min(1, "Kindly provide us your email address.")
+    .max(100, "Email must not exceed 100 characters.")
+    .email("Invalid email address."),
+  mobile: z
+    .string()
+    .min(1, "Kindly provide your mobile number.")
+    .max(14, "Mobile / landline number must not exceed 14 characters.")
+    .refine(
+      (value) =>
+        /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/.test(
+          value
+        ),
+      "Invalid mobile number."
+    ),
+  applyingFor: z
+    .string()
+    .min(1, "Kindly tell us which job you are applying for.")
+    .max(150, "Field must not exceed 150 characters."),
+  workingAt: z
+    .string()
+    .max(150, "Field must not exceed 150 characters.")
+    .optional(),
+  previousSalary: z
+    .string()
+    .max(25, "Field must not exceed 25 characters.")
+    .optional(),
+  expectedSalary: z
+    .string()
+    .max(25, "Field must not exceed 25 characters.")
+    .optional(),
+  joinDate: z.date().refine((value) => {
+    if (value !== null && value !== undefined) {
+      const today = new Date();
+      const maxDate = addMonths(today, 2);
+      return isAfter(value, subDays(today, 1)) && isBefore(value, maxDate);
+    }
+  }, "Joining date can't start in the past or exceed 2 months from now."),
+  gender: z.string().min(1, "Kindly select your gender."),
+  education: z.string().min(1, "Kindly select your education level."),
+  dhaCertificate: z.string().min(1, "Kindly select one of the options below."),
+  careGiverCertificate: z
+    .string()
+    .min(1, "Kindly select one of the options below."),
+  experienceInUAE: z.array(z.string()).length(5),
+  visa: z.string().min(1, "Kindly select one of the options below."),
+  visaExpireDate: z
+    .date()
+    .refine((value) => value !== null && value !== undefined, {
+      message: "Visa expiration date is required.",
+    })
+    .refine((value) => !isNaN(value.getTime()), {
+      message: "Visa expiration date must be a valid date.",
+    })
+    .refine((value) => {
+      const threeMonthsAgo = subMonths(new Date(), 3);
+      return isAfter(value, threeMonthsAgo);
+    }, "Visa expired since 3 months or more!.")
+    .refine((value) => {
+      const today = new Date();
+      const tenYearsLater = addYears(today, 10);
+      return isBefore(value, tenYearsLater);
+    }, "Visa expiration date must be within 10 years from today."),
+  coverLetter: z
+    .string()
+    .max(5000, "Field must not exceed 5000 characters.")
+    .optional(),
+  imgUrl: z.string().min(1, "Kindly attach your CV."),
 });
 
 // export const quoteSchema = z.object({
@@ -295,84 +379,3 @@ export const quoteSchema = z.object({
 //     }, "The service duration can't exceed 15 years."),
 //   extraInfo: z.string().max(5000, "maximum 5000 characters."),
 // });
-
-export const careerSchema = z.object({
-  fullName: z
-    .string()
-    .min(1, "Kindly provide your name.")
-    .max(100, "Name must not exceed 100 characters.")
-    .refine(
-      (value) => /^[a-zA-Z\s]+$/.test(value),
-      "Name must not contain any numbers or special characters."
-    )
-    .refine((value) => value.trim().length > 0, "Kindly tell us your name."),
-  email: z
-    .string()
-    .min(1, "Kindly provide us your email address.")
-    .max(100, "Email must not exceed 100 characters.")
-    .email("Invalid email address."),
-  mobile: z
-    .string()
-    .min(1, "Kindly provide your mobile number.")
-    .max(14, "Mobile / landline number must not exceed 14 characters.")
-    .refine(
-      (value) =>
-        /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/.test(
-          value
-        ),
-      "Invalid mobile number."
-    ),
-  applyingFor: z
-    .string()
-    .min(1, "Kindly tell us which job you are applying for.")
-    .max(150, "Field must not exceed 150 characters."),
-  workingAt: z
-    .string()
-    .max(150, "Field must not exceed 150 characters.")
-    .optional(),
-  previousSalary: z
-    .string()
-    .max(25, "Field must not exceed 25 characters.")
-    .optional(),
-  expectedSalary: z
-    .string()
-    .max(25, "Field must not exceed 25 characters.")
-    .optional(),
-  joinDate: z.date().refine((value) => {
-    if (value !== null && value !== undefined) {
-      const today = new Date();
-      const maxDate = addMonths(today, 2);
-      return isAfter(value, subDays(today, 1)) && isBefore(value, maxDate);
-    }
-  }, "Joining date can't start in the past or exceed 2 months from now."),
-  gender: z.string().min(1, "Kindly select your gender."),
-  education: z.string().min(1, "Kindly select your education level."),
-  dhaCertificate: z.string().min(1, "Kindly select one of the options below."),
-  careGiverCertificate: z
-    .string()
-    .min(1, "Kindly select one of the options below."),
-  experienceInUAE: z.array(z.string()).length(5),
-  visa: z.string().min(1, "Kindly select one of the options below."),
-  visaExpireDate: z
-    .date()
-    .refine((value) => value !== null && value !== undefined, {
-      message: "Visa expiration date is required.",
-    })
-    .refine((value) => !isNaN(value.getTime()), {
-      message: "Visa expiration date must be a valid date.",
-    })
-    .refine((value) => {
-      const threeMonthsAgo = subMonths(new Date(), 3);
-      return isAfter(value, threeMonthsAgo);
-    }, "Visa expired since 3 months or more!.")
-    .refine((value) => {
-      const today = new Date();
-      const tenYearsLater = addYears(today, 10);
-      return isBefore(value, tenYearsLater);
-    }, "Visa expiration date must be within 10 years from today."),
-  coverLetter: z
-    .string()
-    .max(5000, "Field must not exceed 5000 characters.")
-    .optional(),
-  imgUrl: z.string().min(1, "Kindly attach your CV."),
-});

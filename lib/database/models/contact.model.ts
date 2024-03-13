@@ -1,4 +1,5 @@
 import { Document, Schema, models, model } from "mongoose";
+import { contactErrs, setITError } from "@/constants/errors";
 
 export interface IContact extends Document {
   _id: string;
@@ -8,9 +9,20 @@ export interface IContact extends Document {
 }
 
 const ContactSchema: Schema = new Schema<IContact>({
-  imgUrl: { type: String, trim: true, required: true },
-  imgSize: { type: Number, required: true },
-  content: { type: String, trim: true, required: true },
+  imgUrl: {
+    type: String,
+    trim: true,
+    required: [true, contactErrs.imgUrl.errs.min],
+  },
+  imgSize: {
+    type: Number,
+    required: [true, setITError("contact icon size")],
+  },
+  content: {
+    type: String,
+    trim: true,
+    required: [true, contactErrs.content.errs.min],
+  },
 });
 
 const Contact = models.Contact || model<IContact>("Contact", ContactSchema);

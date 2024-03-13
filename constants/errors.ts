@@ -45,6 +45,7 @@ const {
   reviews,
   comments,
   quotation,
+  contacts,
 } = minMaxValues;
 
 const { name, mobile, location, email, hours, kids, age, date, extraInfo } =
@@ -152,10 +153,7 @@ export const commentsErrs = {
 
 export const quoteErrs = {
   cstName: {
-    length: {
-      min: name.minLength,
-      max: name.maxLength,
-    },
+    length: { min: name.minLength, max: name.maxLength },
     errs: {
       min: setProvideErr("name"),
       max: setExceedErr("name", name.maxLength),
@@ -164,10 +162,7 @@ export const quoteErrs = {
     },
   },
   mobile: {
-    length: {
-      min: mobile.minLength,
-      max: mobile.maxLength,
-    },
+    length: { min: mobile.minLength, max: mobile.maxLength },
     errs: {
       min: setProvideErr("mobile / landline number"),
       max: setExceedErr("mobile / landline number", mobile.maxLength),
@@ -175,10 +170,7 @@ export const quoteErrs = {
     },
   },
   location: {
-    length: {
-      min: location.minLength,
-      max: location.maxLength,
-    },
+    length: { min: location.minLength, max: location.maxLength },
     errs: {
       min: setProvideErr("location"),
       max: setExceedErr("location", location.maxLength),
@@ -186,10 +178,7 @@ export const quoteErrs = {
     },
   },
   email: {
-    length: {
-      min: email.minLength,
-      max: email.maxLength,
-    },
+    length: { min: email.minLength, max: email.maxLength },
     errs: {
       min: setProvideErr("email address"),
       max: setExceedErr("email address", email.maxLength),
@@ -197,14 +186,8 @@ export const quoteErrs = {
     },
   },
   hours: {
-    length: {
-      min: hours.minLength,
-      max: hours.maxLength,
-    },
-    values: {
-      min: hours.minValue,
-      max: hours.maxValue,
-    },
+    length: { min: hours.minLength, max: hours.maxLength },
+    values: { min: hours.minValue, max: hours.maxValue },
     errs: {
       min: setProvideErr("number of hours"),
       max: setExceedErr("number of hours", hours.maxLength),
@@ -218,14 +201,8 @@ export const quoteErrs = {
     },
   },
   kids: {
-    length: {
-      min: kids.minLength,
-      max: kids.maxLength,
-    },
-    values: {
-      min: kids.minValue,
-      max: kids.maxValue,
-    },
+    length: { min: kids.minLength, max: kids.maxLength },
+    values: { min: kids.minValue, max: kids.maxValue },
     errs: {
       min: setProvideErr("number of kids"),
       max: setExceedErr("number of kids", kids.maxLength),
@@ -234,14 +211,8 @@ export const quoteErrs = {
     },
   },
   age: {
-    length: {
-      min: age.minLength,
-      max: age.maxLength,
-    },
-    values: {
-      min: age.minValue,
-      max: age.maxValue,
-    },
+    length: { min: age.minLength, max: age.maxLength },
+    values: { min: age.minValue, max: age.maxValue },
     errs: {
       from: { min: setTellUsErr("the age of your kids / youngest kid") },
       to: { min: setTellUsErr("the age of your kids / oldest kid") },
@@ -253,13 +224,8 @@ export const quoteErrs = {
     },
   },
   serviceDates: {
-    length: {
-      min: date.minLength,
-      max: date.maxLength,
-    },
-    values: {
-      max: date.maxValue,
-    },
+    length: { min: date.minLength, max: date.maxLength },
+    values: { max: date.maxValue },
     errs: {
       from: {
         min: setTellUsErr("the starting date of the service"),
@@ -276,11 +242,18 @@ export const quoteErrs = {
     },
   },
   extraInfo: {
-    length: {
-      max: extraInfo.maxLength,
-    },
-    errs: {
-      max: setExceedErr("extra info", extraInfo.maxLength),
-    },
+    length: { max: extraInfo.maxLength },
+    errs: { max: setExceedErr("extra info", extraInfo.maxLength) },
+  },
+};
+
+export const contactErrs = {
+  imgUrl: {
+    length: { min: contacts.imgUrl.minLength },
+    errs: { min: setProvideErr("contact svg icon") },
+  },
+  content: {
+    length: { min: contacts.content.minLength },
+    errs: { min: setProvideErr("contact content") },
   },
 };

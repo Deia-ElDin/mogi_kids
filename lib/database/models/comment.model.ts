@@ -1,6 +1,5 @@
 import { Document, Schema, models, model, Types } from "mongoose";
 import { commentsErrs } from "@/constants/errors";
-import { isInRange } from "@/lib/utils";
 import User from "./user.model";
 
 export interface IComment extends Document {
@@ -48,7 +47,7 @@ CommentSchema.pre<IComment>("save", async function (next) {
 
   for (const { key, value } of fieldsToValidate) {
     if (isError) break;
-    
+
     switch (key) {
       case "likes":
       case "dislikes":

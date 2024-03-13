@@ -38,6 +38,10 @@ export const minMaxValues = {
     date: { minLength: 1, maxLength: 10, maxValue: 15 },
     extraInfo: { maxLength: 5000 },
   },
+  contacts: {
+    imgUrl: { minLength: 1 },
+    content: { minLength: 1 },
+  },
 };
 
 export const today = new Date();
