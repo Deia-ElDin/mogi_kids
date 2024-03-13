@@ -229,7 +229,7 @@ const QuoteSchema = new Schema(
       id: { type: String, default: null },
       error: { type: String, default: null },
     },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", immutable: true },
   },
   { timestamps: true }
 );

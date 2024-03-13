@@ -28,11 +28,10 @@ import RatingInput from "../helpers/RatingInput";
 import * as z from "zod";
 
 type ReviewFormProps = {
-  user: IUser;
   logo: ILogo | null;
 };
 
-const ReviewForm = ({ user, logo }: ReviewFormProps) => {
+const ReviewForm = ({ logo }: ReviewFormProps) => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
   const [rating, setRating] = useState(0);
 
@@ -63,6 +62,8 @@ const ReviewForm = ({ user, logo }: ReviewFormProps) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof reviewSchema>) {
+    console.log("values", values);
+
     values.rating = String(rating);
 
     try {
@@ -73,7 +74,6 @@ const ReviewForm = ({ user, logo }: ReviewFormProps) => {
 
       const { success, error } = await createReview({
         ...values,
-        createdBy: user._id,
         path: pathname,
       });
 

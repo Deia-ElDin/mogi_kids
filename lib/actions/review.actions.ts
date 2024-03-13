@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateIsTheSameUser } from "./validation.actions";
+import { getCurrentUser, validateIsTheSameUser } from "./validation.actions";
 import {
   CreateReviewParams,
   UpdateReviewParams,
@@ -72,27 +72,26 @@ export async function getAllReviews(): Promise<GetAllResult> {
 export async function createReview(
   params: CreateReviewParams
 ): Promise<DefaultResult> {
-  const { createdBy, review, rating, path } = params;
+  const { review, rating, path } = params;
 
   try {
     await connectToDb();
 
-    const { isTheSameUser, error } = await validateIsTheSameUser(createdBy);
+    const { user: currentUser } = await getCurrentUser();
 
-    if (error || !isTheSameUser)
-      throw new Error("Not Authorized to access this resource.");
+    if (!currentUser) throw new Error("Kindly Sign In First.");
 
     const createdReview = await Review.create({
       review,
       rating,
-      createdBy,
+      createdBy: currentUser._id,
     });
 
     if (!createdReview) throw new Error("Failed to create user review.");
 
     const user = await populateUser(
       User.findByIdAndUpdate(
-        createdBy,
+        currentUser._id,
         { $addToSet: { reviews: createdReview._id } },
         { new: true }
       )
@@ -141,7 +140,7 @@ export async function updateReviewLikes(
 
     const updatedReview = await review.save();
 
-    if (!updatedReview) throw new Error("Failed to update review likes.");
+    if (!updatedReview) throw new Error("Failed to update the review likes.");
 
     const index = updatedReview.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -185,7 +184,8 @@ export async function updateReviewDislikes(
 
     const updatedReview = await review.save();
 
-    if (!updatedReview) throw new Error("Failed to update review dislikes.");
+    if (!updatedReview)
+      throw new Error("Failed to update the review dislikes.");
 
     const index = updatedReview.dislikes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -203,21 +203,42 @@ export async function updateReview(
 ): Promise<DefaultResult> {
   const { _id, review, rating, path } = params;
 
+  console.log("params", params);
+
   try {
     await connectToDb();
 
-    const updatedReview = await Review.findByIdAndUpdate(_id, {
-      review,
-      rating,
-    });
+    const foundReview = await Review.findById(_id);
 
-    if (!updatedReview) throw new Error("Failed to create user review.");
+    if (!foundReview) throw new Error("Review not found.");
 
-    const user = await populateUser(User.findById(updatedReview.createdBy));
+    const createdBy = foundReview.createdBy.toString();
+
+    const { user, isTheSameUser, error } = await validateIsTheSameUser(
+      createdBy
+    );
+
+    if (!isTheSameUser || error)
+      throw new Error("Not Authorized to access this resource.");
+
+    const isReviewBelongToUser = user?.reviews.find(
+      (review) => review._id.toString() === _id
+    );
+
+    if (!isReviewBelongToUser)
+      throw new Error("Not Authorized to access this resource.");
+
+    if (review) foundReview.review = review;
+    if (rating) foundReview.rating = rating;
+    await foundReview.save();
+
+    const updatedUser = await populateUser(
+      User.findById(foundReview.createdBy)
+    );
 
     revalidatePath(path);
 
-    const data = JSON.parse(JSON.stringify(user));
+    const data = JSON.parse(JSON.stringify(updatedUser));
 
     return { success: true, data, error: null };
   } catch (error) {

@@ -209,7 +209,6 @@ export type CreateReviewParams = {
   review?: string;
   rating?: string;
   path: string;
-  createdBy: string;
 };
 
 export type UpdateReviewParams = {
@@ -287,7 +286,6 @@ export type UpdateAboutUsParams = {
 
 // Report Params
 
-
 export type GetAllReportsParams = {
   fetch?: {
     applicantName?: string;
@@ -316,7 +314,6 @@ export type DeleteSelectedReportsParams = {
   page?: number;
   limit?: number;
 };
-
 
 // DB Params
 export type DbParams = {

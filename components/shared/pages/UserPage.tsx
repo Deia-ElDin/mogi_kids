@@ -26,7 +26,7 @@ const UserPage: React.FC<UserPageType> = ({ user, logo }) => {
           with MOGi KiDS.
         </h1>
         <WelcomeText />
-        <ReviewForm user={user} logo={logo} />
+        <ReviewForm logo={logo} />
         <ReviewsSwiper user={user} reviews={user.reviews} />
       </section>
     )

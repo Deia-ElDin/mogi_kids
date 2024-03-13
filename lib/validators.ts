@@ -24,6 +24,7 @@ import {
   serviceErrs,
   questionErrs,
   recordErrs,
+  reviewErrs,
   quoteErrs,
 } from "@/constants/errors";
 
@@ -40,6 +41,8 @@ const { serviceName, imgUrl: serviceImg, serviceContent } = serviceErrs;
 const { question, answer } = questionErrs;
 
 const { imgUrl: recordImg, value, label } = recordErrs;
+
+const { review, rating } = reviewErrs;
 
 const {
   cstName,
@@ -81,10 +84,9 @@ export const recordSchema = z.object({
 export const reviewSchema = z.object({
   review: z
     .string()
-    .max(1000, "Customers Review can't exceed 1000 letters. Thank you.")
-    .refine((value) => value.trim().length > 0, {
-      message: "Kindly leave us a review :) Thank you.",
-    }),
+    .min(review.length.min, review.errs.min)
+    .max(review.length.max, `${review.errs.max}. Thank you.`)
+    .refine((value) => isEmpty(value), `${review.errs.empty}. Thank you.`),
   rating: z.string(),
 });
 

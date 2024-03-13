@@ -1,12 +1,13 @@
 import { Document, Schema, models, model, Types } from "mongoose";
 import { IComment } from "./comment.model";
-import { isInRange, isValidString } from "@/lib/utils";
+import { reviewErrs } from "@/constants/errors";
+import { isInRange } from "@/lib/utils";
 import User from "./user.model";
 import Comment from "./comment.model";
 
 export interface IReview extends Document {
   _id: string;
-  review?: string;
+  review: string;
   rating?: string;
   comments: IComment[] | [];
   likes: Types.ObjectId[];
@@ -18,24 +19,45 @@ export interface IReview extends Document {
   createdBy: Types.ObjectId | string;
 }
 
+const { review, rating } = reviewErrs;
+
 const ReviewSchema = new Schema<IReview>(
   {
-    review: { type: String, trim: true },
-    rating: { type: String, default: "0" },
+    review: {
+      type: String,
+      trim: true,
+      required: [true, review.errs.min],
+      maxlength: [review.length.max, review.errs.max],
+    },
+    rating: {
+      type: String,
+      default: "0",
+      maxlength: [rating.length.max, rating.errs.max],
+      validate: [
+        {
+          validator: function (value: string) {
+            return isInRange(
+              parseInt(value),
+              rating.values.min,
+              rating.values.max
+            );
+          },
+          message: rating.errs.range,
+        },
+      ],
+    },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     edited: { type: Boolean, default: false },
     blocked: { type: Boolean, default: false },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", immutable: true },
   },
   { timestamps: true }
 );
 
 ReviewSchema.pre<IReview>("save", async function (next) {
   const fieldsToValidate: { key: string; value: any }[] = [
-    { key: "review", value: this.review },
-    { key: "rating", value: this.rating },
     { key: "comments", value: this.comments },
     { key: "likes", value: this.likes },
     { key: "dislikes", value: this.dislikes },
@@ -47,15 +69,6 @@ ReviewSchema.pre<IReview>("save", async function (next) {
   for (const { key, value } of fieldsToValidate) {
     if (isError) break;
     switch (key) {
-      case "review":
-        if (!isValidString(value, 1000)) isError = true;
-        break;
-
-      case "rating":
-        if (!isValidString(value, 1) || !isInRange(parseInt(value), 0, 5))
-          isError = true;
-        break;
-
       case "likes":
       case "dislikes":
         if (Array.isArray(value) && value.length > 0) {
@@ -82,7 +95,7 @@ ReviewSchema.pre<IReview>("save", async function (next) {
   }
 
   if (isError) {
-    next(new Error("Invalid Form."));
+    next(new Error("Seriously Dude!!!!"));
   } else {
     next();
   }

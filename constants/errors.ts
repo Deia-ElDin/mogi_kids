@@ -16,8 +16,13 @@ const setExceedErr = (required: string, value: number): string =>
 const setInvalidErr = (required: string): string =>
   `Invalid ${toCap(required)} provided.`;
 
-const setRangeErr = (required: string, min: number, max: number): string =>
-  `${toCap(required)} must be between ${min} and ${max}.`;
+const setRangeErr = (
+  required: string,
+  min: number,
+  max: number,
+  unit?: string
+): string =>
+  `${toCap(required)} must be between ${min} and ${max} ${unit ?? ""}.`;
 
 const setDecimalErr = (required: string): string =>
   `${toCap(required)} must not contain any decimal values.`;
@@ -35,13 +40,12 @@ const {
   services,
   questions,
   records,
+  reviews,
   quotation,
 } = minMaxValues;
 
 const { name, mobile, location, email, hours, kids, age, date, extraInfo } =
   quotation;
-
-export const iTErr = {};
 
 export const logoErrs = {
   length: { min: logoImg.minLength },
@@ -73,6 +77,17 @@ export const serviceErrs = {
   },
 };
 
+export const questionErrs = {
+  question: {
+    length: { min: questions.question.minLength },
+    errs: { min: setProvideErr("question") },
+  },
+  answer: {
+    length: { min: questions.answer.minLength },
+    errs: { min: setProvideErr("answer") },
+  },
+};
+
 export const recordErrs = {
   imgUrl: {
     length: { min: records.img.minLength },
@@ -88,14 +103,33 @@ export const recordErrs = {
   },
 };
 
-export const questionErrs = {
-  question: {
-    length: { min: questions.question.minLength },
-    errs: { min: setProvideErr("question") },
+export const reviewErrs = {
+  review: {
+    length: { min: reviews.review.minLength, max: reviews.review.maxLength },
+    errs: {
+      min: setProvideErr("review"),
+      max: setExceedErr("reviews", reviews.review.maxLength),
+      empty: setEmptyErr("review"),
+    },
   },
-  answer: {
-    length: { min: questions.answer.minLength },
-    errs: { min: setProvideErr("answer") },
+  rating: {
+    length: {
+      min: reviews.rating.minLength,
+      max: reviews.rating.maxLength,
+    },
+    values: {
+      min: reviews.rating.minValue,
+      max: reviews.rating.maxValue,
+    },
+    errs: {
+      max: setExceedErr("rating", reviews.rating.maxLength),
+      range: setRangeErr(
+        "rating",
+        reviews.rating.minValue,
+        reviews.rating.maxValue,
+        "stars"
+      ),
+    },
   },
 };
 
@@ -158,7 +192,12 @@ export const quoteErrs = {
       min: setProvideErr("number of hours"),
       max: setExceedErr("number of hours", hours.maxLength),
       invalid: setDecimalErr("number of hours"),
-      range: setRangeErr("number of hours", hours.minValue, hours.maxValue),
+      range: setRangeErr(
+        "number of hours",
+        hours.minValue,
+        hours.maxValue,
+        "hours"
+      ),
     },
   },
   kids: {
@@ -190,7 +229,7 @@ export const quoteErrs = {
       from: { min: setTellUsErr("the age of your kids / youngest kid") },
       to: { min: setTellUsErr("the age of your kids / oldest kid") },
       max: setExceedErr("the age of your kids", age.maxLength),
-      range: setRangeErr("age of kids", age.minValue, age.maxValue),
+      range: setRangeErr("age of kids", age.minValue, age.maxValue, "years"),
       invalid: setDecimalErr("age of kids"),
       exceed:
         "The age of your kids / youngest kid can't exceed the oldest kid.",

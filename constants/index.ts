@@ -20,6 +20,10 @@ export const minMaxValues = {
     value: { minLength: 1 },
     label: { minLength: 1 },
   },
+  reviews: {
+    review: { minLength: 1, maxLength: 1000 },
+    rating: { minLength: 1, maxLength: 1, minValue: 1, maxValue: 5 },
+  },
   quotation: {
     name: { minLength: 1, maxLength: 100 },
     mobile: { minLength: 1, maxLength: 14 },

@@ -26,6 +26,7 @@ import { handleError, onlyPositiveValues } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { SendQuoteToast } from "../toasts";
 import { ILogo } from "@/lib/database/models/logo.model";
+import { IUser } from "@/lib/database/models/user.model";
 import { createQuote } from "@/lib/actions/quote.actions";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
@@ -50,7 +51,9 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
       if (!validationResult.success)
         throw new Error(validationResult.error.message);
 
-      const { success, data, error } = await createQuote(values);
+      const { success, data, error } = await createQuote({
+        ...values,
+      });
 
       if (!success && error) throw new Error(error);
 

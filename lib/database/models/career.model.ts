@@ -76,7 +76,7 @@ const CareerSchema = new Schema<ICareer>(
     imgSize: { type: Number },
     blocked: { type: Boolean, default: false },
     seen: { type: Boolean, default: false },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", immutable: true },
   },
   { timestamps: true }
 );

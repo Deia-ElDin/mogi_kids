@@ -15,7 +15,7 @@ const ReportSchema = new Schema<IReport>(
     target: { type: String, required: true },
     targetId: { type: Schema.Types.ObjectId, ref: "Review" || "Comment" },
     seen: { type: Boolean, default: false },
-    createdBy: { type: Schema.Types.ObjectId, ref: "User" },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", immutable: true },
   },
   { timestamps: true }
 );
