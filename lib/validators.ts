@@ -23,6 +23,7 @@ import {
   webPageErrs,
   serviceErrs,
   questionErrs,
+  recordErrs,
   quoteErrs,
 } from "@/constants/errors";
 
@@ -34,9 +35,11 @@ export const gallerySchema = z.object({
   imgUrl: z.string().min(galleryErrs.length.min, galleryErrs.err),
 });
 
-const { serviceName, imgUrl, serviceContent } = serviceErrs;
+const { serviceName, imgUrl: serviceImg, serviceContent } = serviceErrs;
 
 const { question, answer } = questionErrs;
+
+const { imgUrl: recordImg, value, label } = recordErrs;
 
 const {
   cstName,
@@ -58,7 +61,7 @@ export const pageSchema = z.object({
 
 export const serviceSchema = z.object({
   serviceName: z.string().min(serviceName.length.min, serviceName.errs.min),
-  imgUrl: z.string().min(imgUrl.length.min, imgUrl.errs.min),
+  imgUrl: z.string().min(serviceImg.length.min, serviceImg.errs.min),
   serviceContent: z
     .string()
     .min(serviceContent.length.min, serviceContent.errs.min),
@@ -70,9 +73,9 @@ export const questionSchema = z.object({
 });
 
 export const recordSchema = z.object({
-  imgUrl: z.string().min(1, "Kindly provide us the record svg icon."),
-  value: z.string().min(1, "Kindly provide us the record number."),
-  label: z.string().min(1, "Kindly provide us the record label."),
+  imgUrl: z.string().min(recordImg.length.min, recordImg.errs.min),
+  value: z.string().min(value.length.min, value.errs.min),
+  label: z.string().min(label.length.min, label.errs.min),
 });
 
 export const reviewSchema = z.object({

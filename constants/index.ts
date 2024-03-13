@@ -15,6 +15,11 @@ export const minMaxValues = {
     question: { minLength: 1 },
     answer: { minLength: 1 },
   },
+  records: {
+    img: { minLength: 1 },
+    value: { minLength: 1 },
+    label: { minLength: 1 },
+  },
   quotation: {
     name: { minLength: 1, maxLength: 100 },
     mobile: { minLength: 1, maxLength: 14 },

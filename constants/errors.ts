@@ -28,8 +28,15 @@ const setTellUsErr = (required: string): string =>
 export const setITError = (err: string): string =>
   `Connect with the IT department, Page Naming Error. ${toCap(err)}`;
 
-const { logoImg, galleryImg, webPage, services, questions, quotation } =
-  minMaxValues;
+const {
+  logoImg,
+  galleryImg,
+  webPage,
+  services,
+  questions,
+  records,
+  quotation,
+} = minMaxValues;
 
 const { name, mobile, location, email, hours, kids, age, date, extraInfo } =
   quotation;
@@ -63,6 +70,21 @@ export const serviceErrs = {
   serviceContent: {
     length: { min: services.content.minLength },
     errs: { min: setProvideErr("service content") },
+  },
+};
+
+export const recordErrs = {
+  imgUrl: {
+    length: { min: records.img.minLength },
+    errs: { min: setProvideErr("record svg icon") },
+  },
+  value: {
+    length: { min: records.value.minLength },
+    errs: { min: setProvideErr("record value") },
+  },
+  label: {
+    length: { min: records.label.minLength },
+    errs: { min: setProvideErr("record name") },
   },
 };
 
