@@ -8,7 +8,9 @@ const setSpecialCharsErr = (required: string): string =>
   `${toCap(required)} must not contain any special characters or numbers.`;
 
 const setEmptyErr = (required: string): string =>
-  `${toCap(required)} can't be an empty spaces. ${setProvideErr(required)}`;
+  `${toCap(required)} can't be a white/empty spaces. ${setProvideErr(
+    required
+  )}`;
 
 const setExceedErr = (required: string, value: number): string =>
   `${toCap(required)} must not exceed ${value} characters.`;
@@ -41,6 +43,7 @@ const {
   questions,
   records,
   reviews,
+  comments,
   quotation,
 } = minMaxValues;
 
@@ -129,6 +132,20 @@ export const reviewErrs = {
         reviews.rating.maxValue,
         "stars"
       ),
+    },
+  },
+};
+
+export const commentsErrs = {
+  comment: {
+    length: {
+      min: comments.comment.minLength,
+      max: comments.comment.maxLength,
+    },
+    errs: {
+      min: setProvideErr("comment"),
+      max: setExceedErr("comments", comments.comment.maxLength),
+      empty: setEmptyErr("comment"),
     },
   },
 };

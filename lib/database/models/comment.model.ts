@@ -1,4 +1,6 @@
 import { Document, Schema, models, model, Types } from "mongoose";
+import { commentsErrs } from "@/constants/errors";
+import { isInRange } from "@/lib/utils";
 import User from "./user.model";
 
 export interface IComment extends Document {
@@ -14,9 +16,16 @@ export interface IComment extends Document {
   createdBy: Types.ObjectId | string;
 }
 
+const { comment } = commentsErrs;
+
 const CommentSchema = new Schema<IComment>(
   {
-    comment: { type: String, trim: true },
+    comment: {
+      type: String,
+      trim: true,
+      required: [true, comment.errs.min],
+      maxlength: [comment.length.max, comment.errs.max],
+    },
     review: { type: Schema.Types.ObjectId, ref: "Review" },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: Schema.Types.ObjectId, ref: "User" }],
@@ -32,12 +41,14 @@ CommentSchema.pre<IComment>("save", async function (next) {
     { key: "review", value: this.review },
     { key: "likes", value: this.likes },
     { key: "dislikes", value: this.dislikes },
+    { key: "createdBy", value: this.createdBy },
   ];
 
   let isError = false;
 
   for (const { key, value } of fieldsToValidate) {
     if (isError) break;
+    
     switch (key) {
       case "likes":
       case "dislikes":

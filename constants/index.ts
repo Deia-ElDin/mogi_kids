@@ -21,8 +21,11 @@ export const minMaxValues = {
     label: { minLength: 1 },
   },
   reviews: {
-    review: { minLength: 1, maxLength: 1000 },
+    review: { minLength: 1, maxLength: 1500 },
     rating: { minLength: 1, maxLength: 1, minValue: 1, maxValue: 5 },
+  },
+  comments: {
+    comment: { minLength: 1, maxLength: 1000 },
   },
   quotation: {
     name: { minLength: 1, maxLength: 100 },

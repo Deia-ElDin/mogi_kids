@@ -36,6 +36,7 @@ const ReviewSchema = new Schema<IReview>(
       validate: [
         {
           validator: function (value: string) {
+            if (value === "0") return true;
             return isInRange(
               parseInt(value),
               rating.values.min,
@@ -68,6 +69,7 @@ ReviewSchema.pre<IReview>("save", async function (next) {
 
   for (const { key, value } of fieldsToValidate) {
     if (isError) break;
+
     switch (key) {
       case "likes":
       case "dislikes":

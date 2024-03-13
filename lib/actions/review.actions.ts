@@ -203,8 +203,6 @@ export async function updateReview(
 ): Promise<DefaultResult> {
   const { _id, review, rating, path } = params;
 
-  console.log("params", params);
-
   try {
     await connectToDb();
 
