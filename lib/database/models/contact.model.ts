@@ -1,5 +1,6 @@
 import { Document, Schema, models, model } from "mongoose";
 import { contactErrs, setITError } from "@/constants/errors";
+import { isValidUrl } from "@/lib/utils";
 
 export interface IContact extends Document {
   _id: string;
@@ -8,11 +9,14 @@ export interface IContact extends Document {
   content: string;
 }
 
+const { imgUrl, content } = contactErrs;
+
 const ContactSchema: Schema = new Schema<IContact>({
   imgUrl: {
     type: String,
     trim: true,
-    required: [true, contactErrs.imgUrl.errs.min],
+    required: [true, imgUrl.errs.min],
+    validate: { validator: isValidUrl, message: imgUrl.errs.invalid },
   },
   imgSize: {
     type: Number,
@@ -21,7 +25,7 @@ const ContactSchema: Schema = new Schema<IContact>({
   content: {
     type: String,
     trim: true,
-    required: [true, contactErrs.content.errs.min],
+    required: [true, content.errs.min],
   },
 });
 

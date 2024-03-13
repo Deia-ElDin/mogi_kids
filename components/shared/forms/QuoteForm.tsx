@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { quoteDefaultValues, quoteLocations } from "@/constants";
+import { quoteDefaultValues, quoteLocationsArr } from "@/constants";
 import { handleError, onlyPositiveValues } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { SendQuoteToast } from "../toasts";
@@ -116,7 +116,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {quoteLocations.map((location) => (
+                  {quoteLocationsArr.map((location) => (
                     <SelectItem key={location} value={location}>
                       {location}
                     </SelectItem>

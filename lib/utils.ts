@@ -287,8 +287,9 @@ export const sortApplications = (
     });
   } else if (key === ApplicationsSortKey.SALARY) {
     sortedArray.sort((a, b) => {
-      const aValue = parseInt(a.expectedSalary);
-      const bValue = parseInt(b.expectedSalary);
+      const aValue = a.expectedSalary ? parseInt(a.expectedSalary) : 0;
+      const bValue = b.expectedSalary ? parseInt(b.expectedSalary) : 0;
+
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
   } else if (key === ApplicationsSortKey.VISA_EXPIRY_DATE) {
@@ -311,8 +312,9 @@ export const sortApplications = (
     });
   } else if (key === ApplicationsSortKey.DAYS) {
     sortedArray.sort((a, b) => {
-      const aValue = parseInt(a.expectedSalary);
-      const bValue = parseInt(b.expectedSalary);
+      const aValue = a.expectedSalary ? parseInt(a.expectedSalary) : 0;
+      const bValue = b.expectedSalary ? parseInt(b.expectedSalary) : 0;
+
       return direction === "ascending" ? aValue - bValue : bValue - aValue;
     });
   } else if (key === ApplicationsSortKey.DATE) {

@@ -7,7 +7,7 @@ import {
   CallbackError,
 } from "mongoose";
 import { addYears, subDays } from "date-fns";
-import { today, quoteLocations } from "@/constants";
+import { today, quoteLocationsArr } from "@/constants";
 import { quoteErrs } from "@/constants/errors";
 import {
   isValidName,
@@ -80,7 +80,7 @@ const QuoteSchema = new Schema(
       validate: [
         {
           validator: function (value: string) {
-            return isInArray(value, quoteLocations);
+            return isInArray(value, quoteLocationsArr);
           },
           message: location.errs.invalid,
         },
@@ -91,6 +91,7 @@ const QuoteSchema = new Schema(
       trim: true,
       required: [true, email.errs.min],
       maxlength: [email.length.max, email.errs.max],
+      lowercase: true,
       validate: [
         {
           validator: function (value: string) {

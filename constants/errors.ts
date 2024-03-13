@@ -46,6 +46,8 @@ const {
   comments,
   quotation,
   contacts,
+  aboutUs,
+  career,
 } = minMaxValues;
 
 const { name, mobile, location, email, hours, kids, age, date, extraInfo } =
@@ -53,12 +55,18 @@ const { name, mobile, location, email, hours, kids, age, date, extraInfo } =
 
 export const logoErrs = {
   length: { min: logoImg.minLength },
-  err: setProvideErr("logo image"),
+  errs: {
+    min: setProvideErr("logo image"),
+    invalid: setInvalidErr("logo image url "),
+  },
 };
 
 export const galleryErrs = {
   length: { min: galleryImg.minLength },
-  err: setProvideErr("gallery image"),
+  errs: {
+    min: setProvideErr("gallery image"),
+    invalid: setInvalidErr("gallery image url"),
+  },
 };
 
 export const webPageErrs = {
@@ -73,7 +81,10 @@ export const serviceErrs = {
   },
   imgUrl: {
     length: { min: services.img.minLength },
-    errs: { min: setProvideErr("service image") },
+    errs: {
+      min: setProvideErr("service image"),
+      invalid: setInvalidErr("service image url"),
+    },
   },
   serviceContent: {
     length: { min: services.content.minLength },
@@ -95,7 +106,10 @@ export const questionErrs = {
 export const recordErrs = {
   imgUrl: {
     length: { min: records.img.minLength },
-    errs: { min: setProvideErr("record svg icon") },
+    errs: {
+      min: setProvideErr("record svg icon"),
+      invalid: setInvalidErr("record icon url"),
+    },
   },
   value: {
     length: { min: records.value.minLength },
@@ -250,10 +264,172 @@ export const quoteErrs = {
 export const contactErrs = {
   imgUrl: {
     length: { min: contacts.imgUrl.minLength },
-    errs: { min: setProvideErr("contact svg icon") },
+    errs: {
+      min: setProvideErr("contact svg icon"),
+      invalid: setInvalidErr("contact icon url"),
+    },
   },
   content: {
     length: { min: contacts.content.minLength },
     errs: { min: setProvideErr("contact content") },
+  },
+};
+
+export const aboutUsErrs = {
+  title: {
+    length: { min: aboutUs.title.minLength },
+    errs: { min: setProvideErr("about us article title") },
+  },
+  content: {
+    length: { min: aboutUs.content.minLength },
+    errs: { min: setProvideErr("about us article content") },
+  },
+  imgUrl: {
+    length: { min: aboutUs.imgUrl.minLength },
+    errs: {
+      min: setProvideErr("about us article image"),
+      invalid: setInvalidErr("about us image url"),
+    },
+  },
+};
+
+const {
+  fullName,
+  workingAt,
+  applyingFor,
+  joinDate,
+  salary,
+  gender,
+  education,
+  dha,
+  cgc,
+  visa,
+  visExpiryDate,
+  coverLetter,
+  imgUrl: resumePdf,
+} = career;
+
+export const careerErrs = {
+  fullName: {
+    length: { min: fullName.minLength, max: fullName.maxLength },
+    errs: {
+      min: setProvideErr("full name"),
+      max: setExceedErr("full name", fullName.maxLength),
+      specialChars: setSpecialCharsErr("full name"),
+      empty: setEmptyErr("full name"),
+    },
+  },
+  email: {
+    length: { min: email.minLength, max: email.maxLength },
+    errs: {
+      min: setProvideErr("email address"),
+      max: setExceedErr("email address", email.maxLength),
+      invalid: setInvalidErr("email address"),
+    },
+  },
+  mobile: {
+    length: { min: mobile.minLength, max: mobile.maxLength },
+    errs: {
+      min: setProvideErr("mobile / landline number"),
+      max: setExceedErr("mobile / landline number", mobile.maxLength),
+      invalid: setInvalidErr("mobile number"),
+    },
+  },
+  workingAt: {
+    length: { max: workingAt.maxLength },
+    errs: {
+      max: setExceedErr("current job description", workingAt.maxLength),
+    },
+  },
+  applyingFor: {
+    length: { min: applyingFor.minLength, max: applyingFor.maxLength },
+    errs: {
+      min: setProvideErr("future job description"),
+      max: setExceedErr("current job description", applyingFor.maxLength),
+    },
+  },
+  joinDate: {
+    length: { min: joinDate.minLength, max: joinDate.maxLength },
+    values: { max: joinDate.maxValue },
+    errs: {
+      min: setTellUsErr("the date you will join us"),
+      invalid: `The joining date can't start in the past or exceed ${joinDate.maxValue} months from now.`,
+      max: setExceedErr("joining date", joinDate.maxLength),
+    },
+  },
+  previousSalary: {
+    length: { max: salary.maxLength },
+    errs: {
+      max: setExceedErr("previous salary", salary.maxLength),
+    },
+  },
+  expectedSalary: {
+    length: { max: salary.maxLength },
+    errs: {
+      max: setExceedErr("expected salary", salary.maxLength),
+    },
+  },
+  gender: {
+    length: { min: gender.minLength, max: gender.maxLength },
+    errs: {
+      min: setProvideErr("gender"),
+      max: setExceedErr("gender", gender.maxLength),
+      invalid: setInvalidErr("gender option"),
+    },
+  },
+  education: {
+    length: { min: education.minLength, max: education.maxLength },
+    errs: {
+      min: setProvideErr("education"),
+      max: setExceedErr("education", education.maxLength),
+      invalid: setInvalidErr("education option"),
+    },
+  },
+  dha: {
+    length: { min: dha.minLength, max: dha.maxLength },
+    errs: {
+      min: setProvideErr("dubai health authority certificate"),
+      max: setExceedErr("dubai health authority certificate", dha.maxLength),
+      invalid: setInvalidErr("dha option"),
+    },
+  },
+  cgc: {
+    length: { min: cgc.minLength, max: cgc.maxLength },
+    errs: {
+      min: setProvideErr("care giver certificate"),
+      max: setExceedErr("care giver certificate", cgc.maxLength),
+      invalid: setInvalidErr("cgc option"),
+    },
+  },
+  visa: {
+    length: { min: visa.minLength, max: visa.maxLength },
+    errs: {
+      min: setProvideErr("visa"),
+      max: setExceedErr("visa", visa.maxLength),
+      invalid: setInvalidErr("visa option"),
+    },
+  },
+  visaExpiryDate: {
+    length: { min: visExpiryDate.minLength, max: visExpiryDate.maxLength },
+    values: { max: visExpiryDate.maxValue },
+    errs: {
+      min: setTellUsErr("the date you will join us"),
+      invalid: {
+        threeMonths: "Visa expired since 3 months or more!",
+        tenYears: `Visa expiration date must be within ${visExpiryDate.maxValue} years from now.`,
+      },
+      max: setExceedErr("visa expiry date", visExpiryDate.maxLength),
+    },
+  },
+  coverLetter: {
+    length: { max: coverLetter.maxLength },
+    errs: { max: setExceedErr("cover letter", coverLetter.maxLength) },
+  },
+  imgUrl: {
+    length: { min: resumePdf.minLength },
+    errs: {
+      min: setProvideErr("resume"),
+      invalid: setInvalidErr("resume url"),
+    },
   },
 };

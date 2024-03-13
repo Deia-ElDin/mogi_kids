@@ -85,7 +85,7 @@ export const updateDbSize = async (
 
     let dbRecord = await Db.findOne({});
 
-    if (!dbRecord) dbRecord = await Db.create(params);
+    if (!dbRecord) dbRecord = await Db.create();
 
     if (!dbRecord) {
       throw new Error("Failed to create or update the db size.");

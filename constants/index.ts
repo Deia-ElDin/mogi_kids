@@ -42,6 +42,28 @@ export const minMaxValues = {
     imgUrl: { minLength: 1 },
     content: { minLength: 1 },
   },
+  aboutUs: {
+    title: { minLength: 1 },
+    content: { minLength: 1 },
+    imgUrl: { minLength: 1 },
+  },
+  career: {
+    fullName: { minLength: 1, maxLength: 100 },
+    email: { minLength: 1, maxLength: 100 },
+    mobile: { minLength: 1, maxLength: 14 },
+    workingAt: { maxLength: 250 },
+    applyingFor: { minLength: 1, maxLength: 250 },
+    joinDate: { minLength: 1, maxLength: 10, maxValue: 2 },
+    salary: { maxLength: 25 },
+    gender: { minLength: 4, maxLength: 6 },
+    education: { minLength: 5, maxLength: 8 },
+    dha: { minLength: 2, maxLength: 3 },
+    cgc: { minLength: 2, maxLength: 3 },
+    visa: { minLength: 2, maxLength: 3 },
+    visExpiryDate: { minLength: 1, maxLength: 10, maxValue: 10 },
+    coverLetter: { maxLength: 5000 },
+    imgUrl: { minLength: 1 },
+  },
 };
 
 export const today = new Date();
@@ -98,7 +120,7 @@ export const userWelcomePageText = [
   "To leave a review, simply click on the button below:",
 ];
 
-export const webPages = [
+export const webPagesArr = [
   "Welcomes Page",
   "Services Page",
   "Questions Page",
@@ -109,7 +131,7 @@ export const webPages = [
   "Careers Page",
 ];
 
-export const quoteLocations = [
+export const quoteLocationsArr = [
   "Abu Dhabi",
   "Dubai",
   "Sharjah",
@@ -118,6 +140,12 @@ export const quoteLocations = [
   "Ras Al Khaimah",
   "Fujairah",
 ];
+
+export const gendersArr = ["Female", "Male"];
+
+export const educationsArr = ["Bachelor", "Diploma", "Other"];
+
+export const yesNoArr = ["Yes", "No"];
 
 // Logo
 export const logoDefaultValues = {
@@ -202,7 +230,6 @@ export const careerDefaultValues = {
 // };
 
 // Web Pages
-
 export const pageDefaultValues: Partial<IPage> = {
   pageName: "",
   pageTitle: "",

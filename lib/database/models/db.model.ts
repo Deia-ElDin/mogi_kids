@@ -11,10 +11,10 @@ export interface IDb extends Document {
 
 const DbSchema: Schema = new Schema<IDb>(
   {
-    resend: { type: String, default: null },
-    uploadthing: { type: String, default: null },
-    mongo: { type: String, default: null },
-    clerk: { type: String, default: null },
+    resend: { type: String, default: "0" },
+    uploadthing: { type: String, default: "0" },
+    mongo: { type: String, default: "0" },
+    clerk: { type: String, default: "0" },
     today: { type: Date, default: new Date() },
   },
   { timestamps: true }
