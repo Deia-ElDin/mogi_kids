@@ -1,4 +1,7 @@
 import { Document, Schema, models, model } from "mongoose";
+import { webPageErrs } from "@/constants/errors";
+import { webPages } from "@/constants";
+import { isEmpty, isInArray } from "@/lib/utils";
 
 export interface IPage extends Document {
   _id: string;
@@ -8,8 +11,28 @@ export interface IPage extends Document {
 }
 
 const PageSchema = new Schema<IPage>({
-  pageName: { type: String, trim: true, required: true },
-  pageTitle: { type: String, trim: true, required: true },
+  pageName: {
+    type: String,
+    trim: true,
+    required: [true, "Connect with the IT department, Page Naming Error."],
+    validate: [
+      {
+        validator: function (value: string) {
+          return isInArray(value, webPages);
+        },
+        message: "Connect with the IT department, Page Naming Error.",
+      },
+      {
+        validator: isEmpty,
+        message: "Connect with the IT department, Page Naming Error.",
+      },
+    ],
+  },
+  pageTitle: {
+    type: String,
+    trim: true,
+    required: [true, webPageErrs.err],
+  },
   pageContent: { type: String, trim: true },
 });
 

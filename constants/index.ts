@@ -71,6 +71,27 @@ export const userWelcomePageText = [
   "To leave a review, simply click on the button below:",
 ];
 
+export const webPages = [
+  "Welcomes Page",
+  "Services Page",
+  "Questions Page",
+  "Records Page",
+  "Customers Page",
+  "Quote Page",
+  "Contacts Page",
+  "Careers Page",
+];
+
+export const quoteLocations = [
+  "Abu Dhabi",
+  "Dubai",
+  "Sharjah",
+  "Ajman",
+  "Umm Al Quwain",
+  "Ras Al Khaimah",
+  "Fujairah",
+];
+
 // Logo
 export const logoDefaultValues = {
   imgUrl: "",
@@ -95,16 +116,6 @@ export const galleryDefaultValues = {
 //   to: new Date(),
 //   extraInfo: "",
 // };
-
-export const quoteLocations = [
-  "Abu Dhabi",
-  "Dubai",
-  "Sharjah",
-  "Ajman",
-  "Umm Al Quwain",
-  "Ras Al Khaimah",
-  "Fujairah",
-];
 
 export const quoteDefaultValues = {
   cstName: "Mohamed",
@@ -162,6 +173,8 @@ export const careerDefaultValues = {
 //   coverLetter: "",
 //   imgUrl: "",
 // };
+
+// Web Pages
 
 export const pageDefaultValues: Partial<IPage> = {
   pageName: "",
