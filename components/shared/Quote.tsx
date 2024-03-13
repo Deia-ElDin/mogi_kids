@@ -14,13 +14,12 @@ import QuoteForm from "./forms/QuoteForm";
 import DeleteBtn from "./btns/DeleteBtn";
 
 type QuoteProps = {
-  user: IUser | null;
   isAdmin: boolean | undefined;
   quotePage: IPage | Partial<IPage>;
   logo: ILogo | null;
 };
 
-const Quote: React.FC<QuoteProps> = ({ user, isAdmin, quotePage, logo }) => {
+const Quote: React.FC<QuoteProps> = ({ isAdmin, quotePage, logo }) => {
   const { toast } = useToast();
 
   const pageTitle = getPageTitle(quotePage, isAdmin, "Quote Section Title");
@@ -49,7 +48,7 @@ const Quote: React.FC<QuoteProps> = ({ user, isAdmin, quotePage, logo }) => {
     <section className="section-style">
       <Article title={pageTitle} content={pageContent} />
       {isAdmin && <PageForm page={quotePage} pageName="Quote Page" />}
-      {quotePage?._id && <QuoteForm user={user} logo={logo} />}
+      {quotePage?._id && <QuoteForm logo={logo} />}
       <DeleteBtn
         pageId={quotePage?._id}
         isAdmin={isAdmin}

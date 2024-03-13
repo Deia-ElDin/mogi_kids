@@ -3,8 +3,8 @@
 import { connectToDb } from "../database";
 import {
   validateAdmin,
+  getCurrentUser,
   validatePageAndLimit,
-  validateIsTheSameUser,
 } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { updateDbSize } from "./db.actions";
@@ -52,16 +52,12 @@ export async function createQuote(
   try {
     await connectToDb();
 
-    if (params.createdBy) {
-      const { isTheSameUser, error } = await validateIsTheSameUser(
-        params.createdBy
-      );
+    const { user } = await getCurrentUser();
 
-      if (error || !isTheSameUser)
-        throw new Error("Not Authorized to access this resource.");
-    }
-
-    const newQuote = await Quote.create(params);
+    const newQuote = await Quote.create({
+      ...params,
+      createdBy: user?._id ?? null,
+    });
 
     if (!newQuote) throw new Error("Failed to create the quote.");
 

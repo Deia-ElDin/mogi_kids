@@ -35,8 +35,3 @@ const Contacts: React.FC = async () => {
 };
 
 export default Contacts;
-
-{
-  /* <Title text="Contact Information" />
-<Text text="Get in touch with Sitters Company to take advantage of our wide range of child care services today!" /> */
-}

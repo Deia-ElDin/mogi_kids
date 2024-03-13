@@ -175,7 +175,7 @@ export type CreateApplicationParams = {
   email: string;
   mobile: string;
   applyingFor: string;
-  workingAt: string;
+  workingAt?: string;
   previousSalary?: string;
   expectedSalary?: string;
   joinDate: Date;
@@ -286,11 +286,37 @@ export type UpdateAboutUsParams = {
 };
 
 // Report Params
+
+
+export type GetAllReportsParams = {
+  fetch?: {
+    applicantName?: string;
+    email?: string;
+    day?: Date | null;
+    month?: Date | null;
+  };
+  page?: number;
+  limit?: number;
+};
+
 export type CreateReportParams = {
   target: string;
   targetId: string;
   createdBy: string | null;
 };
+
+export type DeleteSelectedReportParams = {
+  reportId: string;
+  page?: number;
+  limit?: number;
+};
+
+export type DeleteSelectedReportsParams = {
+  selectedReports: string[];
+  page?: number;
+  limit?: number;
+};
+
 
 // DB Params
 export type DbParams = {

@@ -39,32 +39,17 @@ CommentSchema.pre<IComment>("save", async function (next) {
 
   let isError = false;
 
-  console.log("fieldsToValidate", fieldsToValidate);
-
   for (const { key, value } of fieldsToValidate) {
     if (isError) break;
     switch (key) {
       case "comment":
         if (!isValidString(value, 1000)) {
-          console.log("comment value", value);
           isError = true;
         }
         break;
-      // case "review":
-      //   try {
-      //     const review = await Review.findById(value);
-      //     if (!review) {
-      //       console.log("review value", value);
-      //       isError = true;
-      //     }
-      //   } catch (error) {
-      //     isError = true;
-      //   }
-      //   break;
       case "likes":
       case "dislikes":
         if (Array.isArray(value) && value.length > 0) {
-          console.log("likes  dislikes value", value);
           if (!(await validateUsers(value))) isError = true;
         } else if (!Array.isArray(value)) isError = true;
         break;
@@ -90,7 +75,6 @@ CommentSchema.pre<IComment>("save", async function (next) {
 
 async function validateUsers(userIds: string[]): Promise<boolean> {
   try {
-    console.log("userIds", userIds);
     for (const userId of userIds) {
       const user = await User.findById(userId);
       if (!user) {

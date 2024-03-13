@@ -4,19 +4,40 @@ import { currentUser } from "@clerk/nextjs";
 import { handleError } from "../utils";
 import User, { IUser } from "../database/models/user.model";
 
-type isAdminResult = {
+type CurrentUserResult = {
+  user: IUser | null;
+  error: string | null;
+};
+
+type AdminResult = {
   user: IUser | null;
   isAdmin: boolean;
   error: string | null;
 };
 
-type isTheSameUserResult = {
+type TheSameUserResult = {
   user: IUser | null;
   isTheSameUser: boolean;
   error: string | null;
 };
 
-export async function validateAdmin(): Promise<isAdminResult> {
+export async function getCurrentUser(): Promise<CurrentUserResult> {
+  try {
+    const clerkUser = await currentUser();
+
+    if (!clerkUser) return { user: null, error: null };
+
+    const mongoDbUser = await User.findOne({ clerkId: clerkUser.id });
+
+    if (!mongoDbUser) throw new Error("Current User / MongoDb Error.");
+
+    return { user: mongoDbUser, error: null };
+  } catch (error) {
+    return { user: null, error: handleError(error) };
+  }
+}
+
+export async function validateAdmin(): Promise<AdminResult> {
   try {
     const clerkUser = await currentUser();
 
@@ -37,7 +58,7 @@ export async function validateAdmin(): Promise<isAdminResult> {
 
 export async function validateIsTheSameUser(
   userId: string
-): Promise<isTheSameUserResult> {
+): Promise<TheSameUserResult> {
   try {
     const clerkUser = await currentUser();
 

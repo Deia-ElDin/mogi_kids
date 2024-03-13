@@ -21,12 +21,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { quoteDefaultValues } from "@/constants";
+import { quoteDefaultValues, quoteLocations } from "@/constants";
 import { handleError, onlyPositiveValues } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import { SendQuoteToast } from "../toasts";
 import { ILogo } from "@/lib/database/models/logo.model";
-import { IUser } from "@/lib/database/models/user.model";
 import { createQuote } from "@/lib/actions/quote.actions";
 import DatePicker from "react-datepicker";
 import * as z from "zod";
@@ -34,10 +33,9 @@ import "react-datepicker/dist/react-datepicker.css";
 
 type QuoteForm = {
   logo: ILogo | null;
-  user: IUser | null;
 };
 
-const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
+const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof quoteSchema>>({
@@ -52,15 +50,12 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
       if (!validationResult.success)
         throw new Error(validationResult.error.message);
 
-      const { success, data, error } = await createQuote({
-        ...values,
-        createdBy: user ? user._id : null,
-      });
+      const { success, data, error } = await createQuote(values);
 
       if (!success && error) throw new Error(error);
 
       if (success && data) {
-        form.reset();
+        // form.reset();
 
         const response = await fetch("/api/send", {
           method: "POST",
@@ -118,13 +113,11 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Abu Dhabi">Abu Dhabi</SelectItem>
-                  <SelectItem value="Dubai">Dubai</SelectItem>
-                  <SelectItem value="Sharjah">Sharjah</SelectItem>
-                  <SelectItem value="Ajman">Ajman</SelectItem>
-                  <SelectItem value="Umm Al Quwain">Umm Al Quwain</SelectItem>
-                  <SelectItem value="Ras Al Khaimah">Ras Al Khaimah</SelectItem>
-                  <SelectItem value="Fujairah">Fujairah</SelectItem>
+                  {quoteLocations.map((location) => (
+                    <SelectItem key={location} value={location}>
+                      {location}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -208,7 +201,7 @@ const QuoteForm: React.FC<QuoteForm> = ({ user, logo }) => {
                   }}
                   onInput={(evt) =>
                     ((evt.target as HTMLInputElement).value =
-                      onlyPositiveValues(evt, 20))
+                      onlyPositiveValues(evt, 2000))
                   }
                 />
               </FormControl>

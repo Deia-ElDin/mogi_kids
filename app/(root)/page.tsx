@@ -47,7 +47,6 @@ export default async function Home() {
   const contacts = contactsResult.success ? contactsResult.data || [] : [];
   const dbsSize = dbsSizeResult.success ? dbsSizeResult.data || null : null;
 
-
   const isAdmin = isAdminUser(user);
 
   return (
@@ -85,7 +84,6 @@ export default async function Home() {
         reviews={reviews}
       />
       <Quote
-        user={user}
         isAdmin={isAdmin}
         quotePage={findPage(pages, "Quote Page")}
         logo={logo}

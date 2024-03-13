@@ -23,7 +23,7 @@ export interface ICareer extends Document {
   email: string;
   mobile: string;
   applyingFor: string;
-  workingAt: string;
+  workingAt?: string;
   previousSalary: string;
   expectedSalary: string;
   joinDate: Date;
@@ -46,11 +46,21 @@ export interface ICareer extends Document {
 
 const CareerSchema = new Schema<ICareer>(
   {
-    fullName: { type: String, required: true, trim: true },
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
+      validate: {
+        validator: function (value: string) {
+          return isValidString(value, 100) && /^[a-zA-Z\s]+$/.test(value);
+        },
+        message: "Invalid full name",
+      },
+    },
     email: { type: String, required: true, trim: true, lowercase: true },
     mobile: { type: String, required: true, trim: true },
     applyingFor: { type: String, required: true, trim: true },
-    workingAt: { type: String, required: true, trim: true },
+    workingAt: { type: String, trim: true },
     previousSalary: { type: String, trim: true },
     expectedSalary: { type: String, trim: true },
     joinDate: { type: Date, required: true },
@@ -115,7 +125,7 @@ CareerSchema.pre<ICareer>("save", function (next) {
         break;
 
       case "workingAt":
-        if (!isValidString(value, 150)) isError = true;
+        if (value && !isValidString(value, 150)) isError = true;
         break;
 
       case "applyingFor":

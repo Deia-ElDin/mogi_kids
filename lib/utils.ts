@@ -8,16 +8,23 @@ import { IGallery } from "./database/models/gallery.model";
 import { IQuote } from "./database/models/quote.model";
 import { IContact } from "./database/models/contact.model";
 import { IAboutUs } from "./database/models/about-us.model";
-import { differenceInDays } from "date-fns";
-import { QuoteSortKey, ApplicationsSortKey } from "@/constants";
 import { ICareer } from "./database/models/career.model";
-import { IUser } from "./database/models/user.model";
+import { differenceInDays, isValid, isAfter, isBefore } from "date-fns";
+import { QuoteSortKey, ApplicationsSortKey } from "@/constants";
 
 const adminRoles = new Set(["Manager", "Admin"]);
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const toCap = (str: string) => {
+  return str
+    .split(/[\s_]+|(?=[A-Z])/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
 
 export const handleError = (error: unknown): string => {
   if (
@@ -27,6 +34,8 @@ export const handleError = (error: unknown): string => {
     typeof error.message === "string"
   ) {
     return error.message;
+  } else if (error && typeof error === "string") {
+    return error;
   } else {
     return "An unknown error occurred";
   }
@@ -165,7 +174,7 @@ export const onlyPositiveValues = (
   maxValue?: number
 ) => {
   let value = parseFloat((evt.target as HTMLInputElement).value);
-  if (value < 0) value = 0;
+  if (value <= 1) value = 1;
   else if (maxValue && value >= maxValue) value = maxValue;
   return value.toString();
 };
@@ -320,14 +329,6 @@ export const sortApplications = (
   return sortedArray;
 };
 
-export const toCap = (str: string) => {
-  return str
-    .split(/[\s_]+|(?=[A-Z])/)
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
 // Database Validations Function
 export const isValidString = (value: string, maxLength: number) => {
   return (
@@ -338,21 +339,42 @@ export const isValidString = (value: string, maxLength: number) => {
   );
 };
 
-export const isValidMobile = (mobile: string): boolean => {
-  const urlRegex =
-    /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/;
-  return urlRegex.test(mobile);
+export const isValidName = function (value: string): boolean {
+  return /^[a-zA-Z\s]+$/.test(value);
 };
 
-export const isValidUrl = (url: string): boolean => {
-  const urlRegex = /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/;
-  return urlRegex.test(url);
+export const isEmpty = function (value: string): boolean {
+  return value.trim().length > 0;
 };
 
-export const isInRange = (value: number, min: number, max: number): boolean => {
+export const isValidMobile = function (value: string): boolean {
+  return /^(?:\+971|00971|0)(?:2|3|4|6|7|8|9|50|52|54|55|56|58)[0-9]{7}$/.test(
+    value
+  );
+};
+
+export const isInArray = function (value: string, array: string[]) {
+  return array.includes(value);
+};
+
+export const isValidUrl = function (url: string): boolean {
+  return /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(url);
+};
+
+export const isInRange = function (
+  value: number,
+  min: number,
+  max: number
+): boolean {
   return value >= min && value <= max;
 };
 
-export const isInArray = (value: string, array: string[]) => {
-  return array.indexOf(value) === -1;
+export const isWithinDateRange = (
+  value: Date,
+  startDate: Date,
+  endDate: Date
+): boolean => {
+  return (
+    isValid(value) && isAfter(value, startDate) && isBefore(value, endDate)
+  );
 };

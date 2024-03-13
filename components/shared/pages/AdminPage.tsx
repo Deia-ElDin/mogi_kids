@@ -11,11 +11,13 @@ const AdminPage: React.FC = () => {
   const [displayPage, setDisplayPage] = useState<string>("quotes");
   const [unseenQuotes, setUnseenQuotes] = useState<number | null>(null);
   const [unseenApplicants, setUnseenApplicants] = useState<number | null>(null);
+  const [unseenReports, setUnseenReports] = useState<number | null>(null);
 
   const tabsArray = [
     { value: "quotes", count: unseenQuotes },
     { value: "applicants", count: unseenApplicants },
     { value: "users", count: null },
+    { value: "reports", count: null },
   ];
 
   return (
