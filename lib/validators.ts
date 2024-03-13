@@ -22,6 +22,7 @@ import {
   galleryErrs,
   webPageErrs,
   serviceErrs,
+  questionErrs,
   quoteErrs,
 } from "@/constants/errors";
 
@@ -34,6 +35,8 @@ export const gallerySchema = z.object({
 });
 
 const { serviceName, imgUrl, serviceContent } = serviceErrs;
+
+const { question, answer } = questionErrs;
 
 const {
   cstName,
@@ -62,8 +65,8 @@ export const serviceSchema = z.object({
 });
 
 export const questionSchema = z.object({
-  question: z.string().min(1, "Kindly provide us a question."),
-  answer: z.string().min(1, "Kindly provide us an answer."),
+  question: z.string().min(question.length.min, question.errs.min),
+  answer: z.string().min(answer.length.min, answer.errs.min),
 });
 
 export const recordSchema = z.object({

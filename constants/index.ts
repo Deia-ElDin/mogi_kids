@@ -6,20 +6,26 @@ export const minMaxValues = {
   webPage: {
     title: { minLength: 1 },
   },
-  service: {
+  services: {
     name: { minLength: 1 },
     img: { minLength: 1 },
     content: { minLength: 1 },
   },
-  name: { minLength: 1, maxLength: 100 },
-  mobile: { minLength: 1, maxLength: 14 },
-  location: { minLength: 1, maxLength: 14 },
-  email: { minLength: 1, maxLength: 100 },
-  hours: { minLength: 1, maxLength: 2, minValue: 1, maxValue: 24 },
-  kids: { minLength: 1, maxLength: 4, minValue: 1, maxValue: 2000 },
-  age: { minLength: 1, maxLength: 2, minValue: 1, maxValue: 15 },
-  date: { minLength: 1, maxLength: 10, maxValue: 15 },
-  extraInfo: { maxLength: 5000 },
+  questions: {
+    question: { minLength: 1 },
+    answer: { minLength: 1 },
+  },
+  quotation: {
+    name: { minLength: 1, maxLength: 100 },
+    mobile: { minLength: 1, maxLength: 14 },
+    location: { minLength: 1, maxLength: 14 },
+    email: { minLength: 1, maxLength: 100 },
+    hours: { minLength: 1, maxLength: 2, minValue: 1, maxValue: 24 },
+    kids: { minLength: 1, maxLength: 4, minValue: 1, maxValue: 2000 },
+    age: { minLength: 1, maxLength: 2, minValue: 1, maxValue: 15 },
+    date: { minLength: 1, maxLength: 10, maxValue: 15 },
+    extraInfo: { maxLength: 5000 },
+  },
 };
 
 export const today = new Date();
