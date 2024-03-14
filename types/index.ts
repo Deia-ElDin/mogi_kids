@@ -183,13 +183,12 @@ export type CreateApplicationParams = {
   education: string;
   dhaCertificate: string;
   careGiverCertificate: string;
-  experienceInUAE: string[];
+  experienceInUAE: string[] | [];
   visa: string;
   visaExpireDate: Date;
   coverLetter?: string;
   imgUrl: string;
   imgSize: number;
-  createdBy: string | null;
 };
 
 export type DeleteSelectedApplicationParams = {
@@ -240,7 +239,7 @@ export type UpdateCommentParams = {
 
 export type DeleteCommentParams = {
   commentId: string;
-  reviewId: string;
+  reviewId?: string;
   path?: string;
 };
 
@@ -285,11 +284,8 @@ export type UpdateAboutUsParams = {
 };
 
 // Report Params
-
 export type GetAllReportsParams = {
   fetch?: {
-    applicantName?: string;
-    email?: string;
     day?: Date | null;
     month?: Date | null;
   };
@@ -300,7 +296,6 @@ export type GetAllReportsParams = {
 export type CreateReportParams = {
   target: string;
   targetId: string;
-  createdBy: string | null;
 };
 
 export type DeleteSelectedReportParams = {

@@ -5,6 +5,7 @@ import {
   validateAdmin,
   validatePageAndLimit,
   validateIsTheSameUser,
+  getCurrentUser,
 } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import {
@@ -50,16 +51,14 @@ export async function createApplication(
   try {
     await connectToDb();
 
-    if (params.createdBy) {
-      const { isTheSameUser, error } = await validateIsTheSameUser(
-        params.createdBy
-      );
+    const { user: currentUser } = await getCurrentUser();
 
-      if (error || !isTheSameUser)
-        throw new Error("Not Authorized to access this resource.");
-    }
+    if (!currentUser) throw new Error("Kindly Sign In First.");
 
-    const newApplication = await Career.create(params);
+    const newApplication = await Career.create({
+      ...params,
+      createdBy: currentUser._id,
+    });
 
     if (!newApplication) throw new Error("Failed to create the application.");
 

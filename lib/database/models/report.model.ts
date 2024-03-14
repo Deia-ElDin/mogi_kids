@@ -1,4 +1,5 @@
 import { Document, Schema, models, model, Types } from "mongoose";
+import { IUser } from "./user.model";
 
 export interface IReport extends Document {
   _id: string;
@@ -7,7 +8,7 @@ export interface IReport extends Document {
   createdAt: string;
   updatedAt: string;
   seen: boolean;
-  createdBy: Types.ObjectId | string | null;
+  createdBy: IUser | Partial<IUser> | Types.ObjectId | string | null;
 }
 
 const ReportSchema = new Schema<IReport>(

@@ -39,6 +39,30 @@ export async function getAllPages(): Promise<GetAllResult> {
   }
 }
 
+// import { Response } from "express"; 
+
+// export async function getPageByPageName(
+//   pageName: string,
+//   res: Response // Pass the response object as a parameter
+// ): Promise<void> {
+//   try {
+//     await connectToDb();
+
+//     const page = await Page.findOne({ pageName });
+
+//     if (!page) {
+//       res.status(404).json({ success: false, data: null, error: "Failed to find the page you are looking for." });
+//       return;
+//     }
+
+//     const data = JSON.parse(JSON.stringify(page));
+
+//     res.status(200).json({ success: true, data, error: null });
+//   } catch (error) {
+//     res.status(500).json({ success: false, data: null, error: handleError(error) });
+//   }
+// }
+
 export async function getPageByPageName(
   pageName: string
 ): Promise<DefaultResult> {

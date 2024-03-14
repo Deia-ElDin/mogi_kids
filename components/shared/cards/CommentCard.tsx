@@ -31,7 +31,6 @@ import LikesCard from "./LikesCard";
 import Image from "next/image";
 import * as z from "zod";
 import { createReport } from "@/lib/actions/report.actions";
-import { classNames } from "uploadthing/client";
 
 type CommentCardProps = {
   user: IUser | null;
@@ -212,7 +211,6 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
       const { success, error } = await createReport({
         target: "Comment",
         targetId: commentObj._id,
-        createdBy: user?._id ? user._id : null,
       });
 
       if (!success && error) throw new Error(error);

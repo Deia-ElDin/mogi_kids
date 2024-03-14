@@ -69,12 +69,12 @@ const CareerForm: React.FC<CareerFormProps> = ({ user }) => {
         throw new Error("Failed to add your resume to uploadthing database.");
 
       uploadedImgUrl = uploadedImgs[0].url;
+      console.log("values", values);
 
       const { success, error } = await createApplication({
         ...values,
         imgUrl: uploadedImgUrl,
         imgSize: uploadedImgs[0].size,
-        createdBy: user ? user._id : null,
       });
 
       if (!success && error) throw new Error(error);

@@ -20,6 +20,7 @@ import {
   unBlockUser,
 } from "@/lib/actions/user.actions";
 import DeleteBtn from "../btns/DeleteBtn";
+import UserDeleteBtn from "../btns/UserDeleteBtn";
 import BlockBtn from "../btns/BlockBtn";
 import UpdateBtn from "../btns/UpdateBtn";
 import Image from "next/image";
@@ -99,7 +100,7 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Block The User, ${handleError(error)}`,
+        description: `Failed to UnBlock The User, ${handleError(error)}`,
       });
     }
   };
@@ -140,9 +141,7 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
                   </p>
                   <Separator pageId="true" isAdmin={true} />
                   <div className="mt-1 w-full">
-                    <DeleteBtn
-                      pageId="true"
-                      isAdmin={true}
+                    <UserDeleteBtn
                       deletionTarget="Delete Review"
                       handleClick={() => handleDeleteReview(reviewId)}
                     />

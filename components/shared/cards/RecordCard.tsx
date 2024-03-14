@@ -23,9 +23,8 @@ const RecordCard: React.FC<RecordCardParams> = ({ isAdmin, record }) => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "Failed to Delete The Record.",
+        description: `Failed to Delete The Record. ${handleError(error)}`,
       });
-      handleError(error);
     }
   };
 

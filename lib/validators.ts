@@ -37,14 +37,14 @@ export const logoSchema = z.object({
   imgUrl: z
     .string()
     .min(logoErrs.length.min, logoErrs.errs.min)
-    .refine((value) => isValidUrl(value), logoErrs.errs.invalid),
+    .refine((value) => !isValidUrl(value), logoErrs.errs.invalid),
 });
 
 export const gallerySchema = z.object({
   imgUrl: z
     .string()
     .min(galleryErrs.length.min, galleryErrs.errs.min)
-    .refine((value) => isValidUrl(value), galleryErrs.errs.invalid),
+    .refine((value) => !isValidUrl(value), galleryErrs.errs.invalid),
 });
 
 const { serviceName, imgUrl: serviceImg, serviceContent } = serviceErrs;
@@ -84,7 +84,7 @@ export const serviceSchema = z.object({
   imgUrl: z
     .string()
     .min(serviceImg.length.min, serviceImg.errs.min)
-    .refine((value) => isValidUrl(value), serviceImg.errs.invalid),
+    .refine((value) => !isValidUrl(value), serviceImg.errs.invalid),
   serviceContent: z
     .string()
     .min(serviceContent.length.min, serviceContent.errs.min),
@@ -99,7 +99,7 @@ export const recordSchema = z.object({
   imgUrl: z
     .string()
     .min(recordImg.length.min, recordImg.errs.min)
-    .refine((value) => isValidUrl(value), recordImg.errs.invalid),
+    .refine((value) => !isValidUrl(value), recordImg.errs.invalid),
   value: z.string().min(value.length.min, value.errs.min),
   label: z.string().min(label.length.min, label.errs.min),
 });
@@ -211,7 +211,7 @@ export const contactSchema = z.object({
   imgUrl: z
     .string()
     .min(contactImg.length.min, contactImg.errs.min)
-    .refine((value) => isValidUrl(value), contactImg.errs.invalid),
+    .refine((value) => !isValidUrl(value), contactImg.errs.invalid),
   content: z.string().min(content.length.min, content.errs.min),
 });
 
@@ -221,7 +221,7 @@ export const aboutUsSchema = z.object({
   imgUrl: z
     .string()
     .min(aboutImg.length.min, aboutImg.errs.min)
-    .refine((value) => isValidUrl(value), aboutImg.errs.invalid),
+    .refine((value) => !isValidUrl(value), aboutImg.errs.invalid),
 });
 
 const {
@@ -281,6 +281,7 @@ export const careerSchema = z.object({
     .string()
     .max(expectedSalary.length.max, expectedSalary.errs.max)
     .optional(),
+  experienceInUAE: z.array(z.string()).length(5),
   gender: z
     .string()
     .min(gender.length.min, gender.errs.min)
@@ -289,11 +290,11 @@ export const careerSchema = z.object({
     .string()
     .min(education.length.min, education.errs.min)
     .max(education.length.max, education.errs.max),
-  dha: z
+  dhaCertificate: z
     .string()
     .min(dha.length.min, dha.errs.min)
     .max(dha.length.max, dha.errs.max),
-  cgc: z
+  careGiverCertificate: z
     .string()
     .min(cgc.length.min, cgc.errs.min)
     .max(cgc.length.max, cgc.errs.max),
@@ -301,7 +302,7 @@ export const careerSchema = z.object({
     .string()
     .min(visa.length.min, visa.errs.min)
     .max(visa.length.max, visa.errs.max),
-  visaExpiryDate: z
+  visaExpireDate: z
     .date()
     .refine(
       (value) => isAfter(value, subMonths(today, 3)),
@@ -315,7 +316,7 @@ export const careerSchema = z.object({
   imgUrl: z.string().min(resumePdf.length.min, resumePdf.errs.min),
 });
 
-// export const career2Schema = z.object({
+// export const careerSchema = z.object({
 //   workingAt: z
 //     .string()
 //     .max(150, "Field must not exceed 150 characters.")

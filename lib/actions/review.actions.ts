@@ -14,10 +14,17 @@ import { populateUser } from "./user.actions";
 import User, { IUser } from "../database/models/user.model";
 import Review, { IReview } from "../database/models/review.model";
 import Comment from "../database/models/comment.model";
+import Report from "../database/models/report.model";
 
 type GetAllResult = {
   success: boolean;
   data: IReview[] | null;
+  error: string | null;
+};
+
+type GetReviewResult = {
+  success: boolean;
+  data: IReview | null;
   error: string | null;
 };
 
@@ -261,8 +268,31 @@ export async function deleteReview(
       })
     );
 
+    await Report.deleteMany({ targetId: reviewId, target: "Review" });
+
     revalidatePath(path);
     return { success: true, data: null, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function getReviewById(
+  reviewId: string
+): Promise<GetReviewResult> {
+  try {
+    await connectToDb();
+
+    const review = await Review.findById(reviewId).populate({
+      path: "createdBy",
+      model: "User",
+      select: "_id firstName lastName photo blocked",
+    });
+    if (!review) throw new Error("Review not found.");
+
+    const data = JSON.parse(JSON.stringify(review));
+
+    return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }

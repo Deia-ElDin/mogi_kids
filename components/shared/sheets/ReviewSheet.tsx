@@ -29,7 +29,7 @@ import {
   updateReviewLikes,
   updateReviewDislikes,
 } from "@/lib/actions/review.actions";
-// import { createReport } from "@/lib/actions/report.actions";
+import { createReport } from "@/lib/actions/report.actions";
 import { handleError, postedSince, getUsername } from "@/lib/utils";
 import { reviewSchema } from "@/lib/validators";
 import { LikedToast, DisLikedToast, FaceToast } from "../toasts";
@@ -134,7 +134,6 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
       const { success, error } = await createReport({
         target: "Review",
         targetId: reviewObj._id,
-        createdBy: user?._id ? user._id : null,
       });
 
       if (!success && error) throw new Error(error);

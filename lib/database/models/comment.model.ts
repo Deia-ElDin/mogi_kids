@@ -25,7 +25,7 @@ const CommentSchema = new Schema<IComment>(
       required: [true, comment.errs.min],
       maxlength: [comment.length.max, comment.errs.max],
     },
-    review: { type: Schema.Types.ObjectId, ref: "Review" },
+    review: { type: Schema.Types.ObjectId, ref: "Review", immutable: true },
     likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: Schema.Types.ObjectId, ref: "User" }],
     edited: { type: Boolean, default: false },

@@ -11,12 +11,19 @@ import {
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
-import Comment from "../database/models/comment.model";
+import Comment, { IComment } from "../database/models/comment.model";
 import Review from "../database/models/review.model";
+import Report from "../database/models/report.model";
 
 type DefaultResult = {
   success: boolean;
   data: null;
+  error: string | null;
+};
+
+type GetCommentResult = {
+  success: boolean;
+  data: IComment | null;
   error: string | null;
 };
 
@@ -41,8 +48,11 @@ export async function createComment(
 
     const newComment = await Comment.create({
       comment,
+      review: reviewId,
       createdBy,
     });
+
+    console.log("newComment", newComment);
 
     if (!newComment) throw new Error("Couldn't create the comment.");
 
@@ -193,9 +203,35 @@ export async function deleteComment(
 
     if (!parentReview) throw new Error("Couldn't update the parent review.");
 
+    await Report.deleteMany({ targetId: reviewId, target: "Review" });
+
     if (path) revalidatePath(path);
 
     return { success: true, data: null, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function getCommentById(
+  commentId: string
+): Promise<GetCommentResult> {
+  try {
+    await connectToDb();
+
+    const comment = await Comment.findById(commentId).populate({
+      path: "createdBy",
+      model: "User",
+      select: "_id firstName lastName photo",
+    });
+
+    console.log("comment", comment);
+
+    if (!comment) throw new Error("Comment not found.");
+
+    const data = JSON.parse(JSON.stringify(comment));
+
+    return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };
   }
