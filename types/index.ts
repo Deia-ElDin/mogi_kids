@@ -239,7 +239,6 @@ export type UpdateCommentParams = {
 
 export type DeleteCommentParams = {
   commentId: string;
-  reviewId?: string;
   path?: string;
 };
 

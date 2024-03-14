@@ -286,7 +286,7 @@ export async function getReviewById(
     const review = await Review.findById(reviewId).populate({
       path: "createdBy",
       model: "User",
-      select: "_id firstName lastName photo blocked",
+      select: "_id firstName lastName photo email blocked",
     });
     if (!review) throw new Error("Review not found.");
 

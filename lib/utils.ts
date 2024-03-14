@@ -162,7 +162,7 @@ export function postedSince(dateString: string): string {
 
 export const getUsername = (
   firstName: string | undefined,
-  lastName: string | undefined
+  lastName: string | undefined | null
 ) => {
   if (firstName && lastName) return `${toCap(firstName)} ${toCap(lastName)}`;
   else if (firstName) return toCap(firstName);

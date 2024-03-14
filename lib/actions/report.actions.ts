@@ -124,14 +124,13 @@ export async function getAllReports({
       .populate({
         path: "createdBy",
         model: "User",
-        select: "_id firstName lastName blocked photo", 
+        select: "_id firstName lastName blocked photo",
         options: { allowNull: true },
       });
 
     if (!reports) throw new Error("Failed to fetch the reports.");
 
-    if (reports.length === 0)
-      return { success: true, data: [], error: null };
+    if (reports.length === 0) return { success: true, data: [], error: null };
 
     const totalPages = Math.ceil(
       (await Report.countDocuments(condition)) / limit
@@ -170,7 +169,12 @@ export async function markReportAsSeen(
       reportId,
       { seen: true },
       { new: true }
-    );
+    ).populate({
+      path: "createdBy",
+      model: "User",
+      select: "_id firstName lastName blocked photo",
+      options: { allowNull: true },
+    });
 
     if (!seenReport)
       throw new Error("Failed to change the seen status of this quotation.");

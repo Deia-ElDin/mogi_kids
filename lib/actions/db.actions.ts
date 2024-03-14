@@ -83,13 +83,9 @@ export const updateDbSize = async (
   try {
     await connectToDb();
 
-    let dbRecord = await Db.findOne({});
+    const dbRecord = (await Db.findOne({})) || (await Db.create({}));
 
-    if (!dbRecord) dbRecord = await Db.create();
-
-    if (!dbRecord) {
-      throw new Error("Failed to create or update the db size.");
-    }
+    if (!dbRecord) throw new Error("Failed to create or update the db size.");
 
     const todayDate = new Date().toDateString();
     const todayDb = dbRecord.today.toDateString();

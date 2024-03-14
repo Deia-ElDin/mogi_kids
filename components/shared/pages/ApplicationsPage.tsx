@@ -144,6 +144,7 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
             application._id === applicationId ? data : application
           )
         );
+        setUnseenApplicants((prev) => (prev && prev > 1 ? prev - 1 : null));
       }
     }
     if (selectAll) setSelectAll(false);

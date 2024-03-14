@@ -19,7 +19,7 @@ import {
 } from "@/lib/actions/report.actions";
 import { IUser } from "@/lib/database/models/user.model";
 import { IReport } from "@/lib/database/models/report.model";
-import { formatDate, handleError, toCap } from "@/lib/utils";
+import { formatDate, getUsername, handleError } from "@/lib/utils";
 import UpdateBtn from "../btns/UpdateBtn";
 import PagePagination from "../helpers/PagePagination";
 import DatePicker from "react-datepicker";
@@ -55,8 +55,6 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
   );
   const [selectAll, setSelectAll] = useState<boolean>(false);
   const [selectedReports, setSelectedReports] = useState<string[]>([]);
-
-  console.log("reports", reports);
 
   const { toast } = useToast();
 
@@ -108,6 +106,7 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
         setReports(
           reports.map((report) => (report._id === reportId ? data : report))
         );
+        setUnseenReports((prev) => (prev && prev > 1 ? prev - 1 : null));
       }
     }
     if (selectAll) setSelectAll(false);
@@ -211,9 +210,9 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
       if (success && data && data?.length > 0) setStates(data, totalPages);
       else {
         setUnseenReports(null);
-        let extraMsg = "in the Database.";
-        if (day) extraMsg = `at ${format(day, "EEE, dd/MM/yyyy")}.`;
-        else if (month) extraMsg = `during ${format(month, "MMMM MM/yyyy")}.`;
+        let extraMsg = "in the Database";
+        if (day) extraMsg = `at ${format(day, "EEE, dd/MM/yyyy")}`;
+        else if (month) extraMsg = `during ${format(month, "MMMM MM/yyyy")}`;
         setStates([]);
         toast({
           variant: "destructive",
@@ -273,13 +272,18 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
   const TableBodyComp = () => (
     <TableBody>
       {reports.map((report, index) => {
-        console.log("TableBodyComp report", report);
-
         const { createdBy, target, targetId, seen, createdAt } = report;
         const firstName =
           createdBy && typeof createdBy === "object" && "firstName" in createdBy
             ? (createdBy as IUser).firstName
             : "Unknown";
+        const lastName =
+          createdBy && typeof createdBy === "object" && "lastName" in createdBy
+            ? (createdBy as IUser).lastName
+            : null;
+
+        // console.log("TableBodyComp createdBy", createdBy);
+        // console.log("TableBodyComp firstName", firstName);
 
         return (
           <React.Fragment key={report._id}>
@@ -296,16 +300,20 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
                 />
               </TableCell>
               <TableCell className="table-cell">{target}</TableCell>
-              <TableCell className="table-cell">{toCap(firstName)}</TableCell>
+              <TableCell className="table-cell">
+                {getUsername(firstName, lastName)}
+              </TableCell>
               <TableCell className="table-cell">
                 {formatDate(String(createdAt))}
               </TableCell>
             </TableRow>
             {reportsActions[index].checked && (
               <ReportCard
+                reportId={report._id}
                 target={target}
                 targetId={targetId.toString()}
                 fetchAllReports={fetchAllReports}
+                handleDeleteReport={handleDeleteReport}
               />
             )}
           </React.Fragment>

@@ -110,11 +110,10 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
         handleClick={() => setDisplayForm((prev) => !prev)}
       />
       <div
-        className={
-          pageName === "Welcomes Page"
-            ? ""
-            : "w-full absolute bottom-0 left-0 right-0"
-        }
+        className={`${
+          pageName === "Contacts Page" &&
+          "w-full absolute bottom-[500px] left-0 right-0"
+        }`}
       >
         {displayForm && (
           <Form {...form}>

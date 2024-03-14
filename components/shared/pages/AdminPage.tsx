@@ -13,6 +13,8 @@ const AdminPage: React.FC = () => {
   const [unseenApplicants, setUnseenApplicants] = useState<number | null>(null);
   const [unseenReports, setUnseenReports] = useState<number | null>(null);
 
+  console.log("unseenReports", unseenReports);
+  
   const tabsArray = [
     { value: "quotes", count: unseenQuotes },
     { value: "applicants", count: unseenApplicants },

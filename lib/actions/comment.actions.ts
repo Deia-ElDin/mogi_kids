@@ -52,8 +52,6 @@ export async function createComment(
       createdBy,
     });
 
-    console.log("newComment", newComment);
-
     if (!newComment) throw new Error("Couldn't create the comment.");
 
     const updatedReview = await Review.findByIdAndUpdate(
@@ -186,7 +184,7 @@ export async function updateComment(
 export async function deleteComment(
   params: DeleteCommentParams
 ): Promise<DefaultResult> {
-  const { commentId, reviewId, path } = params;
+  const { commentId, path } = params;
 
   try {
     await connectToDb();
@@ -196,16 +194,16 @@ export async function deleteComment(
     if (!deletedComment) throw new Error("Couldn't delete the comment.");
 
     const parentReview = await Review.findByIdAndUpdate(
-      reviewId,
+      deletedComment.review,
       { $pull: { comments: commentId } },
       { new: true }
     );
 
     if (!parentReview) throw new Error("Couldn't update the parent review.");
 
-    await Report.deleteMany({ targetId: reviewId, target: "Review" });
+    await Report.deleteMany({ targetId: commentId, target: "Comment" });
 
-    if (path) revalidatePath(path);
+    revalidatePath(path ?? "/");
 
     return { success: true, data: null, error: null };
   } catch (error) {
@@ -222,10 +220,8 @@ export async function getCommentById(
     const comment = await Comment.findById(commentId).populate({
       path: "createdBy",
       model: "User",
-      select: "_id firstName lastName photo",
+      select: "_id firstName lastName photo email blocked",
     });
-
-    console.log("comment", comment);
 
     if (!comment) throw new Error("Comment not found.");
 

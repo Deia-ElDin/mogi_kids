@@ -14,6 +14,8 @@ import UserDeleteBtn from "../btns/UserDeleteBtn";
 import BlockBtn from "../btns/BlockBtn";
 import UpdateBtn from "../btns/UpdateBtn";
 import Image from "next/image";
+import { Email } from "@clerk/nextjs/server";
+import IconDeleteBtn from "../btns/IconDeleteBtn";
 
 type FetchState = {
   day?: Date | null;
@@ -21,22 +23,25 @@ type FetchState = {
 };
 
 type ReportCardParams = {
+  reportId: string;
   target: string;
   targetId: string;
   fetchAllReports: (fetchBy: FetchState) => Promise<void>;
+  handleDeleteReport: (reportId: string) => void;
 };
 
 const ReportCard: React.FC<ReportCardParams> = ({
+  reportId,
   target,
   targetId,
   fetchAllReports,
+  handleDeleteReport,
 }) => {
   const [review, setReview] = useState<IReview | null>(null);
   const [comment, setComment] = useState<IComment | null>(null);
   const [originalUser, setOriginalUser] = useState<Partial<IUser> | null>(null);
 
   const { toast } = useToast();
-  console.log("comment", comment);
 
   useEffect(() => {
     async function fetchData() {
@@ -49,7 +54,7 @@ const ReportCard: React.FC<ReportCardParams> = ({
 
         if (!success && error) throw new Error(error);
 
-        if ((!review && !comment) || (!originalUser && target === "Comment")) {
+        if (!review && !comment) {
           if (target === "Review" && data) {
             setReview(data as IReview);
             setOriginalUser(data.createdBy as Partial<IUser>);
@@ -88,7 +93,7 @@ const ReportCard: React.FC<ReportCardParams> = ({
     try {
       const { success, error } = await deleteComment({ commentId });
       if (!success && error) throw new Error(error);
-      toast({ description: "Review Deleted Successfully." });
+      toast({ description: "Comment Deleted Successfully." });
       fetchAllReports({
         day: null,
         month: null,
@@ -97,7 +102,7 @@ const ReportCard: React.FC<ReportCardParams> = ({
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: `Failed to Delete The Review, ${handleError(error)}`,
+        description: `Failed to Delete The Comment, ${handleError(error)}`,
       });
     }
   };
@@ -116,35 +121,25 @@ const ReportCard: React.FC<ReportCardParams> = ({
     }
   };
 
-  const handleUnblockUser = async (userId: string) => {
-    try {
-      const { success, error } = await unBlockUser(userId);
-      if (!success && error) throw new Error(error);
-      toast({ description: "User UnBlocked Successfully." });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: `Failed to UnBlock The User, ${handleError(error)}`,
-      });
-    }
-  };
-
-  const UserHeader: React.FC = () => (
+  const ReportHeader: React.FC = () => (
     <div className="flex justify-center">
       <h1 className="text-center font-bold text-lg">
         {originalUser
           ? getUsername(originalUser.firstName, originalUser.lastName)
           : "Unknown"}
       </h1>
+      <div className="absolute top-0 right-0">
+        <IconDeleteBtn
+          deletionTarget="Report"
+          handleClick={() => handleDeleteReport(reportId)}
+        />
+      </div>
     </div>
   );
 
   const ReviewBody: React.FC = () => {
     return review ? (
       <div className="flex flex-col items-center gap-4 w-full">
-        <p className="text-center font-bold text-lg">Review</p>
-        <p className="text-center font-semibold text-sm">ID: {review._id}</p>
         <p className="text-center w-[300px] p-3 border-2 border-gray-200 rounded-lg">
           {review.review}
         </p>
@@ -168,8 +163,6 @@ const ReportCard: React.FC<ReportCardParams> = ({
   const CommentBody: React.FC = () => {
     return comment ? (
       <div className="flex flex-col items-center gap-4 w-full">
-        <p className="text-center font-bold text-lg">Comment</p>
-        <p className="text-center font-semibold text-sm">ID: {comment._id}</p>
         <p className="text-center w-[300px] p-3 border-2 border-gray-200 rounded-lg">
           {comment.comment}
         </p>
@@ -188,16 +181,16 @@ const ReportCard: React.FC<ReportCardParams> = ({
     );
   };
 
-  const UserBody: React.FC = () => {
+  const ReportBody: React.FC = () => {
     return (
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full border-t border-gray-200 pt-4 ">
         {review && <ReviewBody />}
         {comment && <CommentBody />}
       </div>
     );
   };
 
-  const UserFooter: React.FC = () => {
+  const ReportFooter: React.FC = () => {
     const defaultPhoto = "/assets/icons/user.svg";
 
     const getUserInfo = () => {
@@ -205,6 +198,7 @@ const ReportCard: React.FC<ReportCardParams> = ({
         return {
           username: "Unknown",
           photo: defaultPhoto,
+          email: null,
         };
       }
 
@@ -212,16 +206,18 @@ const ReportCard: React.FC<ReportCardParams> = ({
         _id,
         firstName,
         lastName,
+        email,
         photo: userPhoto,
       } = originalUser as Partial<IUser>;
       return {
         username: getUsername(firstName, lastName),
         photo: userPhoto ?? defaultPhoto,
+        email: email,
         creatorId: _id,
       };
     };
 
-    const { username, photo, creatorId } = getUserInfo();
+    const { username, photo, email, creatorId } = getUserInfo();
 
     return (
       <div className="flex justify-between items-center mt-8 border-none rounded-lg p-2 shadow-lg w-full bg-gray-50">
@@ -234,20 +230,11 @@ const ReportCard: React.FC<ReportCardParams> = ({
             className="rounded-full mr-4"
           />
           <div className="flex flex-col gap-1">
+            <p className="text-sm">ID: {creatorId}</p>
             <p className="text-sm">{username}</p>
-            {/* <p className="text-sm">{email}</p>
-            {reports.length > 0 && (
-              <p className="text-sm">{reports.length} Reports</p>
-            )} */}
+            {email && <p className="text-sm">{email}</p>}
           </div>
         </div>
-        {/* <p
-          className={`text-md border-2  text-white py-1 px-3 rounded-2xl ${
-            blocked ? "bg-red-500" : "bg-green-500"
-          }`}
-        >
-          {blocked ? "Blocked" : role}
-        </p> */}
       </div>
     );
   };
@@ -255,12 +242,7 @@ const ReportCard: React.FC<ReportCardParams> = ({
   const UserActions: React.FC = () => {
     if (!originalUser || !originalUser._id) return null;
 
-    return originalUser.blocked ? (
-      <UpdateBtn
-        updateTarget="Unblock This User"
-        handleClick={() => handleUnblockUser(originalUser._id as string)}
-      />
-    ) : (
+    return (
       <BlockBtn
         blockText="Block This User"
         handleClick={() => handleBlockUser(originalUser._id as string)}
@@ -274,10 +256,10 @@ const ReportCard: React.FC<ReportCardParams> = ({
         colSpan={7}
         className="my-2 rounded-lg bg-white shadow-inner w-full border-gray-200"
       >
-        <div className="flex flex-col justify-center items-center gap-7 p-5">
-          <UserHeader />
-          <UserBody />
-          <UserFooter />
+        <div className="flex flex-col justify-center items-center gap-7 p-5 relative">
+          <ReportHeader />
+          <ReportBody />
+          <ReportFooter />
           <UserActions />
         </div>
       </TableCell>

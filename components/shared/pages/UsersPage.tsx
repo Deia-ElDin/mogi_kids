@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -49,8 +48,6 @@ const UsersPage: React.FC = () => {
   const [usersActions, setUsersActions] = useState<usersActionsState[]>([]);
 
   const { toast } = useToast();
-
-  const pathname = usePathname();
 
   const setStates = (data: IUser[], allPages: number = 1) => {
     setUsers(data || []);

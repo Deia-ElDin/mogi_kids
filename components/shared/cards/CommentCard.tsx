@@ -190,7 +190,6 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
     try {
       const { success, error } = await deleteComment({
         commentId: commentObj._id,
-        reviewId: reviewObj._id,
         path: pathname,
       });
 

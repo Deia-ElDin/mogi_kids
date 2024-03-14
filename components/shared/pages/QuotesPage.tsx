@@ -126,12 +126,13 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
         setQuotes(
           quotes.map((quote) => (quote._id === quoteId ? data : quote))
         );
+        setUnseenQuotes((prev) => (prev && prev > 1 ? prev - 1 : null));
       }
     }
     if (selectAll) setSelectAll(false);
   };
 
-  const handleSelectAll = () => {
+  const handleSelectAll = async () => {
     setSelectedQuotes(quotes.map((quote) => quote._id));
     setQuotesActions((prev) =>
       prev.map((quote) => ({
