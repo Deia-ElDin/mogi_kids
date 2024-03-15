@@ -5,6 +5,12 @@ import { validateAdmin } from "./validation.actions";
 import { CreatePageParams, UpdatePageParams } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Page, { IPage } from "../database/models/page.model";
 
 type GetAllResult = {
@@ -92,7 +98,7 @@ export async function createPage(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+    throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const newPage = await Page.create({ pageName, pageTitle, pageContent });
 
@@ -118,7 +124,7 @@ export async function updatePage(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+    throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const updatedPage = await Page.findByIdAndUpdate(_id, {
       pageName,
@@ -147,7 +153,7 @@ export async function deletePage(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+    throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedPage = await Page.findByIdAndDelete(pageId);
 

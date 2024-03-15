@@ -11,6 +11,8 @@ import { IAboutUs } from "./database/models/about-us.model";
 import { ICareer } from "./database/models/career.model";
 import { differenceInDays, isValid, isAfter, isBefore } from "date-fns";
 import { QuoteSortKey, ApplicationsSortKey } from "@/constants";
+import { CustomApiError, UnauthorizedError } from "./errors";
+import mongoose from "mongoose";
 
 const adminRoles = new Set(["Manager", "Admin"]);
 
@@ -27,7 +29,9 @@ export const toCap = (str: string) => {
 };
 
 export const handleError = (error: unknown): string => {
-  if (
+  if (error instanceof CustomApiError || error instanceof UnauthorizedError) {
+    return error.message;
+  } else if (
     error &&
     typeof error === "object" &&
     "message" in error &&
@@ -40,6 +44,17 @@ export const handleError = (error: unknown): string => {
     return "An unknown error occurred";
   }
 };
+
+export function handleServerError(error: Error, errorMessage: string): string {
+  if (error instanceof CustomApiError || error instanceof UnauthorizedError) {
+    return error.message;
+  } else if (error instanceof mongoose.Error) {
+    return new CustomApiError(errorMessage).message;
+  } else {
+    return new CustomApiError("An unexpected error occurred: " + error.message)
+      .message;
+  }
+}
 
 export const findPage = (
   pages: IPage[],

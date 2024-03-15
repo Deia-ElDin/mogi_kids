@@ -282,9 +282,6 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
             ? (createdBy as IUser).lastName
             : null;
 
-        // console.log("TableBodyComp createdBy", createdBy);
-        // console.log("TableBodyComp firstName", firstName);
-
         return (
           <React.Fragment key={report._id}>
             <TableRow

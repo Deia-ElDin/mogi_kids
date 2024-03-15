@@ -62,7 +62,6 @@ const ReviewForm = ({ logo }: ReviewFormProps) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof reviewSchema>) {
-    console.log("values", values);
 
     values.rating = String(rating);
 

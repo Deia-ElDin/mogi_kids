@@ -6,6 +6,12 @@ import { CreateGalleryParams, UpdateGalleryParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { UTApi } from "uploadthing/server";
 import { revalidatePath } from "next/cache";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Gallery, { IGallery } from "../database/models/gallery.model";
 
 const utapi = new UTApi();
@@ -51,7 +57,7 @@ export async function createGalleryImg(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const gallery = await Gallery.create(params);
 
@@ -77,7 +83,7 @@ export async function updateGalleryImg(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const gallery = await Gallery.findById(_id);
 
@@ -107,7 +113,7 @@ export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedImg = await Gallery.findByIdAndDelete(imgId);
 

@@ -16,7 +16,7 @@ const AboutUs = async () => {
   const isAdmin = isAdminUser(user);
 
   return (
-    <section className="section-style gap-4">
+    <section className="section-style gap-4 relative">
       {aboutUs.map((aboutUsObj, index) => (
         <AboutUsCard
           key={`${aboutUsObj.title} - ${index}`}

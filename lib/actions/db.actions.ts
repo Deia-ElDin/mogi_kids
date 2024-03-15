@@ -3,7 +3,6 @@
 import { connectToDb } from "../database";
 import { DbParams } from "@/types";
 import { formatBytes, handleError } from "../utils";
-import Db, { IDb } from "../database/models/db.model";
 import { getLogo } from "./logo.actions";
 import { getGallery } from "./gallery.actions";
 import { getAllServices } from "./service.actions";
@@ -11,6 +10,13 @@ import { getAllRecords } from "./record.actions";
 import { getAllContacts } from "./contact.actions";
 import { getAllAboutUs } from "./aboutUs.actions";
 import { getAllApplications } from "./career.actions";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
+import Db, { IDb } from "../database/models/db.model";
 
 type GetALLResult = {
   success: boolean;

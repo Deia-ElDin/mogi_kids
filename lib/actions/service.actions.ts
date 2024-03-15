@@ -6,6 +6,12 @@ import { CreateServiceParams, UpdateServiceParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Service, { IService } from "../database/models/service.model";
 
 const utapi = new UTApi();
@@ -71,7 +77,7 @@ export async function createService(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const newService = await Service.create({
       serviceName,
@@ -108,7 +114,7 @@ export async function updateService(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const originalService = await Service.findById(_id);
 
@@ -161,7 +167,7 @@ export async function deleteService(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedService = await Service.findByIdAndDelete(serviceId);
 
@@ -186,7 +192,7 @@ export async function deleteAllServices(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const allServices = await Service.find();
 

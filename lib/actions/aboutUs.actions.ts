@@ -3,9 +3,15 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { CreateAboutUsParams, UpdateAboutUsParams } from "@/types";
-import { getImgName, handleError } from "../utils";
+import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import AboutUs, { IAboutUs } from "../database/models/about-us.model";
 
 const utapi = new UTApi();
@@ -13,13 +19,13 @@ const utapi = new UTApi();
 type GetALLResult = {
   success: boolean;
   data: IAboutUs[] | [] | null;
-  error: string | null;
+  error: CustomApiError | string | null;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IAboutUs | null;
-  error: string | null;
+  error: CustomApiError | string | null;
 };
 
 type DeleteResult = {
@@ -38,7 +44,12 @@ export async function getAllAboutUs(): Promise<GetALLResult> {
 
     return { success: true, data, error: null };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const errMsg = "Failed to fetch AboutUs data from the database.";
+    return {
+      success: false,
+      data: null,
+      error: handleServerError(error as Error, errMsg),
+    };
   }
 }
 
@@ -53,7 +64,7 @@ export async function createAboutUs(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const newAboutUs = await AboutUs.create({
       title,
@@ -61,8 +72,9 @@ export async function createAboutUs(
       imgUrl,
       imgSize,
     });
+
     if (!newAboutUs)
-      throw new Error(
+      throw new UnprocessableEntity(
         "Couldn't create the about us article & kindly check the uploadthing database"
       );
 
@@ -71,7 +83,12 @@ export async function createAboutUs(
     revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const errMsg = "Failed to create about us article.";
+    return {
+      success: false,
+      data: null,
+      error: handleServerError(error as Error, errMsg),
+    };
   }
 }
 
@@ -88,12 +105,12 @@ export async function updateAboutUs(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const originalAboutUs = await AboutUs.findById(_id);
 
     if (!originalAboutUs)
-      throw new Error("Could not find the original about us article.");
+      throw new NotFoundError("Could not find the original about us article.");
 
     if (newImg) {
       const imgName = getImgName(originalAboutUs);
@@ -118,7 +135,12 @@ export async function updateAboutUs(
     revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const errMsg = "Failed to update about us article.";
+    return {
+      success: false,
+      data: null,
+      error: handleServerError(error as Error, errMsg),
+    };
   }
 }
 
@@ -132,12 +154,12 @@ export async function deleteAboutUs(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedAboutUs = await AboutUs.findByIdAndDelete(aboutUsArticleId);
 
     if (!deletedAboutUs)
-      throw new Error("AboutUs not found or already deleted.");
+      throw new NotFoundError("AboutUs not found or already deleted.");
 
     const imgName = getImgName(deletedAboutUs);
     if (!imgName) throw new Error("Failed to read the image name.");
@@ -146,6 +168,11 @@ export async function deleteAboutUs(
     revalidatePath(path);
     return { success: true, data: null, error: null };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const errMsg = "Failed to delete about us article.";
+    return {
+      success: false,
+      data: null,
+      error: handleServerError(error as Error, errMsg),
+    };
   }
 }

@@ -16,6 +16,12 @@ import {
 } from "@/types";
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Career, { ICareer } from "../database/models/career.model";
 
 type CountResult = {
@@ -77,7 +83,7 @@ export async function countUnseenApplications(): Promise<CountResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const count = await Career.countDocuments({ seen: false });
 
@@ -101,7 +107,7 @@ export async function getAllApplications({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     let condition = {};
 
@@ -171,7 +177,7 @@ export async function markApplicationAsSeen(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const seenApplication = await Career.findByIdAndUpdate(
       applicationId,
@@ -203,7 +209,7 @@ export async function deleteApplication({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedApplication = await Career.findByIdAndDelete(applicationId);
 
@@ -251,7 +257,7 @@ export async function deleteSelectedApplications({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedApplications = await Career.deleteMany({
       _id: { $in: selectedApplications },

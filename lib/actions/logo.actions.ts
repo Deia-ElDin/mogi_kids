@@ -5,8 +5,14 @@ import { validateAdmin } from "./validation.actions";
 import { CreateLogoParams, UpdateLogoParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { UTApi } from "uploadthing/server";
-import Logo, { ILogo } from "../database/models/logo.model";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import { revalidatePath } from "next/cache";
+import Logo, { ILogo } from "../database/models/logo.model";
 
 const utapi = new UTApi();
 
@@ -39,7 +45,7 @@ export async function createLogo(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+    throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const logo = await Logo.create(params);
 
@@ -65,7 +71,7 @@ export async function updateLogo(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+    throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const logo = await Logo.findById(_id);
 

@@ -6,6 +6,12 @@ import { CreateContactsParams, UpdateContactsParams } from "@/types";
 import { getImgName, handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Contact, { IContact } from "../database/models/contact.model";
 
 const utapi = new UTApi();
@@ -51,7 +57,7 @@ export async function createContact(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const newContact = await Contact.create(params);
 
@@ -77,7 +83,7 @@ export async function updateContact(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const originalContact = await Contact.findById(_id);
 
@@ -121,7 +127,7 @@ export async function deleteContact(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedContact = await Contact.findByIdAndDelete(contactId);
 
@@ -145,7 +151,7 @@ export async function deleteAllContacts(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const contacts = await Contact.find();
 

@@ -6,6 +6,12 @@ import { CreateRecordParams, UpdateRecordParams } from "@/types";
 import { handleError, getImgName } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Record, { IRecord } from "../database/models/record.model";
 
 const utapi = new UTApi();
@@ -51,7 +57,7 @@ export async function createRecord(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const newRecord = await Record.create(params);
 
@@ -77,7 +83,7 @@ export async function updateRecord(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const originalRecord = await Record.findById(_id);
 
@@ -122,7 +128,7 @@ export async function deleteRecord(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedRecord = await Record.findByIdAndDelete(recordId);
 
@@ -146,7 +152,7 @@ export async function deleteAllRecords(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const allRecords = await Record.find();
 

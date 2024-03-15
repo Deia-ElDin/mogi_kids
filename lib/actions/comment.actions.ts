@@ -11,6 +11,12 @@ import {
 import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Comment, { IComment } from "../database/models/comment.model";
 import Review from "../database/models/review.model";
 import Report from "../database/models/report.model";
@@ -44,7 +50,7 @@ export async function createComment(
     const { isTheSameUser, error } = await validateIsTheSameUser(createdBy);
 
     if (error || !isTheSameUser)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const newComment = await Comment.create({
       comment,
@@ -80,7 +86,7 @@ export async function updateCommentLikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const comment = await Comment.findById(commentId);
 
@@ -125,7 +131,7 @@ export async function updateCommentDislikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const comment = await Comment.findById(commentId);
 

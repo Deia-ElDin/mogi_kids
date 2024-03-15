@@ -15,6 +15,12 @@ import {
   DeleteSelectedReportsParams,
 } from "@/types";
 import { handleError } from "../utils";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Report, { IReport } from "../database/models/report.model";
 
 type CountResult = {
@@ -74,7 +80,7 @@ export async function countUnseenReports(): Promise<CountResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const count = await Report.countDocuments({ seen: false });
 
@@ -98,7 +104,7 @@ export async function getAllReports({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     let condition = {};
 
@@ -163,7 +169,7 @@ export async function markReportAsSeen(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const seenReport = await Report.findByIdAndUpdate(
       reportId,
@@ -200,7 +206,7 @@ export async function deleteReport({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedReport = await Report.findByIdAndDelete(reportId);
 
@@ -247,7 +253,7 @@ export async function deleteSelectedReports({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedReports = await Report.deleteMany({
       _id: { $in: selectedReports },

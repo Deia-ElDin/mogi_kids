@@ -12,6 +12,12 @@ import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import { populateUser } from "./user.actions";
 import User, { IUser } from "../database/models/user.model";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import Review, { IReview } from "../database/models/review.model";
 import Comment from "../database/models/comment.model";
 import Report from "../database/models/report.model";
@@ -126,7 +132,7 @@ export async function updateReviewLikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const review = await Review.findById(reviewId);
 
@@ -171,7 +177,7 @@ export async function updateReviewDislikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const review = await Review.findById(reviewId);
 
@@ -224,14 +230,14 @@ export async function updateReview(
     );
 
     if (!isTheSameUser || error)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const isReviewBelongToUser = user?.reviews.find(
       (review) => review._id.toString() === _id
     );
 
     if (!isReviewBelongToUser)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     if (review) foundReview.review = review;
     if (rating) foundReview.rating = rating;

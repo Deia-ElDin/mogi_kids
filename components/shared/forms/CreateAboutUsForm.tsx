@@ -79,7 +79,13 @@ const CreateAboutUsForm: React.FC = () => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({ description: "About Us Article Created Successfully." });
 

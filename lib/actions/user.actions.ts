@@ -4,8 +4,14 @@ import { connectToDb } from "../database";
 import { validateAdmin, validatePageAndLimit } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { CreateUserParams, UpdateUserParams, GetAllUsersParams } from "@/types";
-import { handleError, isAdminUser } from "../utils";
+import { handleError } from "../utils";
 import { revalidatePath } from "next/cache";
+import {
+  CustomApiError,
+  UnauthorizedError,
+  UnprocessableEntity,
+  NotFoundError,
+} from "../errors";
 import User, { IUser } from "../database/models/user.model";
 import Career from "../database/models/career.model";
 import Quote from "../database/models/quote.model";
@@ -68,7 +74,7 @@ export async function getAllUsers({
     const { user, isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin || !user || !user.role)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const { role } = user;
 
@@ -77,7 +83,8 @@ export async function getAllUsers({
     if (role === "Admin") conditions = { role: { $nin: ["Admin", "Manager"] } };
     else if (role === "Manager") conditions = { _id: { $ne: user._id } };
 
-    if (!conditions) throw new Error("Not Authorized to access this resource.");
+    if (!conditions)
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     if (fetch?.firstName)
       conditions = {
@@ -167,7 +174,7 @@ export async function updateUser(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const updateFields: any = {};
 
@@ -234,7 +241,7 @@ export async function blockUser(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const user = await User.findById(userId);
 
@@ -290,7 +297,7 @@ export async function unBlockUser(userId: string): Promise<BlockResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const unBlockedUser = await User.findByIdAndUpdate(
       userId,
@@ -326,7 +333,7 @@ export async function deleteUser(userId: string): Promise<BlockResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new Error("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedUser = await User.findByIdAndDelete(userId);
 
