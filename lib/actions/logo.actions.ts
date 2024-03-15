@@ -3,10 +3,9 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { CreateLogoParams, UpdateLogoParams } from "@/types";
-import { getImgName, handleError } from "../utils";
+import { getImgName, handleServerError } from "../utils";
 import { UTApi } from "uploadthing/server";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -20,6 +19,7 @@ type DefaultResult = {
   success: boolean;
   data: ILogo | null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getLogo(): Promise<DefaultResult> {
@@ -30,9 +30,15 @@ export async function getLogo(): Promise<DefaultResult> {
 
     const data = logo ? JSON.parse(JSON.stringify(logo)) : null;
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -45,18 +51,24 @@ export async function createLogo(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-    throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const logo = await Logo.create(params);
 
-    if (!logo) throw new Error("Failed to create the logo.");
+    if (!logo) throw new UnprocessableEntity("Failed to create the logo.");
 
     const data = JSON.parse(JSON.stringify(logo));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -71,14 +83,16 @@ export async function updateLogo(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-    throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const logo = await Logo.findById(_id);
 
-    if (!logo) throw new Error("Could not find the original logo.");
+    if (!logo)
+      throw new UnprocessableEntity("Could not find the original logo.");
 
     const imgName = getImgName(logo);
-    if (!imgName) throw new Error("Failed to read the image name.");
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     logo.imgUrl = imgUrl;
@@ -88,8 +102,14 @@ export async function updateLogo(
     const data = JSON.parse(JSON.stringify(logo));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
