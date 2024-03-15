@@ -13,6 +13,9 @@ export type CreateUserParams = {
 
 export type UpdateUserParams = {
   userId: string;
+  firstName?: string;
+  lastName?: string;
+  photo?: string;
   role?: string;
 };
 

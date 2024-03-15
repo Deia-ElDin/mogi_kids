@@ -159,7 +159,7 @@ export async function createUser(
 export async function updateUser(
   params: UpdateUserParams
 ): Promise<DefaultResult> {
-  const { userId, role } = params;
+  const { userId, firstName, lastName, photo, role } = params;
 
   try {
     await connectToDb();
@@ -169,8 +169,15 @@ export async function updateUser(
     if (error || !isAdmin)
       throw new Error("Not Authorized to access this resource.");
 
+    const updateFields: any = {};
+
+    if (firstName) updateFields.firstName = firstName;
+    if (lastName) updateFields.lastName = lastName;
+    if (photo) updateFields.photo = photo;
+    if (role) updateFields.role = role;
+
     const updatedUser = await populateUser(
-      User.findByIdAndUpdate(userId, { role }, { new: true })
+      User.findByIdAndUpdate(userId, updateFields, { new: true })
     );
 
     if (!updatedUser) throw new Error("User not found.");
@@ -306,6 +313,41 @@ export async function unBlockUser(userId: string): Promise<BlockResult> {
 
     const data = JSON.parse(JSON.stringify(unBlockedUser));
 
+    return { success: true, data, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: handleError(error) };
+  }
+}
+
+export async function deleteUser(userId: string): Promise<BlockResult> {
+  try {
+    await connectToDb();
+
+    const { isAdmin, error } = await validateAdmin();
+
+    if (error || !isAdmin)
+      throw new Error("Not Authorized to access this resource.");
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) throw new Error("Failed to delete the user.");
+
+    await Career.deleteMany({ createdBy: userId });
+    await Quote.deleteMany({ createdBy: userId });
+    await Review.deleteMany({ createdBy: userId });
+
+    const comments = await Comment.find({ createdBy: userId });
+    for (const comment of comments) {
+      await Review.updateOne(
+        { _id: comment.review },
+        { $pull: { comments: comment._id } }
+      );
+      await Comment.findByIdAndDelete(comment._id);
+    }
+
+    const data = JSON.parse(JSON.stringify(deletedUser));
+
+    revalidatePath("/");
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

@@ -75,6 +75,3 @@ const Contacts: React.FC<ContactsProps> = (props) => {
 };
 
 export default Contacts;
-
-// Contact Information
-// Get in touch with Sitters Company to take advantage of our wide range of child care services today!

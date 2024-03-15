@@ -1,5 +1,7 @@
 import { IPage } from "@/lib/database/models/page.model";
 
+// w: 1024, h: 768, aspect ratio: 4.3
+
 export const minMaxValues = {
   logoImg: { minLength: 1 },
   galleryImg: { minLength: 1 },
@@ -93,8 +95,6 @@ export const headerLinks = [
   },
 ];
 
-// w: 1024, h: 768, aspect ratio: 4.3
-
 export const socialMediaSvgs = [
   {
     label: "facebook",
@@ -158,76 +158,40 @@ export const galleryDefaultValues = {
 };
 
 // Quotations
-// export const quoteDefaultValues = {
-//   cstName: "",
-//   mobile: "",
-//   location: "",
-//   email: "",
-//   numberOfHours: "",
-//   numberOfKids: "",
-//   ageOfKidsFrom: "",
-//   ageOfKidsTo: "",
-//   from: new Date(),
-//   to: new Date(),
-//   extraInfo: "",
-// };
-
 export const quoteDefaultValues = {
-  cstName: "Mohamed",
-  mobile: "0507890072",
-  location: "Abu Dhabi",
-  email: "deia.tech2021@gmail.com",
-  numberOfHours: "5",
-  numberOfKids: "3",
-  ageOfKidsFrom: "3",
-  ageOfKidsTo: "10",
+  cstName: "",
+  mobile: "",
+  location: "",
+  email: "",
+  numberOfHours: "",
+  numberOfKids: "",
+  ageOfKidsFrom: "",
+  ageOfKidsTo: "",
   from: new Date(),
   to: new Date(),
-  extraInfo: "what is the extra info?",
+  extraInfo: "",
 };
 
-const lorem =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nibh. Etiam non elit dui. Nulla nec purus feugiat, molestie ipsum et, consequat nibh. Etiam non elit dui.";
-
+// Career
 export const careerDefaultValues = {
-  fullName: "sara",
-  email: "deia.tech2021@gmail.com",
-  mobile: "0507890072",
-  applyingFor: "job 1",
+  fullName: "",
+  email: "",
+  mobile: "",
+  applyingFor: "",
   workingAt: "",
   previousSalary: "",
   expectedSalary: "",
   joinDate: new Date(),
-  gender: "Female",
-  education: "Other",
-  dhaCertificate: "Yes",
-  careGiverCertificate: "Yes",
-  experienceInUAE: [lorem, lorem, lorem, lorem, lorem],
-  visa: "No",
+  gender: "",
+  education: "",
+  dhaCertificate: "",
+  careGiverCertificate: "",
+  experienceInUAE: ["", "", "", "", ""],
+  visa: "",
   visaExpireDate: new Date(),
-  coverLetter: lorem,
+  coverLetter: "",
   imgUrl: "",
 };
-
-// export const careerDefaultValues = {
-//   fullName: "",
-//   email: "",
-//   mobile: "",
-//   applyingFor: "",
-//   workingAt: "",
-//   previousSalary: "",
-//   expectedSalary: "",
-//   joinDate: new Date(),
-//   gender: "",
-//   education: "",
-//   dhaCertificate: "",
-//   careGiverCertificate: "",
-//   experienceInUAE: ["", "", "", "", ""],
-//   visa: "",
-//   visaExpireDate: new Date(),
-//   coverLetter: "",
-//   imgUrl: "",
-// };
 
 // Web Pages
 export const pageDefaultValues: Partial<IPage> = {

@@ -18,7 +18,6 @@ const ServiceRoute: React.FC<ServicePageProps> = async ({ params: { id } }) => {
   const servicesResult = await getServiceById(id);
   const service = servicesResult.success ? servicesResult.data || null : null;
 
-  // 404
   if (!service) return;
   return <ServicePage isAdmin={isAdmin} service={service} />;
 };
