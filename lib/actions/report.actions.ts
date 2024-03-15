@@ -209,7 +209,7 @@ export async function markReportAsSeen(
     });
 
     if (!seenReport)
-      throw new UnprocessableEntity("Failed to change the seen status of this quotation.");
+      throw new NotFoundError("Failed to change the seen status of this quotation.");
 
     const data = JSON.parse(JSON.stringify(seenReport));
 

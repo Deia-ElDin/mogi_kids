@@ -108,7 +108,7 @@ export async function updateQuote(
     );
 
     if (!updatedQuote)
-      throw new UnprocessableEntity("Failed to update the email service of this quotation.");
+      throw new NotFoundError("Failed to update the email service of this quotation.");
 
     return { success: true, data: null, error: null, statusCode: 201 };
   } catch (error) {
@@ -242,7 +242,7 @@ export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
     );
 
     if (!seenQuote)
-      throw new UnprocessableEntity("Failed to change the seen status of this quotation.");
+      throw new NotFoundError("Failed to change the seen status of this quotation.");
 
     const data = JSON.parse(JSON.stringify(seenQuote));
 

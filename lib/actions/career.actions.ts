@@ -179,7 +179,7 @@ export async function markApplicationAsSeen(
     );
 
     if (!seenApplication)
-      throw new UnprocessableEntity(
+      throw new NotFoundError(
         "Failed to change the seen status of this quotation."
       );
 

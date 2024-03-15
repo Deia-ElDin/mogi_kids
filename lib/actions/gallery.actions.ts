@@ -137,7 +137,7 @@ export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
 
     const deletedImg = await Gallery.findByIdAndDelete(imgId);
 
-    if (!deletedImg) throw new UnprocessableEntity("Failed to delete the image.");
+    if (!deletedImg) throw new NotFoundError("Failed to delete the image.");
 
     const imgName = getImgName(deletedImg);
     if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");

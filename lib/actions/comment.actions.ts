@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDb } from "../database";
-import { validateIsTheSameUser } from "./validation.actions";
+import { getCurrentUser, validateIsTheSameUser } from "./validation.actions";
 import {
   CreateCommentParams,
   UpdateCommentParams,
@@ -15,6 +15,7 @@ import {
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
+  ForbiddenError,
 } from "../errors";
 import Comment, { IComment } from "../database/models/comment.model";
 import Review from "../database/models/review.model";
@@ -49,15 +50,14 @@ export async function createComment(
   try {
     await connectToDb();
 
-    const { isTheSameUser, error } = await validateIsTheSameUser(createdBy);
+    const { user: currentUser } = await getCurrentUser();
 
-    if (error || !isTheSameUser)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+    if (!currentUser) throw new ForbiddenError("Kindly Sign In First.");
 
     const newComment = await Comment.create({
       comment,
       review: reviewId,
-      createdBy,
+      createdBy: currentUser._id,
     });
 
     if (!newComment)
@@ -70,7 +70,7 @@ export async function createComment(
     );
 
     if (!updatedReview)
-      throw new UnprocessableEntity("Couldn't update the review.");
+      throw new NotFoundError("Couldn't find the review.");
 
     revalidatePath(path);
     return { success: true, data: null, error: null, statusCode: 204 };
@@ -215,10 +215,10 @@ export async function updateComment(
     );
 
     if (!updatedComment)
-      throw new UnprocessableEntity("Couldn't update the comment.");
+      throw new NotFoundError("Couldn't update the comment.");
 
     revalidatePath(path);
-    
+
     return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
     const { message, statusCode } = handleServerError(error as Error);
@@ -242,7 +242,7 @@ export async function deleteComment(
     const deletedComment = await Comment.findByIdAndDelete(commentId);
 
     if (!deletedComment)
-      throw new UnprocessableEntity("Couldn't delete the comment.");
+      throw new NotFoundError("Couldn't delete the comment.");
 
     const parentReview = await Review.findByIdAndUpdate(
       deletedComment.review,
@@ -251,7 +251,7 @@ export async function deleteComment(
     );
 
     if (!parentReview)
-      throw new UnprocessableEntity("Couldn't update the parent review.");
+      throw new NotFoundError("Couldn't update the parent review.");
 
     await Report.deleteMany({ targetId: commentId, target: "Comment" });
 

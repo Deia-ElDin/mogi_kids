@@ -7,17 +7,18 @@ import {
   UpdateReviewParams,
   ReviewLikesParams,
 } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import { populateUser } from "./user.actions";
-import User, { IUser } from "../database/models/user.model";
 import {
   CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
+  ForbiddenError,
 } from "../errors";
+import User, { IUser } from "../database/models/user.model";
 import Review, { IReview } from "../database/models/review.model";
 import Comment from "../database/models/comment.model";
 import Report from "../database/models/report.model";
@@ -26,30 +27,35 @@ type GetAllResult = {
   success: boolean;
   data: IReview[] | null;
   error: string | null;
+  statusCode: number;
 };
 
 type GetReviewResult = {
   success: boolean;
   data: IReview | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IUser | null;
   error: string | null;
+  statusCode: number;
 };
 
 type LikesResult = {
   success: boolean;
   data: boolean | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getAllReviews(): Promise<GetAllResult> {
@@ -76,9 +82,15 @@ export async function getAllReviews(): Promise<GetAllResult> {
 
     const data = JSON.parse(JSON.stringify(reviews));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -92,7 +104,7 @@ export async function createReview(
 
     const { user: currentUser } = await getCurrentUser();
 
-    if (!currentUser) throw new Error("Kindly Sign In First.");
+    if (!currentUser) throw new ForbiddenError("Kindly Sign In First.");
 
     const createdReview = await Review.create({
       review,
@@ -100,7 +112,7 @@ export async function createReview(
       createdBy: currentUser._id,
     });
 
-    if (!createdReview) throw new Error("Failed to create user review.");
+    if (!createdReview) throw new UnprocessableEntity("Failed to create user review.");
 
     const user = await populateUser(
       User.findByIdAndUpdate(
@@ -110,14 +122,21 @@ export async function createReview(
       )
     );
 
-    if (!user) throw new Error("User not found.");
+    if (!user) throw new NotFoundError("User not found.");
 
     const data = JSON.parse(JSON.stringify(user));
 
     revalidatePath(path);
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -136,7 +155,7 @@ export async function updateReviewLikes(
 
     const review = await Review.findById(reviewId);
 
-    if (!review) throw new Error("Review not found.");
+    if (!review) throw new NotFoundError("Review not found.");
 
     const likesIndex = review.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -153,16 +172,28 @@ export async function updateReviewLikes(
 
     const updatedReview = await review.save();
 
-    if (!updatedReview) throw new Error("Failed to update the review likes.");
+    if (!updatedReview) throw new UnprocessableEntity("Failed to update the review likes.");
 
     const index = updatedReview.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
     );
 
     revalidatePath(path);
-    return { success: true, data: index >= 0 ? true : false, error: null };
+
+    return {
+      success: true,
+      data: index >= 0 ? true : false,
+      error: null,
+      statusCode: 201,
+    };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -181,7 +212,7 @@ export async function updateReviewDislikes(
 
     const review = await Review.findById(reviewId);
 
-    if (!review) throw new Error("Review not found");
+    if (!review) throw new NotFoundError("Review not found");
 
     const likesIndex = review.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -198,16 +229,28 @@ export async function updateReviewDislikes(
     const updatedReview = await review.save();
 
     if (!updatedReview)
-      throw new Error("Failed to update the review dislikes.");
+      throw new UnprocessableEntity("Failed to update the review dislikes.");
 
     const index = updatedReview.dislikes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
     );
 
     revalidatePath(path);
-    return { success: true, data: index >= 0 ? true : false, error: null };
+
+    return {
+      success: true,
+      data: index >= 0 ? true : false,
+      error: null,
+      statusCode: 201,
+    };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -221,7 +264,7 @@ export async function updateReview(
 
     const foundReview = await Review.findById(_id);
 
-    if (!foundReview) throw new Error("Review not found.");
+    if (!foundReview) throw new NotFoundError("Review not found.");
 
     const createdBy = foundReview.createdBy.toString();
 
@@ -251,9 +294,15 @@ export async function updateReview(
 
     const data = JSON.parse(JSON.stringify(updatedUser));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -266,7 +315,7 @@ export async function deleteReview(
 
     const deletedReview = await Review.findByIdAndDelete(reviewId);
 
-    if (!deletedReview) throw new Error("Review not found or already deleted.");
+    if (!deletedReview) throw new NotFoundError("Review not found or already deleted.");
 
     await Promise.all(
       deletedReview.comments.map(async (id: ObjectId) => {
@@ -277,9 +326,16 @@ export async function deleteReview(
     await Report.deleteMany({ targetId: reviewId, target: "Review" });
 
     revalidatePath(path);
-    return { success: true, data: null, error: null };
+
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -294,12 +350,18 @@ export async function getReviewById(
       model: "User",
       select: "_id firstName lastName photo email blocked",
     });
-    if (!review) throw new Error("Review not found.");
+    if (!review) throw new NotFoundError("Review not found.");
 
     const data = JSON.parse(JSON.stringify(review));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }

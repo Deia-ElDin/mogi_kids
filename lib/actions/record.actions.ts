@@ -125,7 +125,7 @@ export async function updateRecord(
     }
 
     if (!updatedRecord)
-      throw new UnprocessableEntity("Failed to update the record.");
+      throw new NotFoundError("Failed to update the record.");
 
     const data = JSON.parse(JSON.stringify(updatedRecord));
 

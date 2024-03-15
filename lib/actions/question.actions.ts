@@ -105,6 +105,8 @@ export async function updateQuestion(
       answer,
     });
 
+    if (!updatedQuestion) throw new NotFoundError("Question not found.");
+
     const data = JSON.parse(JSON.stringify(updatedQuestion));
 
     revalidatePath("/");
@@ -133,6 +135,7 @@ export async function deleteQuestion(
       throw new UnauthorizedError("Not Authorized to access this resource.");
 
     const deletedQuestion = await Question.findByIdAndDelete(questionId);
+    
     if (!deletedQuestion)
       throw new NotFoundError("Question not found or already deleted.");
 

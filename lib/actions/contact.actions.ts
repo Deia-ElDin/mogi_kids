@@ -126,7 +126,7 @@ export async function updateContact(
     }
 
     if (!updatedContact)
-      throw new UnprocessableEntity("Failed to update the contact.");
+      throw new NotFoundError("Failed to update the contact.");
 
     const data = JSON.parse(JSON.stringify(updatedContact));
 
@@ -157,7 +157,7 @@ export async function deleteContact(
 
     const deletedContact = await Contact.findByIdAndDelete(contactId);
 
-    if (!deletedContact) throw new UnprocessableEntity("Failed to delete the contacts.");
+    if (!deletedContact) throw new NotFoundError("Failed to delete the contacts.");
 
     const imgName = getImgName(deletedContact);
     if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");

@@ -131,7 +131,7 @@ export async function updatePage(
     });
 
     if (!updatedPage)
-      throw new UnprocessableEntity("Failed to update the page.");
+      throw new NotFoundError("Failed to update the page.");
 
     const data = JSON.parse(JSON.stringify(updatedPage));
 

@@ -136,6 +136,9 @@ export async function updateAboutUs(
       });
     }
 
+    if (!updatedAboutUs)
+      throw new NotFoundError("Failed to update the about us article.");
+
     const data = JSON.parse(JSON.stringify(updatedAboutUs));
 
     revalidatePath(path);
