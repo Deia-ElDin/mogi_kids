@@ -14,9 +14,8 @@ import {
   DeleteSelectedReportParams,
   DeleteSelectedReportsParams,
 } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -27,6 +26,7 @@ type CountResult = {
   success: boolean;
   data: number | null;
   error: string | null;
+  statusCode: number;
 };
 
 type GetAllResult = {
@@ -35,12 +35,14 @@ type GetAllResult = {
   totalPages?: number;
   unseen?: number | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IReport | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
@@ -48,6 +50,7 @@ type DeleteResult = {
   data: IReport[] | [] | null;
   totalPages?: number;
   error: string | null;
+  statusCode: number;
 };
 
 export async function createReport(
@@ -58,18 +61,24 @@ export async function createReport(
 
     const { user: currentUser } = await getCurrentUser();
 
-    if (!currentUser) throw new Error("Kindly Sign In First.");
+    // if (!currentUser) throw new Error("Kindly Sign In First.");
 
     const newReport = await Report.create({
       ...params,
-      createdBy: currentUser._id,
+      createdBy: currentUser?._id || null,
     });
 
-    if (!newReport) throw new Error("Failed to create the report.");
+    if (!newReport) throw new UnprocessableEntity("Failed to create the report.");
 
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -85,9 +94,16 @@ export async function countUnseenReports(): Promise<CountResult> {
     const count = await Report.countDocuments({ seen: false });
 
     revalidatePath("/");
-    return { success: true, data: count, error: null };
+
+    return { success: true, data: count, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -134,9 +150,10 @@ export async function getAllReports({
         options: { allowNull: true },
       });
 
-    if (!reports) throw new Error("Failed to fetch the reports.");
+    if (!reports) throw new NotFoundError("Failed to fetch the reports.");
 
-    if (reports.length === 0) return { success: true, data: [], error: null };
+    if (reports.length === 0)
+      return { success: true, data: [], error: null, statusCode: 200 };
 
     const totalPages = Math.ceil(
       (await Report.countDocuments(condition)) / limit
@@ -149,13 +166,22 @@ export async function getAllReports({
       seen: false,
     });
 
-    return { success: true, data, totalPages, unseen, error: null };
+    return {
+      success: true,
+      data,
+      totalPages,
+      unseen,
+      error: null,
+      statusCode: 200,
+    };
   } catch (error) {
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
       unseen: null,
-      error: handleError(error),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -183,13 +209,19 @@ export async function markReportAsSeen(
     });
 
     if (!seenReport)
-      throw new Error("Failed to change the seen status of this quotation.");
+      throw new UnprocessableEntity("Failed to change the seen status of this quotation.");
 
     const data = JSON.parse(JSON.stringify(seenReport));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -211,7 +243,7 @@ export async function deleteReport({
     const deletedReport = await Report.findByIdAndDelete(reportId);
 
     if (!deletedReport)
-      throw new Error(
+      throw new NotFoundError(
         "Failed to find the report or the report already deleted."
       );
 
@@ -226,17 +258,24 @@ export async function deleteReport({
         select: "_id firstName lastName photo",
       });
 
-    if (!reports) throw new Error("Failed to fetch the quotations.");
+    if (!reports) throw new NotFoundError("Failed to fetch the quotations.");
 
-    if (reports.length === 0) return { success: true, data: [], error: null };
+    if (reports.length === 0)
+      return { success: true, data: [], error: null, statusCode: 201 };
 
     const totalPages = Math.ceil((await Report.countDocuments()) / limit);
 
     const data = JSON.parse(JSON.stringify(reports));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -260,7 +299,7 @@ export async function deleteSelectedReports({
     });
 
     if (!deletedReports)
-      throw new Error(
+      throw new NotFoundError(
         "Failed to find the reports or the reports already deleted."
       );
 
@@ -275,16 +314,23 @@ export async function deleteSelectedReports({
         select: "_id firstName lastName photo",
       });
 
-    if (!reports) throw new Error("Failed to fetch the quotations.");
+    if (!reports) throw new NotFoundError("Failed to fetch the quotations.");
 
-    if (reports.length === 0) return { success: true, data: [], error: null };
+    if (reports.length === 0)
+      return { success: true, data: [], error: null, statusCode: 201 };
 
     const totalPages = Math.ceil((await Report.countDocuments()) / limit);
 
     const data = JSON.parse(JSON.stringify(reports));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
