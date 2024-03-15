@@ -1,7 +1,5 @@
 "use server";
 
-import { NextApiResponse } from "next";
-import { NextResponse } from "next/server";
 import { connectToDb } from "../database";
 import {
   validateAdmin,
@@ -17,10 +15,10 @@ import {
   DeleteSelectedQuoteParams,
   DeleteSelectedQuotesParams,
 } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import {
-  CustomApiError,
+  BadRequestError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -31,6 +29,7 @@ type CountResult = {
   success: boolean;
   data: number | null;
   error: string | null;
+  statusCode: number;
 };
 
 type GetAllResult = {
@@ -39,12 +38,14 @@ type GetAllResult = {
   totalPages?: number;
   unseen?: number | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IQuote | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
@@ -52,25 +53,16 @@ type DeleteResult = {
   data: IQuote[] | [] | null;
   totalPages?: number;
   error: string | null;
+  statusCode: number;
 };
-
-class CustomError extends Error {
-  status: number;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = this.constructor.name;
-    this.status = status;
-  }
-}
 
 export async function createQuote(
   params: CreateQuoteParams
 ): Promise<DefaultResult> {
   try {
-    if (!params) {
-      throw new CustomError("Invalid request: Missing parameters.", 400);
-    }
+    if (!params)
+      throw new BadRequestError("Invalid request: Missing parameters.");
+
     await connectToDb();
 
     const { user } = await getCurrentUser();
@@ -80,19 +72,25 @@ export async function createQuote(
       createdBy: user?._id ?? null,
     });
 
-    if (!newQuote) throw new Error("Failed to create the quote.");
+    if (!newQuote) throw new UnprocessableEntity("Failed to create the quote.");
 
     const { success: dbSuccess, error: dbError } = await updateDbSize({
       resend: true,
     });
 
-    if (!dbSuccess && dbError) throw new Error(dbError);
+    if (!dbSuccess && dbError) throw new UnprocessableEntity(dbError);
 
     const data = JSON.parse(JSON.stringify(newQuote));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -110,11 +108,17 @@ export async function updateQuote(
     );
 
     if (!updatedQuote)
-      throw new Error("Failed to update the email service of this quotation.");
+      throw new UnprocessableEntity("Failed to update the email service of this quotation.");
 
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -130,12 +134,14 @@ export async function countUnseenQuotes(): Promise<CountResult> {
     const count = await Quote.countDocuments({ seen: false });
 
     revalidatePath("/");
-    return { success: true, data: count, error: null };
+    return { success: true, data: count, error: null, statusCode: 200 };
   } catch (error) {
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
-      error: handleError("Failed to count unseen quotes"),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -187,9 +193,10 @@ export async function getAllQuotes({
         options: { allowNull: true },
       });
 
-    if (!quotes) throw new Error("Failed to fetch the quotations.");
+    if (!quotes) throw new NotFoundError("Failed to fetch the quotations.");
 
-    if (quotes.length === 0) return { success: true, data: [], error: null };
+    if (quotes.length === 0)
+      return { success: true, data: [], error: null, statusCode: 200 };
 
     const totalPages = Math.ceil(
       (await Quote.countDocuments(condition)) / limit
@@ -199,13 +206,22 @@ export async function getAllQuotes({
 
     const unseen = await Quote.countDocuments({ ...condition, seen: false });
 
-    return { success: true, data, totalPages, unseen, error: null };
+    return {
+      success: true,
+      data,
+      totalPages,
+      unseen,
+      error: null,
+      statusCode: 200,
+    };
   } catch (error) {
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
       unseen: null,
-      error: handleError(error),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -226,13 +242,19 @@ export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
     );
 
     if (!seenQuote)
-      throw new Error("Failed to change the seen status of this quotation.");
+      throw new UnprocessableEntity("Failed to change the seen status of this quotation.");
 
     const data = JSON.parse(JSON.stringify(seenQuote));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -254,7 +276,7 @@ export async function deleteQuote({
     const deletedQuote = await Quote.findByIdAndDelete(quoteId);
 
     if (!deletedQuote)
-      throw new Error("Failed to find the quote or the quote already deleted.");
+      throw new NotFoundError("Failed to find the quote or the quote already deleted.");
 
     const skipAmount = (Number(page) - 1) * limit;
     const quotes = await Quote.find()
@@ -267,17 +289,24 @@ export async function deleteQuote({
         select: "_id firstName lastName photo",
       });
 
-    if (!quotes) throw new Error("Failed to fetch the quotations.");
+    if (!quotes) throw new NotFoundError("Failed to fetch the quotations.");
 
-    if (quotes.length === 0) return { success: true, data: [], error: null };
+    if (quotes.length === 0)
+      return { success: true, data: [], error: null, statusCode: 201 };
 
     const totalPages = Math.ceil((await Quote.countDocuments()) / limit);
 
     const data = JSON.parse(JSON.stringify(quotes));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -301,7 +330,7 @@ export async function deleteSelectedQuotes({
     });
 
     if (!deletedQuotes)
-      throw new Error(
+      throw new NotFoundError(
         "Failed to find the quotes or the quotes already deleted."
       );
 
@@ -316,16 +345,23 @@ export async function deleteSelectedQuotes({
         select: "_id firstName lastName photo",
       });
 
-    if (!quotes) throw new Error("Failed to fetch the quotations.");
+    if (!quotes) throw new NotFoundError("Failed to fetch the quotations.");
 
-    if (quotes.length === 0) return { success: true, data: [], error: null };
+    if (quotes.length === 0)
+      return { success: true, data: [], error: null, statusCode: 201 };
 
     const totalPages = Math.ceil((await Quote.countDocuments()) / limit);
 
     const data = JSON.parse(JSON.stringify(quotes));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
