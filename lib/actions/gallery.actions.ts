@@ -3,7 +3,7 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { CreateGalleryParams, UpdateGalleryParams } from "@/types";
-import { getImgName, handleError } from "../utils";
+import { getImgName, handleServerError } from "../utils";
 import { UTApi } from "uploadthing/server";
 import { revalidatePath } from "next/cache";
 import {
@@ -19,18 +19,21 @@ type GetALLResult = {
   success: boolean;
   data: IGallery[] | [] | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IGallery | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getGallery(): Promise<GetALLResult> {
@@ -41,9 +44,15 @@ export async function getGallery(): Promise<GetALLResult> {
 
     const data = JSON.parse(JSON.stringify(gallery));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -60,14 +69,20 @@ export async function createGalleryImg(
 
     const gallery = await Gallery.create(params);
 
-    if (!gallery) throw new Error("Failed to create the gallery.");
+    if (!gallery) throw new UnprocessableEntity("Failed to create the gallery.");
 
     const data = JSON.parse(JSON.stringify(gallery));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -86,10 +101,10 @@ export async function updateGalleryImg(
 
     const gallery = await Gallery.findById(_id);
 
-    if (!gallery) throw new Error("Could not find the original gallery.");
+    if (!gallery) throw new NotFoundError("Could not find the original gallery.");
 
     const imgName = getImgName(gallery);
-    if (!imgName) throw new Error("Failed to read the image name.");
+    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     gallery.imgUrl = imgUrl;
@@ -99,9 +114,15 @@ export async function updateGalleryImg(
     const data = JSON.parse(JSON.stringify(gallery));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -116,15 +137,21 @@ export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
 
     const deletedImg = await Gallery.findByIdAndDelete(imgId);
 
-    if (!deletedImg) throw new Error("Failed to delete the image.");
+    if (!deletedImg) throw new UnprocessableEntity("Failed to delete the image.");
 
     const imgName = getImgName(deletedImg);
-    if (!imgName) throw new Error("Failed to read the image name.");
+    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     revalidatePath("/");
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
