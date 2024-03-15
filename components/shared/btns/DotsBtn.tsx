@@ -14,8 +14,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
 import { IUser } from "@/lib/database/models/user.model";
 import { Button } from "@/components/ui/button";
+import { handleError, isAdminUser } from "@/lib/utils";
+import { blockUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
 
 type DotsBtnProps = {
@@ -30,6 +33,8 @@ type DotsBtnProps = {
 };
 
 const DotsBtn = (props: DotsBtnProps) => {
+  const { toast } = useToast();
+
   const {
     user,
     creatorId,
@@ -40,6 +45,8 @@ const DotsBtn = (props: DotsBtnProps) => {
     handleDelete,
     handleReport,
   } = props;
+
+  const isAdmin = isAdminUser(user);
 
   const Trigger = () => (
     <Image
@@ -82,6 +89,49 @@ const DotsBtn = (props: DotsBtnProps) => {
     </AlertDialog>
   );
 
+  const BlockBtn = () => (
+    <AlertDialog>
+      <AlertDialogTrigger className="w-full p-1 bg-transparent hover:bg-transparent text-black border-b-2 border-gray-300 text-sm h-[40px] hover:bg-gray-100">
+        Block
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action will block this user and will delete all his/her{" "}
+            <span className="text-red-500">
+              Quotations, Applications, Reviews and Comments
+            </span>
+            .
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            className="delete-btn"
+            onClick={async () => {
+              try {
+                const { success, error } = await blockUser(creatorId, "/");
+                if (!success && error) throw new Error(error);
+                toast({ description: "User Blocked Successfully." });
+              } catch (error) {
+                toast({
+                  variant: "destructive",
+                  title: "Uh oh! Something went wrong.",
+                  description: `Failed to Block The User, ${handleError(
+                    error
+                  )}`,
+                });
+              }
+            }}
+          >
+            Confirm
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+
   const ReportBtn = () => (
     <Button
       className="w-full p-1 text-red-500 bg-white hover:text-white hover:bg-red-500 rounded-none"
@@ -99,6 +149,11 @@ const DotsBtn = (props: DotsBtnProps) => {
             <EditBtn />
             <DeleteBtn />
           </>
+        ) : isAdmin ? (
+          <>
+            <DeleteBtn />
+            <BlockBtn />
+          </>
         ) : (
           <ReportBtn />
         )}
@@ -107,7 +162,7 @@ const DotsBtn = (props: DotsBtnProps) => {
 
   return (
     <Popover open={displayList} onOpenChange={setDisplayList}>
-      <PopoverTrigger className="bg-gray-200 py-2 border-2 rounded-lg w-fit ">
+      <PopoverTrigger className="bg-gray-200 py-2 border-2 rounded-lg w-fit">
         <Trigger />
       </PopoverTrigger>
       <Btns />

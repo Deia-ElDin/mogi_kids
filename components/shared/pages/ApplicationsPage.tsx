@@ -389,7 +389,6 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           dhaCertificate,
           careGiverCertificate,
           visaExpireDate,
-          imgUrl,
           seen,
           createdAt,
         } = application;

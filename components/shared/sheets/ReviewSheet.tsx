@@ -152,7 +152,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
     }
   };
 
-  const handleDeleteBtnClick = async () => {
+  const handleDeleteReview = async () => {
     try {
       const { success, error } = await deleteReview(reviewObj._id, pathname);
 
@@ -325,7 +325,7 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
           deletionTarget="Review"
           setDisplayList={setDisplayList}
           handleEdit={handleEditBtnClick}
-          handleDelete={handleDeleteBtnClick}
+          handleDelete={handleDeleteReview}
           handleReport={handleReport}
         />
       </div>

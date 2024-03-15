@@ -12,10 +12,8 @@ import { IReview } from "@/lib/database/models/review.model";
 import { IComment } from "@/lib/database/models/comment.model";
 import UserDeleteBtn from "../btns/UserDeleteBtn";
 import BlockBtn from "../btns/BlockBtn";
-import UpdateBtn from "../btns/UpdateBtn";
-import Image from "next/image";
-import { Email } from "@clerk/nextjs/server";
 import IconDeleteBtn from "../btns/IconDeleteBtn";
+import Image from "next/image";
 
 type FetchState = {
   day?: Date | null;

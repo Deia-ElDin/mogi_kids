@@ -4,7 +4,7 @@ import { connectToDb } from "../database";
 import { validateAdmin, validatePageAndLimit } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { CreateUserParams, UpdateUserParams, GetAllUsersParams } from "@/types";
-import { handleError } from "../utils";
+import { handleError, isAdminUser } from "../utils";
 import { revalidatePath } from "next/cache";
 import User, { IUser } from "../database/models/user.model";
 import Career from "../database/models/career.model";
@@ -217,7 +217,10 @@ export async function getUserByClerkId(
   }
 }
 
-export async function blockUser(userId: string): Promise<BlockResult> {
+export async function blockUser(
+  userId: string,
+  path?: string
+): Promise<BlockResult> {
   try {
     await connectToDb();
 
@@ -225,6 +228,13 @@ export async function blockUser(userId: string): Promise<BlockResult> {
 
     if (error || !isAdmin)
       throw new Error("Not Authorized to access this resource.");
+
+    const user = await User.findById(userId);
+
+    const isManager = user.role === "Manager";
+
+    if (isManager)
+      throw new Error("Are you trying to block your Manager ????!!.");
 
     const blockedUser = await User.findByIdAndUpdate(
       userId,
@@ -259,6 +269,7 @@ export async function blockUser(userId: string): Promise<BlockResult> {
 
     const data = JSON.parse(JSON.stringify(blockedUser));
 
+    if (path) revalidatePath(path);
     return { success: true, data, error: null };
   } catch (error) {
     return { success: false, data: null, error: handleError(error) };

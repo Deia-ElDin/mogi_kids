@@ -11,6 +11,7 @@ type CurrentUserResult = {
 
 type AdminResult = {
   user: IUser | null;
+  isManager: boolean;
   isAdmin: boolean;
   error: string | null;
 };
@@ -47,12 +48,18 @@ export async function validateAdmin(): Promise<AdminResult> {
 
     if (!mongoDbUser) throw new Error("Authentication Error.");
 
+    const isManager = mongoDbUser.role === "Manager";
     const isAdmin =
       mongoDbUser.role === "Manager" || mongoDbUser.role === "Admin";
 
-    return { user: mongoDbUser, isAdmin, error: null };
+    return { user: mongoDbUser, isManager, isAdmin, error: null };
   } catch (error) {
-    return { user: null, isAdmin: false, error: handleError(error) };
+    return {
+      user: null,
+      isManager: false,
+      isAdmin: false,
+      error: handleError(error),
+    };
   }
 }
 

@@ -19,7 +19,6 @@ import {
   blockUser,
   unBlockUser,
 } from "@/lib/actions/user.actions";
-import DeleteBtn from "../btns/DeleteBtn";
 import UserDeleteBtn from "../btns/UserDeleteBtn";
 import BlockBtn from "../btns/BlockBtn";
 import UpdateBtn from "../btns/UpdateBtn";
