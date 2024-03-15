@@ -87,8 +87,7 @@ export async function updateLogo(
 
     const logo = await Logo.findById(_id);
 
-    if (!logo)
-      throw new UnprocessableEntity("Could not find the original logo.");
+    if (!logo) throw new NotFoundError("Could not find the original logo.");
 
     const imgName = getImgName(logo);
     if (!imgName)
