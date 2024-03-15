@@ -1,5 +1,7 @@
 "use server";
 
+import { NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 import { connectToDb } from "../database";
 import {
   validateAdmin,
@@ -46,10 +48,23 @@ type DeleteResult = {
   error: string | null;
 };
 
+class CustomError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = status;
+  }
+}
+
 export async function createQuote(
   params: CreateQuoteParams
 ): Promise<DefaultResult> {
   try {
+    if (!params) {
+      throw new CustomError("Invalid request: Missing parameters.", 400);
+    }
     await connectToDb();
 
     const { user } = await getCurrentUser();
