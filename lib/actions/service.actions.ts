@@ -3,11 +3,10 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { CreateServiceParams, UpdateServiceParams } from "@/types";
-import { getImgName, handleError } from "../utils";
+import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -20,18 +19,21 @@ type GetALLResult = {
   success: boolean;
   data: IService[] | [] | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IService | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getAllServices(): Promise<GetALLResult> {
@@ -42,9 +44,15 @@ export async function getAllServices(): Promise<GetALLResult> {
 
     const data = JSON.parse(JSON.stringify(services));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -56,13 +64,19 @@ export async function getServiceById(
 
     const service = await Service.findById(serviceId);
 
-    if (!service) throw new Error("Service not found");
+    if (!service) throw new NotFoundError("Service not found");
 
     const data = JSON.parse(JSON.stringify(service));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -87,16 +101,23 @@ export async function createService(
     });
 
     if (!newService)
-      throw new Error(
+      throw new UnprocessableEntity(
         "Couldn't create a service & kindly check the uploadthing database"
       );
 
     const data = JSON.parse(JSON.stringify(newService));
 
     revalidatePath(path);
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -119,11 +140,11 @@ export async function updateService(
     const originalService = await Service.findById(_id);
 
     if (!originalService)
-      throw new Error("Could not find the original service.");
+      throw new NotFoundError("Could not find the original service.");
 
     if (newImg) {
       const imgName = getImgName(originalService);
-      if (!imgName) throw new Error("Failed to read the image name.");
+      if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
       await utapi.deleteFiles(imgName);
 
       updatedService = await Service.findByIdAndUpdate(
@@ -147,12 +168,21 @@ export async function updateService(
       );
     }
 
+    if (!updatedService) throw new NotFoundError("Failed to update.");
+
     const data = JSON.parse(JSON.stringify(updatedService));
 
     revalidatePath(path);
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -172,16 +202,23 @@ export async function deleteService(
     const deletedService = await Service.findByIdAndDelete(serviceId);
 
     if (!deletedService)
-      throw new Error("Service not found or already deleted.");
+      throw new NotFoundError("Service not found or already deleted.");
 
     const imgName = getImgName(deletedService);
-    if (!imgName) throw new Error("Failed to read the image name.");
+    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath(path);
-    return { success: true, data: null, error: null };
+
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -201,8 +238,15 @@ export async function deleteAllServices(): Promise<DeleteResult> {
     );
 
     revalidatePath("/");
-    return { success: true, data: null, error: null };
+
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }

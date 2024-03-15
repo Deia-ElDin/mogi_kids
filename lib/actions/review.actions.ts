@@ -12,7 +12,6 @@ import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import { populateUser } from "./user.actions";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -112,7 +111,8 @@ export async function createReview(
       createdBy: currentUser._id,
     });
 
-    if (!createdReview) throw new UnprocessableEntity("Failed to create user review.");
+    if (!createdReview)
+      throw new UnprocessableEntity("Failed to create user review.");
 
     const user = await populateUser(
       User.findByIdAndUpdate(
@@ -172,7 +172,8 @@ export async function updateReviewLikes(
 
     const updatedReview = await review.save();
 
-    if (!updatedReview) throw new UnprocessableEntity("Failed to update the review likes.");
+    if (!updatedReview)
+      throw new UnprocessableEntity("Failed to update the review likes.");
 
     const index = updatedReview.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -315,7 +316,8 @@ export async function deleteReview(
 
     const deletedReview = await Review.findByIdAndDelete(reviewId);
 
-    if (!deletedReview) throw new NotFoundError("Review not found or already deleted.");
+    if (!deletedReview)
+      throw new NotFoundError("Review not found or already deleted.");
 
     await Promise.all(
       deletedReview.comments.map(async (id: ObjectId) => {
