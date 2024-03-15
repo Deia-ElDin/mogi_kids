@@ -28,7 +28,13 @@ const AboutUsCard: React.FC<AboutUsCardParams> = (props) => {
     try {
       const { success, error } = await deleteAboutUs(aboutUsObj._id, pathname);
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({ description: "About Us Article Deleted Successfully." });
     } catch (error) {

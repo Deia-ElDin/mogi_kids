@@ -45,14 +45,22 @@ export const handleError = (error: unknown): string => {
   }
 };
 
-export function handleServerError(error: Error, errorMessage: string): string {
-  if (error instanceof CustomApiError || error instanceof UnauthorizedError) {
-    return error.message;
-  } else if (error instanceof mongoose.Error) {
-    return new CustomApiError(errorMessage).message;
+export function handleServerError(
+  error: Error,
+  defaultStatusCode: number = 500
+): { message: string; statusCode: number } {
+  if (error instanceof CustomApiError) {
+    return {
+      message: error.message,
+      statusCode: error.status || defaultStatusCode,
+    };
   } else {
-    return new CustomApiError("An unexpected error occurred: " + error.message)
-      .message;
+    return {
+      message: new CustomApiError(
+        "An unexpected error occurred: " + error.message
+      ).message,
+      statusCode: defaultStatusCode,
+    };
   }
 }
 

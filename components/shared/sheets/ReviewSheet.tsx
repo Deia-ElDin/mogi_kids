@@ -112,7 +112,13 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       setDisplayForm(false);
       toast({ description: "Review Updated Successfully." });
     } catch (error) {
@@ -136,7 +142,13 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
         targetId: reviewObj._id,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({
         variant: "destructive",
         title: "Report sent successfully. Thank you.",
@@ -156,7 +168,13 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
     try {
       const { success, error } = await deleteReview(reviewObj._id, pathname);
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Review Deleted Successfully." });
     } catch (error) {
       toast({
@@ -175,7 +193,13 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({
         description: data ? (
           <LikedToast
@@ -209,7 +233,13 @@ const ReviewSheet: React.FC<ReviewSheetParams> = ({ user, reviewObj }) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({
         description: data ? (
           <DisLikedToast

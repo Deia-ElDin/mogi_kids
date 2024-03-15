@@ -26,7 +26,13 @@ const Welcome: React.FC<WelcomeProps> = ({ isAdmin, welcomePage }) => {
     try {
       if (welcomePage?._id) {
         const { success, error } = await deletePage(welcomePage._id, "/");
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
         toast({ description: "Welcomes Page Deleted Successfully." });
       }
     } catch (error) {

@@ -50,7 +50,13 @@ const ReportCard: React.FC<ReportCardParams> = ({
             ? await getReviewById(targetId)
             : await getCommentById(targetId);
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
 
         if (!review && !comment) {
           if (target === "Review" && data) {
@@ -72,7 +78,13 @@ const ReportCard: React.FC<ReportCardParams> = ({
   const handleDeleteReview = async (reviewId: string) => {
     try {
       const { success, error } = await deleteReview(reviewId, "/");
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Review Deleted Successfully." });
       fetchAllReports({
         day: null,
@@ -90,7 +102,13 @@ const ReportCard: React.FC<ReportCardParams> = ({
   const handleDeleteComment = async (commentId: string) => {
     try {
       const { success, error } = await deleteComment({ commentId });
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Comment Deleted Successfully." });
       fetchAllReports({
         day: null,
@@ -108,7 +126,13 @@ const ReportCard: React.FC<ReportCardParams> = ({
   const handleBlockUser = async (userId: string) => {
     try {
       const { success, error } = await blockUser(userId);
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "User Blocked Successfully." });
     } catch (error) {
       toast({

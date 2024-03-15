@@ -4,7 +4,6 @@ import { connectToDb } from "../database";
 import {
   validateAdmin,
   validatePageAndLimit,
-  validateIsTheSameUser,
   getCurrentUser,
 } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
@@ -14,10 +13,9 @@ import {
   DeleteSelectedApplicationParams,
   DeleteSelectedApplicationsParams,
 } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -28,6 +26,7 @@ type CountResult = {
   success: boolean;
   data: number | null;
   error: string | null;
+  statusCode: number;
 };
 
 type GetAllResult = {
@@ -36,12 +35,14 @@ type GetAllResult = {
   totalPages?: number;
   unseen?: number | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: ICareer | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
@@ -49,32 +50,8 @@ type DeleteResult = {
   data: ICareer[] | [] | null;
   totalPages?: number;
   error: string | null;
+  statusCode: number;
 };
-
-export async function createApplication(
-  params: CreateApplicationParams
-): Promise<DefaultResult> {
-  try {
-    await connectToDb();
-
-    const { user: currentUser } = await getCurrentUser();
-
-    if (!currentUser) throw new Error("Kindly Sign In First.");
-
-    const newApplication = await Career.create({
-      ...params,
-      createdBy: currentUser._id,
-    });
-
-    if (!newApplication) throw new Error("Failed to create the application.");
-
-    const data = JSON.parse(JSON.stringify(newApplication));
-
-    return { success: true, data, error: null };
-  } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
-  }
-}
 
 export async function countUnseenApplications(): Promise<CountResult> {
   try {
@@ -88,9 +65,15 @@ export async function countUnseenApplications(): Promise<CountResult> {
     const count = await Career.countDocuments({ seen: false });
 
     revalidatePath("/");
-    return { success: true, data: count, error: null };
+    return { success: true, data: count, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -141,10 +124,11 @@ export async function getAllApplications({
         options: { allowNull: true },
       });
 
-    if (!applications) throw new Error("Failed to fetch the quotations.");
+    if (!applications)
+      throw new NotFoundError("Failed to fetch the quotations.");
 
     if (applications.length === 0)
-      return { success: true, data: [], error: null };
+      return { success: true, data: [], error: null, statusCode: 200 };
 
     const totalPages = Math.ceil(
       (await Career.countDocuments(condition)) / limit
@@ -157,13 +141,22 @@ export async function getAllApplications({
       seen: false,
     });
 
-    return { success: true, data, totalPages, unseen, error: null };
+    return {
+      success: true,
+      data,
+      totalPages,
+      unseen,
+      error: null,
+      statusCode: 200,
+    };
   } catch (error) {
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
       unseen: null,
-      error: handleError(error),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -186,13 +179,53 @@ export async function markApplicationAsSeen(
     );
 
     if (!seenApplication)
-      throw new Error("Failed to change the seen status of this quotation.");
+      throw new UnprocessableEntity(
+        "Failed to change the seen status of this quotation."
+      );
 
     const data = JSON.parse(JSON.stringify(seenApplication));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
+  }
+}
+
+export async function createApplication(
+  params: CreateApplicationParams
+): Promise<DefaultResult> {
+  try {
+    await connectToDb();
+
+    const { user: currentUser } = await getCurrentUser();
+
+    if (!currentUser) throw new UnauthorizedError("Kindly Sign In First.");
+
+    const newApplication = await Career.create({
+      ...params,
+      createdBy: currentUser._id,
+    });
+
+    if (!newApplication)
+      throw new UnprocessableEntity("Failed to create the application.");
+
+    const data = JSON.parse(JSON.stringify(newApplication));
+
+    return { success: true, data, error: null, statusCode: 201 };
+  } catch (error) {
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -214,7 +247,7 @@ export async function deleteApplication({
     const deletedApplication = await Career.findByIdAndDelete(applicationId);
 
     if (!deletedApplication)
-      throw new Error(
+      throw new NotFoundError(
         "Failed to find the application or the application already deleted."
       );
 
@@ -229,18 +262,25 @@ export async function deleteApplication({
         select: "_id firstName lastName photo",
       });
 
-    if (!applications) throw new Error("Failed to fetch the quotations.");
+    if (!applications)
+      throw new UnprocessableEntity("Failed to fetch the quotations.");
 
     if (applications.length === 0)
-      return { success: true, data: [], error: null };
+      return { success: true, data: [], error: null, statusCode: 200 };
 
     const totalPages = Math.ceil((await Career.countDocuments()) / limit);
 
     const data = JSON.parse(JSON.stringify(applications));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -264,7 +304,7 @@ export async function deleteSelectedApplications({
     });
 
     if (!deletedApplications)
-      throw new Error(
+      throw new NotFoundError(
         "Failed to find the applications or the applications already deleted."
       );
 
@@ -279,17 +319,24 @@ export async function deleteSelectedApplications({
         select: "_id firstName lastName photo",
       });
 
-    if (!applications) throw new Error("Failed to fetch the quotations.");
+    if (!applications)
+      throw new UnprocessableEntity("Failed to fetch the quotations.");
 
     if (applications.length === 0)
-      return { success: true, data: [], error: null };
+      return { success: true, data: [], error: null, statusCode: 200 };
 
     const totalPages = Math.ceil((await Career.countDocuments()) / limit);
 
     const data = JSON.parse(JSON.stringify(applications));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }

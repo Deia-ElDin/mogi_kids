@@ -54,7 +54,13 @@ const QuoteForm: React.FC<QuoteForm> = ({ logo }) => {
         ...values,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (success && data) {
         form.reset();

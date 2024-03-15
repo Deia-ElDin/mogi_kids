@@ -84,7 +84,13 @@ const UpdateRecordForm: React.FC<UpdateRecordFormProps> = ({ record }) => {
           newImg: true,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
         toast({ description: "Record Updated Successfully." });
         handleClose();
       } else {
@@ -94,7 +100,13 @@ const UpdateRecordForm: React.FC<UpdateRecordFormProps> = ({ record }) => {
           newImg: false,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
         toast({ description: "Record Updated Successfully." });
         handleClose();
       }

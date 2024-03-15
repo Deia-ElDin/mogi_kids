@@ -30,7 +30,13 @@ const Quote: React.FC<QuoteProps> = ({ isAdmin, quotePage, logo }) => {
     try {
       if (quotePage?._id) {
         const { success, error } = await deletePage(quotePage._id, "/");
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
         toast({ description: "Quotation Page Deleted Successfully." });
       }
     } catch (error) {

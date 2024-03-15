@@ -89,7 +89,13 @@ const UpdateAboutUsForm: React.FC<UpdateAboutUsFormProps> = ({
           path: pathname,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
 
         toast({ description: "About Us Article Updated Successfully." });
 
@@ -102,7 +108,13 @@ const UpdateAboutUsForm: React.FC<UpdateAboutUsFormProps> = ({
           path: pathname,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
 
         toast({ description: "About Us Article Updated Successfully." });
 

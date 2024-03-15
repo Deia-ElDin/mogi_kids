@@ -79,7 +79,13 @@ const CreateServiceForm: React.FC = () => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Service Created Successfully." });
       handleClose();
     } catch (error) {

@@ -81,7 +81,13 @@ const logoForm: React.FC<logoProps> = ({ logo }) => {
               imgSize: uploadedImgs[0].size,
             });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
 
         if (success) handleClose();
 

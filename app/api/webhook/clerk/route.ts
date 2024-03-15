@@ -78,7 +78,13 @@ export async function POST(req: Request) {
 
     const { success, data, error } = await createUser(user);
 
-    if (!success && error) throw new Error(error);
+    if (!success && error) {
+      if (typeof error === "string") {
+        throw new Error(error);
+      } else {
+        throw error;
+      }
+    }
 
     const newUser = data;
 

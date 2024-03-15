@@ -62,7 +62,6 @@ const ReviewForm = ({ logo }: ReviewFormProps) => {
   }, []);
 
   async function onSubmit(values: z.infer<typeof reviewSchema>) {
-
     values.rating = String(rating);
 
     try {
@@ -76,7 +75,13 @@ const ReviewForm = ({ logo }: ReviewFormProps) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: <CreateReviewToast logo={logo} /> });
       handleClose();
     } catch (error) {

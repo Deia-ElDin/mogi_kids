@@ -80,7 +80,13 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
   const handleBlockUser = async (userId: string) => {
     try {
       const { success, error } = await blockUser(userId);
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "User Blocked Successfully." });
     } catch (error) {
       toast({
@@ -151,7 +157,13 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
         limit,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (quotes.length === selectedQuotes.length) {
         setStates([]);
@@ -186,7 +198,13 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
         page: currentPage,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Quotation Selection Deleted Successfully." });
 
       if (quotes.length === selectedQuotes.length) {
@@ -223,7 +241,13 @@ const QuotesPage: React.FC<QuotesPageProps> = ({ setUnseenQuotes }) => {
         page: currentPage,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       if (unseen) setUnseenQuotes(unseen);
       if (success && data && data?.length > 0) setStates(data, totalPages);
       else {

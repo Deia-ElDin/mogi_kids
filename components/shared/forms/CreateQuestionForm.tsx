@@ -59,7 +59,13 @@ const CreateQuestionForm: React.FC = () => {
 
       const { success, error } = await createQuestion({ ...values });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Question Created Successfully." });
       handleClose();
     } catch (error) {

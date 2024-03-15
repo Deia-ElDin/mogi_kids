@@ -131,7 +131,13 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
         limit,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (reports.length === selectedReports.length) {
         setStates([]);
@@ -168,7 +174,13 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
         page: currentPage,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Report Selection Deleted Successfully." });
 
       if (reports.length === selectedReports.length) {
@@ -205,7 +217,13 @@ const ReportsPage: React.FC<ReportsPageProps> = ({ setUnseenReports }) => {
         page: currentPage,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       if (unseen) setUnseenReports(unseen);
       if (success && data && data?.length > 0) setStates(data, totalPages);
       else {

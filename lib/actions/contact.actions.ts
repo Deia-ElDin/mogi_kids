@@ -3,11 +3,10 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { CreateContactsParams, UpdateContactsParams } from "@/types";
-import { getImgName, handleError } from "../utils";
+import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -20,18 +19,21 @@ type GetALLResult = {
   success: boolean;
   data: IContact[] | [] | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IContact | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getAllContacts(): Promise<GetALLResult> {
@@ -42,9 +44,15 @@ export async function getAllContacts(): Promise<GetALLResult> {
 
     const data = JSON.parse(JSON.stringify(contacts));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -61,14 +69,22 @@ export async function createContact(
 
     const newContact = await Contact.create(params);
 
-    if (!newContact) throw new Error("Failed to create the contact.");
+    if (!newContact)
+      throw new UnprocessableEntity("Failed to create the contact.");
 
     const data = JSON.parse(JSON.stringify(newContact));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -88,13 +104,14 @@ export async function updateContact(
     const originalContact = await Contact.findById(_id);
 
     if (!originalContact)
-      throw new Error("Could not find the original contact.");
+      throw new NotFoundError("Could not find the original contact.");
 
     let updatedContact = null;
 
     if (newImg) {
       const imgName = getImgName(originalContact);
-      if (!imgName) throw new Error("Failed to read the image name.");
+      if (!imgName)
+        throw new UnprocessableEntity("Failed to read the image name.");
       await utapi.deleteFiles(imgName);
 
       updatedContact = await Contact.findByIdAndUpdate(_id, {
@@ -108,12 +125,21 @@ export async function updateContact(
       });
     }
 
+    if (!updatedContact)
+      throw new UnprocessableEntity("Failed to update the contact.");
+
     const data = JSON.parse(JSON.stringify(updatedContact));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -131,16 +157,22 @@ export async function deleteContact(
 
     const deletedContact = await Contact.findByIdAndDelete(contactId);
 
-    if (!deletedContact) throw new Error("Failed to delete the contacts.");
+    if (!deletedContact) throw new UnprocessableEntity("Failed to delete the contacts.");
 
     const imgName = getImgName(deletedContact);
-    if (!imgName) throw new Error("Failed to read the image name.");
+    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath("/");
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -158,8 +190,14 @@ export async function deleteAllContacts(): Promise<DeleteResult> {
     contacts.map(async (contact) => await deleteContact(contact._id, false));
 
     revalidatePath("/");
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }

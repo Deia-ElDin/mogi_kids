@@ -88,7 +88,13 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
   const handleBlockUser = async (userId: string) => {
     try {
       const { success, error } = await blockUser(userId);
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "User Blocked Successfully." });
     } catch (error) {
       toast({
@@ -169,7 +175,13 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
         limit,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (applications.length === selectedApplications.length) {
         setStates([]);
@@ -211,7 +223,13 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           page: currentPage,
         });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Quotation Selection Deleted Successfully." });
 
       if (applications.length === selectedApplications.length) {
@@ -254,7 +272,13 @@ const ApplicationsPage: React.FC<ApplicationsPageProps> = ({
           page: currentPage,
         });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       if (unseen) setUnseenApplicants(unseen);
       if (success && data && data?.length > 0) setStates(data, totalPages);
       else {

@@ -40,7 +40,13 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
     try {
       const { success, error } = await deleteReview(reviewId, "/");
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       const {
         success: userSuccess,
         data: updatedUser,
@@ -67,7 +73,13 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
   const handleBlockUser = async (userId: string) => {
     try {
       const { success, data, error } = await blockUser(userId);
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (data) {
         setUsers((prev) =>
@@ -87,7 +99,13 @@ const UserCard: React.FC<UserCardParams> = ({ user, setUsers }) => {
   const handleUnblockUser = async (userId: string) => {
     try {
       const { success, data, error } = await unBlockUser(userId);
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (data) {
         setUsers((prev) =>

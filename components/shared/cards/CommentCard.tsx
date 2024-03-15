@@ -97,7 +97,13 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({ description: "Comment Updated Successfully." });
 
@@ -119,7 +125,13 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({
         description: data ? (
@@ -154,7 +166,13 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({
         description: data ? (
@@ -193,7 +211,13 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({ description: "Comment Deleted Successfully." });
     } catch (error) {
@@ -212,7 +236,13 @@ const CommentCard = ({ user, reviewObj, commentObj }: CommentCardProps) => {
         targetId: commentObj._id,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({
         variant: "destructive",

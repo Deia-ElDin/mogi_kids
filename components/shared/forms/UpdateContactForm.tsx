@@ -89,7 +89,13 @@ const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
           newImg: true,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
 
         toast({ description: "Contact Updated Successfully." });
 
@@ -101,7 +107,13 @@ const UpdateContactForm: React.FC<UpdateContactFormProps> = ({ contact }) => {
           newImg: false,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
 
         toast({ description: "Contact Updated Successfully." });
 

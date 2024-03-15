@@ -8,11 +8,10 @@ import {
   CommentLikesParams,
   DeleteCommentParams,
 } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -25,18 +24,21 @@ type DefaultResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 type GetCommentResult = {
   success: boolean;
   data: IComment | null;
   error: string | null;
+  statusCode: number;
 };
 
 type LikesResult = {
   success: boolean;
   data: boolean | null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function createComment(
@@ -58,7 +60,8 @@ export async function createComment(
       createdBy,
     });
 
-    if (!newComment) throw new Error("Couldn't create the comment.");
+    if (!newComment)
+      throw new UnprocessableEntity("Couldn't create the comment.");
 
     const updatedReview = await Review.findByIdAndUpdate(
       reviewId,
@@ -66,12 +69,19 @@ export async function createComment(
       { new: true }
     );
 
-    if (!updatedReview) throw new Error("Couldn't update the review.");
+    if (!updatedReview)
+      throw new UnprocessableEntity("Couldn't update the review.");
 
     revalidatePath(path);
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -90,7 +100,7 @@ export async function updateCommentLikes(
 
     const comment = await Comment.findById(commentId);
 
-    if (!comment) throw new Error("Comment not found");
+    if (!comment) throw new NotFoundError("Comment not found");
 
     const likesIndex = comment.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -107,16 +117,29 @@ export async function updateCommentLikes(
 
     const updatedComment = await comment.save();
 
-    if (!updatedComment) throw new Error("Failed to update comment likes.");
+    if (!updatedComment)
+      throw new UnprocessableEntity("Failed to update comment likes.");
 
     const index = updatedComment.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
     );
 
     revalidatePath(path);
-    return { success: true, data: index >= 0 ? true : false, error: null };
+
+    return {
+      success: true,
+      data: index >= 0 ? true : false,
+      error: null,
+      statusCode: 201,
+    };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -135,7 +158,7 @@ export async function updateCommentDislikes(
 
     const comment = await Comment.findById(commentId);
 
-    if (!comment) throw new Error("Comment not found");
+    if (!comment) throw new NotFoundError("Comment not found");
 
     const likesIndex = comment.likes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
@@ -151,16 +174,29 @@ export async function updateCommentDislikes(
 
     const updatedComment = await comment.save();
 
-    if (!updatedComment) throw new Error("Failed to update comment dislikes.");
+    if (!updatedComment)
+      throw new UnprocessableEntity("Failed to update comment dislikes.");
 
     const index = updatedComment.dislikes.findIndex(
       (id: ObjectId) => id.toString() === updaterId
     );
 
     revalidatePath(path);
-    return { success: true, data: index >= 0 ? true : false, error: null };
+
+    return {
+      success: true,
+      data: index >= 0 ? true : false,
+      error: null,
+      statusCode: 201,
+    };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -178,12 +214,20 @@ export async function updateComment(
       { new: true }
     );
 
-    if (!updatedComment) throw new Error("Couldn't update the comment.");
+    if (!updatedComment)
+      throw new UnprocessableEntity("Couldn't update the comment.");
 
     revalidatePath(path);
-    return { success: true, data: null, error: null };
+    
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -197,7 +241,8 @@ export async function deleteComment(
 
     const deletedComment = await Comment.findByIdAndDelete(commentId);
 
-    if (!deletedComment) throw new Error("Couldn't delete the comment.");
+    if (!deletedComment)
+      throw new UnprocessableEntity("Couldn't delete the comment.");
 
     const parentReview = await Review.findByIdAndUpdate(
       deletedComment.review,
@@ -205,15 +250,22 @@ export async function deleteComment(
       { new: true }
     );
 
-    if (!parentReview) throw new Error("Couldn't update the parent review.");
+    if (!parentReview)
+      throw new UnprocessableEntity("Couldn't update the parent review.");
 
     await Report.deleteMany({ targetId: commentId, target: "Comment" });
 
     revalidatePath(path ?? "/");
 
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -229,12 +281,18 @@ export async function getCommentById(
       select: "_id firstName lastName photo email blocked",
     });
 
-    if (!comment) throw new Error("Comment not found.");
+    if (!comment) throw new NotFoundError("Comment not found.");
 
     const data = JSON.parse(JSON.stringify(comment));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }

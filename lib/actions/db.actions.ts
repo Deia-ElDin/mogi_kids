@@ -10,12 +10,7 @@ import { getAllRecords } from "./record.actions";
 import { getAllContacts } from "./contact.actions";
 import { getAllAboutUs } from "./aboutUs.actions";
 import { getAllApplications } from "./career.actions";
-import {
-  CustomApiError,
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity } from "../errors";
 import Db, { IDb } from "../database/models/db.model";
 
 type GetALLResult = {
@@ -36,7 +31,7 @@ export const getDbsSize = async (): Promise<GetALLResult> => {
 
     const dbs = await Db.findOne({});
 
-    if (!dbs) throw new Error("Failed to get the db size.");
+    if (!dbs) throw new UnprocessableEntity("Failed to get the db size.");
 
     const logoResult = await getLogo();
     const galleryResult = await getGallery();
@@ -91,7 +86,8 @@ export const updateDbSize = async (
 
     const dbRecord = (await Db.findOne({})) || (await Db.create({}));
 
-    if (!dbRecord) throw new Error("Failed to create or update the db size.");
+    if (!dbRecord)
+      throw new UnprocessableEntity("Failed to create or update the db size.");
 
     const todayDate = new Date().toDateString();
     const todayDb = dbRecord.today.toDateString();

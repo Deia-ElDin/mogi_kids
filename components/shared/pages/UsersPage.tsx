@@ -63,7 +63,13 @@ const UsersPage: React.FC = () => {
   const handleUpdateUser = async (userId: string, role: string) => {
     try {
       const { success, data, error } = await updateUser({ userId, role });
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       if (data) {
         setUsers((prev) =>
           prev.map((user) => (user._id === userId ? data : user))
@@ -90,7 +96,13 @@ const UsersPage: React.FC = () => {
         page: currentPage,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       if (success && data && data?.length > 0) setStates(data, totalPages);
       else {
         let extraMsg = "created yet in the Database.";

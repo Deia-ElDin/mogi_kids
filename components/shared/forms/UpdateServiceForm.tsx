@@ -94,7 +94,13 @@ const UpdateServiceForm: React.FC<UpdateServiceFormProps> = ({ service }) => {
           path: pathname,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
         toast({ description: "Service Updated Successfully." });
         handleClose();
       } else {
@@ -105,7 +111,13 @@ const UpdateServiceForm: React.FC<UpdateServiceFormProps> = ({ service }) => {
           path: pathname,
         });
 
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
         toast({ description: "Service Updated Successfully." });
         handleClose();
       }

@@ -86,7 +86,13 @@ const PageForm: React.FC<PageProps> = ({ page, pageName }) => {
           })
         : await createPage({ ...values, path: pathname });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       if (success) handleClose();
       toast({

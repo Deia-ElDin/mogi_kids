@@ -36,11 +36,23 @@ const Contacts: React.FC<ContactsProps> = (props) => {
     try {
       if (contactsPage?._id) {
         const { success, error } = await deletePage(contactsPage._id, "/");
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
       if (contacts.length > 0) {
         const { success, error } = await deleteAllContacts();
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
       toast({ description: "Contacts Page Deleted Successfully." });
     } catch (error) {

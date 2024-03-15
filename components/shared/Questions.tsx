@@ -45,11 +45,23 @@ const Questions: React.FC<QuestionsProps> = (props) => {
     try {
       if (questionsPage?._id) {
         const { success, error } = await deletePage(questionsPage._id, "/");
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
       if (questions.length > 0) {
         const { success, error } = await deleteAllQuestions();
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
       toast({ description: "Questions Page Deleted Successfully." });
     } catch (error) {
@@ -67,7 +79,13 @@ const Questions: React.FC<QuestionsProps> = (props) => {
     try {
       const { success, error } = await deleteQuestion(id);
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({ description: "Question Deleted Successfully." });
     } catch (error) {

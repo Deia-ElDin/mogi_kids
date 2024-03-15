@@ -51,7 +51,13 @@ const CommentForm = ({ user, reviewId }: CommentFormProps) => {
         path: pathname,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Comment Created Successfully." });
       form.reset();
     } catch (error) {

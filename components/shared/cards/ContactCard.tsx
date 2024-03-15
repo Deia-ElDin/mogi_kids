@@ -21,7 +21,13 @@ const ContactCard: React.FC<ContactCardParams> = ({ isAdmin, contact }) => {
     try {
       const { success, error } = await deleteContact(contact._id, true);
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
 
       toast({ description: "Contact Deleted Successfully." });
     } catch (error) {

@@ -7,7 +7,6 @@ import { getImgName, handleError } from "../utils";
 import { UTApi } from "uploadthing/server";
 import { revalidatePath } from "next/cache";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,

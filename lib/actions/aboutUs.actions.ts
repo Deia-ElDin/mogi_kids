@@ -20,18 +20,21 @@ type GetALLResult = {
   success: boolean;
   data: IAboutUs[] | [] | null;
   error: CustomApiError | string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IAboutUs | null;
-  error: CustomApiError | string | null;
+  error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getAllAboutUs(): Promise<GetALLResult> {
@@ -42,13 +45,14 @@ export async function getAllAboutUs(): Promise<GetALLResult> {
 
     const data = JSON.parse(JSON.stringify(allAboutUs));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    const errMsg = "Failed to fetch AboutUs data from the database.";
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
-      error: handleServerError(error as Error, errMsg),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -81,13 +85,15 @@ export async function createAboutUs(
     const data = JSON.parse(JSON.stringify(newAboutUs));
 
     revalidatePath(path);
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    const errMsg = "Failed to create about us article.";
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
-      error: handleServerError(error as Error, errMsg),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -133,13 +139,15 @@ export async function updateAboutUs(
     const data = JSON.parse(JSON.stringify(updatedAboutUs));
 
     revalidatePath(path);
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    const errMsg = "Failed to update about us article.";
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
-      error: handleServerError(error as Error, errMsg),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -166,13 +174,14 @@ export async function deleteAboutUs(
     await utapi.deleteFiles(imgName);
 
     revalidatePath(path);
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    const errMsg = "Failed to delete about us article.";
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       success: false,
       data: null,
-      error: handleServerError(error as Error, errMsg),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }

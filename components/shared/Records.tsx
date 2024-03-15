@@ -30,11 +30,23 @@ const Records: React.FC<RecordsProps> = ({ isAdmin, recordsPage, records }) => {
     try {
       if (recordsPage?._id) {
         const { success, error } = await deletePage(recordsPage._id, "/");
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
       if (records.length > 0) {
         const { success, error } = await deleteAllRecords();
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
       toast({ description: "Records Page Deleted Successfully." });
     } catch (error) {

@@ -73,7 +73,13 @@ const UpdateQuestionForm: React.FC<UpdateQuestionFormProps> = ({
         _id: question._id!,
       });
 
-      if (!success && error) throw new Error(error);
+      if (!success && error) {
+        if (typeof error === "string") {
+          throw new Error(error);
+        } else {
+          throw error;
+        }
+      }
       toast({ description: "Question Updated Successfully." });
       handleClose();
     } catch (error) {

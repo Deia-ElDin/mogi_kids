@@ -37,7 +37,13 @@ const Customers: React.FC<CustomersProps> = (props) => {
     try {
       if (customersPage?._id) {
         const { success, error } = await deletePage(customersPage._id, "/");
-        if (!success && error) throw new Error(error);
+        if (!success && error) {
+          if (typeof error === "string") {
+            throw new Error(error);
+          } else {
+            throw error;
+          }
+        }
       }
 
       toast({ description: "Customers Page Deleted Successfully." });
