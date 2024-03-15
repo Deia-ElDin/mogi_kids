@@ -3,10 +3,9 @@
 import { connectToDb } from "../database";
 import { validateAdmin } from "./validation.actions";
 import { CreateQuestionParams, UpdateQuestionParams } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
@@ -17,18 +16,21 @@ type GetALLResult = {
   success: boolean;
   data: IQuestion[] | [] | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IQuestion | null;
   error: string | null;
+  statusCode: number;
 };
 
 type DeleteResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getAllQuestions(): Promise<GetALLResult> {
@@ -39,9 +41,15 @@ export async function getAllQuestions(): Promise<GetALLResult> {
 
     const data = JSON.parse(JSON.stringify(questions));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -59,16 +67,23 @@ export async function createQuestion(
     const newQuestion = await Question.create(params);
 
     if (!newQuestion)
-      throw new Error(
+      throw new UnprocessableEntity(
         "Couldn't create a question & kindly check the uploadthing database"
       );
 
     const data = JSON.parse(JSON.stringify(newQuestion));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -93,9 +108,16 @@ export async function updateQuestion(
     const data = JSON.parse(JSON.stringify(updatedQuestion));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -112,13 +134,19 @@ export async function deleteQuestion(
 
     const deletedQuestion = await Question.findByIdAndDelete(questionId);
     if (!deletedQuestion)
-      throw new Error("Question not found or already deleted.");
+      throw new NotFoundError("Question not found or already deleted.");
 
     revalidatePath("/");
 
-    return { success: true, data: null, error: null };
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -134,11 +162,18 @@ export async function deleteAllQuestions(): Promise<DeleteResult> {
     const deletedQuestions = await Question.deleteMany();
 
     if (!deletedQuestions)
-      throw new Error("Questions not found or already deleted.");
+      throw new NotFoundError("Questions not found or already deleted.");
 
     revalidatePath("/");
-    return { success: true, data: null, error: null };
+
+    return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
