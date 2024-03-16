@@ -24,6 +24,7 @@ import AddBtn from "../btns/AddBtn";
 import CloseBtn from "../btns/CloseBtn";
 import FormBtn from "../btns/FormBtn";
 import * as z from "zod";
+import { Textarea } from "@/components/ui/textarea";
 
 const CreateAboutUsForm: React.FC = () => {
   const [displayForm, setDisplayForm] = useState<boolean>(false);
@@ -114,6 +115,24 @@ const CreateAboutUsForm: React.FC = () => {
             <h1 className="title-style text-white">AboutUs Form</h1>
             <FormField
               control={form.control}
+              name="imgUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="label-style">Image</FormLabel>
+                  <FormControl>
+                    <ImgUploader
+                      imageUrl={field.value}
+                      onFieldChange={field.onChange}
+                      setFiles={setFiles}
+                      imgClass="max-w-[300px] max-h-[300px]"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
@@ -132,30 +151,16 @@ const CreateAboutUsForm: React.FC = () => {
                 <FormItem>
                   <FormLabel className="label-style">Content</FormLabel>
                   <FormControl>
-                    <Input {...field} className="edit-input-style text-style" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="imgUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="label-style">Image</FormLabel>
-                  <FormControl>
-                    <ImgUploader
-                      imageUrl={field.value}
-                      onFieldChange={field.onChange}
-                      setFiles={setFiles}
-                      imgClass="max-w-[300px] max-h-[300px]"
+                    <Textarea
+                      {...field}
+                      className="edit-textarea-style text-style"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormBtn
               text="Create About Us Article"
               isSubmitting={form.formState.isSubmitting}

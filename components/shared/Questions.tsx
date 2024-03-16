@@ -22,6 +22,7 @@ import PageForm from "./forms/PageForm";
 import CreateQuestionForm from "./forms/CreateQuestionForm";
 import UpdateQuestionForm from "./forms/UpdateQuestionForm";
 import DeleteBtn from "./btns/DeleteBtn";
+import Text from "./helpers/Text";
 
 type QuestionsProps = {
   isAdmin: boolean | undefined;
@@ -103,34 +104,50 @@ const Questions: React.FC<QuestionsProps> = (props) => {
       {questions?.length > 0 && (
         <>
           <Accordion type="single" collapsible className="w-full">
-            {questions.map((questionObj, index) => (
-              <AccordionItem
-                key={`${questionObj.question}-${index}`}
-                value={questionObj.question}
-              >
-                <AccordionTrigger className="question-style">
-                  {questionObj.question}
-                </AccordionTrigger>
-                <div className="flex flex-col">
-                  <AccordionContent className="answer-style">
-                    {questionObj.answer}
-                    <div className="flex">
-                      {isAdmin && questionObj._id && (
-                        <UpdateQuestionForm question={questionObj} />
-                      )}
-                      <DeleteBtn
-                        pageId={questionsPage?._id}
-                        isAdmin={isAdmin}
-                        deletionTarget="Delete Question"
-                        handleClick={() =>
-                          handleDeleteQuestion(questionObj._id)
-                        }
-                      />
-                    </div>
-                  </AccordionContent>
-                </div>
-              </AccordionItem>
-            ))}
+            {questions.map((questionObj, index) => {
+              const answer = questionObj.answer;
+              let answerContent: string[] | null = [];
+
+              if (typeof answer === "string" && answer.includes("\n")) {
+                answerContent = answer.split("\n");
+              } else if (typeof answer === "string") {
+                answerContent = [answer];
+              } else {
+                answerContent = null;
+              }
+
+              return (
+                <AccordionItem
+                  key={`${questionObj.question}-${index}`}
+                  value={questionObj.question}
+                >
+                  <AccordionTrigger className="question-style">
+                    {questionObj.question}
+                  </AccordionTrigger>
+                  <div className="flex flex-col">
+                    <AccordionContent className="answer-style">
+                      {answerContent &&
+                        answerContent.map((text, index) => (
+                          <p key={`${text} - ${index}`}>{text}</p>
+                        ))}
+                      <div className="flex">
+                        {isAdmin && questionObj._id && (
+                          <UpdateQuestionForm question={questionObj} />
+                        )}
+                        <DeleteBtn
+                          pageId={questionsPage?._id}
+                          isAdmin={isAdmin}
+                          deletionTarget="Delete Question"
+                          handleClick={() =>
+                            handleDeleteQuestion(questionObj._id)
+                          }
+                        />
+                      </div>
+                    </AccordionContent>
+                  </div>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
         </>
       )}
