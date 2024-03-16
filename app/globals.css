@@ -89,7 +89,7 @@ body {
     color: #000;
     padding: 10px 20px 10px 20px;
     text-decoration: none;
-    font-family: var(--font-courgette);
+    /* font-family: var(--font-courgette); */
     @apply font-bold md:text-xl;
   }
 
@@ -203,7 +203,7 @@ body {
 
   .title-style {
     @apply font-bold text-center text-[20px] leading-[24px] md:text-[24px] md:leading-[32px] lg:text-[28px] lg:leading-[34px] xl:text-[32px] xl:leading-[40px] pb-3;
-    font-family: var(--font-courgette);
+    /* font-family: var(--font-courgette); */
   }
 
   .text-style {
