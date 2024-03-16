@@ -4,13 +4,13 @@ import { connectToDb } from "../database";
 import { validateAdmin, validatePageAndLimit } from "./validation.actions";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth } from "date-fns";
 import { CreateUserParams, UpdateUserParams, GetAllUsersParams } from "@/types";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import {
-  CustomApiError,
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
+  ForbiddenError,
 } from "../errors";
 import User, { IUser } from "../database/models/user.model";
 import Career from "../database/models/career.model";
@@ -23,18 +23,21 @@ type GetALLResult = {
   data: IUser[] | [] | null;
   totalPages?: number;
   error: string | null;
+  statusCode: number;
 };
 
 type DefaultResult = {
   success: boolean;
   data: IUser | null;
   error: string | null;
+  statusCode: number;
 };
 
 type BlockResult = {
   success: boolean;
   data: null;
   error: string | null;
+  statusCode: number;
 };
 
 export const populateUser = (query: any) => {
@@ -123,7 +126,8 @@ export async function getAllUsers({
       usersQuery.sort({ role: 1, createdAt: -1 }).skip(skipAmount).limit(limit)
     );
 
-    if (users.length === 0) return { success: true, data: [], error: null };
+    if (users.length === 0)
+      return { success: true, data: [], error: null, statusCode: 200 };
 
     const totalPages = Math.ceil(
       (await Career.countDocuments(conditions)) / limit
@@ -131,9 +135,15 @@ export async function getAllUsers({
 
     const data = JSON.parse(JSON.stringify(users));
 
-    return { success: true, data, totalPages, error: null };
+    return { success: true, data, totalPages, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -145,21 +155,29 @@ export async function createUser(
 
     const isUserExists = await User.findOne({ email: user.email });
 
-    if (isUserExists) return { success: false, data: null, error: null };
+    if (isUserExists)
+      return { success: false, data: null, error: null, statusCode: 200 };
 
     const adminMails = ["deia.tech2021@gmail.com", "mohagtareg@gmail.com"];
     const role = adminMails.includes(user.email) ? "Admin" : "User";
 
     const newUser = await User.create({ ...user, role });
 
-    if (!newUser) throw new Error("Failed to create user.");
+    if (!newUser) throw new UnprocessableEntity("Failed to create user.");
 
     const data = JSON.parse(JSON.stringify(newUser));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -187,12 +205,18 @@ export async function updateUser(
       User.findByIdAndUpdate(userId, updateFields, { new: true })
     );
 
-    if (!updatedUser) throw new Error("User not found.");
+    if (!updatedUser) throw new NotFoundError("User not found.");
 
     const data = JSON.parse(JSON.stringify(updatedUser));
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -202,13 +226,19 @@ export async function getUserByUserId(userId: string): Promise<DefaultResult> {
 
     const foundUser = await populateUser(User.findById(userId));
 
-    if (!foundUser) throw new Error("User not found.");
+    if (!foundUser) throw new NotFoundError("User not found.");
 
     const data = JSON.parse(JSON.stringify(foundUser));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -220,14 +250,21 @@ export async function getUserByClerkId(
 
     const foundUser = await populateUser(User.findOne({ clerkId }));
 
-    if (!foundUser) throw new Error("User not found.");
+    if (!foundUser) throw new NotFoundError("User not found.");
 
     const data = JSON.parse(JSON.stringify(foundUser));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 200 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -248,7 +285,7 @@ export async function blockUser(
     const isManager = user.role === "Manager";
 
     if (isManager)
-      throw new Error("Are you trying to block your Manager ????!!.");
+      throw new ForbiddenError("Are you trying to block your Manager ????!!.");
 
     const blockedUser = await User.findByIdAndUpdate(
       userId,
@@ -256,7 +293,7 @@ export async function blockUser(
       { new: true }
     );
 
-    if (!blockedUser) throw new Error("Failed to block the user.");
+    if (!blockedUser) throw new NotFoundError("Failed to block the user.");
 
     const url = `https://api.clerk.com/v1/users/${blockedUser.clerkId}/ban`;
     const options = {
@@ -284,9 +321,15 @@ export async function blockUser(
     const data = JSON.parse(JSON.stringify(blockedUser));
 
     if (path) revalidatePath(path);
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -305,7 +348,7 @@ export async function unBlockUser(userId: string): Promise<BlockResult> {
       { new: true }
     );
 
-    if (!unBlockedUser) throw new Error("Failed to unblock the user.");
+    if (!unBlockedUser) throw new NotFoundError("Failed to unblock the user.");
 
     const url = `https://api.clerk.com/v1/users/${unBlockedUser.clerkId}/unban`;
     const options = {
@@ -320,9 +363,15 @@ export async function unBlockUser(userId: string): Promise<BlockResult> {
 
     const data = JSON.parse(JSON.stringify(unBlockedUser));
 
-    return { success: true, data, error: null };
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -337,7 +386,7 @@ export async function deleteUser(userId: string): Promise<BlockResult> {
 
     const deletedUser = await User.findByIdAndDelete(userId);
 
-    if (!deletedUser) throw new Error("Failed to delete the user.");
+    if (!deletedUser) throw new NotFoundError("Failed to delete the user.");
 
     await Career.deleteMany({ createdBy: userId });
     await Quote.deleteMany({ createdBy: userId });
@@ -355,8 +404,15 @@ export async function deleteUser(userId: string): Promise<BlockResult> {
     const data = JSON.parse(JSON.stringify(deletedUser));
 
     revalidatePath("/");
-    return { success: true, data, error: null };
+
+    return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
-    return { success: false, data: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      success: false,
+      data: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
