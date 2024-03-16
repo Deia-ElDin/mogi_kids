@@ -6,11 +6,7 @@ import { CreateRecordParams, UpdateRecordParams } from "@/types";
 import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import {
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity, NotFoundError, ForbiddenError } from "../errors";
 import Record, { IRecord } from "../database/models/record.model";
 
 const utapi = new UTApi();
@@ -65,7 +61,7 @@ export async function createRecord(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const newRecord = await Record.create(params);
 
@@ -98,17 +94,19 @@ export async function updateRecord(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const originalRecord = await Record.findById(_id);
 
-    if (!originalRecord) throw new NotFoundError("Could not find the original record.");
+    if (!originalRecord)
+      throw new NotFoundError("Could not find the original record.");
 
     let updatedRecord = null;
 
     if (newImg) {
       const imgName = getImgName(originalRecord);
-      if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+      if (!imgName)
+        throw new UnprocessableEntity("Failed to read the image name.");
       await utapi.deleteFiles(imgName);
 
       updatedRecord = await Record.findByIdAndUpdate(_id, {
@@ -124,8 +122,7 @@ export async function updateRecord(
       });
     }
 
-    if (!updatedRecord)
-      throw new NotFoundError("Failed to update the record.");
+    if (!updatedRecord) throw new NotFoundError("Failed to update the record.");
 
     const data = JSON.parse(JSON.stringify(updatedRecord));
 
@@ -153,14 +150,16 @@ export async function deleteRecord(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedRecord = await Record.findByIdAndDelete(recordId);
 
-    if (!deletedRecord) throw new NotFoundError("Record not found or already deleted.");
+    if (!deletedRecord)
+      throw new NotFoundError("Record not found or already deleted.");
 
     const imgName = getImgName(deletedRecord);
-    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath("/");
@@ -184,7 +183,7 @@ export async function deleteAllRecords(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const allRecords = await Record.find();
 

@@ -11,8 +11,7 @@ import { IAboutUs } from "./database/models/about-us.model";
 import { ICareer } from "./database/models/career.model";
 import { differenceInDays, isValid, isAfter, isBefore } from "date-fns";
 import { QuoteSortKey, ApplicationsSortKey } from "@/constants";
-import { CustomApiError, UnauthorizedError } from "./errors";
-import mongoose from "mongoose";
+import { BadRequestError, CustomApiError, UnauthorizedError } from "./errors";
 
 const adminRoles = new Set(["Manager", "Admin"]);
 
@@ -47,7 +46,7 @@ export const handleError = (error: unknown): string => {
 
 export function handleServerError(
   error: Error,
-  defaultStatusCode: number = 500
+  defaultStatusCode: number = 400
 ): { message: string; statusCode: number } {
   if (error instanceof CustomApiError) {
     return {
@@ -56,9 +55,7 @@ export function handleServerError(
     };
   } else {
     return {
-      message: new CustomApiError(
-        "An unexpected error occurred: " + error.message
-      ).message,
+      message: new BadRequestError("Bad Request: " + error.message).message,
       statusCode: defaultStatusCode,
     };
   }

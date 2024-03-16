@@ -19,9 +19,9 @@ import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import {
   BadRequestError,
-  UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
+  ForbiddenError,
 } from "../errors";
 import Quote, { IQuote } from "../database/models/quote.model";
 
@@ -108,7 +108,9 @@ export async function updateQuote(
     );
 
     if (!updatedQuote)
-      throw new NotFoundError("Failed to update the email service of this quotation.");
+      throw new NotFoundError(
+        "Failed to update the email service of this quotation."
+      );
 
     return { success: true, data: null, error: null, statusCode: 201 };
   } catch (error) {
@@ -129,7 +131,7 @@ export async function countUnseenQuotes(): Promise<CountResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const count = await Quote.countDocuments({ seen: false });
 
@@ -159,7 +161,7 @@ export async function getAllQuotes({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     let condition = {};
 
@@ -233,7 +235,7 @@ export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const seenQuote = await Quote.findByIdAndUpdate(
       quoteId,
@@ -242,7 +244,9 @@ export async function markQuoteAsSeen(quoteId: string): Promise<DefaultResult> {
     );
 
     if (!seenQuote)
-      throw new NotFoundError("Failed to change the seen status of this quotation.");
+      throw new NotFoundError(
+        "Failed to change the seen status of this quotation."
+      );
 
     const data = JSON.parse(JSON.stringify(seenQuote));
 
@@ -271,12 +275,14 @@ export async function deleteQuote({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedQuote = await Quote.findByIdAndDelete(quoteId);
 
     if (!deletedQuote)
-      throw new NotFoundError("Failed to find the quote or the quote already deleted.");
+      throw new NotFoundError(
+        "Failed to find the quote or the quote already deleted."
+      );
 
     const skipAmount = (Number(page) - 1) * limit;
     const quotes = await Quote.find()
@@ -323,7 +329,7 @@ export async function deleteSelectedQuotes({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedQuotes = await Quote.deleteMany({
       _id: { $in: selectedQuotes },

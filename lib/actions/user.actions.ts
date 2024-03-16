@@ -77,7 +77,7 @@ export async function getAllUsers({
     const { user, isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin || !user || !user.role)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const { role } = user;
 
@@ -87,7 +87,7 @@ export async function getAllUsers({
     else if (role === "Manager") conditions = { _id: { $ne: user._id } };
 
     if (!conditions)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     if (fetch?.firstName)
       conditions = {
@@ -192,7 +192,7 @@ export async function updateUser(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const updateFields: any = {};
 
@@ -278,7 +278,7 @@ export async function blockUser(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const user = await User.findById(userId);
 
@@ -340,7 +340,7 @@ export async function unBlockUser(userId: string): Promise<BlockResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const unBlockedUser = await User.findByIdAndUpdate(
       userId,
@@ -382,7 +382,7 @@ export async function deleteUser(userId: string): Promise<BlockResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedUser = await User.findByIdAndDelete(userId);
 

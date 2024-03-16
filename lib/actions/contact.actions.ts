@@ -6,11 +6,7 @@ import { CreateContactsParams, UpdateContactsParams } from "@/types";
 import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import {
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity, NotFoundError, ForbiddenError } from "../errors";
 import Contact, { IContact } from "../database/models/contact.model";
 
 const utapi = new UTApi();
@@ -65,7 +61,7 @@ export async function createContact(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const newContact = await Contact.create(params);
 
@@ -99,7 +95,7 @@ export async function updateContact(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const originalContact = await Contact.findById(_id);
 
@@ -153,14 +149,16 @@ export async function deleteContact(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedContact = await Contact.findByIdAndDelete(contactId);
 
-    if (!deletedContact) throw new NotFoundError("Failed to delete the contacts.");
+    if (!deletedContact)
+      throw new NotFoundError("Failed to delete the contacts.");
 
     const imgName = getImgName(deletedContact);
-    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath("/");
@@ -183,7 +181,7 @@ export async function deleteAllContacts(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const contacts = await Contact.find();
 

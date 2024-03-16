@@ -6,11 +6,7 @@ import { CreateGalleryParams, UpdateGalleryParams } from "@/types";
 import { getImgName, handleServerError } from "../utils";
 import { UTApi } from "uploadthing/server";
 import { revalidatePath } from "next/cache";
-import {
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity, NotFoundError, ForbiddenError } from "../errors";
 import Gallery, { IGallery } from "../database/models/gallery.model";
 
 const utapi = new UTApi();
@@ -65,15 +61,17 @@ export async function createGalleryImg(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const gallery = await Gallery.create(params);
 
-    if (!gallery) throw new UnprocessableEntity("Failed to create the gallery.");
+    if (!gallery)
+      throw new UnprocessableEntity("Failed to create the gallery.");
 
     const data = JSON.parse(JSON.stringify(gallery));
 
     revalidatePath("/");
+
     return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
     const { message, statusCode } = handleServerError(error as Error);
@@ -97,14 +95,16 @@ export async function updateGalleryImg(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const gallery = await Gallery.findById(_id);
 
-    if (!gallery) throw new NotFoundError("Could not find the original gallery.");
+    if (!gallery)
+      throw new NotFoundError("Could not find the original gallery.");
 
     const imgName = getImgName(gallery);
-    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     gallery.imgUrl = imgUrl;
@@ -114,6 +114,7 @@ export async function updateGalleryImg(
     const data = JSON.parse(JSON.stringify(gallery));
 
     revalidatePath("/");
+
     return { success: true, data, error: null, statusCode: 201 };
   } catch (error) {
     const { message, statusCode } = handleServerError(error as Error);
@@ -133,17 +134,19 @@ export async function deleteGalleryImg(imgId: string): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedImg = await Gallery.findByIdAndDelete(imgId);
 
     if (!deletedImg) throw new NotFoundError("Failed to delete the image.");
 
     const imgName = getImgName(deletedImg);
-    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     revalidatePath("/");
+
     return { success: true, data: null, error: null, statusCode: 204 };
   } catch (error) {
     const { message, statusCode } = handleServerError(error as Error);

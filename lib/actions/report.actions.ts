@@ -15,11 +15,7 @@ import {
   DeleteSelectedReportsParams,
 } from "@/types";
 import { handleServerError } from "../utils";
-import {
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity, NotFoundError, ForbiddenError } from "../errors";
 import Report, { IReport } from "../database/models/report.model";
 
 type CountResult = {
@@ -68,7 +64,8 @@ export async function createReport(
       createdBy: currentUser?._id || null,
     });
 
-    if (!newReport) throw new UnprocessableEntity("Failed to create the report.");
+    if (!newReport)
+      throw new UnprocessableEntity("Failed to create the report.");
 
     return { success: true, data: null, error: null, statusCode: 201 };
   } catch (error) {
@@ -89,7 +86,7 @@ export async function countUnseenReports(): Promise<CountResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const count = await Report.countDocuments({ seen: false });
 
@@ -120,7 +117,7 @@ export async function getAllReports({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     let condition = {};
 
@@ -195,7 +192,7 @@ export async function markReportAsSeen(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const seenReport = await Report.findByIdAndUpdate(
       reportId,
@@ -209,7 +206,9 @@ export async function markReportAsSeen(
     });
 
     if (!seenReport)
-      throw new NotFoundError("Failed to change the seen status of this quotation.");
+      throw new NotFoundError(
+        "Failed to change the seen status of this quotation."
+      );
 
     const data = JSON.parse(JSON.stringify(seenReport));
 
@@ -238,7 +237,7 @@ export async function deleteReport({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedReport = await Report.findByIdAndDelete(reportId);
 
@@ -292,7 +291,7 @@ export async function deleteSelectedReports({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedReports = await Report.deleteMany({
       _id: { $in: selectedReports },

@@ -12,10 +12,10 @@ import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import { populateUser } from "./user.actions";
 import {
-  UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
   ForbiddenError,
+  BadRequestError,
 } from "../errors";
 import User, { IUser } from "../database/models/user.model";
 import Review, { IReview } from "../database/models/review.model";
@@ -96,9 +96,12 @@ export async function getAllReviews(): Promise<GetAllResult> {
 export async function createReview(
   params: CreateReviewParams
 ): Promise<DefaultResult> {
-  const { review, rating, path } = params;
-
   try {
+    if (!params)
+      throw new BadRequestError("Invalid request: Missing parameters.");
+
+    const { review, rating, path } = params;
+
     await connectToDb();
 
     const { user: currentUser } = await getCurrentUser();
@@ -151,7 +154,7 @@ export async function updateReviewLikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const review = await Review.findById(reviewId);
 
@@ -209,7 +212,7 @@ export async function updateReviewDislikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const review = await Review.findById(reviewId);
 
@@ -274,14 +277,14 @@ export async function updateReview(
     );
 
     if (!isTheSameUser || error)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const isReviewBelongToUser = user?.reviews.find(
       (review) => review._id.toString() === _id
     );
 
     if (!isReviewBelongToUser)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     if (review) foundReview.review = review;
     if (rating) foundReview.rating = rating;

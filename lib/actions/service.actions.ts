@@ -6,11 +6,7 @@ import { CreateServiceParams, UpdateServiceParams } from "@/types";
 import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
-import {
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity, NotFoundError, ForbiddenError } from "../errors";
 import Service, { IService } from "../database/models/service.model";
 
 const utapi = new UTApi();
@@ -91,7 +87,7 @@ export async function createService(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const newService = await Service.create({
       serviceName,
@@ -135,7 +131,7 @@ export async function updateService(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const originalService = await Service.findById(_id);
 
@@ -144,7 +140,8 @@ export async function updateService(
 
     if (newImg) {
       const imgName = getImgName(originalService);
-      if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+      if (!imgName)
+        throw new UnprocessableEntity("Failed to read the image name.");
       await utapi.deleteFiles(imgName);
 
       updatedService = await Service.findByIdAndUpdate(
@@ -197,7 +194,7 @@ export async function deleteService(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedService = await Service.findByIdAndDelete(serviceId);
 
@@ -205,7 +202,8 @@ export async function deleteService(
       throw new NotFoundError("Service not found or already deleted.");
 
     const imgName = getImgName(deletedService);
-    if (!imgName) throw new UnprocessableEntity("Failed to read the image name.");
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
     await utapi.deleteFiles(imgName);
 
     if (revalidate) revalidatePath(path);
@@ -229,7 +227,7 @@ export async function deleteAllServices(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const allServices = await Service.find();
 

@@ -1,12 +1,14 @@
 "use server";
 
 import { currentUser } from "@clerk/nextjs";
-import { handleError } from "../utils";
+import { handleServerError } from "../utils";
+import { ForbiddenError } from "../errors";
 import User, { IUser } from "../database/models/user.model";
 
 type CurrentUserResult = {
   user: IUser | null;
   error: string | null;
+  statusCode: number;
 };
 
 type AdminResult = {
@@ -14,27 +16,34 @@ type AdminResult = {
   isManager: boolean;
   isAdmin: boolean;
   error: string | null;
+  statusCode: number;
 };
 
 type TheSameUserResult = {
   user: IUser | null;
   isTheSameUser: boolean;
   error: string | null;
+  statusCode: number;
 };
 
 export async function getCurrentUser(): Promise<CurrentUserResult> {
   try {
     const clerkUser = await currentUser();
 
-    if (!clerkUser) return { user: null, error: null };
+    if (!clerkUser) return { user: null, error: null, statusCode: 200 };
 
     const mongoDbUser = await User.findOne({ clerkId: clerkUser.id });
 
-    if (!mongoDbUser) throw new Error("Current User / MongoDb Error.");
+    if (!mongoDbUser) throw new ForbiddenError("Forbidden Error MongoDb.");
 
-    return { user: mongoDbUser, error: null };
+    return { user: mongoDbUser, error: null, statusCode: 200 };
   } catch (error) {
-    return { user: null, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      user: null,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 
@@ -42,23 +51,31 @@ export async function validateAdmin(): Promise<AdminResult> {
   try {
     const clerkUser = await currentUser();
 
-    if (!clerkUser) throw new Error("Authentication Error.");
+    if (!clerkUser) throw new ForbiddenError("Forbidden Error ClerkDb.");
 
     const mongoDbUser = await User.findOne({ clerkId: clerkUser.id });
 
-    if (!mongoDbUser) throw new Error("Authentication Error.");
+    if (!mongoDbUser) throw new ForbiddenError("Forbidden Error MongoDb.");
 
     const isManager = mongoDbUser.role === "Manager";
     const isAdmin =
       mongoDbUser.role === "Manager" || mongoDbUser.role === "Admin";
 
-    return { user: mongoDbUser, isManager, isAdmin, error: null };
+    return {
+      user: mongoDbUser,
+      isManager,
+      isAdmin,
+      error: null,
+      statusCode: 200,
+    };
   } catch (error) {
+    const { message, statusCode } = handleServerError(error as Error);
     return {
       user: null,
       isManager: false,
       isAdmin: false,
-      error: handleError(error),
+      error: message,
+      statusCode: statusCode,
     };
   }
 }
@@ -69,17 +86,23 @@ export async function validateIsTheSameUser(
   try {
     const clerkUser = await currentUser();
 
-    if (!clerkUser) throw new Error("Authentication Error.");
+    if (!clerkUser) throw new ForbiddenError("Forbidden Error ClerkDb.");
 
     const mongoDbUser = await User.findOne({ clerkId: clerkUser.id });
 
-    if (!mongoDbUser) throw new Error("Authentication Error.");
+    if (!mongoDbUser) throw new ForbiddenError("Forbidden Error MongoDb.");
 
     const isTheSameUser = String(mongoDbUser._id) === userId;
 
-    return { user: mongoDbUser, isTheSameUser, error: null };
+    return { user: mongoDbUser, isTheSameUser, error: null, statusCode: 200 };
   } catch (error) {
-    return { user: null, isTheSameUser: false, error: handleError(error) };
+    const { message, statusCode } = handleServerError(error as Error);
+    return {
+      user: null,
+      isTheSameUser: false,
+      error: message,
+      statusCode: statusCode,
+    };
   }
 }
 

@@ -5,11 +5,7 @@ import { validateAdmin } from "./validation.actions";
 import { CreateQuestionParams, UpdateQuestionParams } from "@/types";
 import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
-import {
-  UnauthorizedError,
-  UnprocessableEntity,
-  NotFoundError,
-} from "../errors";
+import { UnprocessableEntity, NotFoundError, ForbiddenError } from "../errors";
 import Question, { IQuestion } from "../database/models/question.model";
 
 type GetALLResult = {
@@ -62,7 +58,7 @@ export async function createQuestion(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const newQuestion = await Question.create(params);
 
@@ -98,7 +94,7 @@ export async function updateQuestion(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const updatedQuestion = await Question.findByIdAndUpdate(_id, {
       question,
@@ -132,10 +128,10 @@ export async function deleteQuestion(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedQuestion = await Question.findByIdAndDelete(questionId);
-    
+
     if (!deletedQuestion)
       throw new NotFoundError("Question not found or already deleted.");
 
@@ -160,7 +156,7 @@ export async function deleteAllQuestions(): Promise<DeleteResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedQuestions = await Question.deleteMany();
 

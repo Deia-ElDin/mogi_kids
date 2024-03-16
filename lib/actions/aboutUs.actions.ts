@@ -8,9 +8,10 @@ import { revalidatePath } from "next/cache";
 import { UTApi } from "uploadthing/server";
 import {
   CustomApiError,
-  UnauthorizedError,
+  BadRequestError,
   UnprocessableEntity,
   NotFoundError,
+  ForbiddenError,
 } from "../errors";
 import AboutUs, { IAboutUs } from "../database/models/about-us.model";
 
@@ -60,15 +61,15 @@ export async function getAllAboutUs(): Promise<GetALLResult> {
 export async function createAboutUs(
   params: CreateAboutUsParams
 ): Promise<DefaultResult> {
-  const { title, content, imgUrl, imgSize, path } = params;
-
   try {
+    const { title, content, imgUrl, imgSize, path } = params;
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const newAboutUs = await AboutUs.create({
       title,
@@ -101,17 +102,17 @@ export async function createAboutUs(
 export async function updateAboutUs(
   params: UpdateAboutUsParams
 ): Promise<DefaultResult> {
-  const { _id, title, content, imgUrl, imgSize, newImg, path } = params;
-
-  let updatedAboutUs;
-
   try {
+    const { _id, title, content, imgUrl, imgSize, newImg, path } = params;
+
+    let updatedAboutUs;
+
     await connectToDb();
 
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const originalAboutUs = await AboutUs.findById(_id);
 
@@ -165,7 +166,7 @@ export async function deleteAboutUs(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedAboutUs = await AboutUs.findByIdAndDelete(aboutUsArticleId);
 

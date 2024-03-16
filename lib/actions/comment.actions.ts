@@ -12,10 +12,10 @@ import { handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import { ObjectId } from "mongoose";
 import {
-  UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
   ForbiddenError,
+  BadRequestError,
 } from "../errors";
 import Comment, { IComment } from "../database/models/comment.model";
 import Review from "../database/models/review.model";
@@ -45,9 +45,12 @@ type LikesResult = {
 export async function createComment(
   params: CreateCommentParams
 ): Promise<DefaultResult> {
-  const { comment, reviewId, createdBy, path } = params;
-
   try {
+    if (!params)
+      throw new BadRequestError("Invalid request: Missing parameters.");
+
+    const { comment, reviewId, path } = params;
+
     await connectToDb();
 
     const { user: currentUser } = await getCurrentUser();
@@ -69,8 +72,7 @@ export async function createComment(
       { new: true }
     );
 
-    if (!updatedReview)
-      throw new NotFoundError("Couldn't find the review.");
+    if (!updatedReview) throw new NotFoundError("Couldn't find the review.");
 
     revalidatePath(path);
     return { success: true, data: null, error: null, statusCode: 204 };
@@ -96,7 +98,7 @@ export async function updateCommentLikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const comment = await Comment.findById(commentId);
 
@@ -154,7 +156,7 @@ export async function updateCommentDislikes(
     const { isTheSameUser, error } = await validateIsTheSameUser(updaterId);
 
     if (error || !isTheSameUser)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const comment = await Comment.findById(commentId);
 

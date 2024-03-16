@@ -19,6 +19,8 @@ import {
   UnauthorizedError,
   UnprocessableEntity,
   NotFoundError,
+  ForbiddenError,
+  BadRequestError,
 } from "../errors";
 import Career, { ICareer } from "../database/models/career.model";
 
@@ -60,7 +62,7 @@ export async function countUnseenApplications(): Promise<CountResult> {
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const count = await Career.countDocuments({ seen: false });
 
@@ -90,7 +92,7 @@ export async function getAllApplications({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     let condition = {};
 
@@ -170,7 +172,7 @@ export async function markApplicationAsSeen(
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const seenApplication = await Career.findByIdAndUpdate(
       applicationId,
@@ -201,6 +203,9 @@ export async function createApplication(
   params: CreateApplicationParams
 ): Promise<DefaultResult> {
   try {
+    if (!params)
+      throw new BadRequestError("Invalid request: Missing parameters.");
+
     await connectToDb();
 
     const { user: currentUser } = await getCurrentUser();
@@ -242,7 +247,7 @@ export async function deleteApplication({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedApplication = await Career.findByIdAndDelete(applicationId);
 
@@ -297,7 +302,7 @@ export async function deleteSelectedApplications({
     const { isAdmin, error } = await validateAdmin();
 
     if (error || !isAdmin)
-      throw new UnauthorizedError("Not Authorized to access this resource.");
+      throw new ForbiddenError("Not Authorized to access this resource.");
 
     const deletedApplications = await Career.deleteMany({
       _id: { $in: selectedApplications },
