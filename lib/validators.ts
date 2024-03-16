@@ -313,5 +313,8 @@ export const careerSchema = z.object({
       visaExpiryDate.errs.invalid.tenYears
     ),
   coverLetter: z.string().max(coverLetter.length.max, coverLetter.errs.max),
-  imgUrl: z.string().min(resumePdf.length.min, resumePdf.errs.min),
+  imgUrl: z
+    .string()
+    .min(resumePdf.length.min, resumePdf.errs.min)
+    .refine((value) => !isValidUrl(value), resumePdf.errs.invalid),
 });

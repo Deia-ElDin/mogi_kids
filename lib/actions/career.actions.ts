@@ -13,7 +13,7 @@ import {
   DeleteSelectedApplicationParams,
   DeleteSelectedApplicationsParams,
 } from "@/types";
-import { handleServerError } from "../utils";
+import { getImgName, handleServerError } from "../utils";
 import { revalidatePath } from "next/cache";
 import {
   UnauthorizedError,
@@ -22,7 +22,11 @@ import {
   ForbiddenError,
   BadRequestError,
 } from "../errors";
+import { UTApi } from "uploadthing/server";
+
 import Career, { ICareer } from "../database/models/career.model";
+
+const utapi = new UTApi();
 
 type CountResult = {
   success: boolean;
@@ -255,6 +259,11 @@ export async function deleteApplication({
       throw new NotFoundError(
         "Failed to find the application or the application already deleted."
       );
+
+    const imgName = getImgName(deletedApplication);
+    if (!imgName)
+      throw new UnprocessableEntity("Failed to read the image name.");
+    await utapi.deleteFiles(imgName);
 
     const skipAmount = (Number(page) - 1) * limit;
     const applications = await Career.find()

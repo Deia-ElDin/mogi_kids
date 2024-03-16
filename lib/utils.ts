@@ -380,7 +380,7 @@ export const isInArray = function (value: string, array: string[]) {
 };
 
 export const isValidUrl = function (url: string): boolean {
-  return /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(url);
+  return /^(?:https?|ftp):\/\/[^\s\/$.?#]+\.[^\s]*$/.test(url);
 };
 
 export const isInRange = function (
