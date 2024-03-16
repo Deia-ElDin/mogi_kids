@@ -313,7 +313,7 @@ export async function deleteSelectedApplications({
     if (error || !isAdmin)
       throw new ForbiddenError("Not Authorized to access this resource.");
 
-    const deletedApplications = await Career.deleteMany({
+    const deletedApplications = await Career.find({
       _id: { $in: selectedApplications },
     });
 
@@ -321,6 +321,12 @@ export async function deleteSelectedApplications({
       throw new NotFoundError(
         "Failed to find the applications or the applications already deleted."
       );
+
+    deletedApplications.map(async (application: ICareer) => {
+      await deleteApplication({
+        applicationId: application._id,
+      });
+    });
 
     const skipAmount = (Number(page) - 1) * limit;
     const applications = await Career.find()
